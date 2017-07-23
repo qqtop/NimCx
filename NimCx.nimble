@@ -10,4 +10,3 @@ license       = "MIT"
 
 Requires : "nim >= 0.17.0"
 
-

@@ -11,7 +11,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-07-10
+##     Latest      : 2017-07-23
 ##
 ##     Compiler    : Nim >= 0.17
 ##
@@ -88,9 +88,6 @@
 ##
 ##                   proc fmtx a formatting utility has been added
 ##
-##                   to remove dependency on strfmt , which used to break sometimes
-##
-##                   after compiler updates .
 ##                   
 ##
 ##     Required    : 
@@ -106,7 +103,11 @@
 ##   
 ##                   to avoid library bload.
 ##
-##
+##     Funding     : If you are happy send any amount of bitcoins you like to a nice wallet : 
+##     
+##                   194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
+##                    
+##                    
 ##
 import os, times, parseutils, parseopt, hashes, tables, sets, strmisc
 import osproc,macros,posix,terminal,math,stats,json,random,streams
@@ -1149,7 +1150,7 @@ proc uniform*(a,b: float) : float =
       ## 
       ## returns a random float uniformly distributed between a and  b
       ## 
-      ## ..code-block:: nim
+      ## .. code-block:: nim
       ##   import cx,stats
       ##   import "random-0.5.3/random"
       ##   proc quickTest() =
@@ -1180,27 +1181,26 @@ proc uniform*(a,b: float) : float =
 
       
 proc getRndInt*(mi:int = 0 , ma:int = int.high):int =
- ## getRndInt
- ##
- ## returns a random int between mi and < ma
- ##
- 
- result = random(mi..ma)
+    ## getRndInt
+    ##
+    ## returns a random int between mi and < ma
+    ##
+    result = random(mi..ma)
 
 
 proc fibonacci*(n: int):float =  
-   ## fibonacci
-   ## 
-   ## calculate fibonacci values
-   ##
-   ## .. code-block:: nim
-   ## 
-   ##    for x in 0.. 20: quickList(x,fibonacci(x))
-   ## 
-   if n < 2: 
-      result = float(n)
-   else: 
-      result = fibonacci(n-1) + fibonacci(n-2)
+    ## fibonacci
+    ## 
+    ## calculate fibonacci values
+    ##
+    ## .. code-block:: nim
+    ## 
+    ##    for x in 0.. 20: quickList(x,fibonacci(x))
+    ## 
+    if n < 2: 
+       result = float(n)
+    else: 
+       result = fibonacci(n-1) + fibonacci(n-2)
   
 
 template colPaletteIndexer*(colx:seq[string]):auto =  toSeq(colx.low.. colx.high) 
@@ -4138,7 +4138,14 @@ template loopy*[T](ite:T,st:typed) =
      ##
      for x in ite: st
 
-
+proc fromCString*(p: pointer, len: int): string =
+  ## fromCString
+  ## 
+  ## convert C pointer to Nim string
+  ## (code ex nim forum https://forum.nim-lang.org/t/3045 by jangko)
+  ## 
+  result = newString(len)
+  copyMem(result.cstring, p, len)
          
 proc showPalette*(coltype:string = "white") = 
     ## ::
@@ -5085,12 +5092,11 @@ proc doFinish*() =
         printLnBiCol("  Compiled on: " & $CompileDate & " at " & $CompileTime)
         if detectOs(OpenSUSE):  # some additional data if on openSuse systems
             printLnBiCol("Kernel     :  " & uname().split("#")[0],":",lightslategray ,lavender)
-            var rld = release().splitLines()
-            var rld2 = $rld[2]
-            var rld21 = rld2.replace("Description:    o","Description:  o")
-            printBiCol(rld21 & spaces(2),":",lightslategray ,seagreen)
-            printLnBiCol(rld[3],":",lightslategray ,olivedrab)
-            
+            let rld = release().splitLines()
+            let rld3 = rld[2].splitty(":")
+            let rld4 = rld3[0] & spaces(2) & strip(rld3[1])
+            printBiCol(rld4,":",lightslategray ,olivedrab)
+            printLnBiCol(spaces(3) & rld[3],":",lightslategray ,olivedrab)
         echo()
         quit(0)
 
