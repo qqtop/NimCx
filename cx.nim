@@ -3971,7 +3971,18 @@ proc checkHash*[T](kata:string,hsx:T)  =
   else:
         printLnBiCol("Hash Status : fail",":",red)
 
-  
+
+proc verifykHash*[T](kata:string,hsx:T):bool  =
+  ## checkHash
+  ## 
+  ## checks hash of a string and returns true or false
+  ## 
+  result = false
+  if hash(kata) == hsx:
+        result = true
+  else:
+        result = false        
+        
 proc createHash*(kata:string):auto = 
     ## createHash
     ## 
