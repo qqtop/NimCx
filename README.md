@@ -41,8 +41,8 @@ Example usage of print procs
 
 Screenshots from cxTest
 
+![Image](http://qqtop.github.io/nimcarpet.png?raw=true)
 
-![Image](http://qqtop.github.io/nimcolors9.png?raw=true)
 
 
 
@@ -63,8 +63,6 @@ dofinish()
 ![Image](http://qqtop.github.io/nimcolors35.png?raw=true)
 
 ![Image](http://qqtop.github.io/nimcolors36.png?raw=true)
-
-![Image](http://qqtop.github.io/nimcarpet.png?raw=true)
 
 ![Image](http://qqtop.github.io/nimcolors10.png?raw=true)
 
