@@ -228,7 +228,7 @@ proc inCarpet(x:int, y:int): bool =
     y = y div 3
  
  
-proc sierpCarpetDemo*(n:int,xpos:int = 1) =
+proc sierpCarpetDemo*(n:int=2,xpos:int = 1) =
   ## sierpCarpetDemo
   ## 
   ## draws the carpet in color
@@ -244,6 +244,26 @@ proc sierpCarpetDemo*(n:int,xpos:int = 1) =
     echo()
 
 
+proc sierpCarpetDemo2*(n:int=2,xpos:int = 1,sa:string = "* ",sb:string = spaces(2)) =
+  ## sierpCarpetDemo2
+  ## 
+  ## draws the carpet in color and allowing change of characters 
+  ## 
+  for i in 0 .. <(3^n):
+    cursetx(xpos)
+    for j in 0 .. <(3^n):
+      if inCarpet(i, j):
+        print(sa,randcol())
+      else:
+          print(sb,randcol(),styled = {stylereverse,styleunderscore,styleblink})
+     
+    echo()
+
+    
+proc allRuneTest() =
+    # shows 58000 unicode chars in color with their ord numbers
+     tableRune(uniall(true),"rand",cols = 8,pause=0.02)
+     decho(2)
 
 
 proc drawRectDemo*() =
@@ -336,13 +356,18 @@ proc colorCJKDemo*() =
     ## carpet with CJK characters
     ##
     decho(2)
-    for y in 0.. 20:
-       curSetx(10)
-       for x in 0.. 50:
+    printBigLetters("NIM  CARPET",xpos = 37,fun = true) 
+    decho(6)
+    for y in 0.. 25:
+       curSetx(15)
+       for x in 0.. 52:
            print(newwordCJK(1,1),randcol())
-       echo()   
-    sleepy(3)   
-        
+       echo()
+    echo()   
+    printBigLetters("    --  NIM    ",randcol(),xpos = 15)  
+    printBigNumber("0.171 --",randcol(),xpos = 65)
+    sleepy(1) 
+    
     
 proc rainbow2Demo*() =
   

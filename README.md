@@ -64,7 +64,7 @@ dofinish()
 
 ![Image](http://qqtop.github.io/nimcolors36.png?raw=true)
 
-![Image](http://qqtop.github.io/colorCJKDemo.png?raw=true)
+![Image](http://qqtop.github.io/nimcarpet.png?raw=true)
 
 ![Image](http://qqtop.github.io/nimcolors10.png?raw=true)
 

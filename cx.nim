@@ -1,4 +1,5 @@
 {.deadCodeElim: on.}
+##  {.noforward: on.}   # future feature
 ## ::
 ## 
 ##     Library     : cx.nim
@@ -4096,7 +4097,11 @@ proc nimcat*(curFile:string,startline:int = -1,endline = -1) =
               break
        
     echo()
+    
     printLnBiCol("File       : " & ccurFile)
+    printLnBicol("File Dir   : " & dir)
+    printLnBiCol("File Name  : " & name)
+    printLnBiCol("File Ext.  : " & ext)
     if startline > 0 and endline > 0:
        printLnBiCol("Startline  : " & $startline)
        printLnBiCol("Endline    : " & $endline)
