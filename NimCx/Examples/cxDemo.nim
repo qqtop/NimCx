@@ -364,9 +364,10 @@ proc colorCJKDemo*() =
            print(newwordCJK(1,1),randcol())
        echo()
     echo()   
-    printBigLetters("    --  NIM    ",randcol(),xpos = 15)  
-    printBigNumber("0.171 --",randcol(),xpos = 65)
+    printBigLetters("--  NIM",randcol(),xpos = 15)  
+    printBigNumber("0.17.1 --",randcol(),xpos = 58)
     sleepy(1) 
+    decho(3)
     
     
 proc rainbow2Demo*() =

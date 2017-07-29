@@ -6,7 +6,7 @@
 ## best run in a large console window
 
 
-import cx,cxDemo,strutils,sequtils,times,random,unicode,cxutils
+import cx,cxDemo,strutils,sequtils,times,unicode,cxutils
 
 superHeader("Testing print and echo procs from cx.nim and run demos")
 
@@ -156,7 +156,7 @@ sleepy(3)
 
 widedotfieldDemo()
 
-sleepy(3)
+sleepy(1)
 decho(3)
 
 
@@ -222,6 +222,20 @@ decho(15)
 var twc = tw div 2
 showTerminalSize()
 printLnBiCol("Terminal Center : " & $twc,":")
+
+
+
+# show sierpcarpetdemo2
+
+cleanscreen()
+decho(2)
+for x in 1.. 100:
+        curset()
+        decho(2)
+        sierpCarpetDemo2(2,10," " & $Rune(9961) & " "," " & $Rune(9924) & " ")
+        sleepy(0.02)
+decho(5)
+
 
 # here showing iching
 rainbow2Demo()

@@ -12,7 +12,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-07-24
+##     Latest      : 2017-07-29
 ##
 ##     Compiler    : Nim >= 0.17
 ##
@@ -26,7 +26,9 @@
 ##                   
 ##                   a wide selection of utility functions . 
 ##                   
-##                   Some procs may mirror functionality of stdlib moduls 
+##                   Some procs may mirror functionality of stdlib moduls others may be deprecated if
+##                   
+##                   similar or better appear in the stdlib.
 ##
 ##
 ##     Usage       : import cx
@@ -138,19 +140,35 @@ when defined(windows):
   {.fatal   : "CX does not support Windows at this stage and never will !".}
 
 when defined(posix):
-  {.hint    : "\x1b[38;2;154;205;50m \u2691 Delicious Os flavour detected .... NimCx loves Linux ! \u2691".}
+  {.hint    : "\x1b[38;2;154;205;50m \u2691 NimCx officially works only on Linux. Testing is done on OpenSUSE Tumbleweed ! \u2691".}
 
 const CXLIBVERSION* = "0.9.9"
 
 let start* = epochTime()  ##  simple execution timing with one line see doFinish()
-randomize()  ## seed random number generator 
+randomize()               ## seed random number generator 
 
 type
      NimCxCustomError* = object of Exception         
      # to be used like so
      # raise newException(NimCxCustomError, "didn't do stuff")
 
-   
+# type used in slim number printing
+type
+    T7 = object
+      zx : seq[string]
+      
+# type used in getRandomPoint
+type
+    RpointInt*   = tuple[x, y : int]
+    RpointFloat* = tuple[x, y : float]
+
+# type used in Benchmark
+type
+    Benchmarkres* = tuple[bname,cpu,epoch : string]
+# used to store all benchmarkresults   
+var benchmarkresults* =  newSeq[Benchmarkres]()
+
+
 proc getfg(fg:ForegroundColor):string =
     var gFG = ord(fg)
     result = "\e[" & $gFG & 'm'
@@ -169,21 +187,6 @@ proc bbright(bg:BackgroundColor): string =
     inc(gBG, 60)
     result = "\e[" & $gBG & 'm'
 
-# type used in slim number printing
-type
-    T7 = object
-      zx : seq[string]
-      
-# type used in getRandomPoint
-type
-    RpointInt*   = tuple[x, y : int]
-    RpointFloat* = tuple[x, y : float]
-
-# type used in Benchmark
-type
-    Benchmarkres* = tuple[bname,cpu,epoch : string]
-# used to store all benchmarkresults   
-var benchmarkresults* =  newSeq[Benchmarkres]()
 
 const
 
@@ -285,6 +288,7 @@ const
       bigdip*               =   "\x1b[38;2;156;37;66m"
       greenery*             =   "\x1b[38;2;136;176;75m"
       bluey*                =   "\x1b[38;2;41;194;102m"    # not displaying , showing default bluishgreen
+      
       # colors lifted from colors.nim and massaged into rgb escape seqs
 
       aliceblue*            =  "\x1b[38;2;240;248;255m"
@@ -428,7 +432,7 @@ const
       yellow*               =  "\x1b[38;2;255;255;0m"
       yellowgreen*          =  "\x1b[38;2;154;205;50m"
       zcolor*               =  "\x1b[38;2;255;111;210m"
-      zippi*                =  "\x1b[38;2;79;196;132m"     # not displaying , showing default blueish green
+      zippi*                =  "\x1b[38;2;79;196;132m"     # maybe not displaying , showing default blueish green
 
 # all colors except original terminal colors
 const colorNames* = @[
@@ -999,8 +1003,7 @@ let clbx* = @[clb1,clb2,clb3,clb4,clb5]
 
 let bigLetters* = @[abx,bbx,cbx,dbx,ebx,fbx,gbx,hbx,ibx,jbx,kbx,lbx,mbx,nbx,obx,pbx,qbx,rbx,sbx,tbx,ubx,vbx,wbx,xbx,ybx,zbx,hybx,plbx,ulbx,elbx,clbx]
 
-# a big block number set
-#  can be used with printBigNumber
+# a big block number set which can be used with printBigNumber
 
 const number0 =
  @["██████"
@@ -1106,10 +1109,20 @@ const clrb =
   ,"      "
   ,"      "
   ,"      "]
+  
+  
+const bigdot =
+ @["      "
+  ,"      "
+  ,"      "
+  ,"      "
+  ,"  ██  "]
+
 
 const numberlen = 4
 
 # big NIM in block letters
+# see printNimSxR for how to print this sets and similar one you make up
 
 let NIMX1 = "██     █    ██    ███   ██"
 let NIMX2 = "██ █   █    ██    ██ █ █ █"
@@ -3176,7 +3189,7 @@ proc printBigNumber*(xnumber:string|int|int64,fgr:string = yellowgreen ,bgr:stri
         of "+": printseq.add(plussign)
         of "-": printseq.add(minussign)
         of "=": printseq.add(equalsign)
-        
+        of ".": printseq.add(bigdot)
         else: discard
 
     for x in 0.. numberlen:
@@ -5350,3 +5363,4 @@ when isMainModule:
         
   doFinish()
 
+############################################ END OF CX.NIM #############################################################################
