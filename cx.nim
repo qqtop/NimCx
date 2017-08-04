@@ -12,7 +12,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-07-29
+##     Latest      : 2017-08-04
 ##
 ##     Compiler    : Nim >= 0.17
 ##
@@ -1459,7 +1459,7 @@ template randCol*(coltype:string): auto =
          ##   
          ##   coltype examples : "red","blue","medium","dark","light","pastel" etc..
          ##   
-         ## .. code-block:: nimble
+         ## .. code-block:: nim
          ##    loopy(0..5,printLn("Random blue shades",randcol("blue")))
          ##
          ##   
@@ -1470,7 +1470,7 @@ template randCol*(coltype:string): auto =
          var rxColt = colPaletteIndexer(ts) 
          ts[rndSampleInt(rxColt)]
   
-#template randCol*: string = colorNames[rndSampleInt(rxCol)][1]  # deprecated
+
 template randCol*: string = random(colorNames)[1]
    ## randCol
    ##
@@ -1605,9 +1605,8 @@ template lowerCase*(s:string):string = unicode.toLower(s)
 template currentLine* = 
    ## currentLine
    ## 
-   ## simple template to return line number , usefull for debugging 
-   var z = instantiationInfo().line
-   printLnBiCol("Line -> " & $z,"->",peru,red)
+   ## simple template to return line number , maybe usefull for debugging 
+   printLnBiCol("Line -> " & $instantiationInfo().line,"->",peru,red)
 
 template randPastelCol*: string = random(pastelset)
    ## randPastelCol
@@ -1845,7 +1844,7 @@ proc cleanScreen*() =
       ##
       ## clear screen with escape seqs
       ##
-      ## similar to terminal.eraseScreen() but cleans the terminal window completely
+      ## similar to terminal.eraseScreen() but cleans the terminal window more completely at times
       ##
       write(stdout,"\e[H\e[J")
 
@@ -2672,7 +2671,7 @@ proc doty*(d:int,fgr:string = white, bgr:string = black,xpos:int = 1) =
      ##
      ## if it is available on your system otherwise a rectangle may be shown
      ##
-     ## .. code-block:: nimble
+     ## .. code-block:: nim
      ##      import cx
      ##      printLnBiCol("Test for  :  doty\n",":",truetomato,lime)
      ##      dotyLn(22 ,lime)
@@ -2694,7 +2693,7 @@ proc dotyLn*(d:int,fgr:string = white, bgr:string = black,xpos:int = 1) =
      ##
      ## each dot is of char length 4
 
-     ## .. code-block:: nimble
+     ## .. code-block:: nim
      ##      import cx
      ##      loopy(0.. 100,loopy(1.. tw div 2, dotyLn(1,randcol(),xpos = random(tw - 1))))
      ##      printLnBiCol("coloredSnow","d",greenyellow,salmon)
@@ -3200,8 +3199,7 @@ proc printBigNumber*(xnumber:string|int|int64,fgr:string = yellowgreen ,bgr:stri
             else:
                 # we want to avoid black
                 var funny = randcol()
-                while funny == black:
-                     funny = randcol()
+                while funny == black: funny = randcol()
                 print(" " & printseq[y][x],funny,bgr)
         echo()
     curup(5)
@@ -4899,6 +4897,27 @@ proc rainbow2*[T](s : T,xpos:int = 1,fitLine:bool = false,centered:bool = false,
 
 
 
+proc getColName*[T](sc:T):string = 
+   ## getColName
+   ## 
+   ## this functions returns the colorname based on an color escape sequence
+   ## 
+   ## usually used with randcol() to see what color was actually returned
+   ## 
+   ## 
+   ## .. code-block:: nim
+   ##  import cx
+   ##  for x in 0 .. 10: 
+   ##     let acol = randcol()
+   ##     let acolname = getColName(acol)         
+   ##     printLn(acolname,acol)  
+   ## 
+   ##
+   result = "unknown color"
+   for x in colornames:
+       if x[1] == sc:
+          result = x[0]
+
 
 proc boxChars*():seq[string] =
 
@@ -4912,7 +4931,22 @@ proc boxChars*():seq[string] =
         boxy.add($RUne(j))
     result = boxy
 
-
+proc optimalbox*(w:int,s:int,tl:int):int =
+    ## optimalbox
+    ## attempts to calculates best overall box width to accomodate single cells with total desired width
+    ## and a minimum of s desired columns
+    ## this function can be used in drawbox to calculate the width parameter
+    ## 
+    ## .. code-block:: nim
+    ## 
+    ## 
+    #
+    result = w
+    while result mod s > 0 : 
+      if  tl > result div s  and result mod s == 0:
+        break
+      else:
+        result = result - 1
 
 proc drawBox*(hy:int = 1, wx:int = 1 , hsec:int = 1 ,vsec:int = 1,frCol:string = yellowgreen,brCol:string = black ,cornerCol:string = truetomato,xpos:int = 1,blink:bool = false) =
      ## drawBox
@@ -5363,4 +5397,4 @@ when isMainModule:
         
   doFinish()
 
-############################################ END OF CX.NIM #############################################################################
+# END OF CX.NIM #
