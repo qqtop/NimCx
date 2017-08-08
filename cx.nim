@@ -12,9 +12,9 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-08-04
+##     Latest      : 2017-08-08
 ##
-##     Compiler    : Nim >= 0.17
+##     Compiler    : Nim >= 0.17.x dev branch
 ##
 ##     OS          : Linux
 ##
@@ -1504,6 +1504,14 @@ let rxCards* = toSeq(cards.low.. cards.high) # index into cards
 
 converter toTwInt(x: cushort): int = result = int(x)
 
+
+template `<>`* (a, b: untyped): untyped =
+  ## unequal operator 
+  ## 
+  ## 
+  ## 
+  not (a == b)
+
 when defined(Linux):
     proc getTerminalWidth*() : int =
         ## getTerminalWidth
@@ -1835,7 +1843,7 @@ proc unquote*(s:string):string =
       ##
       ## remove any double quotes from a string
       ##
-      result = replace(s,$'"',"")
+      result = s.multiReplace(($'"',""))
 
 
 
@@ -2786,7 +2794,7 @@ proc validdate*(adate:string):bool =
       ##
       let m30 = @["04","06","09","11"]
       let m31 = @["01","03","05","07","08","10","12"]
-      let xdate = parseInt(aDate.replace("-",""))
+      let xdate = parseInt(aDate.multiReplace(("-","")))
       # check 1 is our date between 1900 - 3000
       if xdate >= 19000101 and xdate < 30010101:
           var spdate = aDate.split("-")
@@ -2887,8 +2895,8 @@ proc compareDates*(startDate,endDate:string) : int =
      # -1 undefined , invalid s date
      # -2 undefined . invalid e and or s date
      if validdate(startDate) and validdate(enddate):
-        var std = startDate.replace("-","")
-        var edd = endDate.replace("-","")
+        var std = startDate.multiReplace(("-",""))
+        var edd = endDate.multiReplace(("-",""))
         if std == edd:
           result = 0
         elif std >= edd:
@@ -3560,7 +3568,7 @@ proc superHeader*(bstring:string,strcol:string,frmcol:string) =
             # default or smaller
             let n = mmax - astrl
             for x in 0.. <n:
-                astring = astring & " "
+                astring = astring & spaces(1)
             mddl = mddl + 1
 
         let framechar = "⌘"
@@ -3585,11 +3593,11 @@ proc superHeader*(bstring:string,strcol:string,frmcol:string) =
         # draw everything
         frameline(pdl)
         #left marker
-        framemarker(framechar & " ")
+        framemarker(framechar & spaces(1))
         # header message sring
         headermessage(astring)
         # right marker
-        framemarker(" " & framechar)
+        framemarker(spaces(1) & framechar)
         # we need a new line
         echo()
         # bottom frame line
@@ -3988,7 +3996,7 @@ proc ff2*(zz:int64 , n:int = 0):string =
   if nz.startswith(",") == true:
      nz = strip(nz,true,false,{','})
   elif nz.startswith("-,") == true:
-     nz = nz.replace("-,","-")
+     nz = nz.multiReplace(("-,","-"))
      
   result = nz
 
@@ -4329,7 +4337,7 @@ proc showPalette*(coltype:string = "white") =
     echo()
     let z = colPaletteLen(coltype)
     for x in 0.. <z:
-          printLn(fmtx([">3",">4"],$x,rightarrow) & " ABCD 12345678909   " & colPaletteName(coltype,x) , colPalette(coltype,x))
+          printLn(fmtx([">3",">4"],$x,rightarrow) & " ABCD 1234567890   " & colPaletteName(coltype,x) , colPalette(coltype,x))
     printLnBiCol("\n" & coltype & "Palette items count   : " & $z)  
     echo()  
 
@@ -4341,16 +4349,16 @@ proc colorio*() =
     ## Displays name,hex code and rgb of colors available in cx.nim
     ## 
 
-    printLn(fmtx(["<20","","<20","",">5","",">5","",">5"],"ColorName in cx", "  " , "HEX Code","  ","R"," ","G"," ","B") ,zippi)
+    printLn(fmtx(["<20","","<20","",">5","",">5","",">5"],"ColorName in cx", spaces(2) , "HEX Code",spaces(2),"R",spaces(1),"G",spaces(1),"B") ,zippi)
     echo()
 
     for x in 0.. <cx.colorNames.len:
         try:
            var zr = extractRgb(parsecolor(cx.colorNames[x][0]))
-           printLn(fmtx(["<20","","<20","",">5","",">5","",">5"],cx.colorNames[x][0], "  " , $(parsecolor(cx.colorNames[x][0])),"  ",zr[0]," ",zr[1]," ",zr[2]) ,fgr = cx.colorNames[x][1])
+           printLn(fmtx(["<20","","<20","",">5","",">5","",">5"],cx.colorNames[x][0], spaces(2) , $(parsecolor(cx.colorNames[x][0])),spaces(2),zr[0],spaces(1),zr[1],spaces(1),zr[2]) ,fgr = cx.colorNames[x][1])
         
         except ValueError:
-           printLn(fmtx(["<20","","<20"],cx.colorNames[x][0], "  " , "NIMCX CUSTOM COLOR " ),fgr = cx.colorNames[x][1])
+           printLn(fmtx(["<20","","<20"],cx.colorNames[x][0], spaces(2) , "NIMCX CUSTOM COLOR " ),fgr = cx.colorNames[x][1])
             
 
 proc shift*[T](x: var seq[T], zz: Natural = 0): T =
@@ -4930,16 +4938,34 @@ proc boxChars*():seq[string] =
     for j in parsehexint("2500") .. parsehexint("257F"):
         boxy.add($RUne(j))
     result = boxy
+    
 
 proc optimalbox*(w:int,s:int,tl:int):int =
     ## optimalbox
+    ## 
+    ## WORK IN PROGRESS
+    ## 
     ## attempts to calculates best overall box width to accomodate single cells with total desired width
     ## and a minimum of s desired columns
     ## this function can be used in drawbox to calculate the width parameter
     ## 
     ## .. code-block:: nim
+    ##   import cx,cxutils
     ## 
-    ## 
+    ##   var postop = 5
+    ##   var hy = 27
+    ##   var boxwidth = tw 
+    ##   var hsec = 9
+    ##   var boxsections = 20
+    ##   var xpos = 5
+    ##   var tl = 8
+    ##   cleanscreen()
+    ##   decho(postop)
+    ##   drawBox(hy=hy, wx = optimalbox(tw - 10 ,boxsections,tl) , hsec = hsec ,vsec = boxsections,frCol = randcol(),brCol = randcol() ,cornerCol = aquamarine,xpos = xpos,blink = true)
+    ##   decho(postop)
+    ##   showTerminalSize()
+    ##   doFinish()
+    ##
     #
     result = w
     while result mod s > 0 : 
@@ -4947,6 +4973,7 @@ proc optimalbox*(w:int,s:int,tl:int):int =
         break
       else:
         result = result - 1
+        
 
 proc drawBox*(hy:int = 1, wx:int = 1 , hsec:int = 1 ,vsec:int = 1,frCol:string = yellowgreen,brCol:string = black ,cornerCol:string = truetomato,xpos:int = 1,blink:bool = false) =
      ## drawBox
@@ -4974,12 +5001,9 @@ proc drawBox*(hy:int = 1, wx:int = 1 , hsec:int = 1 ,vsec:int = 1,frCol:string =
      # almost ok we need to find a way to to make sure that grid size is fine
      # if we use dynamic sizes like width = tw - 1 etc.
      #
-     # given some data should the data be printed into a drawn box
-     # or the box around the data ?
      # 
      # brcol does not have any sensible effect
      # 
-     # need to have a writeable coordinate system so we can more easier fill in data
      #
 
      var h = hy
@@ -4987,6 +5011,7 @@ proc drawBox*(hy:int = 1, wx:int = 1 , hsec:int = 1 ,vsec:int = 1,frCol:string =
      if h > th: h = th
      if w > tw: w = tw
      curSetx(xpos)
+     
      # top
      if blink == true:
            print($Rune(parsehexint("250C")),cornerCol,styled = {styleBlink},substr = $Rune(parsehexint("250C")))
@@ -5008,9 +5033,18 @@ proc drawBox*(hy:int = 1, wx:int = 1 , hsec:int = 1 ,vsec:int = 1,frCol:string =
 
 
      # bottom left corner and bottom right
-     print($Rune(parsehexint("2514")),fgr = cornercol,xpos=xpos)
+     if blink == true:
+           print($Rune(parsehexint("2514")),cornerCol,xpos = xpos,styled = {styleBlink},substr = $Rune(parsehexint("2514")))
+     else:
+           print($Rune(parsehexint("2514")),fgr = cornercol,xpos=xpos)
+           
+     # bottom line      
      print(repeat($Rune(parsehexint("2500")),w-1),fgr = frcol)
-     printLn($Rune(parsehexint("2518")),fgr=cornercol)
+     
+     if blink == true:
+           printLn($Rune(parsehexint("2518")),cornerCol,styled = {styleBlink},substr = $Rune(parsehexint("2518")))
+     else:
+           printLn($Rune(parsehexint("2518")),fgr=cornercol)
 
      # try to build some dividers
      var vsecwidth = w
@@ -5044,7 +5078,7 @@ proc drawBox*(hy:int = 1, wx:int = 1 , hsec:int = 1 ,vsec:int = 1,frCol:string =
                print($Rune(parsehexint("253C")),fgr = truetomato)
            # print the right edge
            npos = npos + vsecwidth + 1
-           print($Rune(parsehexint("2524")),fgr = truetomato,xpos=npos - 1)
+           print($Rune(parsehexint("2524")),fgr = truetomato,xpos = npos - 1)
            curdn(hsecheight)
            npos = hpos
 
