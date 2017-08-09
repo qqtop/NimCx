@@ -5399,19 +5399,6 @@ proc handler*() {.noconv.} =
 
 
 
-# putting decho here will put two blank lines before anyting else runs
-decho(2)
-# putting this here we can stop most programs which use this lib and get the
-# automatic exit messages , it may not work in tight loops involving execCMD or
-# waiting for readLine() inputs.
-setControlCHook(handler)
-# this will reset any color changes in the terminal
-# so no need for this line in the calling prog
-system.addQuitProc(resetAttributes)
-# end of cx.nim
-
-
-
 proc cxmain*() =
 
   clearup()
@@ -5433,6 +5420,19 @@ proc cxmain*() =
         curup(1)
         
   doFinish()
+
+
+
+# putting decho here will put two blank lines before anyting else runs
+decho(2)
+# putting this here we can stop most programs which use this lib and get the
+# automatic exit messages , it may not work in tight loops involving execCMD or
+# waiting for readLine() inputs.
+setControlCHook(handler)
+# this will reset any color changes in the terminal
+# so no need for this line in the calling prog
+system.addQuitProc(resetAttributes)
+# end of cx.nim
 
 
 
