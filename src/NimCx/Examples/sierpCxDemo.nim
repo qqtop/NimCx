@@ -1,4 +1,4 @@
-import cx,cxDemo
+import nimcx,cxDemo
 
 # another demo for sierpCarpet
 # needs large terminal size

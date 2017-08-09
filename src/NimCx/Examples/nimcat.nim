@@ -1,4 +1,4 @@
-import os,cx
+import os,nimcx
 
 # nimcat   
 # a cat for nim :)

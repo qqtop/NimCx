@@ -1,5 +1,5 @@
 
-import cx
+import nimcx
 
 # testbox.nim
 # 

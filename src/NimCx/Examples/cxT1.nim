@@ -1,4 +1,4 @@
-import cx,strutils,cxutils
+import nimcx
 
 # linux only
 

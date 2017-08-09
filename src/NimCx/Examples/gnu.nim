@@ -1,4 +1,4 @@
-import cx,strutils
+import nimcx
 
 # Attention ! Gnu traffic ahead !
 # The absolute must have gnu's ! Currently busy running about .

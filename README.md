@@ -48,7 +48,7 @@ Screenshots from cxTest
 
 ```nimrod         
 
-import cx
+import nimcx
 # show the colors
 showColors()
 dofinish()

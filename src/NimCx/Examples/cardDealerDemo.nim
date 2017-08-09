@@ -1,4 +1,4 @@
-import cx,cxutils
+import nimcx
 
 ## cardDealerDemo.nim
 ## 

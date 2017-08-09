@@ -1,4 +1,4 @@
-import cx,cxutils,strutils,strfmt,times,math
+import nimcx,strfmt,times,math
 
 
 ## small rough demos repository for var. procs in cx.nim
