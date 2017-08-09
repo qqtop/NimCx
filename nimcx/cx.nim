@@ -12,7 +12,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-08-08
+##     Latest      : 2017-08-09
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -956,6 +956,7 @@ let ul5 = "██████"
 let el1 = "      "
 let el2 = "██████"
 let el3 = "      "
+
 let el4 = "██████"
 let el5 = "      "
 
@@ -5409,7 +5410,9 @@ setControlCHook(handler)
 system.addQuitProc(resetAttributes)
 # end of cx.nim
 
-when isMainModule:
+
+
+proc cxmain*() =
 
   clearup()
   decho(2)
@@ -5431,4 +5434,8 @@ when isMainModule:
         
   doFinish()
 
+
+
+when isMainModule:
+    cxmain()
 # END OF CX.NIM #
