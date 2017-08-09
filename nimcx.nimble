@@ -1,6 +1,6 @@
 [Package]
 
-name          = "NimCx"
+name          = "nimcx"
 version       = "0.9.9"
 author        = "qqTop"
 description   = "Color and utilities library for a happy linux terminal."
