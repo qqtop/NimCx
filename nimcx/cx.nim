@@ -20,7 +20,7 @@
 ##
 ##     Description :
 ##
-##                   cx.nim is a collection of simple procs and templates
+##                   nimcx.nim is a collection of simple procs and templates
 ##
 ##                   for easy colored display in a linux terminal and also contains
 ##                   
@@ -31,7 +31,7 @@
 ##                   similar or better appear in the stdlib.
 ##
 ##
-##     Usage       : import cx
+##     Usage       : import nimcx
 ##
 ##     Project     : https://github.com/qqtop/NimCx
 ##
@@ -1311,7 +1311,7 @@ proc uniform*(a,b: float) : float =
       ## returns a random float uniformly distributed between a and  b
       ## 
       ## .. code-block:: nim
-      ##   import cx,stats
+      ##   import nimcx,stats
       ##   import "random-0.5.3/random"
       ##   proc quickTest() =
       ##        var ps : Runningstat
@@ -1406,7 +1406,7 @@ template colorsPalette*(coltype:string): auto =
          ##   returns a colorpalette which can be used to iterate over
          ##    
          ## .. code-block:: nim
-         ##    import cx
+         ##    import nimcx
          ##    let z = "The big money waits in the bank" 
          ##    printLn(z,colPalette("pastel",getRndInt(0,colPaletteLen("pastel") - 1)),black)
          ##    rainbow2(z & "\n",centered = false,colorset = colorsPalette("medium"))
@@ -1799,7 +1799,7 @@ proc fmtx*[T](fmts:openarray[string],fstrings:varargs[T,`$`]):string =
      ## Examples :
      ##
      ## .. code-block:: nim
-     ##    import cx,cxutils
+     ##    import nimcx
      ##    echo fmtx(["","","<8.3",""," High : ","<8","","","","","","","",""],lime,"Open : ",unquote("1234.5986"),yellow,"",3456.67,red,showRune("FFEC"),white," Change:",unquote("-1.34 - 0.45%"),"  Range : ",lime,@[123,456,789])
      ##    echo fmtx(["","<18",":",">15","","",">8.2"],salmon,"nice something",steelblue,123,spaces(5),yellow,456.12345676)
      ##    echo()
@@ -2466,7 +2466,7 @@ proc printBiCol*[T](s:T,sep:string = ":",colLeft:string = yellowgreen ,colRight:
      ## Note : clrainbow not useable for right side color
      ##
      ## .. code-block:: nim
-     ##    import cx,strutils,strfmt
+     ##    import nimcx,strfmt
      ##
      ##    for x  in 0.. <3:
      ##       # here use default colors for left and right side of the seperator
@@ -2519,7 +2519,7 @@ proc printLnBiCol*[T](s:T,sep:string = ":", colLeft:string = yellowgreen, colRig
      ## default seperator = ":"  if not found we execute printLn with available params
      ##
      ## .. code-block:: nim
-     ##    import cx,strutils,strfmt
+     ##    import nimcx,strfmt
      ##
      ##    for x  in 0.. <3:
      ##       # here use default colors for left and right side of the seperator
@@ -2611,7 +2611,7 @@ proc cecho*(col:string,ggg: varargs[string, `$`] = @[""] )  =
       ##
       ##
       ## .. code-block:: nim
-      ##     import cx,strfmt
+      ##     import nimcx,strfmt
       ##     cechoLn(salmon,"{:<10} : {} ==> {} --> {}".fmt("this ", "zzz ",123 ," color is something else"))
       ##     echo("ok")  # color resetted
       ##     echo(salmon,"{:<10} : {} ==> {} --> {}".fmt("this ", "zzz ",123 ," color is something else"))
@@ -2639,7 +2639,7 @@ proc cechoLn*(col:string,astring: varargs[string, `$`] = @[""] )  =
       ## in your exisiting projects.
       ##
       ## .. code-block:: nim
-      ##     import cx,strutils
+      ##     import nimcx
       ##     cechoLn(steelblue,"We made it in $1 hours !" % $5)
       ##
       ##
@@ -2681,7 +2681,7 @@ proc doty*(d:int,fgr:string = white, bgr:string = black,xpos:int = 1) =
      ## if it is available on your system otherwise a rectangle may be shown
      ##
      ## .. code-block:: nim
-     ##      import cx
+     ##      import nimcx
      ##      printLnBiCol("Test for  :  doty\n",":",truetomato,lime)
      ##      dotyLn(22 ,lime)
      ##      dotyLn(18 ,salmon,blue)
@@ -2703,7 +2703,7 @@ proc dotyLn*(d:int,fgr:string = white, bgr:string = black,xpos:int = 1) =
      ## each dot is of char length 4
 
      ## .. code-block:: nim
-     ##      import cx
+     ##      import nimcx
      ##      loopy(0.. 100,loopy(1.. tw div 2, dotyLn(1,randcol(),xpos = random(tw - 1))))
      ##      printLnBiCol("coloredSnow","d",greenyellow,salmon)
 
@@ -2745,7 +2745,7 @@ proc drawRect*(h:int = 0 ,w:int = 3, frhLine:string = "_", frVLine:string = "|",
       ##
       ##
       ## .. code-block:: nim
-      ##    import cx
+      ##    import nimcx
       ##    clearUp(18)
       ##    curSet()
       ##    drawRect(15,24,frhLine = "+",frvLine = wideDot , frCol = randCol(),xpos = 8)
@@ -3023,7 +3023,7 @@ proc getNextMonday*(adate:string):string =
     ##
     ##
     ## .. code-block:: nim
-    ##      import cx
+    ##      import nimcx
     ##      # get next 10 mondays
     ##      var dw = "2015-08-10"
     ##      for x in 1.. 10:
@@ -3163,7 +3163,7 @@ proc printBigNumber*(xnumber:string|int|int64,fgr:string = yellowgreen ,bgr:stri
     ##    printBigNumber($23456345,steelblue)
     ##
     ## .. code-block:: nim
-    ##    import cx
+    ##    import nimcx
     ##    for x in countdown(9,0):
     ##         cleanScreen()
     ##         if x == 5:
@@ -3548,7 +3548,7 @@ proc superHeader*(bstring:string,strcol:string,frmcol:string) =
         ## can be set to clrainbow too .
         ##
         ## .. code-block:: nim
-        ##    import cx
+        ##    import nimcx
         ##
         ##    superheader("Ok That's it for Now !",clrainbow,white)
         ##    echo()
@@ -3705,7 +3705,7 @@ proc getHosts*(dm:string):seq[string] =
     ## may resolve multiple IP pointing to same domain
     ##
     ## .. code-block:: Nim
-    ##    import cx
+    ##    import nimcx
     ##    var z = getHosts("bbc.co.uk")
     ##    for x in z:
     ##      echo x
@@ -3750,7 +3750,7 @@ proc showHosts*(dm:string) =
     ## may resolve multiple IP pointing to same domain
     ##
     ## .. code-block:: Nim
-    ##    import cx
+    ##    import nimcx
     ##    showHosts("bbc.co.uk")
     ##    doFinish()
     ##
@@ -3800,7 +3800,7 @@ template quickList*[T](c:int,d:T,cw:int = 7 ,dw:int = 15) =
       ## cw and dw are column width adjuster 
       ## 
       ## .. code-block:: nim
-      ##    import cx      
+      ##    import nimcx      
       ##    var z = createSeqFloat(1000000,4)
       ##    for x in 0.. <z.len:
       ##        quicklist(x,ff2(z[x] * 100000,4),dw = 22)
@@ -3927,7 +3927,7 @@ proc ff2*(zz:float , n:int = 3):string =
   ## precision is after comma given by n with default set to 3
   ## 
   ## .. code-block:: nim
-  ##    import cx
+  ##    import nimcx
   ##    
   ##    # floats example
   ##    for x in 1.. 2000:
@@ -3967,7 +3967,7 @@ proc ff2*(zz:int64 , n:int = 0):string =
   ## 
   ## 
   ## .. code-block:: nim
-  ##    import cx
+  ##    import nimcx
   ##    
   ##    # int example
   ##    for x in 1.. 20:
@@ -4276,7 +4276,7 @@ template withFile*(f,fn, mode, actions: untyped): untyped =
   ##  Example 2   
   ##    
   ## .. code-block:: nim
-  ##   import cx
+  ##   import nimcx
   ##
   ##   let curFile="/data5/notes.txt"    # some file
   ##
@@ -4376,7 +4376,7 @@ proc shift*[T](x: var seq[T], zz: Natural = 0): T =
      result = x[zz]
      x.delete(zz)
 
-
+# spellInteger 
 proc nonzero(c: string, n: int, connect=""): string =
   # used by spellInteger
   if n == 0: "" else: connect & c & spellInteger(n)
@@ -4450,6 +4450,7 @@ proc spellFloat*(n:float64,sep:string = ".",sepname:string = " dot "):string =
   ## default sepname = " dot "
   ## 
   ## .. code-block:: nim
+  ##  import nimcx
   ##  printLn spellFloat(0.00)
   ##  printLn spellFloat(234)
   ##  printLn spellFloat(-2311.345)
@@ -4475,7 +4476,8 @@ proc showStats*(x:Runningstat,n:int = 3,xpos:int = 1) =
      ## adjust decimals
      ##
      ## .. code-block:: nim
-     ##
+     ##     import nimcx
+     ##     
      ##     var rsa:Runningstat
      ##     var rsb:Runningstat
      ##     for x in 1.. 100:
@@ -4520,7 +4522,7 @@ proc showRegression*(x,y: seq[float | int],n:int = 5,xpos:int = 1) =
      ## quickly display RunningRegress data based on input of two openarray data series
      ## 
      ## .. code-block:: nim
-     ##    import cx
+     ##    import nimcx
      ##    var a = @[1,2,3,4,5] 
      ##    var b = @[1,2,3,4,7] 
      ##    showRegression(a,b)
@@ -4915,7 +4917,7 @@ proc getColName*[T](sc:T):string =
    ## 
    ## 
    ## .. code-block:: nim
-   ##  import cx
+   ##  import nimcx
    ##  for x in 0 .. 10: 
    ##     let acol = randcol()
    ##     let acolname = getColName(acol)         
@@ -4951,7 +4953,7 @@ proc optimalbox*(w:int,s:int,tl:int):int =
     ## this function can be used in drawbox to calculate the width parameter
     ## 
     ## .. code-block:: nim
-    ##   import cx,cxutils
+    ##   import nimcx
     ## 
     ##   var postop = 5
     ##   var hy = 27
@@ -4987,7 +4989,7 @@ proc drawBox*(hy:int = 1, wx:int = 1 , hsec:int = 1 ,vsec:int = 1,frCol:string =
      ##
      ##
      ## .. code-block:: nim
-     ##    import cx,unicode
+     ##    import nimcx,unicode
      ##    cleanscreen()
      ##    decho(5)
      ##    drawBox(hy=10, wx= 60 , hsec = 5 ,vsec = 5,frCol = randcol(),brCol= black ,cornerCol = truetomato,xpos = 1,blink = false)
@@ -5234,7 +5236,6 @@ proc doInfo*() =
   ##
   ##
   let filename= extractFileName(getAppFilename())
-  #var accTime = getLastAccessTime(filename)
   let modTime = getLastModificationTime(filename)
   let sep = ":"
   superHeader("Information for file " & filename & " and System " & spaces(22))
@@ -5243,7 +5244,7 @@ proc doInfo*() =
   #printLnBiCol("Last access time to file      : " & filename & " " & $(fromSeconds(int(getLastAccessTime(filename)))),sep,yellowgreen,lightgrey)
   printLnBiCol("Last modificaton time of file : " & filename & " " & $(fromSeconds(int(modTime))),sep,yellowgreen,lightgrey)
   #printLnBiCol("Local TimeZone                : " & $(getTzName()),sep,yellowgreen,lightgrey)
-  #printLnBiCol("Offset from UTC  in secs      : " & $(getTimeZone()),sep,yellowgreen,lightgrey)
+  printLnBiCol("Offset from UTC  in secs      : " & $(getTimeZone()),sep,yellowgreen,lightgrey)
   printLnBiCol("Now                           : " & getDateStr() & " " & getClockStr(),sep,yellowgreen,lightgrey)
   printLnBiCol("Local Time                    : " & $getLocalTime(getTime()),sep,yellowgreen,lightgrey)
   printLnBiCol("GMT                           : " & $getGMTime(getTime()),sep,yellowgreen,lightgrey)
@@ -5265,8 +5266,8 @@ proc doInfo*() =
       printLnBiCol("                              : " & $pp,sep,yellowgreen,lightgrey)
   printLnBiCol("Link Count                    : " & $(fi.linkCount),sep,yellowgreen,lightgrey)
   # these only make sense for non executable files
-  #printLnBiCol("Last Access                   : " & $(fi.lastAccessTime),sep,yellowgreen,lightgrey)
-  #printLnBiCol("Last Write                    : " & $(fi.lastWriteTime),sep,yellowgreen,lightgrey)
+  printLnBiCol("Last Access                   : " & $(fi.lastAccessTime),sep,yellowgreen,lightgrey)
+  printLnBiCol("Last Write                    : " & $(fi.lastWriteTime),sep,yellowgreen,lightgrey)
   printLnBiCol("Creation                      : " & $(fi.creationTime),sep,yellowgreen,lightgrey)
   
   when defined windows:
@@ -5399,7 +5400,7 @@ proc handler*() {.noconv.} =
 
 
 
-proc cxmain*() =
+proc cxm*() =
 
   clearup()
   decho(2)
@@ -5407,7 +5408,7 @@ proc cxmain*() =
   clearup()
   decho(3)
   colorio()
-  let smm = "   import cx and your terminal comes alive with color ...  "
+  let smm = "   import nimcx and your terminal comes alive with color ...  "
   for x in 0.. 10:
         cleanScreen()
         decho(5)
@@ -5437,5 +5438,5 @@ system.addQuitProc(resetAttributes)
 
 
 when isMainModule:
-    cxmain()
+    cxm()
 # END OF CX.NIM #
