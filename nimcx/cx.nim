@@ -2,7 +2,9 @@
 ##  {.noforward: on.}   # future feature
 ## ::
 ## 
-##     Library     : cx.nim
+##     Library     : nimcx.nim
+##     
+##     Module      : cx.nim
 ##
 ##     Status      : stable
 ##
@@ -12,7 +14,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-08-09
+##     Latest      : 2017-08-10
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -25,6 +27,10 @@
 ##                   for easy colored display in a linux terminal and also contains
 ##                   
 ##                   a wide selection of utility functions . 
+##                   
+##                   Currently the library consists of cx.nim and cxutils.nim , both files are automatically
+##                   
+##                   imported with : import nimcx
 ##                   
 ##                   Some procs may mirror functionality of stdlib moduls others may be deprecated if
 ##                   
@@ -5171,6 +5177,25 @@ proc splitty*(txt:string,sep:string):seq[string] =
    result = rx
 
 
+proc doFlag*[T](flagcol:string = yellowgreen,flags:int = 1,text:T = "",textcol:string = termwhite) : string {.discardable.} =
+  ## doFlag
+  ## 
+  ## .. code-block:: nim
+  ##   import nimcx
+  ##   
+  ##   # print word Hello : in color dodgerblue followed by 6 little flags in red 
+  ##   # and the word alert in color truetomato followed by 6 little flags in red
+  ##   
+  ##   print("Hello :  " & doflag(red,6,"alert",truetomato) & spaces(1) & doflag(red,6), dodgerblue)
+  ##   
+  ##   
+
+  result = ""
+  for x in 0 .. <flags: result = result & flagcol & fullflag 
+  result = result & spaces(1) & textcol & $text & white
+   
+  
+  
 proc showTerminalSize*() =
       ## showTerminalSize
       ##
@@ -5433,10 +5458,10 @@ setControlCHook(handler)
 # this will reset any color changes in the terminal
 # so no need for this line in the calling prog
 system.addQuitProc(resetAttributes)
-# end of cx.nim
-
 
 
 when isMainModule:
     cxm()
+    
+    
 # END OF CX.NIM #

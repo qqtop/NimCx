@@ -1,6 +1,10 @@
+
+{.deadCodeElim: on.}
+##  {.noforward: on.}   # future feature
+## ::
+##     Library     : nimcx.nim
+##     
 ##     Module      : cxutils.nim
-##    
-##     Library     : cx.nim
 ##
 ##     Status      : stable
 ##
@@ -10,7 +14,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-03-31
+##     Latest      : 2017-08-10
 ##
 ##     Compiler    : Nim >= 0.16
 ##
