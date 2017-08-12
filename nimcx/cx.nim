@@ -4188,17 +4188,22 @@ template benchmark*(benchmarkName: string, code: typed) =
   ##
   ##
   ## .. code-block:: nim
-  ##    proc doit() =
-  ##      var s = createSeqFloat(10,3)
+  ##
+  ##   proc doit() =
+  ##      var s = createSeqFloat(10,9)
   ##      var c = 0
-  ##      for x in sortMe(s):
-  ##          inc c 
-  ##          printLnBiCol(fmtx([">4","<6","<f2.4"],$c," :",$x))
+  ##      s.sort(system.cmp,order = Descending)
+  ##      for x in s:
+  ##           inc c 
+  ##           printLnBiCol(fmtx([">4","<6","<f15.7"],$c," :",$x))
   ##
   ##    benchmark("doit"):
   ##      for x in 0.. 100:
   ##          doit()
-  ##
+  ##          hline(30)
+  ##          printLn(" " & $x,randcol())
+  ##          echo()
+  ##          
   ##    showBench() 
   ##    
   ##    
@@ -4240,24 +4245,7 @@ proc typeTest*[T](x:T): T =
      # used to determine the field types in the temp sqllite table used for sorting
      printLnBiCol("Type     : " & $type(x))
      printLnBiCol("Value    : " & $x)
-
-
-proc sortMe*[T](xs:var seq[T],order = Ascending): seq[T] =
-     ## sortMe
-     ##
-     ## sorts seqs of int,float,string and returns a sorted seq
-     ##
-     ## with order Ascending or Descending
-     ##
-     ## .. code-block:: nim
-     ##    var z = createSeqFloat()
-     ##    printLn(sortMe(z),salmon)
-     ##    printLn(sortMe(z,Descending),peru)
-     ##
-     ##
-     result = xs.sort(proc(x,y:T):int = cmp(x,y),order = order)
-     
-     
+   
      
 
 template withFile*(f,fn, mode, actions: untyped): untyped =
@@ -5260,6 +5248,7 @@ proc doInfo*() =
   ## A more than you want to know information proc
   ##
   ##
+  
   let filename= extractFileName(getAppFilename())
   let modTime = getLastModificationTime(filename)
   let sep = ":"
@@ -5318,7 +5307,7 @@ proc doInfo*() =
   printLnBiCol("CPU Cores                     : " & $cpuInfo.countProcessors())
   printLnBiCol("Current pid                   : " & $getpid(),sep,yellowgreen,lightgrey)
   printLnBiCol("Terminal encoding             : " & $getCurrentEncoding())
-
+  
 
 proc infoLine*() =
     ## infoLine
