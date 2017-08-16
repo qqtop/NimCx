@@ -14,7 +14,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-08-10
+##     Latest      : 2017-08-16
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -1303,6 +1303,7 @@ proc rndSampleInt*(asq:seq[int]):int =
 const rxCol* = toSeq(colorNames.low.. colorNames.high) ## index into colorNames
 const rxPastelCol* = toSeq(pastelset.low.. pastelset.high) ## index into colorNames
 
+template now*:string = getDateStr() & " " & getClockStr()
 
 proc streamFile*(filename:string,mode:FileMode): FileStream = newFileStream(filename, mode)    
      ## streamFile
@@ -1345,7 +1346,13 @@ proc uniform*(a,b: float) : float =
       ##    
       result = a + (b - a) * float(random(b))
 
-      
+  
+template `*`*(s:string,n:int):string =
+    # mimicking python
+    s.repeat(n)    
+    
+
+   
 proc getRndInt*(mi:int = 0 , ma:int = int.high):int =
     ## getRndInt
     ##
@@ -2279,7 +2286,7 @@ proc hline*(n:int = tw,col:string = white,xpos:int = 1) =
      ##    hline(30,green,xpos=xpos)
      ##
 
-     print(repeat("_",n),col,xpos = xpos)
+     print("_" * n,col,xpos = xpos)
 
 
 
@@ -2293,7 +2300,7 @@ proc hlineLn*(n:int = tw,col:string = white,xpos:int = 1) =
      ## .. code-block:: nim
      ##    hlineLn(30,green)
      ##
-     print(repeat("_",n),col,xpos = xpos)
+     hline(n,col,xpos)
      echo()
 
 
@@ -2309,7 +2316,7 @@ proc dline*(n:int = tw,lt:string = "-",col:string = termwhite) =
      ##    dline(30,"/+")
      ##    dline(30,col= yellow)
      ##
-     if lt.len <= n: print(repeat(lt,n div lt.len),col)
+     if lt.len <= n: print(lt * (n div lt.len),col)
 
 
 proc dlineLn*(n:int = tw,lt:string = "-",col:string = termwhite) =
@@ -2326,7 +2333,7 @@ proc dlineLn*(n:int = tw,lt:string = "-",col:string = termwhite) =
      ##    dlineLn(30,"/+/")
      ##    dlineLn(60,col = salmon)
      ##
-     if lt.len <= n: print(repeat(lt,n div lt.len),col)
+     if lt.len <= n: print(lt * (n div lt.len),col)
      writeLine(stdout,"")
 
 
@@ -2438,10 +2445,9 @@ proc printRainbow*(s : string,styled:set[Style] = {}) =
 
     var astr = s
     var c = 0
-    var a = toSeq(1.. <colorNames.len)
     for x in 0.. <astr.len:
-       c = a[getRndInt(ma=a.len)]
-       print($astr[x],colorNames[c][1],styled = styled)
+        c = rxcol[getRndInt(ma=rxcol.len)]
+        print($astr[x],colorNames[c][1],styled = styled)
 
 
 proc printLnRainbow*[T](s : T,styled:set[Style] = {}) =
@@ -4289,18 +4295,30 @@ template withFile*(f,fn, mode, actions: untyped): untyped =
   ##                       echo()
   ##               except:
   ##                   break 
-
-  var f = streamFile(fn,mode)
-  if not isNil f:
-    try:
-        actions
-    finally:
-        close(f)
-  else:
-         echo()
-         printLnBiCol("Error : Cannot open file " & fn,":",red,yellow)
-         quit()
-
+  block:
+        var f = streamFile(fn,mode)
+        if not isNil f:
+            try:
+                actions
+            finally:
+                close(f)
+        else:
+                echo()
+                printLnBiCol("Error : Cannot open file " & fn,":",red,yellow)
+                quit()
+         
+         
+         
+proc pswwaux*() =
+   # pswwaux
+   # 
+   # utility bash command :  ps -ww aux | sort -nk3 | tail
+   # displays output in console
+   # 
+   const pswwaux = staticExec "ps -ww aux | sort -nk3 | tail "
+   printLn("ps -ww aux | sort -nk3 | tail ",yellowgreen)
+   echo  pswwaux
+   decho(2)
          
 
 template loopy*[T](ite:T,st:typed) =
@@ -4967,9 +4985,9 @@ proc optimalbox*(w:int,s:int,tl:int):int =
     result = w
     while result mod s > 0 : 
       if  tl > result div s  and result mod s == 0:
-        break
+          break
       else:
-        result = result - 1
+          result = result - 1
         
 
 proc drawBox*(hy:int = 1, wx:int = 1 , hsec:int = 1 ,vsec:int = 1,frCol:string = yellowgreen,brCol:string = black ,cornerCol:string = truetomato,xpos:int = 1,blink:bool = false) =
@@ -5119,15 +5137,15 @@ proc fastsplit*(s: string, sep: char): seq[string] =
   var count = 1
   for ch in s:
     if ch == sep:
-      count += 1
+        count += 1
   result = newSeq[string](count)
   var fieldNum = 0
   var start = 0
   for i in 0..high(s):
     if s[i] == sep:
-      result[fieldNum] = s[start.. i - 1]
-      start = i + 1
-      fieldNum += 1
+       result[fieldNum] = s[start.. i - 1]
+       start = i + 1
+       fieldNum += 1
   result[fieldNum] = s[start..^1]
 
 
@@ -5259,7 +5277,7 @@ proc doInfo*() =
   printLnBiCol("Last modificaton time of file : " & filename & " " & $(fromSeconds(int(modTime))),sep,yellowgreen,lightgrey)
   #printLnBiCol("Local TimeZone                : " & $(getTzName()),sep,yellowgreen,lightgrey)
   printLnBiCol("Offset from UTC  in secs      : " & $(getTimeZone()),sep,yellowgreen,lightgrey)
-  printLnBiCol("Now                           : " & getDateStr() & " " & getClockStr(),sep,yellowgreen,lightgrey)
+  printLnBiCol("Now                           : " & now,sep,yellowgreen,lightgrey)
   printLnBiCol("Local Time                    : " & $getLocalTime(getTime()),sep,yellowgreen,lightgrey)
   printLnBiCol("GMT                           : " & $getGMTime(getTime()),sep,yellowgreen,lightgrey)
   printLnBiCol("Environment Info              : " & os.getEnv("HOME"),sep,yellowgreen,lightgrey)
@@ -5380,7 +5398,7 @@ proc doFinish*() =
 proc handler*() {.noconv.} =
     ## handler
     ##
-    ## this runs if ctrl-c is pressed
+    ## exit handler this runs if ctrl-c is pressed
     ##
     ## and provides some feedback upon exit
     ##
