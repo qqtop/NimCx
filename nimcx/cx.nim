@@ -14,7 +14,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-08-16
+##     Latest      : 2017-08-20
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -1294,11 +1294,42 @@ const emojis* = @[check,xmark,heart,sun,star,darkstar,umbrella,flag,snowflake,mu
 const wideDot* = "\xE2\x9A\xAB" & " "
 
 
-proc rndSampleInt*(asq:seq[int]):int =
-     ## rndSampleint
-     ## returns an int random sample from an integer sequence
-     result = random(asq)
+proc rndSample*[T](asq:seq[T]):T =
+     ## rndSample
+     ## returns one random sample from a sequence
+     result = random(asq)     
+     
+       
+       
+proc `[]`*[Idx, T](a: openarray[T], x: Slice[Idx]): seq[T] =
+     # used by sampleSeq
+     var L = ord(x.b) - ord(x.a) + 1
+     if L >= 0:
+        newSeq(result, L)
+        for i in 0.. <L: result[i] = a[Idx(ord(x.a) + i)]
+     else:
+        result = @[]
 
+proc sampleSeq*[T](x: openarray[T], a, b: int) : seq[T] = 
+     ## sampleSeq
+     ##
+     ## based on an idea in nim playground
+     ## 
+     ## returns a continuous subseq a..b from an array or seq if a >= b
+     ## 
+     ## 
+     ## .. code-block:: nim
+     ##    import nimcx
+     ##    let x = createSeqint(20)
+     ##    x.sampleseq(4,8)
+     ##    echo x
+     ##    echo x.sampleSeq(4,8).rndSample()    # get one randomly selected value from the subsequence
+     ##    
+     
+     result =  x[a..b]
+       
+
+     
 
 const rxCol* = toSeq(colorNames.low.. colorNames.high) ## index into colorNames
 const rxPastelCol* = toSeq(pastelset.low.. pastelset.high) ## index into colorNames
@@ -1482,7 +1513,7 @@ template randCol*(coltype:string): auto =
             if colorNames[x][0].startswith(coltype) or colorNames[x][0].contains(coltype):
               ts.add(colorNames[x][1])
          var rxColt = colPaletteIndexer(ts) 
-         ts[rndSampleInt(rxColt)]
+         ts[rndSample(rxColt)]
   
 
 template randCol*: string = random(colorNames)[1]
@@ -4076,8 +4107,8 @@ proc createSeqFloat*(n:int = 10,prec:int = 3) : seq[float] =
             if result.len == n : break   
          
        if result.len == n : break
-
-
+       
+       
        
 template bitCheck*(a, b: untyped): bool =
     ## bitCheck

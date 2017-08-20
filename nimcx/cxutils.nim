@@ -14,7 +14,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-08-10
+##     Latest      : 2017-08-20
 ##
 ##     Compiler    : Nim >= 0.16
 ##
@@ -177,7 +177,7 @@ template getCard* :auto =
     ##    print(getCard(),randCol(),xpos = centerX())  # get card and print in random color at xpos
     ##    doFinish()
     ##
-    cards[rndSampleInt(rxCards)]
+    cards[rndSample(rxCards)]
 
 proc showRandomCard*(xpos:int = centerX()) = 
     ## showRandomCard
@@ -398,7 +398,7 @@ proc newWordCJK*(minwl:int = 3 ,maxwl:int = 10):string =
       result = ""
       let c5 = toSeq(minwl.. maxwl)
       let chc = toSeq(parsehexint("3400").. parsehexint("4DB5"))
-      for xx in 0.. <rndSampleInt(c5): result = result & $Rune(rndSampleint(chc))
+      for xx in 0.. <rndSample(c5): result = result & $Rune(rndSample(chc))
 
 
 
@@ -418,10 +418,10 @@ proc newWord*(minwl:int=3,maxwl:int = 10 ):string =
         # words with length range 3 to maxwl
         let maxws = toSeq(minwl.. maxwl)
         # get a random length for a new word
-        let nwl = rndSampleint(maxws)
+        let nwl = rndSample(maxws)
         let chc = toSeq(33.. 126)
         while nw.len < nwl:
-          var x = rndSampleint(chc)
+          var x = rndSample(chc)
           if char(x) in Letters:
               nw = nw & $char(x)
         result = normalize(nw)   # return in lower case , cleaned up
@@ -446,10 +446,10 @@ proc newWord2*(minwl:int=3,maxwl:int = 10 ):string =
         # words with length range 3 to maxwl
         let maxws = toSeq(minwl.. maxwl)
         # get a random length for a new word
-        let nwl = rndSampleint(maxws)
+        let nwl = rndSample(maxws)
         let chc = toSeq(33.. 126)
         while nw.len < nwl:
-          var x = rndSampleint(chc)
+          var x = rndSample(chc)
           if char(x) in IdentChars:
               nw = nw & $char(x)
         result = normalize(nw)   # return in lower case , cleaned up
@@ -475,10 +475,10 @@ proc newWord3*(minwl:int=3,maxwl:int = 10 ,nflag:bool = true):string =
         # words with length range 3 to maxwl
         let maxws = toSeq(minwl.. maxwl)
         # get a random length for a new word
-        let nwl = rndSampleInt(maxws)
+        let nwl = rndSample(maxws)
         let chc = toSeq(33.. 126)
         while nw.len < nwl:
-          var x = rndSampleInt(chc)
+          var x = rndSample(chc)
           if char(x) in AllChars:
               nw = nw & $char(x)
         if nflag == true:
@@ -503,9 +503,9 @@ proc newHiragana*(minwl:int=3,maxwl:int = 10 ):string =
     if minwl <= maxwl:
         result = ""
         var rhig = toSeq(12353.. 12436)  
-        var zz = rndSampleInt(toSeq(minwl.. maxwl))
+        var zz = rndSample(toSeq(minwl.. maxwl))
         while result.len < zz:
-              var hig = rndSampleint(rhig)  
+              var hig = rndSample(rhig)  
               result = result & $Rune(hig)
        
     else:
@@ -525,8 +525,8 @@ proc newKatakana*(minwl:int=3,maxwl:int = 10 ):string =
     ##
     if minwl <= maxwl:
         result  = ""
-        while result.len < rndSampleint(toSeq(minwl.. maxwl)):
-              result = result & $Rune(rndSampleint(toSeq(parsehexint("30A0") .. parsehexint("30FF"))))
+        while result.len < rndSample(toSeq(minwl.. maxwl)):
+              result = result & $Rune(rndSample(toSeq(parsehexint("30A0") .. parsehexint("30FF"))))
        
     else:
          cechoLn(red,"Error : minimum word length larger than maximum word length")
