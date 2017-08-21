@@ -14,7 +14,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-08-20
+##     Latest      : 2017-08-21
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -1335,6 +1335,9 @@ const rxCol* = toSeq(colorNames.low.. colorNames.high) ## index into colorNames
 const rxPastelCol* = toSeq(pastelset.low.. pastelset.high) ## index into colorNames
 
 template now*:string = getDateStr() & " " & getClockStr()
+template today*:string = getDateStr() 
+
+
 
 proc streamFile*(filename:string,mode:FileMode): FileStream = newFileStream(filename, mode)    
      ## streamFile
@@ -2160,7 +2163,38 @@ proc print*[T](astring:T,fgr:string = termwhite ,bgr:BackgroundColor ,xpos:int =
         if fgr != $fgWhite or bgr != bgBlack:
            setForeGroundColor(fgWhite)
            setBackGroundColor(bgBlack)
-        
+
+           
+           
+
+
+proc print*[T](ss:varargs[T,`$`],fgr:string = termwhite , bgr:string = bblack, xpos:int = 0, sep:string = spaces(1)) =
+   ## print
+   ## 
+   ## a print routine which allows printing of varargs in desired color , position and separator
+   ## 
+   ## no newline is added
+   ## 
+   ## sep must not be wider than 1 , if it is wider the comma will be used as default otherwise default will be 1 space
+   ## 
+   ## .. code-block:: nim
+   ##    import nimcx
+   ##    
+   ##    print("TEST VARARGS : ",createSeqint(20).sampleSeq(8,13),getRndInt(10000,12000),createSeqint(3),newword(6,10),ff2(getRndfloat(),4),$(hiragana().sampleSeq(8,13)),randcol(),bblack,0,"") 
+   ##    echo()
+   ##    
+   ##    
+   var ssep = sep
+   if ssep.len > 1:
+     ssep = ","
+   var oldxlen = 0
+   for x in 0..<ss.len:
+     if x == ss.len - 1:
+         print(ss[x],fgr,bgr,xpos = xpos + oldxlen)
+     else:
+         print(ss[x] & ssep,fgr,bgr,xpos = xpos + oldxlen)
+     oldxlen =  oldxlen + ss[x].len + 1
+                
 
 proc printLn*[T](astring:T,fgr:string = termwhite , bgr:string = bblack,xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {},substr:string = "") =  
     ## 
@@ -2974,7 +3008,7 @@ proc fx(nx:TimeInfo):string =
 proc plusDays*(aDate:string,days:int):string =
    ## plusDays
    ##
-   ## adds days to date string of format yyyy-MM-dd  or result of getDateStr()
+   ## adds days to date string of format yyyy-MM-dd  or result of getDateStr()  or today()
    ##
    ## and returns a string of format yyyy-MM-dd
    ##
@@ -2995,7 +3029,7 @@ proc plusDays*(aDate:string,days:int):string =
 proc minusDays*(aDate:string,days:int):string =
    ## minusDays
    ##
-   ## subtracts days from a date string of format yyyy-MM-dd  or result of getDateStr()
+   ## subtracts days from a date string of format yyyy-MM-dd  or result of getDateStr() or today()
    ##
    ## and returns a string of format yyyy-MM-dd
    ##
@@ -5417,12 +5451,12 @@ proc doFinish*() =
         print(fmtx(["<",">5"],ff(epochtime() - cx.start,3)," secs"),goldenrod)
         printLnBiCol("  Compiled on: " & $CompileDate & " at " & $CompileTime)
         if detectOs(OpenSUSE):  # some additional data if on openSuse systems
-            printLnBiCol("Kernel     :  " & uname().split("#")[0],":",lightslategray ,lavender)
+            printLnBiCol("Kernel     :  " & uname().split("#")[0],":",yellowgreen,lightslategray)
             let rld = release().splitLines()
             let rld3 = rld[2].splitty(":")
             let rld4 = rld3[0] & spaces(2) & strip(rld3[1])
-            printBiCol(rld4,":",lightslategray ,olivedrab)
-            printLnBiCol(spaces(3) & rld[3],":",lightslategray ,olivedrab)
+            printBiCol(rld4,":",yellowgreen,lightslategray )
+            printLnBiCol(spaces(3) & rld[3],":",yellowgreen,lightslategray)
         echo()
         quit(0)
 
@@ -5448,7 +5482,7 @@ proc handler*() {.noconv.} =
     cechoLn(yellowgreen,"Thank you for using        : " & getAppFilename())
     hlineLn()
     printLnBiCol(fmtx(["<","<11",">9"],"Last compilation on        : " , CompileDate , CompileTime),":",brightcyan)
-    printLnBiCol(fmtx(["<","<11",">9"],"Exit handler invocation at : " , getDateStr() , getClockStr()),":",pastelorange)
+    printLnBiCol(fmtx(["<","<11",">9"],"Exit handler invocation at : " , today() , getClockStr()),":",pastelorange)
     hlineLn()
     printBiCol("Nim Version   : " & NimVersion)
     print(" | ",brightblack)
