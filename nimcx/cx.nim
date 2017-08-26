@@ -14,7 +14,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-08-21
+##     Latest      : 2017-08-26
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -2186,14 +2186,14 @@ proc print*[T](ss:varargs[T,`$`],fgr:string = termwhite , bgr:string = bblack, x
    ##    
    var ssep = sep
    if ssep.len > 1:
-     ssep = ","
+      ssep = ","
    var oldxlen = 0
    for x in 0..<ss.len:
-     if x == ss.len - 1:
+      if x == ss.len - 1:
          print(ss[x],fgr,bgr,xpos = xpos + oldxlen)
-     else:
+      else:
          print(ss[x] & ssep,fgr,bgr,xpos = xpos + oldxlen)
-     oldxlen =  oldxlen + ss[x].len + 1
+      oldxlen =  oldxlen + ss[x].len + 1
                 
 
 proc printLn*[T](astring:T,fgr:string = termwhite , bgr:string = bblack,xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {},substr:string = "") =  
@@ -2325,10 +2325,10 @@ proc rainbow*[T](s : T,xpos:int = 1,fitLine:bool = false,centered:bool = false) 
     var nxpos = xpos
     var astr = $s
     var c = 0
-    var a = toSeq(0.. <colorNames.len)
+    var aseq = toSeq(0.. <colorNames.len)
 
     for x in 0.. <astr.len:
-       c = a[getRndInt(ma=a.len)]
+       c = aseq[getRndInt(ma=aseq.len)]
        if centered == false:
           print(astr[x],colorNames[c][1],black,xpos = nxpos,fitLine)
        else:
@@ -2643,6 +2643,128 @@ proc printLnBiCol*[T](s:T,sep:string = ":", colLeft:string = yellowgreen, colRig
                         printLn(z[1],fgr = colRight,bgr = black,styled = styled)
 
 
+
+proc printBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) =
+     ## printBiCol
+     ##
+     ## a newer version of printLnBiCol  currently under development
+     ## changes:
+     ## sep moved to behind colors in parameter ordering
+     ## and input can be varargs which gives much better flexibility
+     ## 
+     ## for this to work the complete parameter requirement must be given in the proc call
+     ##
+     ## echos a line in 2 colors based on a seperators first occurance
+     ##
+     ## default seperator = ":"
+     ##
+     ## Note : clrainbow not useable for right side color
+     ##
+     ##    for x  in 0.. <3:
+     ##       # here use default colors for left and right side of the seperator
+     ##        printBiCol("Test $1  : Ok " % $x,"this was $1 : what" % $x,23456.789,randcol(),randcol(),":",0,false,{})
+     ##        echo()
+     ##        
+     ##    for x  in 4.. <6:
+     ##        # here we change the default colors
+     ##        printBiCol("Test $1  : Ok this was $1 : what" % $x,cyan,red)
+     ##        echo()
+     ##    printBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),yellow,randcol(),":",0,false,{})
+     ##    echo()
+     ##
+     ##
+     {.gcsafe.}:
+        var nosepflag:bool = false
+        var zz =""
+        for ss in 0 .. <s.len:
+            zz = zz & $s[ss]
+        var z = zz.splitty(sep)  # using splitty we retain the sep on the left side
+        # in case sep occures multiple time we only consider the first one
+
+        # in case sep occures multiple time we only consider the first one
+        if z.len > 1:
+           for x in 2.. <z.len:
+              # this now should contain the right part to be colored differently
+              z[1] = z[1] & z[x]
+
+        else:
+            # when the separator is not found
+            nosepflag = true
+            # no separator so we just execute print with left color
+            print(zz,fgr=colLeft,xpos=xpos,centered=centered,styled = styled)
+
+        if nosepflag == false:
+
+                if centered == false:
+                    print(z[0],fgr = colLeft,bgr = black,xpos = xpos,styled = styled)
+                    print(z[1],fgr = colRight,bgr = black,styled = styled)
+                else:  # centered == true
+                    let npos = centerX() - (zz).len div 2 - 1
+                    print(z[0],fgr = colLeft,bgr = black,xpos = npos,styled = styled)
+                    print(z[1],fgr = colRight,bgr = black,styled = styled)
+
+
+
+
+proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) =
+     ## printLnBiCol
+     ##
+     ## a newer version of printLnBiCol  currently under development
+     ## changes:
+     ## sep moved to behind colors in parameter ordering
+     ## and input can be varargs which gives much better flexibility
+     ## 
+     ## for this to work the complete parameter requirement must be given in the proc call
+     ##
+     ## default seperator = ":"  if not found we execute printLn with available params
+     ##
+     ## .. code-block:: nim
+     ##    import nimcx
+     ##
+     ##    for x  in 0.. <3:
+     ##       # here use default colors for left and right side of the seperator
+     ##        printLnBiCol("Test $1  : Ok " % $x,"this was $1 : what" % $x,23456.789,randcol(),randcol(),":",0,false,{})
+     ##
+     ##    for x  in 4.. <6:
+     ##        # here we change the default colors
+     ##        printLnBiCol("Test $1  : Ok this was $1 : what" % $x,cyan,red)
+     ##
+     ##    printLnBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),yellow,randcol(),":",0,false,{})
+     ##
+     ##
+     {.gcsafe.}:
+        var nosepflag:bool = false
+        var zz =""
+        for ss in 0 .. <s.len:
+            zz = zz & $s[ss]
+        var z = zz.splitty(sep)  # using splitty we retain the sep on the left side
+        # in case sep occures multiple time we only consider the first one
+
+        if z.len > 1:
+          for x in 2.. <z.len:
+             z[1] = z[1] & z[x]
+        else:
+            # when the separator is not found
+            nosepflag = true
+            # no separator so we just execute printLn with left color
+            printLn(zz,fgr=colLeft,xpos=xpos,centered=centered,styled = styled)
+
+        if nosepflag == false:
+
+            if centered == false:
+                print(z[0],fgr = colLeft,bgr = black,xpos = xpos,styled = styled)
+                if colRight == clrainbow:   # we currently do this as rainbow implementation has changed
+                        printLn(z[1],fgr = randcol(),bgr = black,styled = styled)
+                else:
+                        printLn(z[1],fgr = colRight,bgr = black,styled = styled)
+
+            else:  # centered == true
+                let npos = centerX() - zz.len div 2 - 1
+                print(z[0],fgr = colLeft,bgr = black,xpos = npos)
+                if colRight == clrainbow:   # we currently do this as rainbow implementation has changed
+                        printLn(z[1],fgr = randcol(),bgr = black,styled = styled)
+                else:
+                        printLn(z[1],fgr = colRight,bgr = black,styled = styled)
 
 
 proc printHL*(s:string,substr:string,col:string = termwhite) =
