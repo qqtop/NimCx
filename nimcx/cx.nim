@@ -1609,8 +1609,10 @@ converter colconv*(cx:string) : string
 proc rainbow*[T](s : T,xpos:int = 1,fitLine:bool = false ,centered:bool = false)  ## forward declaration
 proc print*[T](astring:T,fgr:string = termwhite ,bgr:string = bblack,xpos:int = 0,fitLine:bool = false ,centered:bool = false,styled : set[Style]= {},substr:string = "")
 proc printLn*[T](astring:T,fgr:string = termwhite , bgr:string = bblack,xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {},substr:string = "")
-proc printBiCol*[T](s:T,sep:string = ":",colLeft:string = yellowgreen ,colRight:string = termwhite,xpos:int = 0,centered:bool = false,styled : set[Style]= {}) ## forward declaration
-proc printLnBiCol*[T](s:T,sep:string = ":",colLeft:string = yellowgreen ,colRight:string = termwhite,xpos:int = 0,centered:bool = false,styled : set[Style]= {}) ## forward declaration
+#proc printBiCol*[T](s:T,sep:string = ":",colLeft:string = yellowgreen ,colRight:string = termwhite,xpos:int = 0,centered:bool = false,styled : set[Style]= {}) ## forward declaration
+proc printBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) 
+#proc printLnBiCol*[T](s:T,sep:string = ":",colLeft:string = yellowgreen ,colRight:string = termwhite,xpos:int = 0,centered:bool = false,styled : set[Style]= {}) ## forward declaration
+proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) 
 proc printRainbow*(s : string,styled:set[Style] = {})     ## forward declaration
 proc hline*(n:int = tw,col:string = white,xpos:int = 1)   ## forward declaration
 proc hlineLn*(n:int = tw,col:string = white,xpos:int = 1) ## forward declaration
@@ -2532,115 +2534,115 @@ proc printLnRainbow*[T](s : T,styled:set[Style] = {}) =
     printRainBow($(s) & "\L",styled)
 
 
-
-proc printBiCol*[T](s:T,sep:string = ":",colLeft:string = yellowgreen ,colRight:string = termwhite,xpos:int = 0,centered:bool = false,styled : set[Style]= {}) =
-     ## printBiCol
-     ##
-     ## echos a line in 2 colors based on a seperators first occurance
-     ##
-     ## default seperator = ":"
-     ##
-     ## Note : clrainbow not useable for right side color
-     ##
-     ## .. code-block:: nim
-     ##    import nimcx,strfmt
-     ##
-     ##    for x  in 0.. <3:
-     ##       # here use default colors for left and right side of the seperator
-     ##       printBiCol("Test $1  : Ok this was $1 : what" % $x,":")
-     ##
-     ##    for x  in 4.. <6:
-     ##        # here we change the default colors
-     ##        printBiCol("Test $1  : Ok this was $1 : what" % $x,":",cyan,red)
-     ##
-     ##    # following requires strfmt module
-     ##    printBiCol("{} : {}     {}".fmt("Good Idea","Number",50),":",yellow,green)
-     ##
-     ##
-     {.gcsafe.}:
-        var nosepflag:bool = false
-        var zz = $s
-        var z = zz.splitty(sep)  # using splitty we retain the sep on the left side
-
-        # in case sep occures multiple time we only consider the first one
-        if z.len > 1:
-           for x in 2.. <z.len:
-              # this now should contain the right part to be colored differently
-              z[1] = z[1] & z[x]
-
-        else:
-            # when the separator is not found
-            nosepflag = true
-            # no separator so we just execute print with left color
-            print(zz,fgr=colLeft,xpos=xpos,centered=centered,styled = styled)
-
-        if nosepflag == false:
-
-                if centered == false:
-                    print(z[0],fgr = colLeft,bgr = black,xpos = xpos,styled = styled)
-                    print(z[1],fgr = colRight,bgr = black,styled = styled)
-                else:  # centered == true
-                    let npos = centerX() - (zz).len div 2 - 1
-                    print(z[0],fgr = colLeft,bgr = black,xpos = npos,styled = styled)
-                    print(z[1],fgr = colRight,bgr = black,styled = styled)
-
-
-
-
-
-proc printLnBiCol*[T](s:T,sep:string = ":", colLeft:string = yellowgreen, colRight:string = termwhite,xpos:int = 0,centered:bool = false,styled : set[Style]= {}) =
-     ## printLnBiCol
-     ##
-     ## same as printBiCol but issues a new line
-     ##
-     ## default seperator = ":"  if not found we execute printLn with available params
-     ##
-     ## .. code-block:: nim
-     ##    import nimcx,strfmt
-     ##
-     ##    for x  in 0.. <3:
-     ##       # here use default colors for left and right side of the seperator
-     ##       printLnBiCol("Test $1  : Ok this was $1 : what" % $x,":")
-     ##
-     ##    for x  in 4.. <6:
-     ##        # here we change the default colors
-     ##        printLnBiCol("Test $1  : Ok this was $1 : what" % $x,":",cyan,red)
-     ##
-     ##    # following requires strfmt module
-     ##    printLnBiCol("{} : {}     {}".fmt("Good Idea","Number",50),":",yellow,green)
-     ##
-     ##
-     {.gcsafe.}:
-        var nosepflag:bool = false
-        var zz = $s
-        var z = zz.splitty(sep)  # using splitty we retain the sep on the left side
-        # in case sep occures multiple time we only consider the first one
-
-        if z.len > 1:
-          for x in 2.. <z.len:
-             z[1] = z[1] & z[x]
-        else:
-            # when the separator is not found
-            nosepflag = true
-            # no separator so we just execute printLn with left color
-            printLn(zz,fgr=colLeft,xpos=xpos,centered=centered,styled = styled)
-
-        if nosepflag == false:
-
-            if centered == false:
-                print(z[0],fgr = colLeft,bgr = black,xpos = xpos,styled = styled)
-                if colRight == clrainbow:   # we currently do this as rainbow implementation has changed
-                        printLn(z[1],fgr = randcol(),bgr = black,styled = styled)
-                else:
-                        printLn(z[1],fgr = colRight,bgr = black,styled = styled)
-
-            else:  # centered == true
-                let npos = centerX() - zz.len div 2 - 1
-                print(z[0],fgr = colLeft,bgr = black,xpos = npos)
-                if colRight == clrainbow:   # we currently do this as rainbow implementation has changed
-                        printLn(z[1],fgr = randcol(),bgr = black,styled = styled)
-                else:
-                        printLn(z[1],fgr = colRight,bgr = black,styled = styled)
+# 
+# proc printBiCol*[T](s:T,sep:string = ":",colLeft:string = yellowgreen ,colRight:string = termwhite,xpos:int = 0,centered:bool = false,styled : set[Style]= {}) =
+#      ## printBiCol
+#      ##
+#      ## echos a line in 2 colors based on a seperators first occurance
+#      ##
+#      ## default seperator = ":"
+#      ##
+#      ## Note : clrainbow not useable for right side color
+#      ##
+#      ## .. code-block:: nim
+#      ##    import nimcx,strfmt
+#      ##
+#      ##    for x  in 0.. <3:
+#      ##       # here use default colors for left and right side of the seperator
+#      ##       printBiCol("Test $1  : Ok this was $1 : what" % $x,":")
+#      ##
+#      ##    for x  in 4.. <6:
+#      ##        # here we change the default colors
+#      ##        printBiCol("Test $1  : Ok this was $1 : what" % $x,":",cyan,red)
+#      ##
+#      ##    # following requires strfmt module
+#      ##    printBiCol("{} : {}     {}".fmt("Good Idea","Number",50),":",yellow,green)
+#      ##
+#      ##
+#      {.gcsafe.}:
+#         var nosepflag:bool = false
+#         var zz = $s
+#         var z = zz.splitty(sep)  # using splitty we retain the sep on the left side
+# 
+#         # in case sep occures multiple time we only consider the first one
+#         if z.len > 1:
+#            for x in 2.. <z.len:
+#               # this now should contain the right part to be colored differently
+#               z[1] = z[1] & z[x]
+# 
+#         else:
+#             # when the separator is not found
+#             nosepflag = true
+#             # no separator so we just execute print with left color
+#             print(zz,fgr=colLeft,xpos=xpos,centered=centered,styled = styled)
+# 
+#         if nosepflag == false:
+# 
+#                 if centered == false:
+#                     print(z[0],fgr = colLeft,bgr = black,xpos = xpos,styled = styled)
+#                     print(z[1],fgr = colRight,bgr = black,styled = styled)
+#                 else:  # centered == true
+#                     let npos = centerX() - (zz).len div 2 - 1
+#                     print(z[0],fgr = colLeft,bgr = black,xpos = npos,styled = styled)
+#                     print(z[1],fgr = colRight,bgr = black,styled = styled)
+# 
+# 
+# 
+# 
+# 
+# proc printLnBiCol*[T](s:T,sep:string = ":", colLeft:string = yellowgreen, colRight:string = termwhite,xpos:int = 0,centered:bool = false,styled : set[Style]= {}) =
+#      ## printLnBiCol
+#      ##
+#      ## same as printBiCol but issues a new line
+#      ##
+#      ## default seperator = ":"  if not found we execute printLn with available params
+#      ##
+#      ## .. code-block:: nim
+#      ##    import nimcx,strfmt
+#      ##
+#      ##    for x  in 0.. <3:
+#      ##       # here use default colors for left and right side of the seperator
+#      ##       printLnBiCol("Test $1  : Ok this was $1 : what" % $x,":")
+#      ##
+#      ##    for x  in 4.. <6:
+#      ##        # here we change the default colors
+#      ##        printLnBiCol("Test $1  : Ok this was $1 : what" % $x,":",cyan,red)
+#      ##
+#      ##    # following requires strfmt module
+#      ##    printLnBiCol("{} : {}     {}".fmt("Good Idea","Number",50),":",yellow,green)
+#      ##
+#      ##
+#      {.gcsafe.}:
+#         var nosepflag:bool = false
+#         var zz = $s
+#         var z = zz.splitty(sep)  # using splitty we retain the sep on the left side
+#         # in case sep occures multiple time we only consider the first one
+# 
+#         if z.len > 1:
+#           for x in 2.. <z.len:
+#              z[1] = z[1] & z[x]
+#         else:
+#             # when the separator is not found
+#             nosepflag = true
+#             # no separator so we just execute printLn with left color
+#             printLn(zz,fgr=colLeft,xpos=xpos,centered=centered,styled = styled)
+# 
+#         if nosepflag == false:
+# 
+#             if centered == false:
+#                 print(z[0],fgr = colLeft,bgr = black,xpos = xpos,styled = styled)
+#                 if colRight == clrainbow:   # we currently do this as rainbow implementation has changed
+#                         printLn(z[1],fgr = randcol(),bgr = black,styled = styled)
+#                 else:
+#                         printLn(z[1],fgr = colRight,bgr = black,styled = styled)
+# 
+#             else:  # centered == true
+#                 let npos = centerX() - zz.len div 2 - 1
+#                 print(z[0],fgr = colLeft,bgr = black,xpos = npos)
+#                 if colRight == clrainbow:   # we currently do this as rainbow implementation has changed
+#                         printLn(z[1],fgr = randcol(),bgr = black,styled = styled)
+#                 else:
+#                         printLn(z[1],fgr = colRight,bgr = black,styled = styled)
 
 
 
@@ -2652,9 +2654,10 @@ proc printBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:str
      ## sep moved to behind colors in parameter ordering
      ## and input can be varargs which gives much better flexibility
      ## 
-     ## for this to work the complete parameter requirement must be given in the proc call
+     ## for this to work the complete parameter requirement must be given in the proc call up 
+     ## see examples below
      ##
-     ## echos a line in 2 colors based on a seperators first occurance
+     ## echos a string in 2 colors based on a seperators first occurance
      ##
      ## default seperator = ":"
      ##
@@ -2669,18 +2672,22 @@ proc printBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:str
      ##        # here we change the default colors
      ##        printBiCol("Test $1  : Ok this was $1 : what" % $x,cyan,red)
      ##        echo()
+     ##        
      ##    printBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),yellow,randcol(),":",0,false,{})
+     ##    echo()
+     ##    printBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),colLeft = cyan) # others unchanged default will be used
+     ##    echo()
+     ##    printBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),colleft=yellow,colRight=randcol())
      ##    echo()
      ##
      ##
      {.gcsafe.}:
         var nosepflag:bool = false
-        var zz =""
+        var zz = ""
         for ss in 0 .. <s.len:
-            zz = zz & $s[ss]
+            zz = zz & $s[ss] & spaces(1)
+            
         var z = zz.splitty(sep)  # using splitty we retain the sep on the left side
-        # in case sep occures multiple time we only consider the first one
-
         # in case sep occures multiple time we only consider the first one
         if z.len > 1:
            for x in 2.. <z.len:
@@ -2730,13 +2737,16 @@ proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:s
      ##        printLnBiCol("Test $1  : Ok this was $1 : what" % $x,cyan,red)
      ##
      ##    printLnBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),yellow,randcol(),":",0,false,{})
-     ##
-     ##
+     ##    printLnBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),colLeft = cyan)
+     ##    printLnBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),colleft=yellow,colRight=randcol())
+     ##    
+     ##    
      {.gcsafe.}:
         var nosepflag:bool = false
         var zz =""
         for ss in 0 .. <s.len:
-            zz = zz & $s[ss]
+            zz = zz & $s[ss] & spaces(1)
+           
         var z = zz.splitty(sep)  # using splitty we retain the sep on the left side
         # in case sep occures multiple time we only consider the first one
 
@@ -3873,9 +3883,9 @@ proc showIpInfo*(ip:string) =
         dlineln(40,col = yellow)
         for x in jj.mpairs() :
             echo fmtx(["<15","",""],$x.key ," : " ,unquote($x.val))
-        printLnBiCol(fmtx(["<15","",""],"Source"," : ","ip-api.com"),":",yellowgreen,salmon)
+        printLnBiCol(fmtx(["<15","",""],"Source"," : ","ip-api.com"),yellowgreen,salmon,":",0,false,{})
       except:
-          printLnBiCol("IpInfo   : unavailable",":",lightgreen,red)  
+          printLnBiCol("IpInfo   : unavailable",lightgreen,red,":",0,false,{})  
 
 proc localIp*():string =
    # localIp
@@ -3978,11 +3988,11 @@ proc pingy*(dest:string,pingcc:int,col:string = termwhite) =
         let outp2 = quoteshellposix(strip(outp,true,true))
         
         if err > 0:
-            printLnBiCol("Error : " & $err,":",red)
+            printLnBiCol("Error : " & $err,red,termwhite,":",0,false,{})
             
         else:        
                
-            printLnBiCol("Pinging : " & dest,":",yellowgreen,truetomato)
+            printLnBiCol("Pinging : " & dest,yellowgreen,truetomato,":",0,false,{})
             printLnBiCol("Expected: " & pingc & " pings")
             printLn("",col)
             var p = startProcess(outp2,args=["-c",pingc,dest] , options={poParentStreams})
@@ -4701,18 +4711,18 @@ proc showStats*(x:Runningstat,n:int = 3,xpos:int = 1) =
      ##
      
      var sep = ":"
-     printLnBiCol("Sum     : " & ff(x.sum,n),sep,yellowgreen,white,xpos = xpos)
-     printLnBiCol("Mean    : " & ff(x.mean,n),sep,yellowgreen,white,xpos = xpos)
-     printLnBiCol("Var     : " & ff(x.variance,n),sep,yellowgreen,white,xpos = xpos)
-     printLnBiCol("Var  S  : " & ff(x.varianceS,n),sep,yellowgreen,white,xpos = xpos)
-     printLnBiCol("Kurt    : " & ff(x.kurtosis,n),sep,yellowgreen,white,xpos = xpos)
-     printLnBiCol("Kurt S  : " & ff(x.kurtosisS,n),sep,yellowgreen,white,xpos = xpos)
-     printLnBiCol("Skew    : " & ff(x.skewness,n),sep,yellowgreen,white,xpos = xpos)
-     printLnBiCol("Skew S  : " & ff(x.skewnessS,n),sep,yellowgreen,white,xpos = xpos)
-     printLnBiCol("Std     : " & ff(x.standardDeviation,n),sep,yellowgreen,white,xpos = xpos)
-     printLnBiCol("Std  S  : " & ff(x.standardDeviationS,n),sep,yellowgreen,white,xpos = xpos)
-     printLnBiCol("Min     : " & ff(x.min,n),sep,yellowgreen,white,xpos = xpos)
-     printLnBiCol("Max     : " & ff(x.max,n),sep,yellowgreen,white,xpos = xpos)
+     printLnBiCol("Sum     : " & ff(x.sum,n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol("Mean    : " & ff(x.mean,n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol("Var     : " & ff(x.variance,n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol("Var  S  : " & ff(x.varianceS,n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol("Kurt    : " & ff(x.kurtosis,n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol("Kurt S  : " & ff(x.kurtosisS,n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol("Skew    : " & ff(x.skewness,n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol("Skew S  : " & ff(x.skewnessS,n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol("Std     : " & ff(x.standardDeviation,n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol("Std  S  : " & ff(x.standardDeviationS,n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol("Min     : " & ff(x.min,n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol("Max     : " & ff(x.max,n),yellowgreen,white,sep,xpos = xpos,false,{})
      printLn("S --> sample\n",peru,xpos = xpos)
 
 proc showRegression*(x,y: seq[float | int],n:int = 5,xpos:int = 1) =
@@ -4730,9 +4740,9 @@ proc showRegression*(x,y: seq[float | int],n:int = 5,xpos:int = 1) =
      var sep = ":"
      var rr :RunningRegress
      rr.push(x,y)
-     printLnBiCol("Intercept     : " & ff(rr.intercept(),n),sep,yellowgreen,white,xpos = xpos)
-     printLnBiCol("Slope         : " & ff(rr.slope(),n),sep,yellowgreen,white,xpos = xpos)
-     printLnBiCol("Correlation   : " & ff(rr.correlation(),n),sep,yellowgreen,white,xpos = xpos)
+     printLnBiCol("Intercept     : " & ff(rr.intercept(),n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol("Slope         : " & ff(rr.slope(),n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol("Correlation   : " & ff(rr.correlation(),n),yellowgreen,white,sep,xpos = xpos,false,{})
     
 
 proc showRegression*(rr: RunningRegress,n:int = 5,xpos:int = 1) =
@@ -4743,9 +4753,9 @@ proc showRegression*(rr: RunningRegress,n:int = 5,xpos:int = 1) =
   
      var sep = ":"
           
-     printLnBiCol("Intercept     : " & ff(rr.intercept(),n),sep,yellowgreen,white,xpos = xpos)
-     printLnBiCol("Slope         : " & ff(rr.slope(),n),sep,yellowgreen,white,xpos = xpos)
-     printLnBiCol("Correlation   : " & ff(rr.correlation(),n),sep,yellowgreen,white,xpos = xpos)
+     printLnBiCol("Intercept     : " & ff(rr.intercept(),n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol("Slope         : " & ff(rr.slope(),n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol("Correlation   : " & ff(rr.correlation(),n),yellowgreen,white,sep,xpos = xpos,false,{})
     
     
 template zipWith*[T1,T2](f: untyped; xs:openarray[T1], ys:openarray[T2]): untyped =
@@ -4886,7 +4896,7 @@ proc toTimeInfo*(date:string="2000-01-01"):TimeInfo =
       of  11: zmonth = mNov 
       of  12: zmonth = mDec 
       else:
-         printLnBiCol("Month error : Month = " & adate[1] & " ?? ",":",red)
+         printLnBiCol("Month error : Month = " & adate[1] & " ?? ",red,termwhite,0,false,{})
          printLnBiCol("Exiting now : ....")
          quit(0)
    
@@ -5458,59 +5468,59 @@ proc doInfo*() =
   let modTime = getLastModificationTime(filename)
   let sep = ":"
   superHeader("Information for file " & filename & " and System " & spaces(22))
-  printLnBiCol("Last compilation on           : " & CompileDate &  " at " & CompileTime,sep,yellowgreen,lightgrey)
+  printLnBiCol("Last compilation on           : " & CompileDate &  " at " & CompileTime,yellowgreen,lightgrey,sep,0,false,{})
   # this only makes sense for non executable files
-  #printLnBiCol("Last access time to file      : " & filename & " " & $(fromSeconds(int(getLastAccessTime(filename)))),sep,yellowgreen,lightgrey)
-  printLnBiCol("Last modificaton time of file : " & filename & " " & $(fromSeconds(int(modTime))),sep,yellowgreen,lightgrey)
-  #printLnBiCol("Local TimeZone                : " & $(getTzName()),sep,yellowgreen,lightgrey)
-  printLnBiCol("Offset from UTC  in secs      : " & $(getTimeZone()),sep,yellowgreen,lightgrey)
-  printLnBiCol("Now                           : " & now,sep,yellowgreen,lightgrey)
-  printLnBiCol("Local Time                    : " & $getLocalTime(getTime()),sep,yellowgreen,lightgrey)
-  printLnBiCol("GMT                           : " & $getGMTime(getTime()),sep,yellowgreen,lightgrey)
-  printLnBiCol("Environment Info              : " & os.getEnv("HOME"),sep,yellowgreen,lightgrey)
-  printLnBiCol("File exists                   : " & $(existsFile filename),sep,yellowgreen,lightgrey)
-  printLnBiCol("Dir exists                    : " & $(existsDir "/"),sep,yellowgreen,lightgrey)
-  printLnBiCol("AppDir                        : " & getAppDir(),sep,yellowgreen,lightgrey)
-  printLnBiCol("App File Name                 : " & getAppFilename(),sep,yellowgreen,lightgrey)
-  printLnBiCol("User home  dir                : " & os.getHomeDir(),sep,yellowgreen,lightgrey)
-  printLnBiCol("Config Dir                    : " & os.getConfigDir(),sep,yellowgreen,lightgrey)
-  printLnBiCol("Current Dir                   : " & os.getCurrentDir(),sep,yellowgreen,lightgrey)
+  #printLnBiCol("Last access time to file      : " & filename & " " & $(fromSeconds(int(getLastAccessTime(filename)))),yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("Last modificaton time of file : " & filename & " " & $(fromSeconds(int(modTime))),yellowgreen,lightgrey,sep,0,false,{})
+  #printLnBiCol("Local TimeZone                : " & $(getTzName()),yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("Offset from UTC  in secs      : " & $(getTimeZone()),yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("Now                           : " & now,yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("Local Time                    : " & $getLocalTime(getTime()),yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("GMT                           : " & $getGMTime(getTime()),yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("Environment Info              : " & os.getEnv("HOME"),yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("File exists                   : " & $(existsFile filename),yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("Dir exists                    : " & $(existsDir "/"),yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("AppDir                        : " & getAppDir(),yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("App File Name                 : " & getAppFilename(),yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("User home  dir                : " & os.getHomeDir(),yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("Config Dir                    : " & os.getConfigDir(),yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("Current Dir                   : " & os.getCurrentDir(),yellowgreen,lightgrey,sep,0,false,{})
   let fi = getFileInfo(filename)
-  printLnBiCol("File Id                       : " & $(fi.id.device) ,sep,yellowgreen,lightgrey)
-  printLnBiCol("File No.                      : " & $(fi.id.file),sep,yellowgreen,lightgrey)
-  printLnBiCol("Kind                          : " & $(fi.kind),sep,yellowgreen,lightgrey)
-  printLnBiCol("Size                          : " & $(float(fi.size)/ float(1000)) & " kb",sep,yellowgreen,lightgrey)
-  printLnBiCol("File Permissions              : ",sep,yellowgreen,lightgrey)
+  printLnBiCol("File Id                       : " & $(fi.id.device) ,yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("File No.                      : " & $(fi.id.file),yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("Kind                          : " & $(fi.kind),yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("Size                          : " & $(float(fi.size)/ float(1000)) & " kb",yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("File Permissions              : ",yellowgreen,lightgrey,sep,0,false,{})
   for pp in fi.permissions:
-      printLnBiCol("                              : " & $pp,sep,yellowgreen,lightgrey)
-  printLnBiCol("Link Count                    : " & $(fi.linkCount),sep,yellowgreen,lightgrey)
+      printLnBiCol("                              : " & $pp,yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("Link Count                    : " & $(fi.linkCount),yellowgreen,lightgrey,sep,0,false,{})
   # these only make sense for non executable files
-  printLnBiCol("Last Access                   : " & $(fi.lastAccessTime),sep,yellowgreen,lightgrey)
-  printLnBiCol("Last Write                    : " & $(fi.lastWriteTime),sep,yellowgreen,lightgrey)
-  printLnBiCol("Creation                      : " & $(fi.creationTime),sep,yellowgreen,lightgrey)
+  printLnBiCol("Last Access                   : " & $(fi.lastAccessTime),yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("Last Write                    : " & $(fi.lastWriteTime),yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("Creation                      : " & $(fi.creationTime),yellowgreen,lightgrey,sep,0,false,{})
   
   when defined windows:
-        printLnBiCol("System                        : Windows ..... Really ??",sep,red,lightgrey)
+        printLnBiCol("System                        : Windows ..... Really ??",red,lightgrey,sep,0,false,{})
   elif defined linux:
-        printLnBiCol("System                        : Running on Linux" ,sep,brightcyan,yellowgreen)
+        printLnBiCol("System                        : Running on Linux" ,brightcyan,yellowgreen,sep,0,false,{})
   else:
-        printLnBiCol("System                        : Interesting Choice" ,sep,yellowgreen,lightgrey)
+        printLnBiCol("System                        : Interesting Choice" ,yellowgreen,lightgrey,sep,0,false,{})
 
   when defined x86:
-        printLnBiCol("Code specifics                : x86" ,sep,yellowgreen,lightgrey)
+        printLnBiCol("Code specifics                : x86" ,yellowgreen,lightgrey,sep,0,false,{})
 
   elif defined amd64:
-        printLnBiCol("Code specifics                : amd86" ,sep,yellowgreen,lightgrey)
+        printLnBiCol("Code specifics                : amd86" ,yellowgreen,lightgrey,sep,0,false,{})
   else:
-        printLnBiCol("Code specifics                : generic" ,sep,yellowgreen,lightgrey)
+        printLnBiCol("Code specifics                : generic" ,yellowgreen,lightgrey,sep,0,false,{})
 
-  printLnBiCol("Nim Version                   : " & $NimMajor & "." & $NimMinor & "." & $NimPatch,sep,yellowgreen,lightgrey)
-  printLnBiCol("Processor count               : " & $cpuInfo.countProcessors(),sep,yellowgreen,lightgrey)
-  printBiCol("OS                            : "& hostOS,sep,yellowgreen,lightgrey)
-  printBiCol(" | CPU: "& hostCPU,sep,yellowgreen,lightgrey)
-  printLnBiCol(" | cpuEndian: "& $cpuEndian,sep,yellowgreen,lightgrey)
+  printLnBiCol("Nim Version                   : " & $NimMajor & "." & $NimMinor & "." & $NimPatch,yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("Processor count               : " & $cpuInfo.countProcessors(),yellowgreen,lightgrey,sep,0,false,{})
+  printBiCol("OS                            : "& hostOS,yellowgreen,lightgrey,sep,0,false,{})
+  printBiCol(" | CPU: "& hostCPU,yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol(" | cpuEndian: "& $cpuEndian,yellowgreen,lightgrey,sep,0,false,{})
   printLnBiCol("CPU Cores                     : " & $cpuInfo.countProcessors())
-  printLnBiCol("Current pid                   : " & $getpid(),sep,yellowgreen,lightgrey)
+  printLnBiCol("Current pid                   : " & $getpid(),yellowgreen,lightgrey,sep,0,false,{})
   printLnBiCol("Terminal encoding             : " & $getCurrentEncoding())
   
 
@@ -5573,12 +5583,12 @@ proc doFinish*() =
         print(fmtx(["<",">5"],ff(epochtime() - cx.start,3)," secs"),goldenrod)
         printLnBiCol("  Compiled on: " & $CompileDate & " at " & $CompileTime)
         if detectOs(OpenSUSE):  # some additional data if on openSuse systems
-            printLnBiCol("Kernel     :  " & uname().split("#")[0],":",yellowgreen,lightslategray)
+            printLnBiCol("Kernel     :  " & uname().split("#")[0],yellowgreen,lightslategray,":",0,false,{})
             let rld = release().splitLines()
             let rld3 = rld[2].splitty(":")
             let rld4 = rld3[0] & spaces(2) & strip(rld3[1])
-            printBiCol(rld4,":",yellowgreen,lightslategray )
-            printLnBiCol(spaces(3) & rld[3],":",yellowgreen,lightslategray)
+            printBiCol(rld4,yellowgreen,lightslategray,":",0,false,{})
+            printLnBiCol(spaces(3) & rld[3],yellowgreen,lightslategray,":",0,false,{})
         echo()
         quit(0)
 
@@ -5603,8 +5613,8 @@ proc handler*() {.noconv.} =
     hlineLn()
     cechoLn(yellowgreen,"Thank you for using        : " & getAppFilename())
     hlineLn()
-    printLnBiCol(fmtx(["<","<11",">9"],"Last compilation on        : " , CompileDate , CompileTime),":",brightcyan)
-    printLnBiCol(fmtx(["<","<11",">9"],"Exit handler invocation at : " , today() , getClockStr()),":",pastelorange)
+    printLnBiCol(fmtx(["<","<11",">9"],"Last compilation on        : " , CompileDate , CompileTime),brightcyan,termwhite,":",0,false,{})
+    printLnBiCol(fmtx(["<","<11",">9"],"Exit handler invocation at : " , today() , getClockStr()),pastelorange,termwhite,":",0,false,{})
     hlineLn()
     printBiCol("Nim Version   : " & NimVersion)
     print(" | ",brightblack)

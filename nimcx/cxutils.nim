@@ -14,7 +14,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-08-20
+##     Latest      : 2017-08-27
 ##
 ##     Compiler    : Nim >= 0.16
 ##
@@ -48,13 +48,13 @@ proc memCheck*(stats:bool = false) =
   echo()
   printLn("MemCheck            ",yellowgreen,styled = {styleUnderscore},substr = "MemCheck            ")
   echo()
-  printLnBiCol("Status    : Current ",":",salmon)
+  printLnBiCol("Status    : Current ",colLeft=salmon)
   printLn(yellowgreen & "Mem " &  lightsteelblue & "Used  : " & white & ff2(getOccupiedMem()) & lightsteelblue & "  Free : " & white & ff2(getFreeMem()) & lightsteelblue & "  Total : " & white & ff2(getTotalMem() ))
   if stats == true:
     echo GC_getStatistics()
   GC_fullCollect()
   sleepy(0.5)
-  printLnBiCol("Status    : GC_FullCollect executed",":",salmon,pink)
+  printLnBiCol("Status    : GC_FullCollect executed",colLeft=salmon,colRight=pink)
   printLn(yellowgreen & "Mem " &  lightsteelblue & "Used  : " & white & ff2(getOccupiedMem()) & lightsteelblue & "  Free : " & white & ff2(getFreeMem()) & lightsteelblue & "  Total : " & white & ff2(getTotalMem() ))
   if stats == true:
      echo GC_getStatistics()
@@ -588,5 +588,5 @@ proc showWanIp*() =
      ##
      ## show your current wan ip  , this service currently slow
      ##
-     printBiCol("Current Wan Ip  : " & getWanIp(),":",yellowgreen,gray)
+     printBiCol("Current Wan Ip  : " & getWanIp(),colLeft=yellowgreen,colRight=gray)
 
