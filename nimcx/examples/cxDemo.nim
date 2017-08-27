@@ -171,7 +171,7 @@ proc happyEmojis*() =
   echo()
   for x in 0.. <emojis.len:
       var ejs = fmtx(["<4","",""],$x," : ",emojis[x])
-      printLnBiCol(ejs,":",white,randcol())
+      printLnBiCol(ejs,colleft=white,colRight=randcol())
   decho(2)
 
 
@@ -288,7 +288,7 @@ proc wideDotFieldDemo*()=
   ## 
    
   loopy(0.. 10,loopy(1.. tw div 2, dotyLn(1,randcol(),xpos = getRndInt(0,tw - 1))))
-  printlnBiCol("coloredSnow","d",greenyellow,salmon)
+  printlnBiCol("coloredSnow",colLeft=greenyellow,colRight=salmon,sep="d")
 
 
 proc cxYourNimDemo*() =

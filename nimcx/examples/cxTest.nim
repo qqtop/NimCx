@@ -6,7 +6,7 @@
 ## best run in a large console window
 
 
-import nimcx,cxDemo,sequtils,times,unicode
+import cx,cxDemo,strutils,sequtils,times,unicode,cxutils
 
 superHeader("Testing print and echo procs from cx.nim and run demos")
 
@@ -42,8 +42,8 @@ printLn(s,clrainbow,styled = {styleUnderScore,styleBlink},substr = s)
 decho(2)
 
 # change color upon first separator 
-printLnBiCol(s,"c",brightgreen,brightwhite)
-printLnBiCol(s,"c")  # default colors
+printLnBiCol(s,colleft=brightgreen,colRight=brightwhite,sep="c")
+printLnBiCol(s,sep="c")  # default colors
 decho(2)
 
 # all in one color
@@ -51,6 +51,7 @@ printLn(fmtx(["","","","","","",""],s,spaces(1),n,spaces(1),f,spaces(1),l),green
 # all in one color with new background 
 print(fmtx(["","","","","","",""],s,spaces(1),n,spaces(1),f,spaces(1),l),brightyellow,brightblue)
 echo()
+
 printLn(s,clrainbow,brightyellow)  
 printLn(s,lime)
 decho(1)
@@ -221,7 +222,7 @@ rulerDemo()
 decho(15)
 var twc = tw div 2
 showTerminalSize()
-printLnBiCol("Terminal Center : " & $twc,":")
+printLnBiCol("Terminal Center : " & $twc)
 
 
 

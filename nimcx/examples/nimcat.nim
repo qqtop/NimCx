@@ -11,6 +11,6 @@ if pc > 0:
     for x in 0.. <pc:
       nimcat(paramStr(x + 1))
 hlineLn()      
-printLnBiCol("Files Shown: " & $pc,":",peru)
+printLnBiCol("Files Shown: " & $pc,colLeft=peru)
 echo()
-#doFinish()
+doFinish()

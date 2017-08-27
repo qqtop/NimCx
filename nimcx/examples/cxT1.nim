@@ -44,9 +44,9 @@ decho(2)
 
 # change color upon first separator , hence bicolor ...
 # default seperator ":"
-printLnBiCol(s,"c",brightgreen,brightwhite)
-printLnBiCol(s,"c")  # default colors
-printLnBiCol("Junk Food",spaces(1),red,brightblue) # separator is a space
+printLnBiCol(s,colLeft=brightgreen,colRight=brightwhite,sep="c")
+printLnBiCol(s,sep="c")  # default colors
+printLnBiCol("Junk Food",colleft=red,colRight=brightblue,sep=spaces(1)) # separator is a space
 decho(2)
 
 # all in one color , fmtx is a simple formater , but you could use strfmt too if installed
