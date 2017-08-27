@@ -101,7 +101,7 @@
 ##
 ##     Required    : 
 ##
-##     Installation: nimble install https://github.com/qqtop/NimCx.git
+##     Installation: nimble install nimcx
 ##
 ##
 ##     Optional    : xclip  (linux clipboard utility)
@@ -2721,7 +2721,6 @@ proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:s
      ## sep moved to behind colors in parameter ordering
      ## and input can be varargs which gives much better flexibility
      ## 
-     ## for this to work the complete parameter requirement must be given in the proc call
      ##
      ## default seperator = ":"  if not found we execute printLn with available params
      ##
@@ -2738,7 +2737,7 @@ proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:s
      ##
      ##    printLnBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),yellow,randcol(),":",0,false,{})
      ##    printLnBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),colLeft = cyan)
-     ##    printLnBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),colleft=yellow,colRight=randcol())
+     ##    printLnBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),colLeft=yellow,colRight=randcol())
      ##    
      ##    
      {.gcsafe.}:
@@ -5417,21 +5416,37 @@ proc showTerminalSize*() =
 template infoProc*(code: untyped) =
   ## infoProc
   ## 
-  ## shows from where a specific function has been called 
+  ## shows from where a specific function has been called and combined with checkLocals gives
+  ## a nice formatted output for debugging
+  ##
   ## .. code-block:: nim
-  ##   proc test[T](ff:T) =
-  ##     let yuuu = @["test"]
-  ##     var x = "sdfsdf"
-  ##     var z = 689999999999999999i64
-  ##     checklocals()
+  ##    proc test1[T](ff:varargs[T,`$`]) =
+  ##      let yu1 = @["test"]
+  ##      var yu2 = "sdfsdf"
+  ##      var yu3 = parseInt(ff[1]) * 3  # ff[1] has been converted to string we change it back to int and multiply
+  ##      print("test output    : ",lime)
+  ##      for x in ff: print(x & spaces(1)) # print the passed in varargs
+  ##      checklocals()
+  ##      
+  ##    proc test2(s:string,b:int) : string =   
+  ##       var bb = b * getRndInt(10,200)
+  ##       result = s & $bb
+  ##       checklocals()
+  ##      
+  ##    infoproc(test1("zz",1234,789.88))
+  ##    infoproc:
+  ##        printLnBiCol(fmtx(["","",""],"Test2 output  : ",rightarrow & spaces(1),test2("nice",2000)),colLeft = cyan,colRight=gold)
+  ##    doFinish()
+  ##
+  ##
   ##     
   try:
-    let pos = instantiationInfo()
-    code
-    echo "Called by: $1 Line: $2 with: '$3'" % [pos.filename,$pos.line, astToStr(code)]
+      let pos = instantiationInfo()
+      code
+      printLnBiCol("Called by: $1 Line: $2 with: '$3'" % [pos.filename,$pos.line, astToStr(code)],colLeft=gold)
   except:
-    echo "Error checking instantiationInfo occurred"
-    discard
+      printlnBiCol("Error: Checking instantiationInfo ",colLeft=red)
+      discard
 
 proc `$`(T: typedesc): string = name(T)
 template checkLocals*() =
@@ -5441,7 +5456,8 @@ template checkLocals*() =
   ## needs to be called inside a proc calling from toplevel has no effect
   ## best placed at bottom end of a proc to pick up all Variables
   ## 
-    
+  echo()
+  dlineLn(100)
   for name, value in fieldPairs(locals()): 
       printLnBiCol(fmtx(["","<20","","","","","<25","","","","",""],"Variable : ",$name,spaces(3),peru,"Type : ",termwhite,$type(value),spaces(1),aqua,"Value : ",termwhite,$value))
   
