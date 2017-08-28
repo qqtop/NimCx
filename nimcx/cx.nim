@@ -14,7 +14,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-08-26
+##     Latest      : 2017-08-28
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -2327,7 +2327,7 @@ proc rainbow*[T](s : T,xpos:int = 1,fitLine:bool = false,centered:bool = false) 
     var nxpos = xpos
     var astr = $s
     var c = 0
-    var aseq = toSeq(0.. <colorNames.len)
+    let aseq = toSeq(0.. <colorNames.len)
 
     for x in 0.. <astr.len:
        c = aseq[getRndInt(ma=aseq.len)]
@@ -2649,43 +2649,14 @@ proc printLnRainbow*[T](s : T,styled:set[Style] = {}) =
 proc printBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) =
      ## printBiCol
      ##
-     ## a newer version of printLnBiCol  currently under development
-     ## changes:
-     ## sep moved to behind colors in parameter ordering
-     ## and input can be varargs which gives much better flexibility
-     ## 
-     ## for this to work the complete parameter requirement must be given in the proc call up 
-     ## see examples below
+     ## Notes see printLnBiCol
      ##
-     ## echos a string in 2 colors based on a seperators first occurance
-     ##
-     ## default seperator = ":"
-     ##
-     ## Note : clrainbow not useable for right side color
-     ##
-     ##    for x  in 0.. <3:
-     ##       # here use default colors for left and right side of the seperator
-     ##        printBiCol("Test $1  : Ok " % $x,"this was $1 : what" % $x,23456.789,randcol(),randcol(),":",0,false,{})
-     ##        echo()
-     ##        
-     ##    for x  in 4.. <6:
-     ##        # here we change the default colors
-     ##        printBiCol("Test $1  : Ok this was $1 : what" % $x,cyan,red)
-     ##        echo()
-     ##        
-     ##    printBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),yellow,randcol(),":",0,false,{})
-     ##    echo()
-     ##    printBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),colLeft = cyan) # others unchanged default will be used
-     ##    echo()
-     ##    printBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),colleft=yellow,colRight=randcol())
-     ##    echo()
-     ##
-     ##
+     
      {.gcsafe.}:
         var nosepflag:bool = false
         var zz = ""
         for ss in 0 .. <s.len:
-            zz = zz & $s[ss] & spaces(1)
+            zz = zz & s[ss] & spaces(1)
             
         var z = zz.splitty(sep)  # using splitty we retain the sep on the left side
         # in case sep occures multiple time we only consider the first one
@@ -2720,7 +2691,7 @@ proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:s
      ## changes:
      ## sep moved to behind colors in parameter ordering
      ## and input can be varargs which gives much better flexibility
-     ## 
+     ## if varargs are to be printed all parameters need to be specified.
      ##
      ## default seperator = ":"  if not found we execute printLn with available params
      ##
@@ -2728,27 +2699,27 @@ proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:s
      ##    import nimcx
      ##
      ##    for x  in 0.. <3:
-     ##       # here use default colors for left and right side of the seperator
-     ##        printLnBiCol("Test $1  : Ok " % $x,"this was $1 : what" % $x,23456.789,randcol(),randcol(),":",0,false,{})
-     ##
+     ##       # here our input is varargs so weneed to specify all params
+     ##        printLnBiCol("Test $1  : Ok " % $1,"this was $1 : what" % $2,23456.789,red,lime,":",0,false,{})
+     
      ##    for x  in 4.. <6:
      ##        # here we change the default colors
-     ##        printLnBiCol("Test $1  : Ok this was $1 : what" % $x,cyan,red)
+     ##        printLnBiCol("nice",123,":","check",@[1,2,3],cyan,lime,":",0,false,{})
      ##
+     ##    # usage with fmtx 
      ##    printLnBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),yellow,randcol(),":",0,false,{})
      ##    printLnBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),colLeft = cyan)
      ##    printLnBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),colLeft=yellow,colRight=randcol())
-     ##    
+     ##    printLnBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),123,colLeft = cyan,colRight=gold,sep=":",xpos=0,centered=false,styled={})
      ##    
      {.gcsafe.}:
         var nosepflag:bool = false
         var zz =""
         for ss in 0 .. <s.len:
-            zz = zz & $s[ss] & spaces(1)
+            zz = zz & s[ss] & spaces(1)
            
         var z = zz.splitty(sep)  # using splitty we retain the sep on the left side
         # in case sep occures multiple time we only consider the first one
-
         if z.len > 1:
           for x in 2.. <z.len:
              z[1] = z[1] & z[x]
@@ -2770,7 +2741,7 @@ proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:s
             else:  # centered == true
                 let npos = centerX() - zz.len div 2 - 1
                 print(z[0],fgr = colLeft,bgr = black,xpos = npos)
-                if colRight == clrainbow:   # we currently do this as rainbow implementation has changed
+                if colRight == clrainbow:   
                         printLn(z[1],fgr = randcol(),bgr = black,styled = styled)
                 else:
                         printLn(z[1],fgr = colRight,bgr = black,styled = styled)
@@ -2789,7 +2760,7 @@ proc printHL*(s:string,substr:string,col:string = termwhite) =
       ## this would highlight all T in green
       ##
 
-      var rx = s.split(substr)
+      let rx = s.split(substr)
       for x in rx.low.. rx.high:
           print(rx[x])
           if x != rx.high:
@@ -2898,7 +2869,7 @@ proc doty*(d:int,fgr:string = white, bgr:string = black,xpos:int = 1) =
      ## color clrainbow is not supported and will be in white
      ##
 
-     var astr = $(wideDot.repeat(d))
+     let astr = $(wideDot.repeat(d))
      if fgr == clrainbow: print(astring = astr,white,bgr,xpos)
      else: print(astring = astr,fgr,bgr,xpos)
 
@@ -3006,7 +2977,7 @@ proc validdate*(adate:string):bool =
       let xdate = parseInt(aDate.multiReplace(("-","")))
       # check 1 is our date between 1900 - 3000
       if xdate >= 19000101 and xdate < 30010101:
-          var spdate = aDate.split("-")
+          let spdate = aDate.split("-")
           if parseInt(spdate[0]) >= 1900 and parseInt(spdate[0]) <= 3001:
               if spdate[1] in m30:
                   #  day max 30
@@ -3068,33 +3039,25 @@ proc intervalsecs*(startDate,endDate:string) : float =
           
 
 proc intervalmins*(startDate,endDate:string) : float =
-           var imins = intervalsecs(startDate,endDate) / 60
-           result = imins
-
+           result = intervalsecs(startDate,endDate) / 60
+          
 
 proc intervalhours*(startDate,endDate:string) : float =
-         var ihours = intervalsecs(startDate,endDate) / 3600
-         result = ihours
-
+         result = intervalsecs(startDate,endDate) / 3600
+        
 
 proc intervaldays*(startDate,endDate:string) : float =
-          var idays = intervalsecs(startDate,endDate) / 3600 / 24
-          result = idays
-
+          result = intervalsecs(startDate,endDate) / 3600 / 24
+          
 proc intervalweeks*(startDate,endDate:string) : float =
-          var iweeks = intervalsecs(startDate,endDate) / 3600 / 24 / 7
-          result = iweeks
-
-
+          result = intervalsecs(startDate,endDate) / 3600 / 24 / 7
+          
 proc intervalmonths*(startDate,endDate:string) : float =
-          var imonths = intervalsecs(startDate,endDate) / 3600 / 24 / 365  * 12
-          result = imonths
-
+          result = intervalsecs(startDate,endDate) / 3600 / 24 / 365  * 12
+          
 proc intervalyears*(startDate,endDate:string) : float =
-          var iyears = intervalsecs(startDate,endDate) / 3600 / 24 / 365
-          result = iyears
-
-
+          result = intervalsecs(startDate,endDate) / 3600 / 24 / 365
+          
 proc compareDates*(startDate,endDate:string) : int =
      # dates must be in form yyyy-MM-dd
      # we want this to answer
@@ -3104,9 +3067,9 @@ proc compareDates*(startDate,endDate:string) : int =
      # -1 undefined , invalid s date
      # -2 undefined . invalid e and or s date
      if validdate(startDate) and validdate(enddate):
-        var std = startDate.multiReplace(("-",""))
-        var edd = endDate.multiReplace(("-",""))
-        if std == edd:
+        let std = startDate.multiReplace(("-",""))
+        let edd = endDate.multiReplace(("-",""))
+        if std == edd: 
           result = 0
         elif std >= edd:
           result = 1
@@ -3322,11 +3285,11 @@ proc createSeqDate*(fromDate:string,days:int = 1):seq[string] =
          
 
 proc newdate():string =   
-  var year = getRndInt(1900,2099)
-  var month = getRndInt(1,12)
-  var day = getRndInt(1,31)
-  var date = $year & "-" & $month & "-" & $day
-  result = date
+  let year = getRndInt(1900,2099)
+  let month = getRndInt(1,12)
+  let day = getRndInt(1,31)
+  result = $year & "-" & $month & "-" & $day
+  
 
 proc getRndDate*():string = 
   ## getRandomDate
@@ -3384,7 +3347,7 @@ proc printBigNumber*(xnumber:string|int|int64,fgr:string = yellowgreen ,bgr:stri
     ##         sleepy(0.5)
     ##    doFinish()
 
-    var anumber = $xnumber
+    let anumber = $xnumber
     var asn = newSeq[string]()
     var printseq = newSeq[seq[string]]()
     for x in anumber: asn.add($x)
@@ -3466,7 +3429,7 @@ proc printBigLetters*(aword:string,fgr:string = yellowgreen ,bgr:string = black,
       xpos = xpos + k
 
   for aw in aword:
-      var aws = $aw
+      let aws = $aw
       var ak = aws.toLower()
       case ak
       of "a" : abc(abx,xpos)
@@ -3964,14 +3927,14 @@ proc showHosts*(dm:string) =
     ##
     ##
     cechoLn(yellowgreen,"Hosts Data for " & dm)
-    var z = getHosts(dm)
+    let z = getHosts(dm)
     if z.len < 1:
          printLn("Nothing found or not resolved",red)
     else:
        for x in z:
          printLn(x)
 
-proc pingy*(dest:string,pingcc:int,col:string = termwhite) = 
+proc pingy*(dest:string,pingcc:int = 3,col:string = termwhite) = 
         ## pingy
         ## 
         ## small utility to ping some server
@@ -3982,7 +3945,6 @@ proc pingy*(dest:string,pingcc:int,col:string = termwhite) =
         ## 
  
         let pingc = $pingcc
-        
         let (outp,err) = execCmdEx("which ping")
         let outp2 = quoteshellposix(strip(outp,true,true))
         
@@ -3994,7 +3956,7 @@ proc pingy*(dest:string,pingcc:int,col:string = termwhite) =
             printLnBiCol("Pinging : " & dest,yellowgreen,truetomato,":",0,false,{})
             printLnBiCol("Expected: " & pingc & " pings")
             printLn("",col)
-            var p = startProcess(outp2,args=["-c",pingc,dest] , options={poParentStreams})
+            let p = startProcess(outp2,args=["-c",pingc,dest] , options={poParentStreams})
             printLn($p.waitForExit(parseInt(pingc) * 1000 + 500),truetomato)
             decho(2)
 
@@ -4023,7 +3985,7 @@ template doSomething*(body:untyped,secs:int) =
   ## 
   ## execute some code for a certain amount of seconds
   ## 
-  var mytime =  getTime().getLocalTime()
+  let mytime =  getTime().getLocalTime()
   while toTime(getTime().getLocalTime()) < toTime(mytime) + secs.seconds : 
       body
     
@@ -4068,7 +4030,6 @@ proc reverseString*(text:string):string =
   ##    assert s == reverseString(reverseString(s))
   ##    
    
-  result = ""
   for x in reverseMe(text): result = result & x
 
 
@@ -4150,7 +4111,7 @@ proc ff2*(zz:float , n:int = 3):string =
     result = ff(zz,n)
     
   else: 
-        var c = rpartition($zz,".")
+        let c = rpartition($zz,".")
         var cnew = ""
         for d in c[2]:
             if cnew.len < n:  cnew = cnew & d
@@ -4188,8 +4149,8 @@ proc ff2*(zz:int64 , n:int = 0):string =
   var sc = 0
   var nz = ""
   var zrs = ""
-  var zs = split($zz,".")
-  var zrv = reverseme(zs[0])
+  let zs = split($zz,".")
+  let zrv = reverseme(zs[0])
  
   for x in 0 .. <zrv.len: 
      zrs = zrs & $zrv[x]
@@ -4260,7 +4221,7 @@ proc createSeqFloat*(n:int = 10,prec:int = 3) : seq[float] =
      for wd in 0 .. <n:
        var x = 0   
        while  x < prec:
-            var afloat = parseFloat(ff2(getRndFloat(),prec))
+            let afloat = parseFloat(ff2(getRndFloat(),prec))
             if ($afloat).len > prec + 2:
                x = x - 1
                if x < 0:
@@ -4291,7 +4252,7 @@ proc nimcat*(curFile:string,startline:int = -1,endline = -1) =
     ## a simple file lister which allows to show all rows
     ## or consecutive lines from  startline to endline  with line number
     ## a file name without extension will be assuemed to be .nim  ... it is the nimcat afterall
-    ## 
+    ## # linewrap not yet implemented
     ## .. code-block: nim
     ## 
     ##   nimcat("notes.txt")                   # show all lines
@@ -4303,14 +4264,15 @@ proc nimcat*(curFile:string,startline:int = -1,endline = -1) =
     echo()
     var line = ""
     var ccurFile = curFile
-    var (dir, name, ext) = splitFile(ccurFile)
+    let (dir, name, ext) = splitFile(ccurFile)
     if ext == "":
        ccurFile = ccurFile & ".nim"
-    var fs = streamFile(ccurFile, fmRead)
+    let fs = streamFile(ccurFile, fmRead)
     var c = 1
     if startline == -1 and endline == -1:
       if not isNil(fs):
         while fs.readLine(line):
+            # TODO: linewrap
             printLnBiCol(fmtx([">5",": ",""],c,spaces(2),line))
             inc c
         fs.close()   
@@ -4327,7 +4289,10 @@ proc nimcat*(curFile:string,startline:int = -1,endline = -1) =
     echo()
     
     printLnBiCol("File       : " & ccurFile)
-    printLnBicol("File Dir   : " & dir)
+    if isNil(dir) or isEmpty(dir) or dir == "":
+        printLnBicol("File Dir   : pwd")
+    else:  
+        printLnBicol("File Dir   : " & dir)
     printLnBiCol("File Name  : " & name)
     printLnBiCol("File Ext.  : " & ext)
     if startline > 0 and endline > 0:
@@ -4439,7 +4404,7 @@ proc showBench*() =
     benchmarkresults = @[]
     printLn("Benchmark results end. Results cleared.",goldenrod)
  else:
-    printLn("Benchmark results emtpy.Nothing to show",red)   
+    printLn("Benchmark results emtpy. Nothing to show",red)   
 
     
 proc `$`*[T](some:typedesc[T]): string = name(T)
@@ -4563,7 +4528,7 @@ proc colorio*() =
 
     for x in 0.. <cx.colorNames.len:
         try:
-           var zr = extractRgb(parsecolor(cx.colorNames[x][0]))
+           let zr = extractRgb(parsecolor(cx.colorNames[x][0]))
            printLn(fmtx(["<20","","<20","",">5","",">5","",">5"],cx.colorNames[x][0], spaces(2) , $(parsecolor(cx.colorNames[x][0])),spaces(2),zr[0],spaces(1),zr[1],spaces(1),zr[2]) ,fgr = cx.colorNames[x][1])
         
         except ValueError:
@@ -4750,8 +4715,7 @@ proc showRegression*(rr: RunningRegress,n:int = 5,xpos:int = 1) =
      ## Displays RunningRegress data from an already formed RunningRegress
      ## 
   
-     var sep = ":"
-          
+     let sep = ":"
      printLnBiCol("Intercept     : " & ff(rr.intercept(),n),yellowgreen,white,sep,xpos = xpos,false,{})
      printLnBiCol("Slope         : " & ff(rr.slope(),n),yellowgreen,white,sep,xpos = xpos,false,{})
      printLnBiCol("Correlation   : " & ff(rr.correlation(),n),yellowgreen,white,sep,xpos = xpos,false,{})
@@ -4942,37 +4906,36 @@ proc toClip*[T](s:T ) =
      
 
 
-proc tableRune*[T](z:T,fgr:string = white,cols = 18,pause:float=0.05) = 
+proc tableRune*[T](z:T,fgr:string = truetomato,cols = 6,maxitemwidth:int=5) = 
     ## tableRune
     ##
-    ## simple table routine with 15 cols for displaying various unicode sets
-    ## fgr allows color display and fgr = "rand" displays in random color
+    ## simple table routine with default 6 cols for displaying various unicode sets
+    ## fgr allows color display and fgr = "rand" displays in random color and maxwidth for displayable items
+    ## this can also be used to show items of a sequence
     ##
     ## .. code-block:: nim
     ##      tableRune(cjk(),"rand")
     ##      tableRune(katakana(),yellowgreen)
-    ##      tableRune(hiragana(),truetomato)
+    ##      tableRune(hiragana())
     ##      tableRune(geoshapes(),randcol())
-    ##
+    ##      tableRune(createSeqint(1000,10000,100000))
+    ##      
+    ##      
     var c = 0
-    var r = 0
     for x in 0.. <z.len:
       inc c
       if c < cols + 1 :
         
           if fgr == "rand":
-                print(z[x] & spaces(2) & " , ",randcol()) 
+                printBiCol(fmtx([">" & $maxitemwidth,"",">" & $maxitemwidth ,""] ,$x , " : ",  $z[x] , spaces(1)) ,colLeft=gold,colRight=randcol(),0,false,{}) 
           else:
-                print(z[x] & spaces(2) & " , ",fgr)     
+                printBiCol(fmtx([">" & $maxitemwidth,"",">" & $maxitemwidth ,""] ,$x , " : ",  $z[x] , spaces(1)) ,colLeft=fgr,colRight=gold,0,false,{})     
       else:
-            c = 0
-            echo()
-      
-      if r == th :
-         sleepy(pause)
-         r = 0
-      else: inc(r)   
-      
+           c = 0
+           if  c mod 10 == 0: echo() 
+     
+    decho(2)      
+    printLnBiCol("Seq Items: 0 - " & $(z.len - 1), colLeft=greenyellow,colRight=gold,3,false,{})        
     decho(2)
 
 
@@ -4992,6 +4955,10 @@ proc uniall*(showOrd:bool=true):seq[string] =
      result = gs    
     
 proc geoshapes*():seq[string] =
+     ## geoshapes
+     ## 
+     ## returns a seq containing geoshapes unicode chars
+     ## 
      var gs = newSeq[string]()
      for j in 9632..9727: gs.add($Rune(j))
      result = gs
@@ -5075,7 +5042,7 @@ proc rainbow2*[T](s : T,xpos:int = 1,fitLine:bool = false,centered:bool = false,
     ##
     ##
     var nxpos = xpos
-    var astr = $s
+    let astr = $s
     var c = 0
     
     # in case the passed in set contains nothing , maybe a unsuitable filter was used then
@@ -5083,7 +5050,7 @@ proc rainbow2*[T](s : T,xpos:int = 1,fitLine:bool = false,centered:bool = false,
     var okcolorset = colorset
     if okcolorset.len < 1:  okcolorset = colorNames
     
-    var a = toSeq(0.. <okcolorset.len)
+    let a = toSeq(0.. <okcolorset.len)
 
     if astr in emojis or astr in hiragana() or astr in katakana() or astr in iching():
         c = a[getRndInt(ma=a.len)]
@@ -5445,7 +5412,7 @@ template infoProc*(code: untyped) =
       code
       printLnBiCol("Called by: $1 Line: $2 with: '$3'" % [pos.filename,$pos.line, astToStr(code)],colLeft=gold)
   except:
-      printlnBiCol("Error: Checking instantiationInfo ",colLeft=red)
+      printLnBiCol("Error: Checking instantiationInfo ",colLeft=red)
       discard
 
 proc `$`(T: typedesc): string = name(T)
