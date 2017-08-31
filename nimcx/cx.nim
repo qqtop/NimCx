@@ -14,7 +14,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-08-28
+##     Latest      : 2017-08-31
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -2288,25 +2288,11 @@ proc printy*[T](astring:varargs[T,`$`]) =
     ##    printy "this is : " ,yellowgreen,1,bgreen,5,bblue," ʈəɽɭάɧɨɽ ʂəɱρʊɽɲά(άɲάʂʈάʂɣά)"
     ##
     
-    for x in astring: write(stdout,x)
+    for x in astring: write(stdout,x & spaces(1))
     setForeGroundColor(fgWhite)
     setBackGroundColor(bgBlack)
     
- 
-
-template printyLn*(astring:varargs[untyped]) =  
-    ## printy2
-    ##
-    ## similar to echo , backgroundcolor will be set to black when finished
-    ##
-    ## ..code-block:: nim
-    ##    printy2(peru,"this is : " ,yellowgreen,1,rightarrow,bbrightmagenta,black,5,bblue,seagreen," ʈəɽɭάɧɨɽ ʂəɱρʊɽɲά(άɲάʂʈάʂɣά)")
-    ##
-    
-    echo(astring,bblack)
-    setForeGroundColor(fgWhite)
-    setBackGroundColor(bgBlack)
-    
+  
  
 proc rainbow*[T](s : T,xpos:int = 1,fitLine:bool = false,centered:bool = false)  =
     ## rainbow
@@ -3045,7 +3031,6 @@ proc intervalmins*(startDate,endDate:string) : float =
 proc intervalhours*(startDate,endDate:string) : float =
          result = intervalsecs(startDate,endDate) / 3600
         
-
 proc intervaldays*(startDate,endDate:string) : float =
           result = intervalsecs(startDate,endDate) / 3600 / 24
           
@@ -4246,22 +4231,27 @@ template bitCheck*(a, b: untyped): bool =
 # Misc. routines
 
 
-proc nimcat*(curFile:string,startline:int = -1,endline = -1) =
+proc nimcat*(curFile:string,countphrase : varargs[string,`$`] = "")=
     ## nimcat
     ## 
-    ## a simple file lister which allows to show all rows
-    ## or consecutive lines from  startline to endline  with line number
+    ## a simple file lister which shows all rows and some stats as well as allows counting of tokens
     ## a file name without extension will be assuemed to be .nim  ... it is the nimcat afterall
-    ## # linewrap not yet implemented
+    ## countphrase is case sensitive
+    ## # 
+    ## # 
+    ## # 
     ## .. code-block: nim
     ## 
     ##   nimcat("notes.txt")                   # show all lines
-    ##   nimcat("bigdatafile.csv",2000,3000)   # show lines 2000 to 3000
-    ## 
+    ##   nimcat("bigdatafile.csv")
+    ##   nimcat("/data5/notes.txt",countphrase = "nice" , "hanya", 88) # also count how often a token appears in the file
     ## 
     decho(2)
     dlineLn()
     echo()
+   
+    var phrasecount = newSeqWith(countphrase.len, 0)
+    var phraseinline = newSeqWith(countphrase.len, newSeq[int](0))  # holds the line numbers where a phrase to be counted was found
     var line = ""
     var ccurFile = curFile
     let (dir, name, ext) = splitFile(ccurFile)
@@ -4269,23 +4259,20 @@ proc nimcat*(curFile:string,startline:int = -1,endline = -1) =
        ccurFile = ccurFile & ".nim"
     let fs = streamFile(ccurFile, fmRead)
     var c = 1
-    if startline == -1 and endline == -1:
-      if not isNil(fs):
+    if not isNil(fs):
         while fs.readLine(line):
             # TODO: linewrap
             printLnBiCol(fmtx([">5",": ",""],c,spaces(2),line))
+            if line.len > 0:
+               var lc = 0
+               for mc in 0 .. <countphrase.len:
+                   lc = line.count(countphrase[mc])
+                   phrasecount[mc] += lc
+                   if lc > 0: phraseinline[mc].add(c)
+            
             inc c
         fs.close()   
         
-    else:
-      if not isNil(fs):
-        while fs.readLine(line):
-            if c >= startline and c <= endline: printLnBiCol(fmtx([">9",": ",""],c,spaces(2),line))
-            if c <= endline: inc c
-            else:
-              fs.close() 
-              break
-       
     echo()
     
     printLnBiCol("File       : " & ccurFile)
@@ -4295,12 +4282,18 @@ proc nimcat*(curFile:string,startline:int = -1,endline = -1) =
         printLnBicol("File Dir   : " & dir)
     printLnBiCol("File Name  : " & name)
     printLnBiCol("File Ext.  : " & ext)
-    if startline > 0 and endline > 0:
-       printLnBiCol("Startline  : " & $startline)
-       printLnBiCol("Endline    : " & $endline)
-       printLnBiCol("Lines Shown: " & ff2(endline - startline))
-    else:
-       printLnBiCol("Lines Shown: " & ff2(c - 1))
+    printLnBiCol("Lines Shown: " & ff2(c - 1))
+    
+    var maxphrasewidth = 0
+    
+    for x in  countphrase:
+       if x.len > maxphrasewidth: maxphrasewidth = x.len
+         
+    if countphrase.len > 0:
+       println("\nPhraseCount stats :    \n",gold,styled={styleUnderScore})
+       for x in 0 .. <countphrase.len:
+             printLnBiCol(fmtx(["<" & $maxphrasewidth,"",""],countphrase[x]," : " & rightarrow & " Count: ",phrasecount[x]))
+             printLnBiCol("Lines : " , phraseinline[x],"\n" ,colLeft = cyan ,colRight = termwhite ,sep = ":",0,false,{})
     
 
  
@@ -4412,7 +4405,10 @@ proc typeTest*[T](x:T): T =
      # used to determine the field types in the temp sqllite table used for sorting
      printLnBiCol("Type     : " & $type(x))
      printLnBiCol("Value    : " & $x)
-   
+     
+proc typeTest2*[T](x:T): T =
+     # same as typetes but without showing values (which may be huge in case of seqs)
+     printLnBiCol("Type       : " & $type(x),xpos = 3)   
      
 
 template withFile*(f,fn, mode, actions: untyped): untyped =
@@ -4906,7 +4902,7 @@ proc toClip*[T](s:T ) =
      
 
 
-proc tableRune*[T](z:T,fgr:string = truetomato,cols = 6,maxitemwidth:int=5) = 
+proc tableRune*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5) = 
     ## tableRune
     ##
     ## simple table routine with default 6 cols for displaying various unicode sets
@@ -4927,19 +4923,26 @@ proc tableRune*[T](z:T,fgr:string = truetomato,cols = 6,maxitemwidth:int=5) =
       if c < cols + 1 :
         
           if fgr == "rand":
-                printBiCol(fmtx([">" & $maxitemwidth,"",">" & $maxitemwidth ,""] ,$x , " : ",  $z[x] , spaces(1)) ,colLeft=gold,colRight=randcol(),0,false,{}) 
+                printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$x , " : ",  $z[x] , spaces(1)) ,colLeft=gold,colRight=randcol(),0,false,{}) 
           else:
-                printBiCol(fmtx([">" & $maxitemwidth,"",">" & $maxitemwidth ,""] ,$x , " : ",  $z[x] , spaces(1)) ,colLeft=fgr,colRight=gold,0,false,{})     
+                printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$x , " : ",  $z[x] , spaces(1)) ,colLeft=fgr,colRight=gold,0,false,{})     
       else:
            c = 0
            if  c mod 10 == 0: echo() 
      
     decho(2)      
-    printLnBiCol("Seq Items: 0 - " & $(z.len - 1), colLeft=greenyellow,colRight=gold,3,false,{})        
+    printLnBiCol("Seq Items  : 0 - " & $(z.len - 1) , colLeft=greenyellow,colRight=gold,3,false,{})  
+    printLnBiCol("Item Count : " & $z.len, colLeft=greenyellow,colRight=gold,3,false,{}) 
+    discard typeTest2(z)
     decho(2)
 
 
-    
+proc showSeq*[T](aseq:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5) =
+      ## showSeq
+      ## 
+      ## display contents of a seq, in case of seq of seq the first item of the sub seqs will be shown
+      ## 
+      tableRune(aseq)    
 
 proc uniall*(showOrd:bool=true):seq[string] =
      # for testing purpose only
@@ -4948,6 +4951,10 @@ proc uniall*(showOrd:bool=true):seq[string] =
             # there are more chars up to maybe 120150 some
             # maybe for indian langs,iching, some special arab and koran symbols if installed on the system
             # https://www.w3schools.com/charsets/ref_html_utf8.asp
+            # 
+            # 
+            # tablerune(uniall(),cols=6,maxitemwidth=12)  
+            # 
             if showOrd==true:
                    gs.add($j & " : " & $Rune(j))
             else:
