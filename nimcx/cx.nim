@@ -1,4 +1,5 @@
 {.deadCodeElim: on.}
+
 ##  {.noforward: on.}   # future feature
 ## ::
 ## 
@@ -14,7 +15,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-08-31
+##     Latest      : 2017-09-03
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -170,7 +171,34 @@ type
 
 # type used in Benchmark
 type
-    Benchmarkres* = tuple[bname,cpu,epoch : string]
+    Benchmarkres* = tuple[bname,cpu,epoch,repeats : string]
+    
+    
+type
+  Cxcounter* =  object
+      value*: int
+
+proc newCxcounter*():ref(Cxcounter) =
+    ## newCxcounter
+    ## 
+    ## set up a new cxcounter
+    ## 
+    ## simple counter with add,dec and reset procs
+    ## 
+    ## .. code-block:: nim
+    ## var counter1 = newCxcounter()
+    ## counter1.add   # add 1
+    ## counter1.dec   # dec 1
+    ## counter1.reset # set to 0
+    ## echo counter1.value # show current value
+    ## 
+    result =  (ref CxCounter)(value : 0)
+    
+proc  add*(co:ref Cxcounter) = inc co.value 
+proc  dec*(co:ref Cxcounter) = dec co.value
+proc  reset*(co:ref CxCounter) = co.value = 0   
+    
+    
 # used to store all benchmarkresults   
 var benchmarkresults* =  newSeq[Benchmarkres]()
 
@@ -1609,9 +1637,7 @@ converter colconv*(cx:string) : string
 proc rainbow*[T](s : T,xpos:int = 1,fitLine:bool = false ,centered:bool = false)  ## forward declaration
 proc print*[T](astring:T,fgr:string = termwhite ,bgr:string = bblack,xpos:int = 0,fitLine:bool = false ,centered:bool = false,styled : set[Style]= {},substr:string = "")
 proc printLn*[T](astring:T,fgr:string = termwhite , bgr:string = bblack,xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {},substr:string = "")
-#proc printBiCol*[T](s:T,sep:string = ":",colLeft:string = yellowgreen ,colRight:string = termwhite,xpos:int = 0,centered:bool = false,styled : set[Style]= {}) ## forward declaration
 proc printBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) 
-#proc printLnBiCol*[T](s:T,sep:string = ":",colLeft:string = yellowgreen ,colRight:string = termwhite,xpos:int = 0,centered:bool = false,styled : set[Style]= {}) ## forward declaration
 proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) 
 proc printRainbow*(s : string,styled:set[Style] = {})     ## forward declaration
 proc hline*(n:int = tw,col:string = white,xpos:int = 1)   ## forward declaration
@@ -1855,7 +1881,7 @@ proc fmtx*[T](fmts:openarray[string],fstrings:varargs[T,`$`]):string =
      ##    showRuler()
      ##    for x in 0.. 10: printlnBiCol(fmtx([">22",">10"],"nice something :",x ))
      ##    echo()
-     ##    printLnBiCol(fmtx(["",">15.3f"],"Result : ",123.456789),":",lime,red)  # formats the float to a string with precision 3 the f is not necessary
+     ##    printLnBiCol(fmtx(["",">15.3f"],"Result : ",123.456789),lime,red,":",0,false,{})  # formats the float to a string with precision 3 the f is not necessary
      ##    echo()
      ##    echo fmtx([">22.3"],234.43324234)  # this formats float and aligns last char to pos 22
      ##    echo fmtx(["22.3"],234.43324234)   # this formats float but ignores position as no align operator given
@@ -2520,118 +2546,6 @@ proc printLnRainbow*[T](s : T,styled:set[Style] = {}) =
     printRainBow($(s) & "\L",styled)
 
 
-# 
-# proc printBiCol*[T](s:T,sep:string = ":",colLeft:string = yellowgreen ,colRight:string = termwhite,xpos:int = 0,centered:bool = false,styled : set[Style]= {}) =
-#      ## printBiCol
-#      ##
-#      ## echos a line in 2 colors based on a seperators first occurance
-#      ##
-#      ## default seperator = ":"
-#      ##
-#      ## Note : clrainbow not useable for right side color
-#      ##
-#      ## .. code-block:: nim
-#      ##    import nimcx,strfmt
-#      ##
-#      ##    for x  in 0.. <3:
-#      ##       # here use default colors for left and right side of the seperator
-#      ##       printBiCol("Test $1  : Ok this was $1 : what" % $x,":")
-#      ##
-#      ##    for x  in 4.. <6:
-#      ##        # here we change the default colors
-#      ##        printBiCol("Test $1  : Ok this was $1 : what" % $x,":",cyan,red)
-#      ##
-#      ##    # following requires strfmt module
-#      ##    printBiCol("{} : {}     {}".fmt("Good Idea","Number",50),":",yellow,green)
-#      ##
-#      ##
-#      {.gcsafe.}:
-#         var nosepflag:bool = false
-#         var zz = $s
-#         var z = zz.splitty(sep)  # using splitty we retain the sep on the left side
-# 
-#         # in case sep occures multiple time we only consider the first one
-#         if z.len > 1:
-#            for x in 2.. <z.len:
-#               # this now should contain the right part to be colored differently
-#               z[1] = z[1] & z[x]
-# 
-#         else:
-#             # when the separator is not found
-#             nosepflag = true
-#             # no separator so we just execute print with left color
-#             print(zz,fgr=colLeft,xpos=xpos,centered=centered,styled = styled)
-# 
-#         if nosepflag == false:
-# 
-#                 if centered == false:
-#                     print(z[0],fgr = colLeft,bgr = black,xpos = xpos,styled = styled)
-#                     print(z[1],fgr = colRight,bgr = black,styled = styled)
-#                 else:  # centered == true
-#                     let npos = centerX() - (zz).len div 2 - 1
-#                     print(z[0],fgr = colLeft,bgr = black,xpos = npos,styled = styled)
-#                     print(z[1],fgr = colRight,bgr = black,styled = styled)
-# 
-# 
-# 
-# 
-# 
-# proc printLnBiCol*[T](s:T,sep:string = ":", colLeft:string = yellowgreen, colRight:string = termwhite,xpos:int = 0,centered:bool = false,styled : set[Style]= {}) =
-#      ## printLnBiCol
-#      ##
-#      ## same as printBiCol but issues a new line
-#      ##
-#      ## default seperator = ":"  if not found we execute printLn with available params
-#      ##
-#      ## .. code-block:: nim
-#      ##    import nimcx,strfmt
-#      ##
-#      ##    for x  in 0.. <3:
-#      ##       # here use default colors for left and right side of the seperator
-#      ##       printLnBiCol("Test $1  : Ok this was $1 : what" % $x,":")
-#      ##
-#      ##    for x  in 4.. <6:
-#      ##        # here we change the default colors
-#      ##        printLnBiCol("Test $1  : Ok this was $1 : what" % $x,":",cyan,red)
-#      ##
-#      ##    # following requires strfmt module
-#      ##    printLnBiCol("{} : {}     {}".fmt("Good Idea","Number",50),":",yellow,green)
-#      ##
-#      ##
-#      {.gcsafe.}:
-#         var nosepflag:bool = false
-#         var zz = $s
-#         var z = zz.splitty(sep)  # using splitty we retain the sep on the left side
-#         # in case sep occures multiple time we only consider the first one
-# 
-#         if z.len > 1:
-#           for x in 2.. <z.len:
-#              z[1] = z[1] & z[x]
-#         else:
-#             # when the separator is not found
-#             nosepflag = true
-#             # no separator so we just execute printLn with left color
-#             printLn(zz,fgr=colLeft,xpos=xpos,centered=centered,styled = styled)
-# 
-#         if nosepflag == false:
-# 
-#             if centered == false:
-#                 print(z[0],fgr = colLeft,bgr = black,xpos = xpos,styled = styled)
-#                 if colRight == clrainbow:   # we currently do this as rainbow implementation has changed
-#                         printLn(z[1],fgr = randcol(),bgr = black,styled = styled)
-#                 else:
-#                         printLn(z[1],fgr = colRight,bgr = black,styled = styled)
-# 
-#             else:  # centered == true
-#                 let npos = centerX() - zz.len div 2 - 1
-#                 print(z[0],fgr = colLeft,bgr = black,xpos = npos)
-#                 if colRight == clrainbow:   # we currently do this as rainbow implementation has changed
-#                         printLn(z[1],fgr = randcol(),bgr = black,styled = styled)
-#                 else:
-#                         printLn(z[1],fgr = colRight,bgr = black,styled = styled)
-
-
-
 proc printBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) =
      ## printBiCol
      ##
@@ -2847,7 +2761,7 @@ proc doty*(d:int,fgr:string = white, bgr:string = black,xpos:int = 1) =
      ##
      ## .. code-block:: nim
      ##      import nimcx
-     ##      printLnBiCol("Test for  :  doty\n",":",truetomato,lime)
+     ##      printLnBiCol("Test for  :  doty\n",truetomato,lime,":",0,false,{})
      ##      dotyLn(22 ,lime)
      ##      dotyLn(18 ,salmon,blue)
      ##      dotyLn(centerX(),red)  # full widedotted line
@@ -4305,7 +4219,7 @@ proc checkHash*[T](kata:string,hsx:T)  =
   if hash(kata) == hsx:
         printLnBiCol("Hash Status : ok")
   else:
-        printLnBiCol("Hash Status : fail",":",red)
+        printLnBiCol("Hash Status : fail",red,termwhite,":",0,false{})
 
 
 proc verifyHash*[T](kata:string,hsx:T):bool  =
@@ -4336,10 +4250,67 @@ proc createHash*(kata:string):auto =
     ##    
     result = hash(kata)   
 
-template benchmark*(benchmarkName: string, code: typed) =
+
+template repeats(count: int, statements: untyped) =
+  for i in 0 .. <count:
+      statements
+    
+    
+template benchmark*(benchmarkName: string, repeatcount:int = 1,code: typed) =
   ## benchmark
   ## 
-  ## a quick benchmark template showing cpu and epoch times
+  ## a quick benchmark template showing cpu and epoch times with repeat looping param
+  ## 
+  ## .. code-block:: nim
+  ##    benchmark("whatever",1000):
+  ##        printLn("Kami makan tiga kali setiap hari.",randcol())
+  ##
+  ##
+  ## .. code-block:: nim
+  ##        import nimcx,algorithm
+  ##
+  ##          proc doit() =
+  ##              var s = createSeqFloat(10,9)
+  ##              var c = 0
+  ##              s.sort(system.cmp,order = Descending)
+  ##              for x in s:
+  ##                  inc c 
+  ##                  printLnBiCol(fmtx([">4","<6","<f15.7"],$c," :",$x))
+  ##
+  ##          template cxcounter(bx:int):int =
+  ##                  inc bx
+  ##                  bx
+  ##
+  ##          var x = 0
+  ##          benchmark("doit",10000):
+  ##                  doit()
+  ##                  hline(30)
+  ##                  printLn( " " & uparrow & " Run " & $cxcounter(x),greenyellow)
+  ##                  echo()
+  ##                  
+  ##          showBench() 
+    
+  ##    
+  ##    
+  
+  var zbres:Benchmarkres
+  let t0 = epochTime()
+  let t1 = cpuTime()
+  repeats(repeatcount):
+      code
+  let elapsed  = epochTime() - t0
+  let elapsed1 = cpuTime()   - t1
+  zbres.epoch  = ff(elapsed,4)  
+  zbres.cpu = ff(elapsed1,4) 
+  zbres.bname = benchmarkName
+  zbres.repeats = $repeatcount
+  benchmarkresults.add(zbres)
+  
+    
+template benchmark*(benchmarkName: string,code: typed) =
+  ## benchmark
+  ## 
+  ## a quick benchmark template showing cpu and epoch times without repeat
   ## 
   ## .. code-block:: nim
   ##    benchmark("whatever"):
@@ -4371,15 +4342,17 @@ template benchmark*(benchmarkName: string, code: typed) =
   var zbres:Benchmarkres
   let t0 = epochTime()
   let t1 = cpuTime()
-  code
+  let repeatcount = 1
+  repeats(repeatcount):
+      code
   let elapsed  = epochTime() - t0
   let elapsed1 = cpuTime()   - t1
   zbres.epoch  = ff(elapsed,4)  
   zbres.cpu = ff(elapsed1,4) 
   zbres.bname = benchmarkName
+  zbres.repeats = $repeatcount
   benchmarkresults.add(zbres)
-
-
+  
 
 proc showBench*() =
  ## showBench
@@ -4388,11 +4361,15 @@ proc showBench*() =
  ## 
  if benchmarkresults.len > 0: 
     for x in  benchmarkresults:
-      echo()
-      var tit = " BenchMark        Timing " & spaces(25)
-      printLn(tit,chartreuse,styled = {styleUnderScore},substr = tit)
-      printLn(dodgerblue & " [" & salmon & x.bname & dodgerblue & "]" & spaces(7) & cornflowerblue & "Epoch Time : " & white & x.epoch & " secs")
-      printLn(dodgerblue & " [" & salmon & x.bname & dodgerblue & "]" & spaces(7) & cornflowerblue & "Cpu   Time : " & white & x.cpu & " secs")    
+       echo()
+      
+       let tit = " BenchMark        Timing " & spaces(20) & "Runs/Loops : " & x.repeats
+       if parseInt(x.repeats) > 0:
+          printLn(tit,chartreuse,styled = {styleUnderScore},substr = tit)
+       else:
+          printLn(tit,red,styled = {styleUnderScore},substr = tit)
+       printLn(dodgerblue & " [" & salmon & x.bname & dodgerblue & "]" & spaces(7) & cornflowerblue & "Epoch Time : " & white & x.epoch & " secs")
+       printLn(dodgerblue & " [" & salmon & x.bname & dodgerblue & "]" & spaces(7) & cornflowerblue & "Cpu   Time : " & white & x.cpu & " secs")   
     echo()
     benchmarkresults = @[]
     printLn("Benchmark results end. Results cleared.",goldenrod)
@@ -4461,7 +4438,7 @@ template withFile*(f,fn, mode, actions: untyped): untyped =
                 close(f)
         else:
                 echo()
-                printLnBiCol("Error : Cannot open file " & fn,":",red,yellow)
+                printLnBiCol("Error : Cannot open file " & fn,red,yellow,":",0,false,{})
                 quit()
          
          
@@ -4496,6 +4473,7 @@ proc fromCString*(p: pointer, len: int): string =
   ## 
   result = newString(len)
   copyMem(result.cstring, p, len)
+         
          
 proc showPalette*(coltype:string = "white") = 
     ## ::
@@ -5573,7 +5551,9 @@ proc doFinish*() =
         print(fmtx(["<",">5"],ff(epochtime() - cx.start,3)," secs"),goldenrod)
         printLnBiCol("  Compiled on: " & $CompileDate & " at " & $CompileTime)
         if detectOs(OpenSUSE):  # some additional data if on openSuse systems
-            printLnBiCol("Kernel     :  " & uname().split("#")[0],yellowgreen,lightslategray,":",0,false,{})
+            let ux = uname().split("#")[0]
+            let ux1 = ux.split(" ")
+            printLnBiCol("Kernel     :  " &  ux1[2] & "  Computer : " & ux1[1] & "  System : " & ux1[0],yellowgreen,lightslategray,":",0,false,{})
             let rld = release().splitLines()
             let rld3 = rld[2].splitty(":")
             let rld4 = rld3[0] & spaces(2) & strip(rld3[1])
