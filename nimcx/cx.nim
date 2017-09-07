@@ -15,7 +15,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-09-03
+##     Latest      : 2017-09-09
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -3862,9 +3862,7 @@ proc pingy*(dest:string,pingcc:int = 3,col:string = termwhite) =
 template quickList*[T](c:int,d:T,cw:int = 7 ,dw:int = 15) =
       ## quickList
       ## 
-      ## a simple template which allows listing of 2 columns in format
-      ## 
-      ## count data
+      ## a simple template which allows listing of 2 columns in format count data
       ## 
       ## cw and dw are column width adjuster 
       ## 
@@ -4151,9 +4149,9 @@ proc nimcat*(curFile:string,countphrase : varargs[string,`$`] = "")=
     ## a simple file lister which shows all rows and some stats as well as allows counting of tokens
     ## a file name without extension will be assuemed to be .nim  ... it is the nimcat afterall
     ## countphrase is case sensitive
-    ## # 
-    ## # 
-    ## # 
+    ## 
+    ##  
+    ##  
     ## .. code-block: nim
     ## 
     ##   nimcat("notes.txt")                   # show all lines
@@ -5507,6 +5505,8 @@ proc infoLine*() =
     print(CXLIBVERSION,brightblack)
     print(" | ",brightblack)
     print($someGcc & " | ",brightblack)
+    print("Size : " & ff2(float(getfilesize(getAppFilename())) / 1000.0) & " Kb",peru) # appears to be approximate
+    print(" | ",brightblack)
     qqTop()
 
 

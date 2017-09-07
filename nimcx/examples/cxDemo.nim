@@ -262,7 +262,7 @@ proc sierpCarpetDemo2*(n:int=2,xpos:int = 1,sa:string = "* ",sb:string = spaces(
     
 proc allRuneTest() =
     # shows 58000 unicode chars in color with their ord numbers
-     tableRune(uniall(true),"rand",cols = 8,pause=0.02)
+     tableRune(uniall(true),fgr="rand",cols = 8)
      decho(2)
 
 
