@@ -1,6 +1,6 @@
 {.deadCodeElim: on.}
 
-##  {.noforward: on.}   # future feature
+##  {.noforward: on.}   # future feature hopefully
 ## ::
 ## 
 ##     Library     : nimcx.nim
@@ -147,8 +147,9 @@ when defined(windows):
   {.fatal   : "CX does not support Windows at this stage and never will !".}
 
 when defined(posix):
-  {.hint    : "\x1b[38;2;154;205;50m \u2691 NimCx officially works only on Linux. Testing is done on OpenSUSE Tumbleweed ! \u2691".}
-
+  {.hint    : "\x1b[38;2;154;205;50m \u2691 \x1b[38;2;221;160;221m NimCx     : Officially works only on Linux. Developed on : OpenSUSE Tumbleweed ! \x1b[38;2;154;205;50m \u2691".}
+  {.hint     :"\x1b[38;2;154;205;50m \u2691  Compiling :" &  "\x1b[38;2;255;100;0m Please wait , Nim will be right back ! \xE2\x9A\xAB" &  " " &  "\xE2\x9A\xAB" & spaces(2)  & "\x1b[38;2;154;205;50m \u2691" & spaces(1) .} 
+  
 const CXLIBVERSION* = "0.9.9"
 
 let start* = epochTime()  ##  simple execution timing with one line see doFinish()
@@ -1690,7 +1691,7 @@ template currentLine* =
    ## currentLine
    ## 
    ## simple template to return line number , maybe usefull for debugging 
-   printLnBiCol("Line -> " & $instantiationInfo().line,"->",peru,red)
+   printLnBiCol("Line -> " & $instantiationInfo().line,peru,red,"->",0,false,{})
 
 template randPastelCol*: string = random(pastelset)
    ## randPastelCol
@@ -2587,8 +2588,7 @@ proc printBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:str
 proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) =
      ## printLnBiCol
      ##
-     ## a newer version of printLnBiCol  currently under development
-     ## changes:
+     ## changes to prev. versions:
      ## sep moved to behind colors in parameter ordering
      ## and input can be varargs which gives much better flexibility
      ## if varargs are to be printed all parameters need to be specified.
@@ -3306,7 +3306,7 @@ proc printBigLetters*(aword:string,fgr:string = yellowgreen ,bgr:string = black,
   ## .. code-block:: nim
   ##       printBigLetters("ABA###RR#3",xpos = 1)
   ##       printBigLetters("#",xpos = 1)   # the '#' char is used to denote a blank space or to overwrite
-  ##
+  ##       printBigLetters("Nim#DOES#IT#AGAIN",xpos = 1,fun=true)
 
   var xpos = xpos
   template abc(s:typed,xpos:int) =
@@ -4382,7 +4382,7 @@ proc typeTest*[T](x:T): T =
      printLnBiCol("Value    : " & $x)
      
 proc typeTest2*[T](x:T): T =
-     # same as typetes but without showing values (which may be huge in case of seqs)
+     # same as typetest but without showing values (which may be huge in case of seqs)
      printLnBiCol("Type       : " & $type(x),xpos = 3)   
      
 
@@ -4584,12 +4584,28 @@ proc spellInteger*(n: int64): string =
     reverse sq
     lastAnd(sq.join(" "))
  
-
  
-proc spellFloat*(n:float64,sep:string = ".",sepname:string = " dot "):string = 
+proc spellInteger2*(n: string): string =
+  ## spellInteger2
+  ## 
+  ## used in after comma part of a float , we just put out the numbers one by one
+  ## 
+  ## code adapted from rosettacode and slightly updated to make it actually compile
+  ## 
+  result = ""
+  
+  var nn = n
+  for x in nn:
+     if x == '0':
+        result = result & "zero" & spaces(1)
+     else:   
+        result = result & spellInteger(parseInt($x)) & spaces(1)
+  
+proc spellFloat*(n:float64,currency:bool = false,sep:string = ".",sepname:string = " dot "):string = 
   ## spellFloat
   ## 
-  ## writes out a float number in english 
+  ## writes out a float number in english with up to 14 positions after the dot
+  ## currency denotes spelling of an amount
   ## sep and sepname can be adjusted as needed
   ## default sep = "."
   ## default sepname = " dot "
@@ -4599,18 +4615,30 @@ proc spellFloat*(n:float64,sep:string = ".",sepname:string = " dot "):string =
   ##  printLn spellFloat(0.00)
   ##  printLn spellFloat(234)
   ##  printLn spellFloat(-2311.345)
-  ## 
-  var ok = ""
+  ##  println spellFloat(5212311.00).replace("dot","and") & "hundreds"
+  ##  printLn spellFloat(122311.34,true).replace("dot","dollars and") & " cents"
+  ##  
+
   if n == 0.00:
-      ok = spellInteger(0)
+      result = spellInteger(0)
   else:
-      #split it into two integer parts
+      #split it into two integer parts  the back part should be spelled differently and there is an issue with 123.00234 !
       var nss = split($n,".")
       if nss[0].len == 0:  nss[0] = $0
       if nss[1].len == 0:  nss[1] = $0
-      ok = spellInteger(parseInt(nss[0])) & sepname &  spellInteger(parseInt(nss[1]))
-       
-  result = ok   
+      
+      # depending on the situation we might want
+      # 250.365
+      # two hundred fifty dot three six five
+      # two hundred fifty dot three hundred sixty five 
+      # but we may also want 
+      # two hundred fifty dollars and thirty four cents
+      if currency == false:
+          result = spellInteger(parseInt(nss[0])) & sepname &  spellInteger2(nss[1])
+      else:
+          # we assume its a currency float value
+          result = spellInteger(parseInt(nss[0])) & sepname &  spellInteger(parseInt(nss[1]))
+  
     
 
 proc showStats*(x:Runningstat,n:int = 3,xpos:int = 1) =
@@ -5385,7 +5413,7 @@ template infoProc*(code: untyped) =
   ##      
   ##    infoproc(test1("zz",1234,789.88))
   ##    infoproc:
-  ##        printLnBiCol(fmtx(["","",""],"Test2 output  : ",rightarrow & spaces(1),test2("nice",2000)),colLeft = cyan,colRight=gold)
+  ##        printLnBiCol(fmtx(["","",""],"Test2 output  : ",rightarrow & spaces(1),test2("nice",2000)),colLeft = cyan,colRight=gold,":",0,false,{})
   ##    doFinish()
   ##
   ##
@@ -5393,7 +5421,7 @@ template infoProc*(code: untyped) =
   try:
       let pos = instantiationInfo()
       code
-      printLnBiCol("Called by: $1 Line: $2 with: '$3'" % [pos.filename,$pos.line, astToStr(code)],colLeft=gold)
+      printLnBiCol("[infoproc    -->] $1 Line: $2 with: '$3'" % [pos.filename,$pos.line, astToStr(code)],colLeft=gold,colRight=bblack,"]",0,false,{})
   except:
       printLnBiCol("Error: Checking instantiationInfo ",colLeft=red)
       discard
@@ -5409,6 +5437,7 @@ template checkLocals*() =
   echo()
   dlineLn(100)
   for name, value in fieldPairs(locals()): 
+      print("[checkLocals -->] ",gold) 
       printLnBiCol(fmtx(["","<20","","","","","<25","","","","",""],"Variable : ",$name,spaces(3),peru,"Type : ",termwhite,$type(value),spaces(1),aqua,"Value : ",termwhite,$value))
   
 
