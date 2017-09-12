@@ -420,5 +420,29 @@ proc rulerDemo*(xpos:int = 0,ypos:int = 12) =
       showRuler(fgr=ahcol1) # bottom
       curup(ypos + 3)
       sleepy(0.03)
-      
-     
+   
+   
+proc animNimcx() =                  
+        # experimental font demo      
+        for nn in 0.. 2:            
+           loopy2(0,15):
+                cleanscreen()
+                cxn(xloopy,dodgerblue,coltop=red)
+                cxi(xloopy+12,lime,coltop=red)
+                cxm(xloopy+17,gold,coltop=red)
+                cxc(xloopy+29,pink,coltop=red)
+                cxx(xloopy+23,coltop=red) 
+                sleepy(0.05)
+
+
+
+proc printMini() =
+  # experimental font demo  
+  loopy2(0,8):
+        cleanscreen()
+        cxm(xloopy,gold,coltop=red)
+        cxi(xloopy+12,dodgerblue,coltop=red)
+        cxn(xloopy+17,gold,coltop=red)
+        cxi(xloopy+29,dodgerblue,coltop=red)  
+        sleepy(0.15)   
+        

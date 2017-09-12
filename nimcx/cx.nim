@@ -15,7 +15,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-09-09
+##     Latest      : 2017-09-12
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -222,6 +222,14 @@ proc bbright(bg:BackgroundColor): string =
     inc(gBG, 60)
     result = "\e[" & $gBG & 'm'
 
+# block chars for font building     
+let efb1 = "▀"
+let efb2 = "▒"
+let efb3 = "▃"
+let efl1 = "▍"
+let efr1 = "▇"
+let efr2 = "⛆"
+let efs1 = "▨"    
 
 const
 
@@ -1416,12 +1424,14 @@ template `*`*(s:string,n:int):string =
     
 
    
-proc getRndInt*(mi:int = 0 , ma:int = int.high):int =
+proc getRndInt*(mi:int = 0 , ma: int = int.high):int =
     ## getRndInt
     ##
     ## returns a random int between mi and < ma
-    ##
-    result = random(mi..ma)
+    ## so for 0 or 1 we need random(0..2)
+    var maa = ma
+    if ma == 1: maa = 2
+    result = random(mi..maa)
 
 
 proc fibonacci*(n: int):float =  
@@ -1746,11 +1756,9 @@ proc getRandomSignI*(): int =
     ## 
     ## returns -1 or 1 integer  to have a random positive or negative multiplier
     ##  
-    var s = getRndInt(0,1) 
-    if s == 0:
-       result = -1
-    else :
-       result = 1
+    result = 1
+    if 0 == getRndInt(0,1):  result = -1
+   
 
     
 proc getRandomSignF*():float = 
@@ -1758,12 +1766,10 @@ proc getRandomSignF*():float =
     ## 
     ## returns -1.0 or 1.0 float  to have a random positive or negative multiplier
     ##  
-   
-    var s = getRndInt(0,1) 
-    if s == 0:
-       result = -1.0   
-    else :
-       result = 1.0
+    result = 1.0
+    if 0 == getRndInt(0,1) : result = -1.0   
+    
+       
 
 
 proc fmtengine[T](a:string,astring:T):string =
@@ -4226,10 +4232,8 @@ proc verifyHash*[T](kata:string,hsx:T):bool  =
   ## checks hash of a string and returns true or false
   ## 
   result = false
-  if hash(kata) == hsx:
-        result = true
-  else:
-        result = false        
+  if hash(kata) == hsx: result = true
+       
         
 proc createHash*(kata:string):auto = 
     ## createHash
@@ -4360,7 +4364,6 @@ proc showBench*() =
  if benchmarkresults.len > 0: 
     for x in  benchmarkresults:
        echo()
-      
        let tit = " BenchMark        Timing " & spaces(20) & "Runs/Loops : " & x.repeats
        if parseInt(x.repeats) > 0:
           printLn(tit,chartreuse,styled = {styleUnderScore},substr = tit)
@@ -4453,7 +4456,7 @@ proc pswwaux*() =
    decho(2)
          
 
-template loopy*[T](ite:T,st:typed) =
+template loopy*[T](ite:T,st:untyped) =
      ## loopy
      ##
      ## the lazy programmer's quick simple for-loop template
@@ -4463,6 +4466,20 @@ template loopy*[T](ite:T,st:typed) =
      ##
      for x in ite: st
 
+     
+template loopy2*(mi:int = 0,ma:int = 5,st:untyped) =
+     ## loopy2
+     ##
+     ##  the advanced version of loopy the simple for-loop template
+     ##  which also injects the loop counter xloopy and loops over a block of code
+     ##
+     ##  loopy2(1,10):
+     ##      printLnBiCol(xloopy , "  The house is in the back.",randcol(),randcol(),":",0,false,{})
+     ##      printLn("Some integer : " , getRndInt())
+     ##
+     for xloopy {.inject.} in mi .. <ma: st    
+     
+     
 proc fromCString*(p: pointer, len: int): string =
   ## fromCString
   ## 
@@ -5451,6 +5468,110 @@ proc qqTop*() =
   print("o",brightred)
   print("p",cyan)
 
+  
+
+# nice font style but need to calc the kerning meaning distance from chars somehoe
+# currently trial and error also creating this font in code is slow .. 
+
+template cxn*(npos:int = 0,col:string=randcol(),coltop:string = lime) =
+        
+        loopy2(0,2):
+           let xpos = xloopy+npos
+           printLn(efb3,coltop,xpos=xpos)
+           loopy(0..4,printLn(efb2,col,xpos=xpos))
+           curup(6)
+        
+        curdn(1) 
+        loopy2(0,4):
+              printLn(efs1,col,xpos=xloopy + 2 + npos)
+        curup(5) 
+
+        loopy2(0,2):
+            let xpos = 7 + xloopy + npos
+            printLn(efb3,coltop,xpos=xpos)
+            loopy(0..4, printLn(efb2,col,xpos=xpos))
+            curup(6)
+    
+
+# experimental : font building  implemented N,M,I,C,X
+template cxi*(npos:int = 0,col:string=randcol(),coltop:string = lime) =    
+
+        loopy2(0,2):
+           let xpos = xloopy+npos
+           printLn(efb3 ,coltop,xpos=xpos)
+           loopy(0..4,printLn(efb2,col,xpos=xpos))
+           curup(6)
+           
+           
+template cxm*(npos:int=0,col:string=randcol(),coltop:string = lime) =
+       
+        loopy2(0,2):
+              let xpos = xloopy+npos
+              printLn(efb3,coltop,xpos=xpos)
+              loopy(0..4,printLn(efb2,col,xpos=xpos))
+              curup(6)
+        
+        curdn(1) 
+        loopy2(0,2):
+              let xpos = xloopy+npos+2
+              printLn(efs1,col,xpos=xpos)
+        loopy2(0,3):
+              let xpos = xloopy+npos+4
+              print(efs1,col,xpos=xpos)
+              curup()
+              
+        loopy2(0,2):
+        
+              let xpos = xloopy+npos+7
+              printLn(efb3,coltop,xpos=xpos)
+              loopy(0..4,printLn(efb2,col,xpos=xpos))
+              curup(6) 
+ 
+ 
+template cxc*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
+      
+      loopy2(0,2):
+              let xpos = xloopy+npos
+              #printLn(efb3,coltop,xpos=xpos)
+              printLn(" ",xpos=xpos)
+              printLn(efb3,coltop,xpos=xpos)
+              loopy(0..2,printLn(efb2,col,xpos=xpos))
+              printLn(" ",xpos=xpos)
+              curup(6)
+      loopy2(0,5):
+              let xpos = xloopy+npos+2
+              printLn(efb3,coltop,xpos=xpos)
+              printLn(efb2,col,xpos=xpos)
+              loopy(0..2,printLn(" ",col,xpos=xpos))
+              printLn(efb2,col,xpos=xpos)
+              curup(6)
+              
+              
+template cxx*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
+            let xpos = npos+5
+            printLn(efb3 * 2 & spaces(5) & efb3 * 2, coltop,xpos=xpos)
+            printLn(efb2 * 2 & spaces(5) & efb2 * 2,col,xpos=xpos)
+            printLn(spaces(2) & efs1 * 2 & spaces(1) & efs1 * 2,col,xpos=xpos)
+            printLn(spaces(4) & efl1 * 2,col,xpos=xpos)
+            printLn(spaces(2) & efs1 * 2 & spaces(1) & efs1 * 2,col,xpos=xpos)
+            printLn(efb2 * 2 & spaces(5) & efb2 * 2,col,xpos=xpos)
+            
+proc printNimcx*(npos:int = tw div 2 - 24) =
+        ## printNimcx
+        ## 
+        ##  experiments in block font building , default is center in terminal
+        ## 
+        echo()
+        var xpos = npos
+        cxn(xpos,dodgerblue,coltop=red)
+        cxi(xpos+12,lime,coltop=red)
+        cxm(xpos+17,gold,coltop=red)
+        cxc(xpos+29,pink,coltop=red)
+        cxx(xpos+34,coltop=red) 
+        echo()
+              
+  
+  
 
 proc doInfo*() =
   ## doInfo
@@ -5628,7 +5749,7 @@ proc handler*() {.noconv.} =
 
 
 
-proc cxm*() =
+proc docxm*() =
 
   clearup()
   decho(2)
@@ -5636,16 +5757,17 @@ proc cxm*() =
   clearup()
   decho(3)
   colorio()
-  let smm = "   import nimcx and your terminal comes alive with color ...  "
+  let smm = "      import nimcx and your terminal comes alive with color ...  "
   for x in 0.. 10:
         cleanScreen()
         decho(5)
-        printBigLetters("NIMCX",xpos = tw div 4 + 6,fun=true)
-        decho(8)
+        #printBigLetters("NIMCX",xpos = tw div 4 + 6,fun=true)
+        printNimcx()
+        decho(3)
         rainbow2(smm,centered = false,colorset = colorsPalette("pastel"))
         print(innocent,truetomato)
         for x in 0.. (tw - 5) div 5: print(innocent,randcol())
-        sleepy(0.106)
+        sleepy(0.15)
         curup(1)
         
   doFinish()
@@ -5664,7 +5786,7 @@ system.addQuitProc(resetAttributes)
 
 
 when isMainModule:
-    cxm()
+    docxm()
     
     
 # END OF CX.NIM #

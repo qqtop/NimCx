@@ -241,6 +241,13 @@ decho(5)
 # here showing iching
 rainbow2Demo()
 decho(5)
+sleepy(2)
 
+   
+animNimcx()   
+decho(8) 
+printMini()
+decho(10)
+printNimcx()
 
 doFinish()
