@@ -422,7 +422,7 @@ proc rulerDemo*(xpos:int = 0,ypos:int = 12) =
       sleepy(0.03)
    
    
-proc animNimcx() =                  
+proc animNimcx*() =                  
         # experimental font demo      
         for nn in 0.. 2:            
            loopy2(0,15):
@@ -436,7 +436,7 @@ proc animNimcx() =
 
 
 
-proc printMini() =
+proc printMini*() =
   # experimental font demo  
   loopy2(0,8):
         cleanscreen()
