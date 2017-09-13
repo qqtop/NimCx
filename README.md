@@ -4,7 +4,6 @@
 ![Image](http://qqtop.github.io/nimcxfont.pngf?raw=true)
 
 
-
 Color and Utilities for the Linux Terminal
 -------------------------------------------
 
