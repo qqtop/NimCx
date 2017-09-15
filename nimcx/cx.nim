@@ -1,5 +1,3 @@
-{.deadCodeElim: on.}
-
 ##  {.noforward: on.}   # future feature hopefully
 ## ::
 ## 
@@ -15,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-09-13
+##     Latest      : 2017-09-15
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -27,7 +25,7 @@
 ##
 ##                   for easy colored display in a linux terminal and also contains
 ##                   
-##                   a wide selection of utility functions . 
+##                   a wide selection of utility functions and useable snippets. 
 ##                   
 ##                   Currently the library consists of cx.nim and cxutils.nim , both files are automatically
 ##                   
@@ -50,7 +48,7 @@
 ##
 ##                   with var. terminal font : monospace size 9.0 - 15  tested
 ##
-##                   xterm,bash,st terminals support truecolor ok
+##                   xterm,bash,st ,zsh  terminals support truecolor ok
 ##
 ##                   some ubuntu based gnome-terminals may not be able to display all colors
 ##
@@ -113,7 +111,7 @@
 ##   
 ##                   to avoid library bload.
 ##
-##     Funding     : If you are happy send any amount of bitcoins you like to a nice wallet : 
+##     Funding     : If you are happy send any amount of bitcoins you like to this wallet : 
 ##     
 ##                   194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
 ##                    
@@ -132,11 +130,9 @@ export terminal.Style,terminal.getch  # make terminal style constants available 
 var someGcc = "" 
 if defined(gcc) : someGcc = "gcc"
 # below needs to be tested    
-#[elif defined(llvm_gcc):  someGcc = "llvm_gcc"
-elif defined(clang): someGcc = "clang"
+#elif defined(llvm_gcc):  someGcc = "llvm_gcc"
+#elif defined(clang): someGcc = "clang"
 elif defined(cpp) : someGcc = "c++ target"
-elif defined(objc): someGcc = "Objective C target"
-elif defined(js): someGcc = "JavaScript target"]#
 else: someGcc = "undefined"    
 
 when defined(macosx):
@@ -147,13 +143,15 @@ when defined(windows):
   {.fatal   : "CX does not support Windows at this stage and never will !".}
 
 when defined(posix):
-  {.hint    : "\x1b[38;2;154;205;50m \u2691 \x1b[38;2;221;160;221m NimCx     : Officially works only on Linux. Developed on : OpenSUSE Tumbleweed ! \x1b[38;2;154;205;50m \u2691".}
+  {.hint    : "\x1b[38;2;154;205;50m \u2691  NimCx     :" &  "\x1b[38;2;255;215;0m Officially works on Linux only." & spaces(13) & "\x1b[38;2;154;205;50m \u2691".}
   {.hint     :"\x1b[38;2;154;205;50m \u2691  Compiling :" &  "\x1b[38;2;255;100;0m Please wait , Nim will be right back ! \xE2\x9A\xAB" &  " " &  "\xE2\x9A\xAB" & spaces(2)  & "\x1b[38;2;154;205;50m \u2691" & spaces(1) .} 
+  {.hints: off.}   # turn on off as per requirement
+  
   
 const CXLIBVERSION* = "0.9.9"
 
-let start* = epochTime()  ##  simple execution timing with one line see doFinish()
-randomize()               ## seed random number generator 
+let start* = epochTime()  #  simple execution timing with one line see doFinish()
+randomize()               # seed random number generator 
 
 type
      NimCxCustomError* = object of Exception         
@@ -1655,7 +1653,6 @@ proc hline*(n:int = tw,col:string = white,xpos:int = 1)   ## forward declaration
 proc hlineLn*(n:int = tw,col:string = white,xpos:int = 1) ## forward declaration
 proc spellInteger*(n: int64): string                      ## forward declaration
 proc splitty*(txt:string,sep:string):seq[string]          ## forward declaration
-
 proc doFinish*()
 
 
@@ -4139,6 +4136,46 @@ proc createSeqFloat*(n:int = 10,prec:int = 3) : seq[float] =
        
        
        
+       
+proc seqLeft*[T](it : seq[T] , n: int) : seq[T] =
+    ## seqLeft
+    ## 
+    ## returns a new seq with n left end elements of the original seq 
+    try:
+        result = it
+        if it.len >= n: result = it[0.. <n]
+    except RangeError:
+        discard
+
+
+proc seqRight*[T](it : seq[T] , n: int) : seq[T] =
+    ## seqRight
+    ## 
+    ## returns a new seq with n right end elements of the original seq 
+   
+    try:
+        result = it
+        if n <= it.len : result = it[it.len - n.. <it.len]
+    except RangeError:
+        discard        
+        
+proc seqHighLite*[T](b:seq[T],b1:seq[T],col:string=gold) =
+   ## seqHighLite
+   ## 
+   ## displays the passed in seq with highlighting of subsequence
+   ## 
+   ## .. code-block:: nim
+   ##   import nimcx
+   ##   var b = createSeqInt(30,1,10)
+   ##   seqHighLite(b,@[5,6])   # subseq will be highlighted if found
+   ## 
+   ## 
+   var bs:string = $b1
+   bs = bs.replace("@[","")
+   bs.removesuffix(']')
+   printLn(b,col,styled = {styleReverse},substr = bs)       
+       
+       
 template bitCheck*(a, b: untyped): bool =
     ## bitCheck
     ## 
@@ -5830,7 +5867,7 @@ proc printMadeWithNim*(npos:int = tw div 2 - 60) =
         cxe(xpos + 30,randcol(),coltop=red)
         
         cxw(xpos + 42,randcol(),coltop=red)
-        cxi(xpos + 51,randcol(),coltop=red)
+        cxi(xpos + 52,randcol(),coltop=red)
         cxt(xpos + 58,randcol(),coltop=red)
         cxh(xpos + 68,randcol(),coltop=red)
         
