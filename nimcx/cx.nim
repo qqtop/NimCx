@@ -5508,7 +5508,7 @@ proc qqTop*() =
   
 
 
-# experimental : font building  
+# experimental font building  
 
 
 template cxZero*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
@@ -5538,7 +5538,7 @@ template cx2*(npos:int=0,col:string=randcol(),coltop:string = lime) =
          println(spaces(2) & efb3 * 4 & spaces(4),coltop,xpos = xpos)
          println(spaces(1) & efs2 & efb1 & efb1 * 2  & efb1 & efs2 & spaces(2),col,xpos = xpos)
          printLn(spaces(6) & efs2 * 1 & spaces(1),col,xpos = xpos)
-         printLn(spaces(2) & efs2 * 3  & spaces(4),col,xpos = xpos)
+         printLn(spaces(2) & efs2 * 3  & efb1 & spaces(3),col,xpos = xpos)
          printLn(spaces(1) & efs2 * 1  & spaces(4)  & spaces(2),col,xpos = xpos)
          println(spaces(1) & efb1 * 1 & efb2 * 4  & efb1 * 1 & spaces(2),col,xpos = xpos)
          curup(6) 
@@ -6011,7 +6011,7 @@ proc printMadeWithNim*(npos:int = tw div 2 - 60) =
         
         echo()
               
-    
+# end experimental font    
   
 
 proc doInfo*() =
