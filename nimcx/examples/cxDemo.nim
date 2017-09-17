@@ -428,21 +428,19 @@ proc animNimcx*() =
            loopy2(0,15):
                 cleanscreen()
                 cxn(xloopy,dodgerblue,coltop=red)
-                cxi(xloopy+12,lime,coltop=red)
-                cxm(xloopy+17,gold,coltop=red)
-                cxc(xloopy+29,pink,coltop=red)
-                cxx(xloopy+23,coltop=red) 
+                cxi(xloopy+9,lime,coltop=red)
+                cxm(xloopy+16,gold,coltop=red)
+                cxc(xloopy+27,pink,coltop=red)
+                cxx(xloopy+35,coltop=red) 
                 sleepy(0.05)
-
-
 
 proc printMini*() =
   # experimental font demo  
   loopy2(0,8):
         cleanscreen()
-        cxm(xloopy,gold,coltop=red)
-        cxi(xloopy+12,dodgerblue,coltop=red)
-        cxn(xloopy+17,gold,coltop=red)
-        cxi(xloopy+29,dodgerblue,coltop=red)  
+        cxm(xloopy,randcol(),coltop=red)
+        cxi(xloopy+9,dodgerblue,coltop=red)
+        cxn(xloopy+15,gold,coltop=red)
+        cxi(xloopy+23,dodgerblue,coltop=red)  
         sleepy(0.15)   
         

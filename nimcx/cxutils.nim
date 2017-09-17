@@ -14,9 +14,9 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-08-27
+##     Latest      : 2017-09-16
 ##
-##     Compiler    : Nim >= 0.16
+##     Compiler    : Nim >= 0.17.1
 ##
 ##     OS          : Linux
 ##

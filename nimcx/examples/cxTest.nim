@@ -6,7 +6,7 @@
 ## best run in a large console window
 
 
-import nimcx,cxDemo,sequtils,times,unicode,cxutils
+import cx,cxDemo,sequtils,times,unicode,cxutils
 
 superHeader("Testing print and echo procs from cx.nim and run demos")
 
@@ -128,7 +128,7 @@ println("something blue ", colPalette("blue",5) )  #show entry 5 of the blue pal
 decho(2)
 # showing randcol with custom palette selection and full randcol with all colors
 for x in 0.. <colPaletteLen(mycol):   
-  print(rightarrow & "what 12345678909 ",randCol(mycol))
+  print(rightarrow & "what 12345678909 ",randCol2(mycol))
   println("  what 12345678909 ",randCol())
   
   
@@ -243,6 +243,8 @@ rainbow2Demo()
 decho(5)
 sleepy(2)
 
+
+# experimental font tests
    
 animNimcx()   
 decho(8) 
@@ -282,12 +284,35 @@ cxk(10)
 cxe(20)
 cxk(30)
 cxs(40)
-cxexc(50,truetomato)
 cxpoint(60)
 cxhyphen(70)
 decho(10)
+
+loopy2(0,20):
+    cleanscreen()
+    cx1(1)
+    cx2(10)
+    cx3(20)
+    cx4(30)
+    cx5(40)
+    cx6(50)
+    cx7(60)
+    cx8(70)
+    cx9(80)
+    cxzero(90)
+    cxpoint(100)
+    cxhyphen(110)
+    decho(10)
+    loopy2(0,6):
+       cxgrid(10 * xloopy,col = "blue",coltop=red)
+       cxgrid(10 * xloopy + 60,col = "light",coltop=blue)
+    sleepy(0.5)
+
+decho(10)
+cleanscreen()
 printNimcx()
 decho(10)
 printMadeWithNim()
+
 decho(10)
 doFinish()

@@ -221,13 +221,13 @@ proc bbright(bg:BackgroundColor): string =
     result = "\e[" & $gBG & 'm'
 
 # block chars for font building     
-let efb1 = "▀"
-let efb2 = "▒"
-let efb3 = "▃"
-let efl1 = "▍"
-let efr1 = "▇"
-let efr2 = "⛆"
-let efs2 = "▨"    
+let efb1* = "▀"
+let efb2* = "▒"
+let efb3* = "▃"
+let efl1* = "▍"
+let efr1* = "▇"
+let efr2* = "⛆"
+let efs2* = "▨"    
 
 const
 
@@ -1534,7 +1534,7 @@ template colPaletteName*(coltype:string,n:int): auto =
  
 
 
-template randCol*(coltype:string): auto =
+template randCol2*(coltype:string): auto =
          ## ::
          ##   randCol
          ##   
@@ -1556,7 +1556,7 @@ template randCol*(coltype:string): auto =
          ts[rndSample(rxColt)]
   
 
-template randCol*: string = random(colorNames)[1]
+template randCol*(): string = random(colorNames)[1]
    ## randCol
    ##
    ## get a randomcolor from colorNames , no filter is applied 
@@ -5510,62 +5510,145 @@ proc qqTop*() =
 
 # experimental : font building  
 
-template cxi*(npos:int = 0,col:string=randcol(),coltop:string = lime) =    
 
-        loopy2(0,2):
-           let xpos = xloopy+npos+7
-           printLn(efb3 ,coltop,xpos=xpos)
-           loopy(0..4,printLn(efb2,col,xpos=xpos))
-           curup(6)
+template cxZero*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
+      
+         let xpos = npos + 5
+         println(efb3 * 7,coltop,xpos = xpos)
+         println(efb2 * 7,col,xpos = xpos)
+         loopy(0..2,printLn(efb2 * 2 & spaces(3) & efb2 * 2 ,col,xpos = xpos))
+         println(efb2 * 7,col,xpos = xpos)
+         curup(6)         
+          
+template cx1*(npos:int = 0,col:string=randcol(),coltop:string = lime) =    
+       
+          let xpos = npos+5
+          printLn(spaces(4) & efb3 * 2 ,coltop,xpos=xpos)
+          println(spaces(3) & efb1 & efb2 * 2 ,col,xpos=xpos)
+          println(spaces(1) & efb1 & spaces(2) & efb2 * 2 ,col,xpos=xpos)
+          println(spaces(4) & efb2 * 2 ,col,xpos=xpos)
+          println(spaces(4) & efs2 * 2,col,xpos=xpos)
+          println(spaces(4) & efb2 * 2 ,col,xpos=xpos)
+          curup(6) 
+           
+           
+template cx2*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
+      
+         let xpos = npos + 5
+         println(spaces(2) & efb3 * 4 & spaces(4),coltop,xpos = xpos)
+         println(spaces(1) & efs2 & efb1 & efb1 * 2  & efb1 & efs2 & spaces(2),col,xpos = xpos)
+         printLn(spaces(6) & efs2 * 1 & spaces(1),col,xpos = xpos)
+         printLn(spaces(2) & efs2 * 3  & spaces(4),col,xpos = xpos)
+         printLn(spaces(1) & efs2 * 1  & spaces(4)  & spaces(2),col,xpos = xpos)
+         println(spaces(1) & efb1 * 1 & efb2 * 4  & efb1 * 1 & spaces(2),col,xpos = xpos)
+         curup(6) 
+ 
+        
            
             
- 
-template cxc*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
+template cx3*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
+
+        let xpos = npos+5
+        printLn(spaces(1) & efb3 * 6,coltop,xpos=xpos)
+        printLn(spaces(1) & efb2 * 6,col,xpos=xpos)
+        printLn(spaces(5) & efb2 * 2,col,xpos=xpos)
+        printLn(spaces(3) & efs2 * 3& spaces(1),col,xpos=xpos)
+        printLn(spaces(5) & efb2 * 2,col,xpos=xpos)
+        printLn(spaces(1) & efb2 * 6,col,xpos=xpos)
+        curup(6)      
+
+
+template cx4*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
       
-              let xpos = npos+5
-              printLn(spaces(1) & efb3 * 6,coltop,xpos=xpos)
-              printLn(spaces(1) & efb2 * 6,col,xpos=xpos)
-              printLn(efb2 * 2,col,xpos=xpos)
-              printLn(efb2 * 2,col,xpos=xpos)
-              printLn(efb2 * 2,col,xpos=xpos)
-              printLn(spaces(1) & efb2 * 6,col,xpos=xpos)
-              curup(6)
+        let xpos = npos+5
+        printLn(spaces(5) & efb3 * 1,coltop,xpos=xpos)
+        printLn(spaces(5) & efb2 * 1,col,xpos=xpos)
+        printLn(spaces(3) & efb1 * 1 &  spaces(1) & efs2 & spaces(3),col,xpos=xpos)
+        printLn(spaces(1) & efs2 * 1 & spaces(3) & efb2,col,xpos=xpos)
+        printLn(spaces(0) & efs2 * 1 & spaces(1) & efs2 & spaces(1) & efs2 * 4,col,xpos=xpos)
+        printLn(spaces(4) & efb2 * 2,col,xpos=xpos)
+        curup(6)               
             
-      
+           
               
-template cxx*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
-            let xpos = npos+5
-            printLn(spaces(1) & efb3 * 2 & spaces(3) & efb3 * 2, coltop,xpos=xpos)
-            printLn(spaces(1) & efb2 * 2 & spaces(3) & efb2 * 2,col,xpos=xpos)
-            printLn(spaces(2) & efs2 * 2 & spaces(1) & efs2 * 2,col,xpos=xpos)
-            printLn(spaces(4) & efl1 * 2,col,xpos=xpos)
-            printLn(spaces(2) & efs2 * 2 & spaces(1) & efs2 * 2,col,xpos=xpos)
-            printLn(spaces(1) & efb2 * 2 & spaces(3) & efb2 * 2,col,xpos=xpos)
-            curup(6)
+template cx5*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
+      
+         let xpos = npos + 5
+         println(spaces(2) & efb3 * 5 & spaces(4),coltop,xpos = xpos)
+         println(spaces(1) & efs2 & efb1 * 5 & spaces(2),col,xpos = xpos)
+         printLn(spaces(1) & efs2 * 1 & spaces(7),col,xpos = xpos)
+         printLn(spaces(1) & efs2 & spaces(1) & efs2 * 1 & spaces(1) & efs2 & spaces(3),col,xpos = xpos)
+         printLn(spaces(6) & efb1 * 1 & spaces(1),col,xpos = xpos)
+         println(spaces(2) & efb1 & efb2 * 2  & efb1 & spaces(3),col,xpos = xpos)
+         curup(6)               
+                            
+              
+              
+              
+template cx6*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
+      
+         let xpos = npos + 5
+         println(spaces(2) & efb3 * 4 & spaces(4),coltop,xpos = xpos)
+         println(spaces(1) & efs2 & efb1 * 4 & spaces(3),col,xpos = xpos)
+         printLn(spaces(1) & efs2 * 1 & spaces(7),col,xpos = xpos)
+         printLn(spaces(1) & efb2 & spaces(1) & efs2 * 1 & spaces(1) & efs2 & spaces(3),col,xpos = xpos)
+         printLn(spaces(1) & efs2 * 1 & spaces(4) & efb1 * 1 & spaces(1),col,xpos = xpos)
+         println(spaces(2) & efb1 & efb2 * 2  & efb1 & spaces(3),col,xpos = xpos)
+         curup(6)               
+              
+     
+              
+template cx7*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
+      
+         let xpos = npos + 5
+         println(efb3 * 7,coltop,xpos = xpos)
+         println(efb2 * 7,col,xpos = xpos)
+         printLn(spaces(5) & efs2 * 1  & efb1 ,col,xpos = xpos)
+         loopy(0..2,printLn(spaces(4) & efb2 * 2 ,col,xpos = xpos))
+         curup(6)  
+ 
 
-            
-            
-                   
-template cxy*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
-            let xpos = npos + 5
-            printLn(spaces(1) & efb3 * 2 & spaces(3) & efb3 * 2, coltop,xpos=xpos)
-            printLn(spaces(1) & efb2 * 2 & spaces(3) & efb2 * 2,col,xpos=xpos)
-            printLn(spaces(2) & efs2 * 2 & spaces(1) & efs2 * 2,col,xpos=xpos)
-            printLn(spaces(4) & efl1 * 2,col,xpos=xpos)
-            printLn(spaces(4) & efl1 * 2,col,xpos=xpos)
-            printLn(spaces(3)  &  efl1 * 4,col,xpos=xpos)
-            curup(6)
-            
-
+template cx8*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
+      
+         let xpos = npos + 5
+         println(spaces(2) & efb3 * 4 & spaces(4),coltop,xpos = xpos)
+         println(spaces(1) & efs2 & efb1 & efb1 * 2  & efb1 & efs2 & spaces(2),col,xpos = xpos)
+         printLn(spaces(1) & efs2 * 1  & spaces(4) & efs2 * 1 & spaces(1),col,xpos = xpos)
+         printLn(spaces(2) & efb1 &  efs2 * 2  & efb1 * 1 & spaces(1),col,xpos = xpos)
+         printLn(spaces(1) & efs2 * 1  & spaces(4) & efs2 * 1 & spaces(1),col,xpos = xpos)
+         println(spaces(2) & efb1 & efb2 * 2  & efb1 & spaces(3),col,xpos = xpos)
+         curup(6) 
+ 
+ 
+ 
+ 
+template cx9*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
+      
+         let xpos = npos + 5
+         println(spaces(1) & efb3 * 6,coltop,xpos = xpos)
+         println(efs2 & efb1 * 3 & efb2 * 3,col,xpos = xpos)
+         printLn(spaces(0) & efs2 * 1  & spaces(4) & efb2 * 2,col,xpos = xpos)
+         printLn(spaces(1) & efb1 &  efs2 * 3 & efb1 * 2,col,xpos = xpos)
+         loopy(0..1,printLn(spaces(5) & efb2 * 2 ,col,xpos = xpos))
+         curup(6)  
+ 
+ 
+ 
+proc cx10*(npos:int = 0,col:string=randcol(),coltop:string = lime) =
+     cx1(npos,col,coltop)
+     cxzero(npos + 9,col,coltop)
+ 
+ 
+ 
 template cxa*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
-            let xpos = npos + 5
-            printLn(spaces(4) & efb3 * 2 & spaces(3), coltop,xpos=xpos)
-            printLn(spaces(4) & efb2 * 2,col,xpos=xpos)
-            printLn(spaces(2) & efb2 * 2 & spaces(2) & efb2 * 2,col,xpos=xpos)
-            printLn(spaces(2) & efs2 * 6 ,col,xpos=xpos)
-            printLn(spaces(1) & efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
-            printLn(spaces(1) & efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
-            curup(6)
+        let xpos = npos + 5
+        printLn(spaces(4) & efb3 * 2 & spaces(3), coltop,xpos=xpos)
+        printLn(spaces(4) & efb2 * 2,col,xpos=xpos)
+        printLn(spaces(2) & efb2 * 2 & spaces(2) & efb2 * 2,col,xpos=xpos)
+        printLn(spaces(2) & efs2 * 6 ,col,xpos=xpos)
+        printLn(spaces(1) & efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
+        printLn(spaces(1) & efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
+        curup(6)
                       
             
 template cxb*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
@@ -5579,7 +5662,18 @@ template cxb*(npos:int=0,col:string=randcol(),coltop:string = lime) =
          println(efb2 * 4 & spaces(1) & efb2,col,xpos=xpos)
          curup(6)
 
-                
+template cxc*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
+
+        let xpos = npos+5
+        printLn(spaces(1) & efb3 * 6,coltop,xpos=xpos)
+        printLn(spaces(1) & efb2 * 6,col,xpos=xpos)
+        printLn(efb2 * 2,col,xpos=xpos)
+        printLn(efs2 * 2,col,xpos=xpos)
+        printLn(efb2 * 2,col,xpos=xpos)
+        printLn(spaces(1) & efb2 * 6,col,xpos=xpos)
+        curup(6)
+              
+              
 template cxd*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
       
          let xpos = npos + 5
@@ -5590,7 +5684,85 @@ template cxd*(npos:int=0,col:string=randcol(),coltop:string = lime) =
          println(efb2 * 2 & spaces(4) & efb2,col,xpos=xpos)
          println(efb2 * 4 & spaces(1) & efb2,col,xpos=xpos)
          curup(6)
-     
+
+         
+  
+template cxe*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
+      
+         let xpos = npos + 5
+         printLn(efb3 * 7, coltop,xpos=xpos)
+         println(efb2 * 7,col,xpos=xpos)
+         println(efb2 * 2 ,col,xpos=xpos)
+         println(efb2 * 5 ,col,xpos=xpos)
+         println(efb2 * 2 ,col,xpos=xpos)
+         println(efb2 * 7, col,xpos=xpos)
+         curup(6)  
+ 
+template cxf*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
+      
+         let xpos = npos + 5
+         printLn(efb3 * 7, coltop,xpos=xpos)
+         println(efb2 * 7,col,xpos=xpos)
+         println(efb2 * 2 ,col,xpos=xpos)
+         println(efb2 * 5 ,col,xpos=xpos)
+         println(efb2 * 2 ,col,xpos=xpos)
+         println(efb2 * 2, col,xpos=xpos)
+         curup(6)  
+ 
+
+template cxg*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
+
+        let xpos = npos+5
+        printLn(spaces(1) & efb3 * 6,coltop,xpos=xpos)
+        printLn(spaces(1) & efb2 * 6,col,xpos=xpos)
+        printLn(efb2 * 2,col,xpos=xpos)
+        printLn(efb2 * 2 & spaces(2) & efs2 * 3,col,xpos=xpos)
+        printLn(efb2 * 2 & spaces(3) & efb2 * 2,col,xpos=xpos)
+        printLn(spaces(1) & efb2 * 6,col,xpos=xpos)
+        curup(6)
+             
+template cxh*(npos:int=0,col:string=randcol(),coltop:string = lime) =
+        let xpos = npos + 5
+        printLn(efb3 * 2 & spaces(4) & efb3 * 2, coltop,xpos=xpos)
+        printLn(efb2 * 2 & spaces(4) & efb2 * 2, col,xpos=xpos)
+        printLn(efb2 * 2 & spaces(4) & efb2 * 2, col,xpos=xpos)
+        printLn(efb2 * 2 & efs2 * 4 & efb2 * 2, col,xpos=xpos)
+        printLn(efb2 * 2 & spaces(4) & efb2 * 2, col,xpos=xpos)
+        printLn(efb2 * 2 & spaces(4) & efb2 * 2, col,xpos=xpos)
+        curup(6)   
+ 
+template cxi*(npos:int = 0,col:string=randcol(),coltop:string = lime) =    
+
+        loopy2(0,2):
+           let xpos = xloopy+npos+7
+           printLn(efb3 ,coltop,xpos=xpos)
+           loopy(0..4,printLn(efb2,col,xpos=xpos))
+           curup(6)
+           
+             
+template cxj*(npos:int = 0,col:string=randcol(),coltop:string = lime) =    
+
+        loopy2(0,2):
+           let xpos = xloopy+npos+5
+           printLn(spaces(2) & efb3 * 2 ,coltop,xpos=xpos)
+           loopy(0..2,printLn(spaces(2) & efb2 * 2,col,xpos=xpos))
+           printLn(efs2 & spaces(1) & efb2 * 2,col,xpos = xpos)
+           printLn(spaces(1) & efb2 & efb2,col,xpos=xpos)
+           curup(6) 
+           
+           
+           
+template cxk*(npos:int = 0,col:string=randcol(),coltop:string = lime) =    
+       
+           let xpos = npos+5
+           printLn(efb3 * 2 & spaces(4) & efb3 * 2,coltop,xpos=xpos)
+           println(efb2 * 2 & spaces(4) & efb1 * 2,col,xpos=xpos)
+           println(efb2 * 2 & spaces(2) & efs2 * 2,col,xpos=xpos)
+           println(efb2 * 2 & efs2 * 2,col,xpos=xpos)
+           println(efb2 * 2 & spaces(2) & efs2 * 2,col,xpos=xpos)
+           println(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
+           curup(6)          
+         
 template cxl*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
       
          let xpos = npos + 5
@@ -5622,30 +5794,6 @@ template cxn*(npos:int=0,col:string=randcol(),coltop:string = lime) =
         printLn(efb2 * 2 & spaces(4) & efb2 * 2, col,xpos=xpos)
         curup(6)  
  
- 
-template cxp*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
-      
-         let xpos = npos + 5
-         printLn(efb3 * 5, coltop,xpos=xpos)
-         println(efb2 * 4 & spaces(1) & efb2,col,xpos=xpos)
-         println(efb2 * 2 & spaces(4) & efb2,col,xpos=xpos)
-         println(efb2 * 3 & efs2 &  spaces(0) & efs2 * 2,col,xpos=xpos)
-         println(efb2 * 2 ,col,xpos=xpos)
-         println(efb2 * 2,col,xpos=xpos)
-         curup(6)
- 
-  
-template cxr*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
-      
-         let xpos = npos + 5
-         printLn(efb3 * 5, coltop,xpos=xpos)
-         println(efb2 * 4 & spaces(1) & efb2,col,xpos=xpos)
-         println(efb2 * 2 & spaces(3) & efb3 & efb2,col,xpos=xpos)
-         println(efb2 * 2 & efs2 * 2 &  spaces(0) & efs2 * 1,col,xpos=xpos)
-         println(efb2 * 2 & spaces(1) & efs2,col,xpos=xpos)
-         println(efb2 * 2 & spaces(3) & efb2 * 2,col,xpos=xpos)
-         curup(6)
- 
 template cxo*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
       
          let xpos = npos + 5
@@ -5656,6 +5804,19 @@ template cxo*(npos:int=0,col:string=randcol(),coltop:string = lime) =
          println(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
          println(spaces(2) & efb2 * 3 & efb2,col,xpos=xpos)
          curup(6) 
+          
+template cxp*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
+      
+         let xpos = npos + 5
+         printLn(efb3 * 5, coltop,xpos=xpos)
+         println(efb2 * 4 & spaces(1) & efb2,col,xpos=xpos)
+         println(efb2 * 2 & spaces(4) & efb2,col,xpos=xpos)
+         println(efb2 * 3 & efs2 &  spaces(0) & efs2 * 2,col,xpos=xpos)
+         println(efb2 * 2 ,col,xpos=xpos)
+         println(efb2 * 2,col,xpos=xpos)
+         curup(6)
+   
+       
  
 template cxq*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
       
@@ -5667,62 +5828,30 @@ template cxq*(npos:int=0,col:string=randcol(),coltop:string = lime) =
          println(efb2 * 2 & spaces(3) & efs2 & efb2 * 2,col,xpos=xpos)
          println(spaces(2) & efb2 * 3 & efb2 & "\\",col,xpos=xpos)
          curup(6) 
- 
-template cxe*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
+
+template cxr*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
       
          let xpos = npos + 5
-         printLn(efb3 * 7, coltop,xpos=xpos)
-         println(efb2 * 7,col,xpos=xpos)
-         println(efb2 * 2 ,col,xpos=xpos)
-         println(efb2 * 5 ,col,xpos=xpos)
-         println(efb2 * 2 ,col,xpos=xpos)
-         println(efb2 * 7, col,xpos=xpos)
-         curup(6)  
+         printLn(efb3 * 5, coltop,xpos=xpos)
+         println(efb2 * 4 & spaces(1) & efb2,col,xpos=xpos)
+         println(efb2 * 2 & spaces(3) & efb3 & efb2,col,xpos=xpos)
+         println(efb2 * 2 & efs2 * 2 &  spaces(0) & efs2 * 1,col,xpos=xpos)
+         println(efb2 * 2 & spaces(1) & efs2,col,xpos=xpos)
+         println(efb2 * 2 & spaces(3) & efb2 * 2,col,xpos=xpos)
+         curup(6)
  
-template cxf*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
+template cxs*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
       
          let xpos = npos + 5
-         printLn(efb3 * 7, coltop,xpos=xpos)
-         println(efb2 * 7,col,xpos=xpos)
-         println(efb2 * 2 ,col,xpos=xpos)
-         println(efb2 * 5 ,col,xpos=xpos)
-         println(efb2 * 2 ,col,xpos=xpos)
-         println(efb2 * 2, col,xpos=xpos)
+         printLn(spaces(2) & efb3 * 4, coltop,xpos=xpos)
+         println(spaces(1) & efs2 & efb1 * 4,col,xpos=xpos)
+         println(efb1 & spaces(1) & efs2 * 1 ,col,xpos=xpos)
+         println(spaces(4) & efb1 & efs2 * 1 ,col,xpos=xpos)
+         println(spaces(4) & efs2 * 2,col,xpos=xpos)
+         println(efb2 * 2 & efs2 & spaces(1) & efb1 ,col,xpos=xpos)
          curup(6)  
+  
  
-
-template cxg*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
-      
-              let xpos = npos+5
-              printLn(spaces(1) & efb3 * 6,coltop,xpos=xpos)
-              printLn(spaces(1) & efb2 * 6,col,xpos=xpos)
-              printLn(efb2 * 2,col,xpos=xpos)
-              printLn(efb2 * 2 & spaces(2) & efs2 * 3,col,xpos=xpos)
-              printLn(efb2 * 2 & spaces(3) & efb2 * 2,col,xpos=xpos)
-              printLn(spaces(1) & efb2 * 6,col,xpos=xpos)
-              curup(6)
-             
-template cxh*(npos:int=0,col:string=randcol(),coltop:string = lime) =
-        let xpos = npos + 5
-        printLn(efb3 * 2 & spaces(4) & efb3 * 2, coltop,xpos=xpos)
-        printLn(efb2 * 2 & spaces(4) & efb2 * 2, col,xpos=xpos)
-        printLn(efb2 * 2 & spaces(4) & efb2 * 2, col,xpos=xpos)
-        printLn(efb2 * 2 & efs2 * 4 & efb2 * 2, col,xpos=xpos)
-        printLn(efb2 * 2 & spaces(4) & efb2 * 2, col,xpos=xpos)
-        printLn(efb2 * 2 & spaces(4) & efb2 * 2, col,xpos=xpos)
-        curup(6)   
- 
- 
-template cxj*(npos:int = 0,col:string=randcol(),coltop:string = lime) =    
-
-        loopy2(0,2):
-           let xpos = xloopy+npos+5
-           printLn(spaces(2) & efb3 * 2 ,coltop,xpos=xpos)
-           loopy(0..2,printLn(spaces(2) & efb2 * 2,col,xpos=xpos))
-           printLn(efs2 & spaces(1) & efb2 * 2,col,xpos = xpos)
-           printLn(spaces(1) & efb2 & efb2,col,xpos=xpos)
-           curup(6)
-            
 template cxt*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
       
          let xpos = npos + 5
@@ -5732,16 +5861,6 @@ template cxt*(npos:int=0,col:string=randcol(),coltop:string = lime) =
          curup(6)   
          
             
-template cxz*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
-      
-         let xpos = npos + 5
-         printLn(efb3 * 8, coltop,xpos=xpos)
-         println(efb2 * 8,col,xpos=xpos)
-         println(spaces(6) & efb2 * 2 ,col,xpos=xpos)
-         println(spaces(3) & efb2 * 2 ,col,xpos=xpos)
-         println(spaces(0) & efb2 * 2 ,col,xpos=xpos)
-         println(efb2 * 8,col,xpos=xpos)    
-         curup(6)
          
 template cxu*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
       
@@ -5778,40 +5897,44 @@ template cxw*(npos:int=0,col:string=randcol(),coltop:string = lime) =
         printLn(spaces(2) & efb2 * 2 &  spaces(1) & efb2 * 2, col,xpos=xpos)
         curup(6)          
  
+              
+template cxx*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
+        let xpos = npos+5
+        printLn(spaces(1) & efb3 * 2 & spaces(3) & efb3 * 2 & spaces(1) ,coltop,xpos=xpos)
+        printLn(spaces(1) & efb2 * 2 & spaces(3) & efb2 * 2 & spaces(1) ,col,xpos=xpos)
+        printLn(spaces(2) & efs2 * 2 & spaces(1) & efs2 * 2 & spaces(2) ,col,xpos=xpos)
+        printLn(spaces(4) & efl1 * 2 & spaces(4),col,xpos=xpos)
+        printLn(spaces(2) & efs2 * 2 & spaces(1) & efs2 * 2 & spaces(2) ,col,xpos=xpos)
+        printLn(spaces(1) & efb2 * 2 & spaces(3) & efb2 * 2 & spaces(1),col,xpos=xpos)
+        curup(6)
+
+            
+            
+                   
+template cxy*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
+        let xpos = npos + 5
+        printLn(spaces(1) & efb3 * 2 & spaces(3) & efb3 * 2, coltop,xpos=xpos)
+        printLn(spaces(1) & efb2 * 2 & spaces(3) & efb2 * 2,col,xpos=xpos)
+        printLn(spaces(2) & efs2 * 2 & spaces(1) & efs2 * 2,col,xpos=xpos)
+        printLn(spaces(4) & efl1 * 2,col,xpos=xpos)
+        printLn(spaces(4) & efl1 * 2,col,xpos=xpos)
+        printLn(spaces(3)  &  efl1 * 4,col,xpos=xpos)
+        curup(6)
+             
+
  
-template cxk*(npos:int = 0,col:string=randcol(),coltop:string = lime) =    
-       
-           let xpos = npos+5
-           printLn(efb3 * 2 & spaces(4) & efb3 * 2,coltop,xpos=xpos)
-           println(efb2 * 2 & spaces(4) & efb1 * 2,col,xpos=xpos)
-           println(efb2 * 2 & spaces(2) & efs2 * 2,col,xpos=xpos)
-           println(efb2 * 2 & efs2 * 2,col,xpos=xpos)
-           println(efb2 * 2 & spaces(2) & efs2 * 2,col,xpos=xpos)
-           println(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
-           curup(6) 
- 
-template cxs*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
+template cxz*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
       
          let xpos = npos + 5
-         printLn(spaces(2) & efb3 * 4, coltop,xpos=xpos)
-         println(spaces(1) & efs2 & efb1 * 4,col,xpos=xpos)
-         println(efb1 & spaces(1) & efs2 * 1 ,col,xpos=xpos)
-         println(spaces(4) & efb1 & efs2 * 1 ,col,xpos=xpos)
-         println(spaces(4) & efs2 * 2,col,xpos=xpos)
-         println(efb2 * 2 & efs2 & spaces(1) & efb1 ,col,xpos=xpos)
-         curup(6)  
+         printLn(efb3 * 8, coltop,xpos=xpos)
+         println(efb2 * 8,col,xpos=xpos)
+         println(spaces(6) & efb2 * 2 ,col,xpos=xpos)
+         println(spaces(3) & efb2 * 2 ,col,xpos=xpos)
+         println(spaces(0) & efb2 * 2 ,col,xpos=xpos)
+         println(efb2 * 8,col,xpos=xpos)    
+         curup(6)
  
  
-template cxexc*(npos:int = 0,col:string=randcol(),coltop:string = lime) =    
-       
-           let xpos = npos+5
-           printLn(efb3 * 2 ,coltop,xpos=xpos)
-           println(efb2 * 2 ,col,xpos=xpos)
-           println(efb2 * 2 ,col,xpos=xpos)
-           println(efb2 * 2 ,col,xpos=xpos)
-           println(efb2 * 0,col,xpos=xpos)
-           println(efb2 * 2 ,col,xpos=xpos)
-           curup(6)  
  
 template cxpoint*(npos:int = 0,col:string=randcol(),coltop:string = lime) =    
        
@@ -5837,8 +5960,19 @@ template cxhyphen*(npos:int = 0,col:string=randcol(),coltop:string = lime) =
            println(efb2 * 0 ,col,xpos=xpos)
            curup(6)    
        
-            
-
+template cxgrid*(npos:int = 0,col:string=randcol(),coltop:string = lime) =    
+       
+           let xpos = npos+5
+           let xwd  = 9
+           loopy2(0,xwd): 
+             print(efb3  ,coltop,xpos=xpos + xloopy)
+           echo()
+           loopy2(0,5):
+               loopy2(0,xwd) :
+                  print(efb2  ,randcol2(col),xpos=xpos + xloopy)
+               echo()  
+           curup(6)
+                  
 proc printNimcx*(npos:int = tw div 2 - 30) =
         ## printNimcx
         ## 
