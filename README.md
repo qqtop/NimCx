@@ -3,6 +3,7 @@
 
 ![Image](http://qqtop.github.io/nimcxfont.png?raw=true)
 
+![Image](http://qqtop.github.io/nimcxfont2.png?raw=true)
 
 Color and Utilities for the Linux Terminal
 -------------------------------------------
