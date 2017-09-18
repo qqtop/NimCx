@@ -1,12 +1,12 @@
 
 ## cxTest.nim
 ## 
-## rough testing for cx.nim 
+## rough testing for nimcx.nim 
 ## 
 ## best run in a large console window
 
 
-import cx,cxDemo,sequtils,times,unicode,cxutils
+import nimcx,cxDemo,sequtils,times,unicode
 
 superHeader("Testing print and echo procs from cx.nim and run demos")
 
