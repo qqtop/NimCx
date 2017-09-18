@@ -6,7 +6,7 @@
 ## best run in a large console window
 
 
-import nimcx,cxDemo,sequtils,times,unicode,cxutils
+import cx,cxDemo,sequtils,times,unicode,cxutils
 
 superHeader("Testing print and echo procs from cx.nim and run demos")
 
@@ -252,43 +252,7 @@ printMini()
 decho(10)
 sleepy(1) 
 
-cxy(0)
-cxp(10)
-cxx(20)   
-cxa(30)
-cxx(40)
-cxb(50)
-cxd(60)
-cxl(70)
-cxc(80)
-cxm(90)
-cxi(100)
-cxn(106)
-cxr(116)
-decho(10)
-cxo(0)
-cxy(10)
-cxq(20)
-cxe(30)
-cxf(40)
-cxg(50)
-cxh(60)
-cxj(71)
-cxt(80)
-cxz(90)
-cxu(100)
-cxv(110)
-decho(10)
-cxw(0)
-cxk(10)
-cxe(20)
-cxk(30)
-cxs(40)
-cxpoint(60)
-cxhyphen(70)
-decho(10)
-
-loopy2(0,20):
+loopy2(0,10):
     cleanscreen()
     cx1(1)
     cx2(10)
@@ -308,11 +272,35 @@ loopy2(0,20):
        cxgrid(10 * xloopy + 60,col = "light",coltop=blue)
     sleepy(0.5)
 
+    
+    
+proc printFontTest() =
+    printFontFancy("Random--" & newWord(3,6),randcol2("rod"),xpos = 0)
+    decho(10)
+    printFont("nimcx",randcol2("blue"),30)
+    decho(10)
+    printFont("You like it ")
+    printFont("now.",red,80)
+    decho(10)
+    printFontFancy("You like it ")
+    printFont("now.",red,80)
+    decho(10)
+    printFontFancy("1234567890.0")
+    decho(10)
+    
+cleanscreen()    
+printFonttest()
+sleepy(5)
 decho(10)
 cleanscreen()
 printNimcx()
 decho(10)
+doNimUp()
+decho(10)
 printMadeWithNim()
 
+
 decho(10)
+showWanIp()
+
 doFinish()
