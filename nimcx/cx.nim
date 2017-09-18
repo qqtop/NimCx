@@ -1536,7 +1536,7 @@ template colPaletteName*(coltype:string,n:int): auto =
 
 template randCol2*(coltype:string): auto =
          ## ::
-         ##   randCol
+         ##   randCol2    -- experimental
          ##   
          ##   returns a random color based on a palette
          ##   
@@ -1548,13 +1548,15 @@ template randCol2*(coltype:string): auto =
          ##    loopy(0..5,printLn("Random blue shades",randcol("blue")))
          ##
          ##   
-         var ts = newseq[string]()         
+         var coltypen = coltype.toLowerAscii()
+         if coltypen == "black":   # no black
+          coltypen = "darkgray"
+         var ts = newSeq[string]()         
          for x in 0.. <colorNames.len:
-            if colorNames[x][0].startswith(coltype) or colorNames[x][0].contains(coltype) and not colorNames[x][0].startswith("black"):
+            if colorNames[x][0].startswith(coltypen) or colorNames[x][0].contains(coltypen):
               ts.add(colorNames[x][1])
-         var rxColt = colPaletteIndexer(ts) 
-         ts[rndSample(rxColt)]
-  
+         ts[rndSample(colPaletteIndexer(ts))]
+         
 
 template randCol*(): string = random(colorNames)[1]
    ## randCol
@@ -5536,7 +5538,7 @@ template cx2*(npos:int=0,col:string=randcol(),coltop:string = lime) =
       
          let xpos = npos + 5
          println(spaces(2) & efb3 * 4 & spaces(4),coltop,xpos = xpos)
-         println(spaces(1) & efs2 & efb1 & efb1 * 2  & efb1 & efs2 & spaces(2),col,xpos = xpos)
+         println(spaces(1) & efs2 & efb1 * 4 & efs2 & spaces(2),col,xpos = xpos)
          printLn(spaces(6) & efs2 * 1 & spaces(1),col,xpos = xpos)
          printLn(spaces(2) & efs2 * 3  & efb1 & spaces(3),col,xpos = xpos)
          printLn(spaces(1) & efs2 * 1  & spaces(4)  & spaces(2),col,xpos = xpos)
@@ -5552,7 +5554,7 @@ template cx3*(npos:int=0,col:string=randcol(),coltop:string = lime) =
         printLn(spaces(1) & efb3 * 6,coltop,xpos=xpos)
         printLn(spaces(1) & efb2 * 6,col,xpos=xpos)
         printLn(spaces(5) & efb2 * 2,col,xpos=xpos)
-        printLn(spaces(3) & efs2 * 3& spaces(1),col,xpos=xpos)
+        printLn(spaces(3) & efs2 * 3 & spaces(1),col,xpos=xpos)
         printLn(spaces(5) & efb2 * 2,col,xpos=xpos)
         printLn(spaces(1) & efb2 * 6,col,xpos=xpos)
         curup(6)      
@@ -5563,7 +5565,7 @@ template cx4*(npos:int=0,col:string=randcol(),coltop:string = lime) =
         let xpos = npos+5
         printLn(spaces(5) & efb3 * 1,coltop,xpos=xpos)
         printLn(spaces(5) & efb2 * 1,col,xpos=xpos)
-        printLn(spaces(3) & efb1 * 1 &  spaces(1) & efs2 & spaces(3),col,xpos=xpos)
+        printLn(spaces(3) & efb1 * 1 & spaces(1) & efs2 & spaces(3),col,xpos=xpos)
         printLn(spaces(1) & efs2 * 1 & spaces(3) & efb2,col,xpos=xpos)
         printLn(spaces(0) & efs2 * 1 & spaces(1) & efs2 & spaces(1) & efs2 * 4,col,xpos=xpos)
         printLn(spaces(4) & efb2 * 2,col,xpos=xpos)
@@ -5691,10 +5693,10 @@ template cxe*(npos:int=0,col:string=randcol(),coltop:string = lime) =
       
          let xpos = npos + 5
          printLn(efb3 * 7, coltop,xpos=xpos)
-         println(efb2 * 7,col,xpos=xpos)
-         println(efb2 * 2 ,col,xpos=xpos)
-         println(efb2 * 5 ,col,xpos=xpos)
-         println(efb2 * 2 ,col,xpos=xpos)
+         println(efb2 * 7, col,xpos=xpos)
+         println(efb2 * 2, col,xpos=xpos)
+         println(efb2 * 5, col,xpos=xpos)
+         println(efb2 * 2, col,xpos=xpos)
          println(efb2 * 7, col,xpos=xpos)
          curup(6)  
  
@@ -5702,10 +5704,10 @@ template cxf*(npos:int=0,col:string=randcol(),coltop:string = lime) =
       
          let xpos = npos + 5
          printLn(efb3 * 7, coltop,xpos=xpos)
-         println(efb2 * 7,col,xpos=xpos)
-         println(efb2 * 2 ,col,xpos=xpos)
-         println(efb2 * 5 ,col,xpos=xpos)
-         println(efb2 * 2 ,col,xpos=xpos)
+         println(efb2 * 7, col,xpos=xpos)
+         println(efb2 * 2, col,xpos=xpos)
+         println(efb2 * 5, col,xpos=xpos)
+         println(efb2 * 2, col,xpos=xpos)
          println(efb2 * 2, col,xpos=xpos)
          curup(6)  
  
@@ -5767,7 +5769,7 @@ template cxl*(npos:int=0,col:string=randcol(),coltop:string = lime) =
       
          let xpos = npos + 5
          printLn(efb3 * 2, coltop,xpos=xpos)
-         println(efb2 * 2,col,xpos=xpos)
+         println(efb2 * 2, col,xpos=xpos)
          println(efb2 * 2 ,col,xpos=xpos)
          println(efb2 * 2 ,col,xpos=xpos)
          println(efb2 * 2 ,col,xpos=xpos)
@@ -5798,7 +5800,7 @@ template cxo*(npos:int=0,col:string=randcol(),coltop:string = lime) =
       
          let xpos = npos + 5
          printLn(spaces(2) & efb3 * 4, coltop,xpos=xpos)
-         println(spaces(2) & efb2 * 3 & efb2,col,xpos=xpos)
+         println(spaces(2) & efb2 * 4, col,xpos=xpos)
          println(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
          println(efb2 * 2 & spaces(4) & efs2 * 2,col,xpos=xpos)
          println(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
@@ -5843,12 +5845,12 @@ template cxr*(npos:int=0,col:string=randcol(),coltop:string = lime) =
 template cxs*(npos:int=0,col:string=randcol(),coltop:string = lime) = 
       
          let xpos = npos + 5
-         printLn(spaces(2) & efb3 * 4, coltop,xpos=xpos)
-         println(spaces(1) & efs2 & efb1 * 4,col,xpos=xpos)
-         println(efb1 & spaces(1) & efs2 * 1 ,col,xpos=xpos)
+         printLn(spaces(3) & efb3 * 5, coltop,xpos=xpos)
+         println(spaces(1) & efb1 & spaces(1) & efb1 * 5,col,xpos=xpos)
+         println(efb1 * 1 & spaces(1) & efs2 * 1 ,col,xpos=xpos)
          println(spaces(4) & efb1 & efs2 * 1 ,col,xpos=xpos)
-         println(spaces(4) & efs2 * 2,col,xpos=xpos)
-         println(efb2 * 2 & efs2 & spaces(1) & efb1 ,col,xpos=xpos)
+         println(spaces(5) & efs2 * 2,col,xpos=xpos)
+         println(efb2 * 5 &  efs2  * 1 & efb1  * 1 ,col,xpos=xpos)
          curup(6)  
   
  
@@ -6190,8 +6192,7 @@ proc handler*() {.noconv.} =
 
 
 
-proc docxm*() =
-
+proc doCxEnd*() =
   clearup()
   decho(2)
   doInfo()
@@ -6199,11 +6200,9 @@ proc docxm*() =
   decho(3)
   colorio()
   let smm = "      import nimcx and your terminal comes alive with color ...  "
-  for x in 0.. 10:
+  for x in 0.. 6:
         cleanScreen()
         decho(5)
-        #printBigLetters("NIMCX",xpos = tw div 4 + 6,fun=true)
-        #decho(8)
         printNimCx()
         decho(8)
         printMadeWithNim()
@@ -6230,7 +6229,7 @@ system.addQuitProc(resetAttributes)
 
 
 when isMainModule:
-    docxm()
+    doCxEnd()
     
     
 # END OF CX.NIM #
