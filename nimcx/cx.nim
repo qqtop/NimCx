@@ -1,4 +1,5 @@
-##  {.noforward: on.}   # future feature hopefully
+{.deadCodeElim: on.}
+#  {.noforward: on.}   # future feature
 ## ::
 ## 
 ##     Library     : nimcx.nim
@@ -13,7 +14,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-09-15
+##     Latest      : 2017-09-19
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -27,9 +28,9 @@
 ##                   
 ##                   a wide selection of utility functions and useable snippets. 
 ##                   
-##                   Currently the library consists of cx.nim and cxutils.nim , both files are automatically
+##                   Currently the library consists of cx.nim and cxutils.nim , 
 ##                   
-##                   imported with : import nimcx
+##                   both files are automatically imported with : import nimcx
 ##                   
 ##                   Some procs may mirror functionality of stdlib moduls others may be deprecated if
 ##                   
@@ -96,9 +97,6 @@
 ##
 ##                   proc fmtx a formatting utility has been added
 ##
-##                   
-##
-##     Required    : 
 ##
 ##     Installation: nimble install nimcx
 ##
@@ -107,9 +105,9 @@
 ##                 
 ##                   unicode font libraries as needed 
 ##
-##     In progress : moving some of the non core procs to module cxutils.nim to avoid bloat.
-##
-##                   
+##     In progress : moving some of the non core procs to module cxutils.nim to avoid bloat
+##     
+##                   and deprecating unused functions.
 ##
 ##     Funding     : If you are happy or unhappy send any amount of bitcoins to this wallet : 
 ##                                      
@@ -117,15 +115,14 @@
 ##                    
 ##                    
 ##
+
 import os, times, parseutils, parseopt, hashes, tables, sets, strmisc
 import osproc,macros,posix,terminal,math,stats,json,random,streams
 import sequtils,httpclient,rawsockets,browsers,intsets, algorithm
 import strutils except toLower,toUpper
 import unicode ,typeinfo, typetraits ,cpuinfo,colors,encodings,distros
-#import nimprof       # needs compile with: nim c --profiler:on --stackTrace:on  -d:memProfiler cx
-export strutils,sequtils,times,unicode,streams,hashes
-export terminal.Style,terminal.getch  # make terminal style constants available in the calling prog
-
+export strutils,sequtils,times,unicode,streams,hashes,terminal
+#import nimprof  # nim c -r --profiler:on --stackTrace:on cx
 #const someGcc = defined(gcc) or defined(llvm_gcc) or defined(clang)  # idea for backend info ex nimforum
 var someGcc = "" 
 if defined(gcc) : someGcc = "gcc"
@@ -1862,16 +1859,17 @@ proc printLn*[T](astring:T,fgr:string = termwhite , bgr:string = bblack,xpos:int
     ## Examples
     ##
     ## .. code-block:: nim
+    ##    import nimcx
     ##    printLn("Yes ,  we made it.",clrainbow,brightyellow) # background has no effect with font in  clrainbow
     ##    printLn("Yes ,  we made it.",green,brightyellow)
     ##    # or use it as a replacement of echo
     ##    printLn(red & "What's up ? " & green & "Grub's up ! "
     ##    printLn("No need to reset the original color")
     ##    printLn("Nim does it again",peru,centered = true ,styled = {styleDim,styleUnderscore},substr = "i")
-    ##
     ##    # To achieve colored text with styleReverse try:
-    ##    setBackgroundColor(bgRed)
-    ##    printLn("The End never comes on time ! ",lime,styled = {styleReverse})
+    ##    loopy2(0,30):
+    ##        printLn("The end never comes on time ! ",randcol(),bRed,styled = {styleReverse})
+    ##        sleepy(0.5)
     ##
     print($(astring) & "\L",fgr,bgr,xpos,fitLine,centered,styled,substr)
    
@@ -3710,7 +3708,7 @@ template benchmark*(benchmarkName: string, repeatcount:int = 1,code: typed) =
   ##
   ##
   ## .. code-block:: nim
-  ##        import nimcx,algorithm
+  ##          import nimcx,algorithm
   ##
   ##          proc doit() =
   ##              var s = createSeqFloat(10,9)
@@ -3801,23 +3799,53 @@ proc showBench*() =
  ## showBench
  ## 
  ## Displays results of all benchmarks
- ## 
+
+ var bnamesize = 0
+ var epochsize = 0
+ var cpusize = 0 
+ for x in  benchmarkresults:
+   var aa11 =  spaces(1) & dodgerblue & "[" & salmon & x.bname & dodgerblue & "]"  
+   if len(aa11) > bnamesize: bnamesize = len(aa11)
+   if len(x.epoch) > epochsize: epochsize = len(x.epoch)
+   if len(x.cpu) > cpusize: cpusize = len(x.cpu)
+
  if benchmarkresults.len > 0: 
     for x in  benchmarkresults:
        echo()
-       let tit = " BenchMark        Timing " & spaces(20) & "Runs/Loops : " & x.repeats
+       let tit = spaces(1) & fmtx(["<$1" % $(bnamesize div 3),"<$1" % $(epochsize + 16),"<30"],"BenchMark","Timing","Runs/Loops : " & x.repeats)
+       
        if parseInt(x.repeats) > 0:
           printLn(tit,chartreuse,styled = {styleUnderScore},substr = tit)
+          echo()
        else:
           printLn(tit,red,styled = {styleUnderScore},substr = tit)
-       printLn(dodgerblue & " [" & salmon & x.bname & dodgerblue & "]" & spaces(7) & cornflowerblue & "Epoch Time : " & white & x.epoch & " secs")
-       printLn(dodgerblue & " [" & salmon & x.bname & dodgerblue & "]" & spaces(7) & cornflowerblue & "Cpu   Time : " & white & x.cpu & " secs")   
+      
+       let aa1 =  spaces(1) & dodgerblue & "[" & salmon & x.bname & dodgerblue & "]"  
+       let bb1 =  cornflowerblue & "Epoch Time : " & white & x.epoch & " secs" 
+       let cc1 =  cornflowerblue & "Cpu Time   : " & white & x.cpu & " secs"
+       var dd1 = ""
+       var ee1 = ""
+       
+       if parseFloat(x.epoch) > 0.00: 
+          dd1 = "Iters/sec : " & ff2(parsefloat(x.repeats)/parsefloat(x.epoch))
+       else :
+          dd1 = "Iters/sec : Inf"
+       
+       if parseFloat(x.cpu) > 0.00:   
+          ee1 = "Iters/sec : " & ff2(parsefloat(x.repeats)/parsefloat(x.cpu))
+       else:
+          ee1 = "Iters/sec : Inf"
+         
+       printLn(fmtx(["<$1" % $bnamesize,"","<70","<50"],aa1,spaces(3),bb1 ,dd1))
+       printLn(fmtx(["<$1" % $bnamesize,"","<70","<50"],aa1,spaces(3),cc1 ,ee1))
+
     echo()
     benchmarkresults = @[]
     printLn("Benchmark results end. Results cleared.",goldenrod)
  else:
     printLn("Benchmark results emtpy. Nothing to show",red)   
 
+    
     
 proc `$`*[T](some:typedesc[T]): string = name(T)
 proc typeTest*[T](x:T): T =
@@ -5808,8 +5836,6 @@ proc doCxEnd*() =
         curup(1)
   echo() 
   doFinish()
-
-
 
 # putting decho here will put two blank lines before anyting else runs
 decho(2)

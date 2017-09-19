@@ -1,6 +1,5 @@
-
 {.deadCodeElim: on.}
-##  {.noforward: on.}   # future feature
+#  {.noforward: on.}   # future feature
 ## ::
 ##     Library     : nimcx.nim
 ##     
