@@ -13,9 +13,9 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-09-18
+##     Latest      : 2017-09-28
 ##
-##     Compiler    : Nim >= 0.17.1
+##     Compiler    : Nim >= 0.17.x dev branch
 ##
 ##     OS          : Linux
 ##
@@ -23,17 +23,18 @@
 ##
 ##                   cxutils.nim is a collection of lesser used simple utility procs and templates
 ##
-##                   moved here to avoid code bloat in cx.nim
+##                   moved here to avoid code bloat in cx.nim  it is automaticall imported with nimcx
 ##
 ##
-##     Usage       : import cx,cxutils
+##     Usage       : import nimcx
 ##
 ##     Project     : https://github.com/qqtop/NimCx
 ##
-##     Docs        : https://qqtop.github.io/cx.html   
+##     Docs        : https://qqtop.github.io/cxutils.html   
 ##
 ##     Tested      : OpenSuse Tumbleweed 
-##       
+##  
+
 import os,osproc,cx,math,stats,cpuinfo,httpclient,browsers
  
 # some handmade font...
@@ -293,6 +294,7 @@ let clbx* = @[clb1,clb2,clb3,clb4,clb5]
 let bigLetters* = @[abx,bbx,cbx,dbx,ebx,fbx,gbx,hbx,ibx,jbx,kbx,lbx,mbx,nbx,obx,pbx,qbx,rbx,sbx,tbx,ubx,vbx,wbx,xbx,ybx,zbx,hybx,plbx,ulbx,elbx,clbx]
 
 # a big block number set which can be used with printBigNumber
+# for the newer experimental block font see printfont() in cx.nim
 
 const number0 =
  @["██████"
@@ -1187,5 +1189,17 @@ proc doNimUp*(xpos = 5, rev:bool = true) =
       printBigLetters("NIM",fgr=randcol(),xpos = xpos + 33)
       curdn(15)
 
+proc dayOfWeekJulian*(datestr:string): string =
+   ## dayOfWeekJulian
+   ##
+   ## returns the day of the week of a date given in format yyyy-MM-dd as string
+   ##
+   ## actually starts to fail with 2100-03-01 which shud be a monday but this proc says tuesday
+   ## 
+   ## due to shortcomings in the julian calendar .
+   ##
+   ## 
+   result = $(getdayofweekjulian(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr))))
+   
 
 # END OF CXUTILS.NIM #

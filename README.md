@@ -15,6 +15,13 @@ Color and Utilities for the Linux Terminal
 | cx.nim         | cxDemo.nim       | cxTest.nim       |
 
 
+
+
+[Documentation for cx.nim](https://qqtop.github.io/cx.html)
+[Documentation for cxutils.nim](https://qqtop.github.io/cxutils.html)
+[Documentation for cxconsts.nim](https://qqtop.github.io/cxconsts.html)
+                           
+
 Requires     : Latest Nim dev version
 
 
@@ -29,10 +36,6 @@ Installation :
 
 ```
 
-
-
-[Documentation for cx.nim](https://qqtop.github.io/cx.html)
-                           
 
 Example usage of print procs 
 

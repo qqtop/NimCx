@@ -1,12 +1,31 @@
+{.deadCodeElim: on.}
 
-# cxconsts.nim
-# 
-# this file is part of nimcx and contains all const declarations
-# 
-# it automatically imported and exported by cx.nim
-# 
-# 
-# 
+##     Library     : nimcx.nim
+##     
+##     Module      : cxconsts.nim
+##
+##     Status      : stable
+##
+##     License     : MIT opensource
+##
+##     Version     : 0.9.9
+##
+##     ProjectStart: 2015-06-20
+##   
+##     Latest      : 2017-09-28
+##
+##     Compiler    : Nim >= 0.17.x dev branch
+##
+##     OS          : Linux
+##
+##     Docs        : https://qqtop.github.io/cxconsts.html
+##
+##     Description : this file is part of nimcx and contains all public const declarations
+## 
+##                   it is automatically imported and exported by cx.nim
+## 
+## 
+## 
 
 import terminal,sequtils 
  

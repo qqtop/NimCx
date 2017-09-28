@@ -14,7 +14,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-09-27
+##     Latest      : 2017-09-28
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -119,10 +119,9 @@
 ##                    
 ##
 import cxconsts
-import os, times, parseutils, parseopt, hashes, tables, sets, strmisc
+import os, times, strutils,parseutils, parseopt, hashes, tables, sets, strmisc
 import osproc,macros,posix,terminal,math,stats,json,random,streams
 import sequtils,httpclient,rawsockets,browsers,intsets, algorithm
-import strutils except toLower,toUpper
 import unicode ,typeinfo, typetraits ,cpuinfo,colors,encodings,distros
 export strutils,sequtils,times,unicode,streams,hashes,terminal,cxconsts
 #import nimprof  # nim c -r --profiler:on --stackTrace:on cx
@@ -204,6 +203,7 @@ var benchmarkresults* =  newSeq[Benchmarkres]()
 proc rndSample*[T](asq:seq[T]):T =
      ## rndSample
      ## returns one random sample from a sequence
+     randomize()
      result = random(asq)     
      
 proc rndRGB*():auto = 
@@ -241,13 +241,16 @@ proc sampleSeq*[T](x: openarray[T], a, b: int) : seq[T] =
      result =  x[a..b]
        
 
-     
-
-
-
 template now*:string = getDateStr() & " " & getClockStr()
+     ## now
+     ## 
+     ## returns date and time string
+     ## 
 template today*:string = getDateStr() 
-
+     ## today
+     ## 
+     ## returns date string
+     ## 
 
 
 proc streamFile*(filename:string,mode:FileMode): FileStream = newFileStream(filename, mode)    
@@ -293,7 +296,7 @@ proc uniform*(a,b: float) : float =
 
   
 template `*`*(s:string,n:int):string =
-    # mimicking python
+    # returns input string  n times mimicking python
     s.repeat(n)    
     
 
@@ -346,9 +349,22 @@ template colPalette*(coltype:string,n:int): auto =
          ##   if n > larger than palette length the first palette entry will be used
          ##   
          ## .. code-block:: nim
-         ##     printLn("something blue ", colPalette("blue",5)   # gets the fifth entry of the bluepalette
+         ##     import nimcx
+         ##     cleanScreen()       
+         ##     decho(2)
+         ##     var mycol = "light"
+         ##     mycol = mycol.lowerCase()
+         ##     let somesample = aPaletteSample(mycol)
+         ##     printLn($somesample & "th color of the " & mycol & " palette  ( index starts with 0 )", colPalette(mycol,somesample)) 
+         ##     printLn("Name of the " & $somesample & "th entry : " & colPaletteName(mycol,somesample))
+         ##     echo()
+         ##     printLn("Random color of the " & mycol & " palette ", colPalette(mycol,aPaletteSample(mycol))) 
+         ##     printLn("Length of " & mycol & " palette: " & $colPaletteLen(mycol) & " ( index starts with 0 )" )
+         ##     echo()
+         ##     loopy2(0,colPaletteLen(mycol)):
+         ##         printLn("Here we go " & rightarrow * 3 & spaces(2) & colPaletteName(mycol,xloopy), colPalette(mycol,xloopy))
+         ##    doFinish()
          ##
-         
          var ts = newseq[string]()         
          for colx in 0.. <colorNames.len:
             if colorNames[colx][0].startswith(coltype) or colorNames[colx][0].contains(coltype):
@@ -393,7 +409,7 @@ template colPaletteName*(coltype:string,n:int): auto =
          ##
          ## returns the actual name of the palette entry n
          ## eg. "mediumslateblue"
-         ## 
+         ## see example at colPalette
          ##
          var ts = newseq[string]()  
          # build the custom palette ts       
@@ -408,6 +424,16 @@ template colPaletteName*(coltype:string,n:int): auto =
          ts[m] 
  
 
+template aPaletteSample*(coltype:string):int = 
+     ## aPaletteSample
+     ## 
+     ##  returns an random entry (int) from a palette
+     ##  see example at colPalette
+     ## 
+     var coltypen = coltype.toLowerAscii()
+     var b = newSeq[int]()
+     for x in 0 .. <colPaletteLen(coltypen): b.add(x)
+     rndSample(b)
 
 template randCol2*(coltype:string): auto =
          ## ::
@@ -420,12 +446,12 @@ template randCol2*(coltype:string): auto =
          ##   coltype examples : "red","blue","medium","dark","light","pastel" etc..
          ##   
          ## .. code-block:: nim
-         ##    loopy(0..5,printLn("Random blue shades",randcol("blue")))
+         ##    loopy(0..5,printLn("Random blue shades",randcol2("blue")))
          ##
          ##   
          var coltypen = coltype.toLowerAscii()
          if coltypen == "black":   # no black
-          coltypen = "darkgray"
+            coltypen = "darkgray"
          var ts = newSeq[string]()         
          for x in 0.. <colorNames.len:
             if colorNames[x][0].startswith(coltypen) or colorNames[x][0].contains(coltypen):
@@ -2204,7 +2230,7 @@ proc printSlim* (ss:string = "", frg:string = termwhite,bgr:string = termblack,x
     var npos = xpos
     #if we want to right align we need to know the overall length, which needs a scan
     var sswidth = 0
-    if align.toLower() == "right":
+    if align.toLowerAscii() == "right":
       for x in ss:
          if $x in slimCharSet:
            sswidth = sswidth + 1
