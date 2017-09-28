@@ -123,7 +123,7 @@ import os, times, strutils,parseutils, parseopt, hashes, tables, sets, strmisc
 import osproc,macros,posix,terminal,math,stats,json,random,streams
 import sequtils,httpclient,rawsockets,browsers,intsets, algorithm
 import unicode ,typeinfo, typetraits ,cpuinfo,colors,encodings,distros
-export strutils,sequtils,times,unicode,streams,hashes,terminal,cxconsts
+export strutils,sequtils,times,unicode,streams,hashes,terminal,cxconsts,random
 #import nimprof  # nim c -r --profiler:on --stackTrace:on cx
 #const someGcc = defined(gcc) or defined(llvm_gcc) or defined(clang)  # idea for backend info ex nimforum
 var someGcc = "" 
@@ -1880,18 +1880,6 @@ proc compareDates*(startDate,endDate:string) : int =
           result = -2
 
 
-proc dayOfWeekJulian*(datestr:string): string =
-   ## dayOfWeekJulian
-   ##
-   ## returns the day of the week of a date given in format yyyy-MM-dd as string
-   ##
-   ## actually starts to fail with 2100-03-01 which shud be a monday but this proc says tuesday
-   ## 
-   ## due to shortcomings in the julian calendar .
-   ##
-   ## 
-   result = $(getdayofweekjulian(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr))))
-   
 
 
 proc fx(nx:TimeInfo):string =
@@ -2040,8 +2028,7 @@ proc createSeqDate*(fromDate:string,toDate:string):seq[string] =
      ## 
      ## from fromDate to toDate
      ##  
-  
-  
+
      var aresult = newSeq[string]()
      var aDate = fromDate
      while compareDates(aDate,toDate) == 2 : 
@@ -2064,7 +2051,6 @@ proc dayofweek*(datestr:string):string =
     result =  $(getdayofweek(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr))))
   
 
-     
 
 proc createSeqDate*(fromDate:string,days:int = 1):seq[string] = 
      ## createSeqDate
@@ -2083,24 +2069,40 @@ proc createSeqDate*(fromDate:string,days:int = 1):seq[string] =
      result = aresult    
          
 
-proc newdate():string =   
-  let year = getRndInt(1900,2099)
-  let month = getRndInt(1,12)
-  let day = getRndInt(1,31)
-  result = $year & "-" & $month & "-" & $day
-  
-
-proc getRndDate*():string = 
-  ## getRandomDate
-  ## 
-  ## gets a randomdate between 1900-01-01 and 2099-12-31
-  ## 
-  ## larger dates not supported 
-  ## 
-  ## 
-  var okdate = newdate()
-  while validdate(okdate) == false: okdate = newdate()  
-  result = okdate  
+proc getRndDate*(minyear:int = parseint(year(today)) - 50,maxyear:int = parseint(year(today)) + 50):string =  
+         ## getRndDate
+         ## 
+         ## returns a valid random date between 1900 and 3001 in format 2017-12-31
+         ## 
+         ## default currently set to  between  +/- 50 years of today
+         ## 
+         ## .. code-block:: nim
+         ##    import nimcx
+         ##    loopy2(0,100): echo getRndDate(2016,2025)
+         ##    
+         ##    
+         var okflag = false
+         var mminyear = minyear 
+         var mmaxyear = maxyear + 1
+         if mminyear < 1900: mminyear = 1900
+         if mmaxyear > 3001: mmaxyear = 3001
+                 
+         while okflag == false:
+            
+             var mmd = $getRndInt(1,13)
+             if mmd.len == 1:
+                mmd = "0" & $mmd
+            
+             var ddd = $getRndInt(1,32)
+             if ddd.len == 1:
+                ddd = "0" & $ddd
+            
+             var nd = $getRndInt(mminyear,mmaxyear) & "-" & mmd & "-" & ddd
+             if validDate(nd) == false:
+                 okflag = false
+             else : 
+                 okflag = true
+                 result = nd
 
 
 proc printSlimNumber*(anumber:string,fgr:string = yellowgreen ,bgr:string = black,xpos:int = 1) =
