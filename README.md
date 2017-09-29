@@ -34,6 +34,36 @@ Installation :
 
 ```
 
+
+
+Benchmark your procs :
+
+```nim
+
+    import nimcx
+
+    proc doCalc() = 
+        var b = createSeqint(10,0,100_000)        # random seq with 10 ints between 0 and 100000
+        let rs = rndSample(b)                     # draw a random sample from b
+        printLnBiCol("Random Sample : " & $rs)    # print the drawn sample
+        seqHighLite(b,@[rs])                      # print the full seq with the sample highligthed
+        echo()
+
+    benchmark("proc doCalc ",50):                 # benchmark runs 50 times
+       doCalc()
+  
+     
+    benchmark("quicksomething ",2):               # benchmark runs 2 times
+       printMadeWithNim()
+       decho(10)
+        
+    showbench()      
+    decho(10)
+   
+```
+
+Example of showbench() output format
+
 ![Image](http://qqtop.github.io/nimcxbenchmark.png?raw=true)
 
 
