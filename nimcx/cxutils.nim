@@ -1,4 +1,4 @@
-{.deadCodeElim: on.}
+{.deadCodeElim: on , optimization: speed.}
 #  {.noforward: on.}   # future feature
 ## ::
 ##     Library     : nimcx.nim
@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-09-28
+##     Latest      : 2017-09-29
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -23,7 +23,7 @@
 ##
 ##                   cxutils.nim is a collection of lesser used simple utility procs and templates
 ##
-##                   moved here to avoid code bloat in cx.nim  it is automaticall imported with nimcx
+##                   moved here to avoid code bloat in cx.nim  it is imported with nimcx
 ##
 ##
 ##     Usage       : import nimcx
@@ -473,7 +473,7 @@ proc getRandomPointInCircle*(radius:float) : seq[float] =
     ##
     ##
     ## .. code-block:: nim
-    ##    import cx,math,strfmt
+    ##    import nimcx,math,strfmt
     ##    # get randompoints in a circle
     ##    var crad:float = 1
     ##    for x in 0.. 100:
@@ -570,7 +570,7 @@ template getCard* :auto =
     ## gets a random card from the Cards seq
     ##
     ## .. code-block:: nim
-    ##    import cx,cxutils
+    ##    import nimcx
     ##    print(getCard(),randCol(),xpos = centerX())  # get card and print in random color at xpos
     ##    doFinish()
     ##
@@ -679,7 +679,7 @@ proc superHeaderA*(bb:string = "",strcol:string = white,frmcol:string = green,an
       ## Example :
       ##
       ## .. code-block:: nim
-      ##    import cx
+      ##    import nimcx
       ##    cleanScreen()
       ##    let bb = "NIM the system language for the future, which extends to as far as you need !!"
       ##    superHeaderA(bb,white,red,true,1)

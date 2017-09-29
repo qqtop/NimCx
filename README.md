@@ -5,16 +5,16 @@
 
 ![Image](http://qqtop.github.io/nimcxfont2.png?raw=true)
 
-Color and Utilities for the Linux Terminal
--------------------------------------------
+ NIMCX - Color and Utilities for the Linux Terminal
+--------------------------------------------------------
 
 
 
 | Code           | Demoslib         | Tests            |
 |----------------|------------------|------------------|
 | cx.nim         | cxDemo.nim       | cxTest.nim       |
-
-
+| cxconsts.nim   |                  |                  |
+| cxutils.nim    |                  |                  |
 
 
 [Documentation for cx.nim](https://qqtop.github.io/cx.html)
@@ -26,10 +26,6 @@ Color and Utilities for the Linux Terminal
 
 Requires     : Latest Nim dev version
 
-
-![Image](http://qqtop.github.io/snowmaninjapan.png?raw=true)
-
-
 Installation : 
 
 
@@ -37,6 +33,9 @@ Installation :
     nimble install nimcx
 
 ```
+
+![Image](http://qqtop.github.io/nimcxbenchmark.png?raw=true)
+
 
 
 Example usage of print procs 
@@ -76,7 +75,7 @@ dofinish()
 
 ![Image](http://qqtop.github.io/nimbox.png?raw=true)
 
-   ![Image](http://qqtop.github.io/nimcx.gif?raw=true)
+![Image](http://qqtop.github.io/snowmaninjapan.png?raw=true)
 
  
     Brought to you by :
