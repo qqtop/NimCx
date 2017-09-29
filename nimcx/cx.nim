@@ -1,4 +1,6 @@
-{.deadCodeElim: on.}
+#Compiler options
+{.deadCodeElim: on, optimization: speed.}
+#{.deadCodeElim: on, checks: off, hints: off, warnings: off, optimization: size.}
 #  {.noforward: on.}   # future feature
 ## ::
 ## 
@@ -14,7 +16,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-09-28
+##     Latest      : 2017-09-29
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -117,15 +119,18 @@
 ##                   194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
 ##                    
 ##                    
-##
-import cxconsts
-import os, times, strutils,parseutils, parseopt, hashes, tables, sets, strmisc
+
+import cxconsts,os, times, strutils,parseutils, parseopt, hashes, tables, sets, strmisc
 import osproc,macros,posix,terminal,math,stats,json,random,streams
 import sequtils,httpclient,rawsockets,browsers,intsets, algorithm
 import unicode ,typeinfo, typetraits ,cpuinfo,colors,encodings,distros
-export strutils,sequtils,times,unicode,streams,hashes,terminal,cxconsts,random
+
+export 
+       strutils,sequtils,times,unicode,streams,hashes,terminal,cxconsts,random
+
 #import nimprof  # nim c -r --profiler:on --stackTrace:on cx
 #const someGcc = defined(gcc) or defined(llvm_gcc) or defined(clang)  # idea for backend info ex nimforum
+
 var someGcc = "" 
 if defined(gcc) : someGcc = "gcc"
 # below needs to be tested    
@@ -832,7 +837,12 @@ proc cleanScreen*() =
       ##
       write(stdout,"\e[H\e[J")
 
-
+proc clearScreen():int {.discardable.} =
+     ## clearScreen
+     ## 
+     ## another clear terminal proc
+     ## 
+     execShellCmd("clear")
 
 proc centerX*() : int = tw div 2
      ## centerX
@@ -3102,17 +3112,20 @@ proc showBench*() =
  for x in  benchmarkresults:
    var aa11 =  spaces(1) & dodgerblue & "[" & salmon & x.bname & dodgerblue & "]"  
    if len(aa11) > bnamesize: bnamesize = len(aa11)
-   if len(x.epoch) > epochsize: epochsize = len(x.epoch)
-   if len(x.cpu) > cpusize: cpusize = len(x.cpu)
+   if bnamesize < 13 : bnamesize = 13
+    
+   if len(x.epoch) > epochsize: epochsize = len(x.epoch) - bnamesize + 50
+   if len(x.cpu) > cpusize: cpusize = len(x.cpu) + 26
    if len(x.repeats) > repeatsize: repeatsize = len(x.repeats)
+
    
  if benchmarkresults.len > 0: 
     for x in benchmarkresults:
        echo()
-       let tit = spaces(1) & fmtx(["<$1" % $(bnamesize div 3),"<$1" % $(epochsize + 16),"<$1" % $(repeatsize + 30)],"BenchMark","Timing","Runs/Loops : " & x.repeats)
+       let tit = fmtx(["","<$1" % $(bnamesize - len(dodgerblue) * 3),"","<30","<20"],spaces(1),"BenchMark",spaces(4),"Timing" ,"Runs/Loops : $1" % x.repeats)
        
        if parseInt(x.repeats) > 0:
-          printLn(tit,chartreuse,styled = {styleUnderScore},substr = tit)
+          printLn(tit,chartreuse, styled = {styleUnderScore},substr = tit)
           echo()
        else:
           printLn(tit,red,styled = {styleUnderScore},substr = tit)
@@ -3138,7 +3151,7 @@ proc showBench*() =
 
     echo()
     benchmarkresults = @[]
-    printLn("Benchmark results end. Results cleared.",goldenrod)
+    printLn("Benchmark results finished. Results cleared.",goldenrod)
  else:
     printLn("Benchmark results emtpy. Nothing to show",red)   
 
