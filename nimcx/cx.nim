@@ -16,7 +16,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-09-29
+##     Latest      : 2017-10-04
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -41,9 +41,9 @@
 ##
 ##     Usage       : import nimcx
 ##
-##     Project     : https://github.com/qqtop/NimCx
+##     Project     : `NimCx <https://github.com/qqtop/NimCx>`_
 ##
-##     Docs        : https://qqtop.github.io/cx.html
+##     Docs        : `Documentation <https://qqtop.github.io/cx.html'_
 ##
 ##     Tested      : OpenSuse Tumbleweed , Ubuntu 16.04 LTS 
 ##       
@@ -128,14 +128,23 @@ import unicode ,typeinfo, typetraits ,cpuinfo,colors,encodings,distros
 export 
        strutils,sequtils,times,unicode,streams,hashes,terminal,cxconsts,random
 
+# Profiling       
 #import nimprof  # nim c -r --profiler:on --stackTrace:on cx
+
+# Memory usage
+# --profiler:off, --stackTrace:on -d:memProfiler  
+
+# for debugging intersperse with dprint(someline)
+# or see the stacktrace with writeStackTrace()
+# or compile with  --debugger:on 
+
 #const someGcc = defined(gcc) or defined(llvm_gcc) or defined(clang)  # idea for backend info ex nimforum
 
 var someGcc = "" 
 if defined(gcc) : someGcc = "gcc"
 # below needs to be tested    
-#elif defined(llvm_gcc):  someGcc = "llvm_gcc"
-#elif defined(clang): someGcc = "clang"
+elif defined(llvm_gcc):  someGcc = "llvm_gcc"
+elif defined(clang): someGcc = "clang"
 elif defined(cpp) : someGcc = "c++ target"
 else: someGcc = "undefined"    
 
@@ -176,7 +185,27 @@ type
 type
     Benchmarkres* = tuple[bname,cpu,epoch,repeats : string]
     
+# used to store all benchmarkresults   
+var benchmarkresults* =  newSeq[Benchmarkres]()
+
+
+type
+  CxTimer* =  object 
+      name* : string
+      start*: float
+      stop  : float
+      lap*  : seq[float]
+      
+     
+# type used in for cxtimer
+type
+    Cxtimerres* = tuple[tname:string,start:float,stop : float,lap:seq[float]]
     
+# used to store all cxtimer results   
+var cxtimerresults* =  newSeq[Cxtimerres]()      
+      
+
+
 type
   Cxcounter* =  object
       value*: int
@@ -201,10 +230,6 @@ proc  add*(co:ref Cxcounter) = inc co.value
 proc  dec*(co:ref Cxcounter) = dec co.value
 proc  reset*(co:ref CxCounter) = co.value = 0   
     
-    
-# used to store all benchmarkresults   
-var benchmarkresults* =  newSeq[Benchmarkres]()
-
 proc rndSample*[T](asq:seq[T]):T =
      ## rndSample
      ## returns one random sample from a sequence
@@ -246,6 +271,30 @@ proc sampleSeq*[T](x: openarray[T], a, b: int) : seq[T] =
      result =  x[a..b]
        
 
+template loopy*[T](ite:T,st:untyped) =
+     ## loopy
+     ##
+     ## the lazy programmer's quick simple for-loop template
+     ##
+     ## .. code-block:: nim
+     ##       loopy(0.. 10,printLn("The house is in the back.",randcol()))
+     ##
+     for x in ite: st
+
+     
+template loopy2*(mi:int = 0,ma:int = 5,st:untyped) =
+     ## loopy2
+     ##
+     ##  the advanced version of loopy the simple for-loop template
+     ##  which also injects the loop counter xloopy and loops over a block of code
+     ##
+     ##  loopy2(1,10):
+     ##      printLnBiCol(xloopy , "  The house is in the back.",randcol(),randcol(),":",0,false,{})
+     ##      printLn("Some integer : " , getRndInt())
+     ##
+     for xloopy {.inject.} in mi .. <ma: st  
+     
+     
 template now*:string = getDateStr() & " " & getClockStr()
      ## now
      ## 
@@ -555,6 +604,7 @@ proc hlineLn*(n:int = tw,col:string = white,xpos:int = 1) ## forward declaration
 proc spellInteger*(n: int64): string                      ## forward declaration
 proc splitty*(txt:string,sep:string):seq[string]          ## forward declaration
 proc doFinish*()
+
 
 
 # procs lifted from terminal.nim as they are currently not exported from there
@@ -2466,7 +2516,7 @@ proc localIp*():string =
 
    result =  execCmdEx("ip route | grep src").output.split("src")[1].strip()
   
-   
+
 
 proc localRouterIp*():string = 
    # localRouterIp
@@ -2476,6 +2526,10 @@ proc localRouterIp*():string =
    let res = execCmdEx("ip route list | awk ' /^default/ {print $3}'")
    result = $res[0]
    
+
+proc showLocalIpInfo*() =
+     printLnBiCol("Machine : " & localIp())
+     printLnBiCol("Router  : " & localRouterIp())
    
 proc getHosts*(dm:string):seq[string] =
     ## getHosts
@@ -2592,7 +2646,10 @@ template doSomething*(body:untyped,secs:int) =
   ## 
   ## execute some code for a certain amount of seconds
   ## 
-  let mytime =  getTime().getLocalTime()
+  ## .. code-block:: nim
+  ##    doSomething(10,myproc())  # executes my proc for ten secs
+  ## 
+  let mytime = getTime().getLocalTime()
   while toTime(getTime().getLocalTime()) < toTime(mytime) + secs.seconds : 
       body
     
@@ -2908,57 +2965,61 @@ proc nimcat*(curFile:string,countphrase : varargs[string,`$`] = "")=
     ##   nimcat("bigdatafile.csv")
     ##   nimcat("/data5/notes.txt",countphrase = "nice" , "hanya", 88) # also count how often a token appears in the file
     ## 
-    decho(2)
-    dlineLn()
-    echo()
-   
-    var phrasecount = newSeqWith(countphrase.len, 0)
-    var phraseinline = newSeqWith(countphrase.len, newSeq[int](0))  # holds the line numbers where a phrase to be counted was found
-    var line = ""
-    var ccurFile = curFile
-    let (dir, name, ext) = splitFile(ccurFile)
-    if ext == "":
-       ccurFile = ccurFile & ".nim"
-    let fs = streamFile(ccurFile, fmRead)
-    var c = 1
-    if not isNil(fs):
-        while fs.readLine(line):
-            # TODO: linewrap
-            printLnBiCol(fmtx([">5",": ",""],c,spaces(2),line))
-            if line.len > 0:
-               var lc = 0
-               for mc in 0 .. <countphrase.len:
-                   lc = line.count(countphrase[mc])
-                   phrasecount[mc] += lc
-                   if lc > 0: phraseinline[mc].add(c)
-            
-            inc c
-        fs.close()   
+    
+    if not fileExists(curfile):
+            echo()
+            printLnBiCol("Error : " , curfile , " not found !",red,white,":",0,false,{})
+            printLn(spaces(8) & " Check path and filename")
+            echo()
+            discard
+       
+    else :   
+    
+            decho(2)
+            dlineLn()
+            echo()
         
-    echo()
-    
-    printLnBiCol("File       : " & ccurFile)
-    if isNil(dir) or isEmpty(dir) or dir == "":
-        printLnBicol("File Dir   : pwd")
-    else:  
-        printLnBicol("File Dir   : " & dir)
-    printLnBiCol("File Name  : " & name)
-    printLnBiCol("File Ext.  : " & ext)
-    printLnBiCol("Lines Shown: " & ff2(c - 1))
-    
-    var maxphrasewidth = 0
-    
-    for x in  countphrase:
-       if x.len > maxphrasewidth: maxphrasewidth = x.len
-         
-    if countphrase.len > 0:
-       println("\nPhraseCount stats :    \n",gold,styled={styleUnderScore})
-       for x in 0 .. <countphrase.len:
-             printLnBiCol(fmtx(["<" & $maxphrasewidth,"",""],countphrase[x]," : " & rightarrow & " Count: ",phrasecount[x]))
-             printLnBiCol("Lines : " , phraseinline[x],"\n" ,colLeft = cyan ,colRight = termwhite ,sep = ":",0,false,{})
-    
+            var phrasecount = newSeqWith(countphrase.len, 0)
+            var phraseinline = newSeqWith(countphrase.len, newSeq[int](0))  # holds the line numbers where a phrase to be counted was found
+            var line = ""
+            var ccurFile = curFile
+            let (dir, name, ext) = splitFile(ccurFile)
+            if ext == "":
+               ccurFile = ccurFile & ".nim"
+            let fs = streamFile(ccurFile, fmRead)
+            var c = 1
+            if not isNil(fs):
+                while fs.readLine(line):
+                    # TODO: linewrap
+                    printLnBiCol(fmtx([">5",": ",""],c,spaces(2),line))
+                    if line.len > 0:
+                      var lc = 0
+                      for mc in 0 .. <countphrase.len:
+                          lc = line.count(countphrase[mc])
+                          phrasecount[mc] += lc
+                          if lc > 0: phraseinline[mc].add(c)
+                    
+                    inc c
+                fs.close()   
+                
+            echo()
+            
+            printLnBiCol("File       : " & ccurFile)
+            printLnBiCol("Lines Shown: " & ff2(c - 1))
+            
+            var maxphrasewidth = 0
+            
+            for x in  countphrase:
+               if x.len > maxphrasewidth: maxphrasewidth = x.len
+                
+            if countphrase.len > 0:
+              println("\nPhraseCount stats :    \n",gold,styled={styleUnderScore})
+              for x in 0 .. <countphrase.len:
+                    printLnBiCol(fmtx(["<" & $maxphrasewidth,"",""],countphrase[x]," : " & rightarrow & " Count: ",phrasecount[x]))
+                    printLnBiCol("Lines : " , phraseinline[x],"\n" ,colLeft = cyan ,colRight = termwhite ,sep = ":",0,false,{})
+            
 
- 
+        
 proc checkHash*[T](kata:string,hsx:T)  =
   ## checkHash
   ## 
@@ -3155,7 +3216,144 @@ proc showBench*() =
  else:
     printLn("Benchmark results emtpy. Nothing to show",red)   
 
-    
+
+proc newCxtimer*(aname:string = "cxtimer"):ref(CxTimer) =
+     ## newCxtimer
+     ## 
+     ## set up a new cxtimer
+     ## 
+     ## simple timer with starttimer,stoptimer,laptimer,resettimer functionality
+     ## 
+     ## .. code-block:: nim
+     ##   
+     ## # Example for newcxtimer usage
+     ## var ct  = newCxtimer("TestTimer1")   # create a cxtimer with name TestTimer1
+     ## var ct2 = newCxtimer()               # create a cxtimer which will have default name cxtimer
+     ## ct.startTimer                        # start a timer
+     ## ct2.startTimer
+     ## loopy2(0,2):
+     ##    sleepy(1)
+     ##    ct2.laptimer                      # take a laptime for a timer
+     ## ct.stopTimer                         # stop a timer
+     ## ct2.stopTimer
+     ## saveTimerResults(ct)                 # save current state of a timer
+     ## saveTimerResults(ct2)
+     ## echo()
+     ## showTimerResults()                   # display status of all timers
+     ## ct2.resetTimer                       # reset a particular timer 
+     ## clearTimerResults()                  # clear timer result of default timer
+     ## clearTimerResults("TestTimer1")      # clear timer results of a particular timer
+     ## clearAllTimerResults()               # clear all timer results
+     ## showTimerResults()
+     ## dprint cxtimerresults                # dprint is a simple repr utility
+     ## 
+     
+     ## 
+
+     var aresult = (ref(CxTimer))(name:aname)
+     aresult.start = 0.00
+     aresult.stop = 0.00
+     aresult.lap = @[]
+     result = aresult
+   
+proc  startTimer*(co:ref(CxTimer)) = co.start = epochTime()
+proc  lapTimer*(co:ref(CxTimer))   = co.lap.add(epochTime() - co.start)
+proc  stopTimer*(co: ref(CxTimer))  = co.stop = epochtime()   
+proc  resetTimer*(co: ref(CxTimer)) = 
+      co.start = 0.00
+      co.stop = 0.00
+      co.lap = @[]
+
+proc saveTimerResults*(b:ref(CxTimer)) =
+     ## saveTimerResults
+     ## 
+     ## saves the current state of a cxtimer
+     ## 
+     var bb:Cxtimerres
+     var c = b
+     if  b.name == "": c.name = "cxtimer"   # give it a default name
+     bb.tname = c.name
+     bb.start = c.start
+     bb.stop = c.stop
+     bb.lap = c.lap
+     cxtimerresults.add(bb)
+
+proc showTimerResults*(aname:string) =  
+     ## showTimerResults  
+     ## 
+     ## shows results for a particular timer name
+     ## 
+     var bname = aname
+     if bname == "": bname = "cxtimer"    # if no name given we assume defaultname cxtimer 
+     echo()
+     loopy2(0,cxtimerresults.len):
+       var b = cxtimerresults[xloopy]
+       if b.tname == bname:
+          printLnBiCol("Timer    : " & $(b.tname))
+          printLnBiCol("Start    : " & $fromSeconds(b.start))
+          printLnBiCol("Stop     : " & $fromSeconds(b.stop))
+          printLnBiCol("Laptimes : ")
+          if b.lap.len > 0:
+             printLnBiCol("Laptimes : ")
+             loopy2(0,b.lap.len):
+                printLnBiCol(fmtx([">7","",""],$(xloopy + 1), " : " , $b.lap[xloopy]),xpos = 8)
+             echo()
+          else:
+             printLnBiCol("Laptimes : none recorded")
+          printLnBiCol("Duration : " & $(b.stop - b.start) & " secs.")   
+               
+          
+proc showTimerResults*() =  
+     ## showTimerResults  
+     ## 
+     ## shows results for all timers
+     ## 
+     echo()
+     loopy2(0,cxtimerresults.len):
+       var b = cxtimerresults[xloopy]
+       echo()
+       printLnBiCol("Timer    : " & $(b.tname))
+       printLnBiCol("Start    : " & $fromSeconds(b.start))
+       printLnBiCol("Stop     : " & $fromSeconds(b.stop))
+       if b.lap.len > 0:
+          printLnBiCol("Laptimes : ")
+          loopy2(0,b.lap.len):
+             printLnBiCol(fmtx([">7","",""],$(xloopy + 1), " : " , $b.lap[xloopy]),xpos = 8)
+          echo()
+       else:
+          printLnBiCol("Laptimes : none recorded")
+       printLnBiCol("Duration : " & $(b.stop - b.start) & " secs.")
+       
+       
+proc clearTimerResults*(aname:string = "") =
+     ## clearTimerResults
+     ## 
+     ## clears cxtimerresults of one named timer or if aname == "" of timer cxtimer
+     ## 
+     ##  
+     var bname = aname
+     if bname == "": bname = "cxtimer"    # if no name given we assume defaultname cxtimer 
+     loopy2(0,cxtimerresults.len):
+        if cxtimerresults[xloopy].tname == bname:
+               echo()
+               print("Timer deleted : " ,goldenrod)
+               printLn(cxtimerresults[xloopy].tname ,tomato)
+               cxtimerresults.delete(xloopy)  
+               echo()
+        else:
+               discard
+       
+proc clearAllTimerResults*() =
+     ## clearAllTimerResults
+     ## 
+     ## clears cxtimerresults for all timers
+     ## 
+     ##  
+     cxtimerresults = @[] 
+     echo()
+     print("Timer deleted : " , goldenrod)
+     printLn("all",tomato)
+             
     
 proc `$`*[T](some:typedesc[T]): string = name(T)
 proc typeTest*[T](x:T): T =
@@ -3234,29 +3432,6 @@ proc pswwaux*() =
    echo  pswwaux
    decho(2)
          
-
-template loopy*[T](ite:T,st:untyped) =
-     ## loopy
-     ##
-     ## the lazy programmer's quick simple for-loop template
-     ##
-     ## .. code-block:: nim
-     ##       loopy(0.. 10,printLn("The house is in the back.",randcol()))
-     ##
-     for x in ite: st
-
-     
-template loopy2*(mi:int = 0,ma:int = 5,st:untyped) =
-     ## loopy2
-     ##
-     ##  the advanced version of loopy the simple for-loop template
-     ##  which also injects the loop counter xloopy and loops over a block of code
-     ##
-     ##  loopy2(1,10):
-     ##      printLnBiCol(xloopy , "  The house is in the back.",randcol(),randcol(),":",0,false,{})
-     ##      printLn("Some integer : " , getRndInt())
-     ##
-     for xloopy {.inject.} in mi .. <ma: st    
      
      
 proc fromCString*(p: pointer, len: int): string =
@@ -3515,7 +3690,22 @@ proc showRegression*(rr: RunningRegress,n:int = 5,xpos:int = 1) =
      printLnBiCol("Intercept     : " & ff(rr.intercept(),n),yellowgreen,white,sep,xpos = xpos,false,{})
      printLnBiCol("Slope         : " & ff(rr.slope(),n),yellowgreen,white,sep,xpos = xpos,false,{})
      printLnBiCol("Correlation   : " & ff(rr.correlation(),n),yellowgreen,white,sep,xpos = xpos,false,{})
-    
+
+     
+     
+proc dprint*[T](s:T) = 
+     ## dprint
+     ## 
+     ## show contents of s in repr mode
+     ## 
+     ## usefull for debugging
+     ##
+     echo()
+     printLn("**** REPR OUTPTUT ********",truetomato)
+     echo repr(s) 
+     curup(1)
+     printLn("**** END REPR OUTPTUT ****",truetomato)
+     echo()
     
 template zipWith*[T1,T2](f: untyped; xs:openarray[T1], ys:openarray[T2]): untyped =
   ## zipWith
@@ -5145,6 +5335,7 @@ proc doCxEnd*() =
         sleepy(0.15)
         curup(1)
   echo() 
+ 
   doFinish()
 
 # putting decho here will put two blank lines before anyting else runs
