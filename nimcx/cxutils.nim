@@ -433,7 +433,19 @@ let NIMX10 = "██     █  ██  ██     █  ██"
 let nimsx2* = @[NIMX6,NIMX7,NIMX8,NIMX9,NIMX10]
 
 
-
+proc fibonacci*(n: int):float =  
+    ## fibonacci
+    ## 
+    ## calculate fibonacci values
+    ##
+    ## .. code-block:: nim
+    ## 
+    ##    for x in 0.. 20: quickList(x,fibonacci(x))
+    ## 
+    if n < 2: 
+       result = float(n)
+    else: 
+       result = fibonacci(n-1) + fibonacci(n-2)
 
 proc memCheck*(stats:bool = false) =
   ## memCheck
@@ -1202,4 +1214,5 @@ proc dayOfWeekJulian*(datestr:string): string =
    result = $(getdayofweekjulian(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr))))
    
 
+   
 # END OF CXUTILS.NIM #

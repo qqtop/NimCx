@@ -1,4 +1,4 @@
-{.deadCodeElim: on.}
+{.deadCodeElim: on , optimization: speed.}
 
 ##     Library     : nimcx.nim
 ##     

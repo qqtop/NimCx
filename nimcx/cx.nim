@@ -43,7 +43,7 @@
 ##
 ##     Project     : `NimCx <https://github.com/qqtop/NimCx>`_
 ##
-##     Docs        : `Documentation <https://qqtop.github.io/cx.html'_
+##     Docs        : `Documentation <https://qqtop.github.io/cx.html>`_
 ##
 ##     Tested      : OpenSuse Tumbleweed , Ubuntu 16.04 LTS 
 ##       
