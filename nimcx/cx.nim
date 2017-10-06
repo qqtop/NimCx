@@ -16,7 +16,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-10-04
+##     Latest      : 2017-10-06
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -163,8 +163,8 @@ when defined(posix):
   
 const CXLIBVERSION* = "0.9.9"
 
-let start* = epochTime()  #  simple execution timing with one line see doFinish()
-randomize()               # seed random number generator 
+let cxstart* = epochTime()  #  simple execution timing with one line see doFinish()
+randomize()                 # seed random number generator 
 
 type
      NimCxCustomError* = object of Exception         
@@ -201,10 +201,16 @@ type
 type
     Cxtimerres* = tuple[tname:string,start:float,stop : float,lap:seq[float]]
     
-# used to store all cxtimer results   
-var cxtimerresults* =  newSeq[Cxtimerres]()      
-      
 
+# under consideration use different setup to get rid of glbals like cxtimerresults    
+#type
+#   Cxtimerresults* = seq[Cxtimerres]
+     
+# proc newCxtimerresults*():Cxtimerresults =
+#       result = newSeq[Cxtimerres]() 
+
+# used to store all cxtimer results 
+var cxtimerresults* =  newSeq[Cxtimerres]() 
 
 type
   Cxcounter* =  object
@@ -262,7 +268,7 @@ proc sampleSeq*[T](x: openarray[T], a, b: int) : seq[T] =
      ## 
      ## .. code-block:: nim
      ##    import nimcx
-     ##    let x = createSeqint(20)
+     ##    let x = createSeqInt(20)
      ##    x.sampleseq(4,8)
      ##    echo x
      ##    echo x.sampleSeq(4,8).rndSample()    # get one randomly selected value from the subsequence
@@ -364,21 +370,6 @@ proc getRndInt*(mi:int = 0 , ma: int = int.high):int =
     if ma == 1: maa = 2
     result = random(mi..maa)
 
-
-proc fibonacci*(n: int):float =  
-    ## fibonacci
-    ## 
-    ## calculate fibonacci values
-    ##
-    ## .. code-block:: nim
-    ## 
-    ##    for x in 0.. 20: quickList(x,fibonacci(x))
-    ## 
-    if n < 2: 
-       result = float(n)
-    else: 
-       result = fibonacci(n-1) + fibonacci(n-2)
-  
 
 template colPaletteIndexer*(colx:seq[string]):auto =  toSeq(colx.low.. colx.high) 
 
@@ -645,12 +636,18 @@ template lowerCase*(s:string):string = toLowerAscii(s)
   ## lower cases a string
   ## 
 
-template currentLine* = 
+template currentLine*  = 
    ## currentLine
    ## 
    ## simple template to return line number , maybe usefull for debugging 
-   printLnBiCol("Line -> " & $instantiationInfo().line,peru,red,"->",0,false,{})
-
+   print("[",truetomato)
+   print(rightarrow,dodgerblue)
+   printBiCol(" ln:" & $(instantiationInfo().line),yellow,white,":",0,false,{})
+   curbk(1)
+   print("]",truetomato)
+   echo()
+   
+   
 template randPastelCol*: string = random(pastelset)
    ## randPastelCol
    ##
@@ -3249,7 +3246,7 @@ proc newCxtimer*(aname:string = "cxtimer"):ref(CxTimer) =
      ## 
      
      ## 
-
+     
      var aresult = (ref(CxTimer))(name:aname)
      aresult.start = 0.00
      aresult.stop = 0.00
@@ -4438,6 +4435,7 @@ proc qqTop*() =
   print("p",cyan)
 
   
+#experimental  font code here
 
 
 # experimental font building  
@@ -4914,7 +4912,6 @@ proc printFont*(s:string,col:string = randcol() , xpos:int = -10) =
      ## 
      ## 
 
-
      var npos = xpos
      var ccol = col
      for x in s.toLowerAscii:
@@ -5095,7 +5092,7 @@ proc printFontFancy*(s:string,col:string = randcol() , xpos:int = -10) =
                       
             else: discard             
  
-proc printNimcx*(npos:int = tw div 2 - 30) =
+proc printNimCx*(npos:int = tw div 2 - 30) =
         ## printNimcx
         ## 
         ##  experiments in block font building , default is center in terminal
@@ -5134,7 +5131,7 @@ proc printMadeWithNim*(npos:int = tw div 2 - 60) =
         
         echo()
               
-# end experimental font    
+# end experimental font      
   
 
 proc doInfo*() =
@@ -5262,7 +5259,7 @@ proc doFinish*() =
         infoLine()
         printLn(" - " & year(getDateStr()),brightblack)
         print(fmtx(["<14"],"Elapsed    : "),yellowgreen)
-        print(fmtx(["<",">5"],ff(epochtime() - cx.start,3)," secs"),goldenrod)
+        print(fmtx(["<",">5"],ff(epochtime() - cxstart,3)," secs"),goldenrod)
         printLnBiCol("  Compiled on: " & $CompileDate & " at " & $CompileTime)
         if detectOs(OpenSUSE):  # some additional data if on openSuse systems
             let ux1 = uname().split("#")[0].split(" ")
@@ -5305,7 +5302,7 @@ proc handler*() {.noconv.} =
     print(" | ",brightblack)
     printLnBiCol("cx Version     : " & CXLIBVERSION)
     print(fmtx(["<14"],"Elapsed       : "),yellow)
-    printLn(fmtx(["<",">5"],epochTime() - cx.start,"secs"),brightblack)
+    printLn(fmtx(["<",">5"],epochTime() - cxstart,"secs"),brightblack)
     echo()
     printLn(" Have a Nice Day !",clRainbow)  ## change or add custom messages as required
     decho(2)
@@ -5348,8 +5345,7 @@ setControlCHook(handler)
 # so no need for this line in the calling prog
 system.addQuitProc(resetAttributes)
 
-when isMainModule:
-      doCxEnd()
+when isMainModule:  doCxEnd()
     
-    
+   
 # END OF CX.NIM #
