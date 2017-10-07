@@ -590,8 +590,8 @@ proc printLn*[T](astring:T,fgr:string = termwhite , bgr:string = bblack,xpos:int
 proc printBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) 
 proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) 
 proc printRainbow*(s : string,styled:set[Style] = {})     ## forward declaration
-proc hline*(n:int = tw,col:string = white,xpos:int = 1)   ## forward declaration
-proc hlineLn*(n:int = tw,col:string = white,xpos:int = 1) ## forward declaration
+proc hline*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-")   ## forward declaration
+proc hlineLn*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-") ## forward declaration
 proc spellInteger*(n: int64): string                      ## forward declaration
 proc splitty*(txt:string,sep:string):seq[string]          ## forward declaration
 proc doFinish*()
