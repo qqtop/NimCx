@@ -16,7 +16,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-10-06
+##     Latest      : 2017-10-08
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -114,7 +114,7 @@
 ##                   moving constants to cxconsts.nim
 ##                   
 ##
-##     Funding     : If you are happy or unhappy send any amount of bitcoins to this wallet : 
+##     Funding     : If you are happy or unhappy feel free to send any amount of bitcoins to this wallet : 
 ##                                      
 ##                   194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
 ##                    
@@ -1312,7 +1312,7 @@ proc rainbow*[T](s : T,xpos:int = 1,fitLine:bool = false,centered:bool = false) 
 
 
 # output  horizontal lines
-proc hline*(n:int = tw,col:string = white,xpos:int = 1) =
+proc hline*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-") =
      ## hline
      ##
      ## draw a full line in stated length and color no linefeed will be issued
@@ -1323,11 +1323,11 @@ proc hline*(n:int = tw,col:string = white,xpos:int = 1) =
      ##    hline(30,green,xpos=xpos)
      ##
 
-     print("_" * n,col,xpos = xpos)
+     print(lt * n,col,xpos = xpos)
 
 
 
-proc hlineLn*(n:int = tw,col:string = white,xpos:int = 1) =
+proc hlineLn*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-") =
      ## hlineLn
      ##
      ## draw a full line in stated length and color a linefeed will be issued
@@ -1337,7 +1337,7 @@ proc hlineLn*(n:int = tw,col:string = white,xpos:int = 1) =
      ## .. code-block:: nim
      ##    hlineLn(30,green)
      ##
-     hline(n,col,xpos)
+     hline(n,col,xpos,lt)
      echo()
 
 
