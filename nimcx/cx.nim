@@ -1621,10 +1621,10 @@ proc printHL*(s:string,substr:string,col:string = termwhite) =
       for x in rx.low.. rx.high:
           print(rx[x])
           if x != rx.high:
-             print(substr)
+             print(substr,col)
 
 
-proc printLnHL*(s:string,substr:string,col:string = termwhite) =
+proc printLnHL*(s:string,substr:string,col:string = lightcyan) =
       ## printLnHL
       ##
       ## print and highlight all appearances of a char or substring of a string
@@ -1637,7 +1637,7 @@ proc printLnHL*(s:string,substr:string,col:string = termwhite) =
       ## this would highlight all T in yellowgreen
       ##
 
-      printHL($(s) & "\L",substr)
+      printHL($(s) & "\L",substr,col)
 
 
 proc cecho*(col:string,ggg: varargs[string, `$`] = @[""] )  =
