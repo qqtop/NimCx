@@ -56,7 +56,13 @@ const
       efl1* = "▍"
       efr1* = "▇"
       efr2* = "⛆"
-      efs2* = "▨"    
+      efs2* = "▨"   
+      
+const
+      cfb2* = "△"
+      # circles
+      cfb4* = "⭕"    # shadowed circle
+      cfb5* = "⬤"   # black circle
 
 const
 
@@ -861,6 +867,7 @@ const
 
       phone*               = "\u260E"
       fullflag*            = "\u2691"
+      enterkey*               = "↵"
 
 # emojis
 # mileage here may vary depending on whatever your system supports

@@ -16,7 +16,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-10-08
+##     Latest      : 2017-10-13
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -183,7 +183,7 @@ type
 
 # type used in Benchmark
 type
-    Benchmarkres* = tuple[bname,cpu,epoch,repeats : string]
+    Benchmarkres* = tuple[bname,cpu,epoch,repeats:string,fastest : float]
     
 # used to store all benchmarkresults   
 var benchmarkresults* =  newSeq[Benchmarkres]()
@@ -202,7 +202,7 @@ type
     Cxtimerres* = tuple[tname:string,start:float,stop : float,lap:seq[float]]
     
 
-# under consideration use different setup to get rid of glbals like cxtimerresults    
+# under consideration use different setup to get rid of globals like cxtimerresults    
 #type
 #   Cxtimerresults* = seq[Cxtimerres]
      
@@ -257,6 +257,7 @@ proc `[]`*[Idx, T](a: openarray[T], x: Slice[Idx]): seq[T] =
         for i in 0.. <L: result[i] = a[Idx(ord(x.a) + i)]
      else:
         result = @[]
+        
 
 proc sampleSeq*[T](x: openarray[T], a, b: int) : seq[T] = 
      ## sampleSeq
@@ -306,6 +307,8 @@ template now*:string = getDateStr() & " " & getClockStr()
      ## 
      ## returns date and time string
      ## 
+     
+     
 template today*:string = getDateStr() 
      ## today
      ## 
@@ -371,6 +374,13 @@ proc getRndInt*(mi:int = 0 , ma: int = int.high):int =
     result = random(mi..maa)
 
 
+proc getRndBool*():bool = 
+      if getRndInt(0,1) == 0:
+         result = false
+      else:
+         result = true
+    
+    
 template colPaletteIndexer*(colx:seq[string]):auto =  toSeq(colx.low.. colx.high) 
 
 template colPaletteLen*(coltype:string): auto =
@@ -2696,8 +2706,14 @@ proc reverseString*(text:string):string =
 
 
 # Convenience procs for random data creation and handling
-
- 
+proc createSeqBool*(n:int = 10): seq[bool] {.inline.} =
+     # createSeqBool
+     # 
+     # returns a seq of random bools
+     # 
+     result = newSeq[bool]()
+     for x in 0.. <n: result.add(getRndBool())
+            
 
 proc createSeqInt*(n:int = 10,mi:int = 0,ma:int = 1000) : seq[int] {.inline.} =
     ## createSeqInt
@@ -3058,12 +3074,17 @@ proc createHash*(kata:string):auto =
 template repeats(count: int, statements: untyped) =
   for i in 0 .. <count:
       statements
-    
+
+proc checkspeed(ztb:float):float =
+         result = epochTime() - ztb
+         
     
 template benchmark*(benchmarkName: string, repeatcount:int = 1,code: typed) =
   ## benchmark
   ## 
   ## a quick benchmark template showing cpu and epoch times with repeat looping param
+  ## suitable for in program testing of procs 
+  ## for in depth benchmarking use the nimbench module available via nimble
   ## 
   ## .. code-block:: nim
   ##    benchmark("whatever",1000):
@@ -3093,15 +3114,19 @@ template benchmark*(benchmarkName: string, repeatcount:int = 1,code: typed) =
   ##                  echo()
   ##                  
   ##          showBench() 
-    
+  ##  
   ##    
   ##    
   
   var zbres:Benchmarkres
   let t0 = epochTime()
   let t1 = cpuTime()
+  zbres.fastest = 100000000.0  # some large int to init
   repeats(repeatcount):
+      #var t2 = epochTime()
       code
+      #var fstt = checkspeed(t2)
+      #if fstt < zbres.fastest : zbres.fastest = fstt
   let elapsed  = epochTime() - t0
   let elapsed1 = cpuTime()   - t1
   zbres.epoch  = ff(elapsed,4)  
@@ -3180,17 +3205,17 @@ proc showBench*() =
  if benchmarkresults.len > 0: 
     for x in benchmarkresults:
        echo()
-       let tit = fmtx(["","<$1" % $(bnamesize - len(dodgerblue) * 3),"","<30","<20"],spaces(1),"BenchMark",spaces(4),"Timing" ,"Runs/Loops : $1" % x.repeats)
+       let tit = fmtx(["","<$1" % $(bnamesize - len(gold) * 3),"","<30","<20"],spaces(1),"BenchMark",spaces(4),"Timing" ,"Runs/Loops : $1" % x.repeats)
        
        if parseInt(x.repeats) > 0:
-          printLn(tit,chartreuse, styled = {styleUnderScore},substr = tit)
+          printLn(tit,greenyellow, styled = {styleUnderScore},substr = tit)
           echo()
        else:
           printLn(tit,red,styled = {styleUnderScore},substr = tit)
       
-       let aa1 =  spaces(1) & dodgerblue & "[" & salmon & x.bname & dodgerblue & "]"  
-       let bb1 =  cornflowerblue & "Epoch Time : " & white & x.epoch & " secs" 
-       let cc1 =  cornflowerblue & "Cpu Time   : " & white & x.cpu & " secs"
+       let aa1 =  spaces(1) & gold & "[" & salmon & x.bname & gold & "]"  
+       let bb1 =  cornflowerblue & "Epoch Time : " & oldlace & x.epoch & " secs" 
+       let cc1 =  cornflowerblue & "Cpu Time   : " & oldlace & x.cpu & " secs"
        var dd1 = ""
        var ee1 = ""
        
@@ -3204,8 +3229,9 @@ proc showBench*() =
        else:
           ee1 = "Iters/sec : Inf"
          
-       printLn(fmtx(["<$1" % $bnamesize,"","<70","<50"],aa1,spaces(3),bb1 ,dd1))
-       printLn(fmtx(["<$1" % $bnamesize,"","<70","<50"],aa1,spaces(3),cc1 ,ee1))
+       #dd1.add "     secs " & ff(x.fastest,20)
+       printLn(fmtx(["<$1" % $bnamesize,"","<70","<90"],aa1,spaces(3),bb1 ,dd1))
+       printLn(fmtx(["<$1" % $bnamesize,"","<70","<50"],aa1,spaces(3),cc1,ee1))
 
     echo()
     benchmarkresults = @[]
