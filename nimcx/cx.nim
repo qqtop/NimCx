@@ -16,7 +16,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-10-13
+##     Latest      : 2017-10-18
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -121,12 +121,12 @@
 ##                    
 
 import cxconsts,os, times, strutils,parseutils, parseopt, hashes, tables, sets, strmisc
-import osproc,macros,posix,terminal,math,stats,json,random,streams
+import osproc,macros,posix,terminal,math,stats,json,random,streams,options
 import sequtils,httpclient,rawsockets,browsers,intsets, algorithm
 import unicode ,typeinfo, typetraits ,cpuinfo,colors,encodings,distros
 
 export 
-       strutils,sequtils,times,unicode,streams,hashes,terminal,cxconsts,random
+       strutils,sequtils,times,unicode,streams,hashes,terminal,cxconsts,random,options
 
 # Profiling       
 #import nimprof  # nim c -r --profiler:on --stackTrace:on cx
@@ -323,7 +323,7 @@ proc streamFile*(filename:string,mode:FileMode): FileStream = newFileStream(file
      ##
      ##
 
-proc uniform*(a,b: float) : float =
+proc uniform*(a,b: float) : float {.inline.} =
       ## uniform
       ## 
       ## returns a random float uniformly distributed between a and  b
@@ -364,7 +364,7 @@ template `*`*(s:string,n:int):string =
     
 
    
-proc getRndInt*(mi:int = 0 , ma: int = int.high):int =
+proc getRndInt*(mi:int = 0 , ma: int = int.high):int  {.noInit,inline.} =
     ## getRndInt
     ##
     ## returns a random int between mi and < ma
@@ -373,6 +373,7 @@ proc getRndInt*(mi:int = 0 , ma: int = int.high):int =
     if ma == 1: maa = 2
     result = random(mi..maa)
 
+  
 
 proc getRndBool*():bool = 
       if getRndInt(0,1) == 0:
@@ -2732,10 +2733,8 @@ proc createSeqInt*(n:int = 10,mi:int = 0,ma:int = 1000) : seq[int] {.inline.} =
     # result = newSeqofCap[int](n)  # slow use if memory considerations are of top importance
     result = newSeq[int]()          # faster
     case  mi <= ma
-      of true :
-                #for x in 0.. <n: result.add()
-                result.add(newSeqWith(n,getRndInt(mi,ma)))
-      of false: print("Error : Wrong parameters for min , max ",red)
+        of true : result.add(newSeqWith(n,getRndInt(mi,ma)))
+        of false: print("Error : Wrong parameters for min , max ",red)
 
 
 
@@ -2782,8 +2781,7 @@ proc ff2*(zz:float , n:int = 3):string =
   ##       printLnBiCol(fmtx(["",">6","",">20"],"NZ ",$x," : ",ff2(z)))
   ##  
   ##       
-  
-   
+     
   if abs(zz) < 10000 == true:   #  number less than 10000 so no 1000 seps needed
     result = ff(zz,n)
     
@@ -2792,9 +2790,7 @@ proc ff2*(zz:float , n:int = 3):string =
         var cnew = ""
         for d in c[2]:
             if cnew.len < n:  cnew = cnew & d
-
         result = ff2(parseInt(c[0])) & c[1] & cnew
-
 
 
 
@@ -2862,7 +2858,7 @@ proc getRandomFloat*(mi:float = -1.0 ,ma:float = 1.0):float =
      ##
      result = random(-1.0..float(1.0))
 
-proc getRndFloat*(mi:float = -1.0 ,ma:float = 1.0):float = result =  random(mi..ma)
+proc getRndFloat*(mi:float = -1.0 ,ma:float = 1.0):float  {.noInit,inline.} =  random(mi..ma)
      ## getRndFloat
      ##
      ## same as getrandomFloat()
@@ -3083,8 +3079,9 @@ template benchmark*(benchmarkName: string, repeatcount:int = 1,code: typed) =
   ## benchmark
   ## 
   ## a quick benchmark template showing cpu and epoch times with repeat looping param
-  ## suitable for in program testing of procs 
+  ## suitable for in program ttiming of procs 
   ## for in depth benchmarking use the nimbench module available via nimble
+  ## 
   ## 
   ## .. code-block:: nim
   ##    benchmark("whatever",1000):
@@ -3196,16 +3193,14 @@ proc showBench*() =
    var aa11 =  spaces(1) & dodgerblue & "[" & salmon & x.bname & dodgerblue & "]"  
    if len(aa11) > bnamesize: bnamesize = len(aa11)
    if bnamesize < 13 : bnamesize = 13
-    
    if len(x.epoch) > epochsize: epochsize = len(x.epoch) - bnamesize + 50
    if len(x.cpu) > cpusize: cpusize = len(x.cpu) + 26
    if len(x.repeats) > repeatsize: repeatsize = len(x.repeats)
-
    
  if benchmarkresults.len > 0: 
     for x in benchmarkresults:
        echo()
-       let tit = fmtx(["","<$1" % $(bnamesize - len(gold) * 3),"","<30","<20"],spaces(1),"BenchMark",spaces(4),"Timing" ,"Runs/Loops : $1" % x.repeats)
+       let tit = fmtx(["","<$1" % $(bnamesize - len(gold) * 3),"","<30","<20"],spaces(1),"BenchMark",spaces(4),"Timing" ,"Iters : $1" % x.repeats)
        
        if parseInt(x.repeats) > 0:
           printLn(tit,greenyellow, styled = {styleUnderScore},substr = tit)
@@ -3229,7 +3224,6 @@ proc showBench*() =
        else:
           ee1 = "Iters/sec : Inf"
          
-       #dd1.add "     secs " & ff(x.fastest,20)
        printLn(fmtx(["<$1" % $bnamesize,"","<70","<90"],aa1,spaces(3),bb1 ,dd1))
        printLn(fmtx(["<$1" % $bnamesize,"","<70","<50"],aa1,spaces(3),cc1,ee1))
 
@@ -3379,12 +3373,12 @@ proc clearAllTimerResults*() =
              
     
 proc `$`*[T](some:typedesc[T]): string = name(T)
-proc typeTest*[T](x:T): T =
+proc typeTest*[T](x:T):  T {.discardable.} =
      # used to determine the field types in the temp sqllite table used for sorting
      printLnBiCol("Type     : " & $type(x))
      printLnBiCol("Value    : " & $x)
      
-proc typeTest2*[T](x:T): T =
+proc typeTest2*[T](x:T): T {.discardable.}  =
      # same as typetest but without showing values (which may be huge in case of seqs)
      printLnBiCol("Type       : " & $type(x),xpos = 3)   
      
