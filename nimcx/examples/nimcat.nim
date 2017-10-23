@@ -1,4 +1,4 @@
-import os,nimcx,osproc
+import os,cx,osproc
 
 # nimcat   
 # a cat for nim :)

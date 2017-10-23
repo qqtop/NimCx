@@ -153,7 +153,7 @@ when defined(macosx):
 
 when defined(windows):
   {.hint    : "Time to switch to Linux !".}
-  {.fatal   : "CX does not support Windows at this stage and never will !".}
+  {.hint    : "CX does not support Windows at this stage , you are on your own !".}
 
 when defined(posix):
   {.hint    : "\x1b[38;2;154;205;50m \u2691  NimCx     :" &  "\x1b[38;2;255;215;0m Officially works on Linux only." & spaces(13) & "\x1b[38;2;154;205;50m \u2691".}
@@ -167,9 +167,23 @@ let cxstart* = epochTime()  #  simple execution timing with one line see doFinis
 randomize()                 # seed random number generator 
 
 type
-     NimCxCustomError* = object of Exception         
+     NimCxError* = object of Exception         
      # to be used like so
-     # raise newException(NimCxCustomError, "didn't do stuff")
+     # raise newException(NimCxError, "didn't do stuff")
+     #
+     # or something like this
+     # 
+     # proc checkoktype[T](a: T) =
+     #   when (T is ref or T is ptr or T is cstring):
+     #     raise newException(NimCxError, "This type not supported here")
+     #     # or exit during compile already
+     #     #  {.fatal: "This type not supported here".}
+     #   else:
+     #     discard
+     # 
+     # 
+     #
+     
 
 # type used in slim number printing
 type
@@ -799,7 +813,6 @@ proc fmtengine[T](a:string,astring:T):string =
         for x in 0.. <parseInt(dg):  
             dps = dps & okstring[x]
         okstring = dps
-         
      result = okstring
 
 
@@ -1333,7 +1346,6 @@ proc hline*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-") =
      ## .. code-block:: nim
      ##    hline(30,green,xpos=xpos)
      ##
-
      print(lt * n,col,xpos = xpos)
 
 
@@ -3045,10 +3057,13 @@ proc nimcat*(curFile:string,countphrase : varargs[string,`$`] = "")=
     ##   nimcat("bigdatafile.csv")
     ##   nimcat("/data5/notes.txt",countphrase = "nice" , "hanya", 88) # also count how often a token appears in the file
     ## 
-    
-    if not fileExists(curfile):
+    var ccurFile = curFile
+    let (dir, name, ext) = splitFile(ccurFile)
+    if ext == "": ccurFile = ccurFile & ".nim"
+   
+    if not fileExists(ccurfile):
             echo()
-            printLnBiCol("Error : " , curfile , " not found !",red,white,":",0,false,{})
+            printLnBiCol("Error : " , ccurfile , " not found !",red,white,":",0,false,{})
             printLn(spaces(8) & " Check path and filename")
             echo()
             discard
@@ -3059,25 +3074,17 @@ proc nimcat*(curFile:string,countphrase : varargs[string,`$`] = "")=
             dlineLn()
             echo()
         
-            var phrasecount = newSeqWith(countphrase.len, 0)
+            
             var phraseinline = newSeqWith(countphrase.len, newSeq[int](0))  # holds the line numbers where a phrase to be counted was found
             var line = ""
-            var ccurFile = curFile
-            let (dir, name, ext) = splitFile(ccurFile)
-            if ext == "":
-               ccurFile = ccurFile & ".nim"
-   
             var c = 1
             #if not isNil(fs):
             for line in memSlices(memfiles.open(ccurFile)):
-                    # TODO: linewrap
-                    #printLnBiCol(fmtx([">5",": ",""],c,spaces(2),line))
-                    echo yellowgreen, align($c, 6),termwhite,":",spaces(2),line
+                    echo yellowgreen, align($c, 6),termwhite,":",spaces(1),wordwrap($line,maxLineWidth = tw - 8,splitLongWords = false,newLine = "\x0D\x0A" & spaces(8))
                     if ($line).len > 0:
                       var lc = 0
                       for mc in 0 .. <countphrase.len:
                           lc = ($line).count(countphrase[mc])
-                          phrasecount[mc] += lc
                           if lc > 0: phraseinline[mc].add(c)
                     
                     inc c
@@ -3095,7 +3102,7 @@ proc nimcat*(curFile:string,countphrase : varargs[string,`$`] = "")=
             if countphrase.len > 0:
               println("\nPhraseCount stats :    \n",gold,styled={styleUnderScore})
               for x in 0 .. <countphrase.len:
-                    printLnBiCol(fmtx(["<" & $maxphrasewidth,"",""],countphrase[x]," : " & rightarrow & " Count: ",phrasecount[x]))
+                    printLnBiCol(fmtx(["<" & $maxphrasewidth,"",""],countphrase[x]," : " & rightarrow & " Count: ",phraseinline[x].len))
                     printLnBiCol("Lines : " , phraseinline[x],"\n" ,colLeft = cyan ,colRight = termwhite ,sep = ":",0,false,{})
             
   
@@ -3338,7 +3345,6 @@ proc newCxtimer*(aname:string = "cxtimer"):ref(CxTimer) =
      ## showTimerResults()
      ## dprint cxtimerresults                # dprint is a simple repr utility
      ## 
-     
      ## 
      
      var aresult = (ref(CxTimer))(name:aname)
@@ -3457,6 +3463,22 @@ proc typeTest2*[T](x:T): T {.discardable.}  =
      printLnBiCol("Type       : " & $type(x),xpos = 3)   
      
 
+macro echoType*(x: typed): untyped = 
+  ## echoType
+  ## by @yardanico
+  ## 
+  let impl = x.symbol.getImpl()
+  # we're called on some type
+  
+  if impl.kind == nnkTypeDef:
+    echo "type ", toStrLit(impl)
+  # we're called on a variable
+  else:
+    echo "type ", impl.getTypeInst(), " = ", toStrLit(impl.getTypeImpl())
+
+
+
+     
 template withFile*(f,fn, mode, actions: untyped): untyped =
   ## withFile
   ## 
@@ -3701,14 +3723,19 @@ proc spellFloat*(n:float64,currency:bool = false,sep:string = ".",sepname:string
           # we assume its a currency float value
           result = spellInteger(parseInt(nss[0])) & sepname &  spellInteger(parseInt(nss[1]))
   
-    
+proc returnStat(x:Runningstat,stat : seq[string]):float =
+     ## returnStat
+     ## 
+     ## returns any of following from a runningstat instance
+     ## 
+     discard
 
 proc showStats*(x:Runningstat,n:int = 3,xpos:int = 1) =
      ## showStats
      ##
      ## quickly display runningStat data
      ## 
-     ## adjust decimals
+     ## adjust decimals default n = 3 as needed
      ##
      ## .. code-block:: nim
      ##     import nimcx
@@ -3735,7 +3762,6 @@ proc showStats*(x:Runningstat,n:int = 3,xpos:int = 1) =
      ##     curdn(6)  
      ##     doFinish()
      ##
-     
      var sep = ":"
      printLnBiCol("Sum     : " & ff(x.sum,n),yellowgreen,white,sep,xpos = xpos,false,{})
      printLnBiCol("Mean    : " & ff(x.mean,n),yellowgreen,white,sep,xpos = xpos,false,{})
