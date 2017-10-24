@@ -16,7 +16,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-10-20
+##     Latest      : 2017-10-24
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -124,9 +124,7 @@ import cxconsts,os, times, strutils,parseutils, parseopt, hashes, tables, sets, 
 import osproc,macros,posix,terminal,math,stats,json,random,streams,options,memfiles
 import sequtils,httpclient,rawsockets,browsers,intsets, algorithm
 import unicode ,typeinfo, typetraits ,cpuinfo,colors,encodings,distros
-
-export 
-       strutils,sequtils,times,unicode,streams,hashes,terminal,cxconsts,random,options
+export strutils,sequtils,times,unicode,streams,hashes,terminal,cxconsts,random,options
 
 # Profiling       
 #import nimprof  # nim c -r --profiler:on --stackTrace:on cx
@@ -553,6 +551,21 @@ template rndCol*(r:int = getRndInt(0,254) ,g:int = getRndInt(0,254), b:int = get
     ##    loopy(0..5,printLn("Hello Random Color",rndCol()))
     ##
     ##
+    
+   
+template randPastelCol*: string = random(pastelset)
+   ## randPastelCol
+   ##
+   ## get a randomcolor from pastelSet
+   ##
+   ## .. code-block:: nim
+   ##    # print a string 6 times in a random color selected from pastelSet
+   ##    loopy(0..5,printLn("Hello Random Color",randPastelCol()))
+   ##
+   ##
+ 
+    
+    
    
 template `<>`* (a, b: untyped): untyped =
   ## unequal operator 
@@ -672,18 +685,6 @@ template currentLine*  =
    print("]",truetomato)
    echo()
    
-   
-template randPastelCol*: string = random(pastelset)
-   ## randPastelCol
-   ##
-   ## get a randomcolor from pastelSet
-   ##
-   ## .. code-block:: nim
-   ##    # print a string 6 times in a random color selected from pastelSet
-   ##    loopy(0..5,printLn("Hello Random Color",randPastelCol()))
-   ##
-   ##
- 
 
 template hdx*(code:typed,frm:string = "+",width:int = tw,nxpos:int = 0):typed =
    ## hdx
@@ -902,18 +903,13 @@ proc unquote*(s:string):string =
 proc cleanScreen*() =
       ## cleanScreen
       ##
-      ## clear screen with escape seqs
+      ## vaery fast clear screen proc with escape seqs
       ##
       ## similar to terminal.eraseScreen() but cleans the terminal window more completely at times
       ##
       write(stdout,"\e[H\e[J")
 
-proc clearScreen():int {.discardable.} =
-     ## clearScreen
-     ## 
-     ## another clear terminal proc
-     ## 
-     execShellCmd("clear")
+
 
 proc centerX*() : int = tw div 2
      ## centerX
@@ -2794,14 +2790,14 @@ proc ff2*(zz:float , n:int = 3):string =
   ##  
   ##       
      
-  if abs(zz) < 10000 == true:   #  number less than 10000 so no 1000 seps needed
+  if abs(zz) < 1000 == true:   #  number less than 1000 so no 1000 seps needed
     result = ff(zz,n)
     
   else: 
         let c = rpartition($zz,".")
         var cnew = ""
         for d in c[2]:
-            if cnew.len < n:  cnew = cnew & d
+              if cnew.len < n:  cnew = cnew & d
         result = ff2(parseInt(c[0])) & c[1] & cnew
 
 
@@ -2969,78 +2965,7 @@ template bitCheck*(a, b: untyped): bool =
     (a and (1 shl b)) != 0       
        
 # Misc. routines
-
-# 
-# proc nimcat*(curFile:string,countphrase : varargs[string,`$`] = "")=
-#     ## nimcat
-#     ## 
-#     ## a simple file lister which shows all rows and some stats as well as allows counting of tokens
-#     ## a file name without extension will be assuemed to be .nim  ... it is the nimcat afterall
-#     ## countphrase is case sensitive
-#     ## 
-#     ##  
-#     ##  
-#     ## .. code-block: nim
-#     ## 
-#     ##   nimcat("notes.txt")                   # show all lines
-#     ##   nimcat("bigdatafile.csv")
-#     ##   nimcat("/data5/notes.txt",countphrase = "nice" , "hanya", 88) # also count how often a token appears in the file
-#     ## 
-#     
-#     if not fileExists(curfile):
-#             echo()
-#             printLnBiCol("Error : " , curfile , " not found !",red,white,":",0,false,{})
-#             printLn(spaces(8) & " Check path and filename")
-#             echo()
-#             discard
-#        
-#     else :   
-#     
-#             decho(2)
-#             dlineLn()
-#             echo()
-#         
-#             var phrasecount = newSeqWith(countphrase.len, 0)
-#             var phraseinline = newSeqWith(countphrase.len, newSeq[int](0))  # holds the line numbers where a phrase to be counted was found
-#             var line = ""
-#             var ccurFile = curFile
-#             let (dir, name, ext) = splitFile(ccurFile)
-#             if ext == "":
-#                ccurFile = ccurFile & ".nim"
-#             let fs = streamFile(ccurFile, fmRead)
-#             var c = 1
-#             if not isNil(fs):
-#                 while fs.readLine(line):
-#                     # TODO: linewrap
-#                     let px = fmtx([">5",": ",""],c,spaces(2),line)
-#                     #printLnBiCol(fmtx([">5",": ",""],c,spaces(2),line))
-#                     printLnBiCol(px)
-#                     if line.len > 0:
-#                       var lc = 0
-#                       for mc in 0 .. <countphrase.len:
-#                           lc = line.count(countphrase[mc])
-#                           phrasecount[mc] += lc
-#                           if lc > 0: phraseinline[mc].add(c)
-#                     
-#                     inc c
-#                 fs.close()   
-#                 
-#             echo()
-#             
-#             printLnBiCol("File       : " & ccurFile)
-#             printLnBiCol("Lines Shown: " & ff2(c - 1))
-#             
-#             var maxphrasewidth = 0
-#             
-#             for x in  countphrase:
-#                if x.len > maxphrasewidth: maxphrasewidth = x.len
-#                 
-#             if countphrase.len > 0:
-#               println("\nPhraseCount stats :    \n",gold,styled={styleUnderScore})
-#               for x in 0 .. <countphrase.len:
-#                     printLnBiCol(fmtx(["<" & $maxphrasewidth,"",""],countphrase[x]," : " & rightarrow & " Count: ",phrasecount[x]))
-#                     printLnBiCol("Lines : " , phraseinline[x],"\n" ,colLeft = cyan ,colRight = termwhite ,sep = ":",0,false,{})
-#             
+     
 
 proc nimcat*(curFile:string,countphrase : varargs[string,`$`] = "")=
     ## nimcat
@@ -3089,15 +3014,14 @@ proc nimcat*(curFile:string,countphrase : varargs[string,`$`] = "")=
                     
                     inc c
 
-            echo()
-            
+            echo() 
             printLnBiCol("File       : " & ccurFile)
             printLnBiCol("Lines Shown: " & ff2(c - 1))
             
             var maxphrasewidth = 0
             
             for x in  countphrase:
-               if x.len > maxphrasewidth: maxphrasewidth = x.len
+                  if x.len > maxphrasewidth: maxphrasewidth = x.len
                 
             if countphrase.len > 0:
               println("\nPhraseCount stats :    \n",gold,styled={styleUnderScore})
@@ -3106,9 +3030,7 @@ proc nimcat*(curFile:string,countphrase : varargs[string,`$`] = "")=
                     printLnBiCol("Lines : " , phraseinline[x],"\n" ,colLeft = cyan ,colRight = termwhite ,sep = ":",0,false,{})
             
   
-  
-  
-  
+
         
 proc checkHash*[T](kata:string,hsx:T)  =
   ## checkHash

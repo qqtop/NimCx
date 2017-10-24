@@ -1212,7 +1212,13 @@ proc dayOfWeekJulian*(datestr:string): string =
    ##
    ## 
    result = $(getdayofweekjulian(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr))))
-   
 
+   
+proc clearScreen*():int {.discardable.} =
+     ## clearScreen
+     ## 
+     ## slow clear screen proc using call to Os
+     ## 
+     execShellCmd("clear")
    
 # END OF CXUTILS.NIM #
