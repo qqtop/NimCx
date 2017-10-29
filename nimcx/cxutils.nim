@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-09-29
+##     Latest      : 2017-09-30
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -700,7 +700,7 @@ proc superHeaderA*(bb:string = "",strcol:string = white,frmcol:string = green,an
       ##    doFinish()
 
       for am in 0..<animcount:
-          for x in 0.. <1:
+          for x in 0..<1:
             cleanScreen()
             for zz in 0.. bb.len:
                   cleanScreen()
@@ -739,7 +739,7 @@ proc newWordCJK*(minwl:int = 3 ,maxwl:int = 10):string =
       result = ""
       let c5 = toSeq(minwl.. maxwl)
       let chc = toSeq(parsehexint("3400").. parsehexint("4DB5"))
-      for xx in 0.. <rndSample(c5): result = result & $Rune(rndSample(chc))
+      for xx in 0..<rndSample(c5): result = result & $Rune(rndSample(chc))
 
 
 
@@ -1003,7 +1003,7 @@ proc printBigNumber*(xnumber:string|int|int64,fgr:string = yellowgreen ,bgr:stri
 
     for x in 0.. numberlen:
         curSetx(xpos)
-        for y in 0.. <printseq.len:
+        for y in 0..<printseq.len:
             if fun == false:
                print(" " & printseq[y][x],fgr,bgr)
             else:

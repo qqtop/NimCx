@@ -16,7 +16,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-10-24
+##     Latest      : 2017-10-30
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -30,13 +30,17 @@
 ##                   
 ##                   a wide selection of utility functions and useable snippets. 
 ##                   
-##                   Currently the library consists of cx.nim and cxutils.nim , 
+##                   Currently the library consists of cx.nim , cxconsts.nim and cxutils.nim , 
 ##                   
-##                   both files are automatically imported with : import nimcx
+##                   all files are automatically imported with : import nimcx
 ##                   
-##                   Some procs may mirror functionality of stdlib moduls others may be deprecated if
+##                   Some procs may mirror functionality available in stdlib moduls and will be deprecated if
 ##                   
-##                   similar or better appear in the stdlib.
+##                   similar or better appear in the stdlib. Overtime more procs will be pushed into
+##                   
+##                   cxutils.nim and the upcoming cxsnippets.nim and not longer imported via cxnim to
+##                   
+##                   keep everything small and usefull.
 ##
 ##
 ##     Usage       : import nimcx
@@ -61,7 +65,7 @@
 ##
 ##                   script from : https://gist.github.com/XVilka/8346728
 ##
-##                   ..   code-block:: nim
+##                  ..   code-block:: nim
 ##
 ##                    awk 'BEGIN{
 ##                        s="/\\/\\/\\/\\/\\"; s=s s s s s s s s;
@@ -82,7 +86,7 @@
 ##
 ##                  * see examples
 ##
-##                  * demo library: cxDemo.nim
+##                  * demo library: cxDemo.nim   (rough demos lib)
 ##
 ##                  * tests       : cxTest.nim   (run some rough demos from cxDemo)
 ##
@@ -97,7 +101,7 @@
 ##
 ##                   terminal x-axis position start with 1
 ##
-##                   proc fmtx a formatting utility has been added
+##                   proc fmtx a simple formatting utility has been added
 ##
 ##
 ##     Installation: nimble install nimcx
@@ -107,11 +111,11 @@
 ##                 
 ##                   unicode font libraries as needed 
 ##
-##     In progress : moving some of the non core procs to module cxutils.nim to avoid bloat
-##     
-##                   and deprecating unused functions.
+##     In progress : moving some of the non core procs to module cxutils.nim 
 ##                   
 ##                   moving constants to cxconsts.nim
+##                   
+##                   
 ##                   
 ##
 ##     Funding     : If you are happy or unhappy feel free to send any amount of bitcoins to this wallet : 
@@ -161,7 +165,7 @@ when defined(posix):
   
 const CXLIBVERSION* = "0.9.9"
 
-let cxstart* = epochTime()  #  simple execution timing with one line see doFinish()
+let cxstart* = epochTime()  # simple execution timing with one line see doFinish()
 randomize()                 # seed random number generator 
 
 type
@@ -214,15 +218,26 @@ type
     Cxtimerres* = tuple[tname:string,start:float,stop : float,lap:seq[float]]
     
 
-# under consideration use different setup to get rid of globals like cxtimerresults    
-#type
-#   Cxtimerresults* = seq[Cxtimerres]
-     
-# proc newCxtimerresults*():Cxtimerresults =
-#       result = newSeq[Cxtimerres]() 
-
 # used to store all cxtimer results 
 var cxtimerresults* =  newSeq[Cxtimerres]() 
+
+# #start tier experimental
+# # under consideration use different setup to get rid of globals like cxtimerresults    
+# 
+# type 
+#      CxRtes* = object
+#          cxRtimerres* : seq[Cxtimerres]
+#      
+# proc newCxtimerresults*(acxtimer:Cxtimer): CxRtes =
+#         
+#         result.cxRtimerres.add(acxtimer)    # hmm need to rethink this
+# 
+# # try to use it
+# # 
+# var globalTimer = newCxtimerresults()
+# globalTimer.start = epochTime()
+# # 
+# ## end timer experimental
 
 type
   Cxcounter* =  object
@@ -235,7 +250,7 @@ proc newCxcounter*():ref(Cxcounter) =
     ## 
     ## simple counter with add,dec and reset procs
     ## 
-    ## .. code-block:: nim
+    ##.. code-block:: nim
     ## var counter1 = newCxcounter()
     ## counter1.add   # add 1
     ## counter1.dec   # dec 1
@@ -256,17 +271,17 @@ proc rndSample*[T](asq:seq[T]):T =
      
 proc rndRGB*():auto = 
    var cln = newSeq[int]()
-   for x in 0.. <colorNames.len: cln.add(x)
+   for x in 0..<colorNames.len: cln.add(x)
    let argb =  extractRgb(parsecolor(colorNames[rndSample(cln)][0]))
    result =  rgb(argb.r,argb.g,argb.b)
         
        
-proc `[]`*[Idx, T](a: openarray[T], x: Slice[Idx]): seq[T] =
+proc `[]`*[Idx, T, U](a: openarray[T], x: Slice[Idx,U]): seq[T] =
      # used by sampleSeq
      var L = ord(x.b) - ord(x.a) + 1
      if L >= 0:
         newSeq(result, L)
-        for i in 0.. <L: result[i] = a[Idx(ord(x.a) + i)]
+        for i in 0..<L: result[i] = a[Idx(ord(x.a) + i)]
      else:
         result = @[]
         
@@ -279,7 +294,7 @@ proc sampleSeq*[T](x: openarray[T], a, b: int) : seq[T] =
      ## returns a continuous subseq a..b from an array or seq if a >= b
      ## 
      ## 
-     ## .. code-block:: nim
+     ##.. code-block:: nim
      ##    import nimcx
      ##    let x = createSeqInt(20)
      ##    x.sampleseq(4,8)
@@ -295,7 +310,7 @@ template loopy*[T](ite:T,st:untyped) =
      ##
      ## the lazy programmer's quick simple for-loop template
      ##
-     ## .. code-block:: nim
+     ##.. code-block:: nim
      ##       loopy(0.. 10,printLn("The house is in the back.",randcol()))
      ##
      for x in ite: st
@@ -311,7 +326,7 @@ template loopy2*(mi:int = 0,ma:int = 5,st:untyped) =
      ##      printLnBiCol(xloopy , "  The house is in the back.",randcol(),randcol(),":",0,false,{})
      ##      printLn("Some integer : " , getRndInt())
      ##
-     for xloopy {.inject.} in mi .. <ma: st  
+     for xloopy {.inject.} in mi..<ma: st  
      
      
 template now*:string = getDateStr() & " " & getClockStr()
@@ -340,7 +355,7 @@ proc uniform*(a,b: float) : float {.inline.} =
       ## 
       ## returns a random float uniformly distributed between a and  b
       ## 
-      ## .. code-block:: nim
+      ##.. code-block:: nim
       ##   import nimcx,stats
       ##   import "random-0.5.3/random"
       ##   proc quickTest() =
@@ -348,17 +363,17 @@ proc uniform*(a,b: float) : float {.inline.} =
       ##        var  n = 100_000_000
       ##        printLnBiCol("Each test loops : " & $n & " times\n\n")
       ##
-      ##        for x in 0.. <n: ps.push(uniform(0.00,100.00))
+      ##        for x in 0..<n: ps.push(uniform(0.00,100.00))
       ##        printLn("uniform",salmon) 
       ##        showStats(ps) 
       ##        ps.clear 
-      ##        for x in 0.. <n: ps.push(getRandomFloat() * 100)
+      ##        for x in 0..<n: ps.push(getRandomFloat() * 100)
       ##        curup(15) 
       ##        printLn("getRandomFloat * 100",salmon,xpos = 30)
       ##        showStats(ps,xpos = 30) 
       ##    
       ##        ps.clear 
-      ##        for x in 0.. <n: ps.push(getRndInt(0,100))
+      ##        for x in 0..<n: ps.push(getRndInt(0,100))
       ##        curup(15) 
       ##        printLn("getRndInt",salmon,xpos = 60)
       ##        showStats(ps,xpos = 60) 
@@ -394,7 +409,7 @@ proc getRndBool*():bool =
          result = true
     
     
-template colPaletteIndexer*(colx:seq[string]):auto =  toSeq(colx.low .. colx.high) 
+template colPaletteIndexer*(colx:seq[string]):auto =  toSeq(colx.low.. colx.high) 
 
 template colPaletteLen*(coltype:string): auto =
          ##  colPaletteLen
@@ -402,7 +417,7 @@ template colPaletteLen*(coltype:string): auto =
          ##  returns the len of a colPalette 
          ##  
          var ts = newseq[string]()         
-         for x in 0.. <colorNames.len:
+         for x in 0..<colorNames.len:
             if colorNames[x][0].startswith(coltype) or colorNames[x][0].contains(coltype):
                ts.add(colorNames[x][1])           
          colPaletteIndexer(ts).len  
@@ -416,7 +431,7 @@ template colPalette*(coltype:string,n:int): auto =
          ##   
          ##   if n > larger than palette length the first palette entry will be used
          ##   
-         ## .. code-block:: nim
+         ##.. code-block:: nim
          ##     import nimcx
          ##     cleanScreen()       
          ##     decho(2)
@@ -435,7 +450,7 @@ template colPalette*(coltype:string,n:int): auto =
          ##
          var m = n
          var ts = newseq[string]()         
-         for colx in 0.. <colorNames.len:
+         for colx in 0..<colorNames.len:
             if colorNames[colx][0].startswith(coltype) or colorNames[colx][0].contains(coltype):
                ts.add(colorNames[colx][1])
          if m > colPaletteLen(coltype): m = 0
@@ -448,7 +463,7 @@ template colorsPalette*(coltype:string): auto =
          ## 
          ##   returns a colorpalette which can be used to iterate over
          ##    
-         ## .. code-block:: nim
+         ##.. code-block:: nim
          ##    import nimcx
          ##    let z = "The big money waits in the bank" 
          ##    printLn(z,colPalette("pastel",getRndInt(0,colPaletteLen("pastel") - 1)),black)
@@ -459,7 +474,7 @@ template colorsPalette*(coltype:string): auto =
          ##    
                
          var pal = newseq[(string,string)]()         
-         for colx in 0.. <colorNames.len:
+         for colx in 0..<colorNames.len:
             if colorNames[colx][0].startswith(coltype) or colorNames[colx][0].contains(coltype):
               pal.add((colorNames[colx][0],colorNames[colx][1]))
               
@@ -481,7 +496,7 @@ template colPaletteName*(coltype:string,n:int): auto =
          ##
          var ts = newseq[string]()  
          # build the custom palette ts       
-         for colx in 0.. <colorNames.len:
+         for colx in 0..<colorNames.len:
             if colorNames[colx][0].startswith(coltype) or colorNames[colx][0].contains(coltype):
               ts.add(colorNames[colx][0])
          
@@ -500,7 +515,7 @@ template aPaletteSample*(coltype:string):int =
      ## 
      var coltypen = coltype.toLowerAscii()
      var b = newSeq[int]()
-     for x in 0 .. <colPaletteLen(coltypen): b.add(x)
+     for x in 0..<colPaletteLen(coltypen): b.add(x)
      rndSample(b)
 
 template randCol2*(coltype:string): auto =
@@ -513,7 +528,7 @@ template randCol2*(coltype:string): auto =
          ##   
          ##   coltype examples : "red","blue","medium","dark","light","pastel" etc..
          ##   
-         ## .. code-block:: nim
+         ##.. code-block:: nim
          ##    loopy(0..5,printLn("Random blue shades",randcol2("blue")))
          ##
          ##   
@@ -521,7 +536,7 @@ template randCol2*(coltype:string): auto =
          if coltypen == "black":      # no black
             coltypen = "darkgray"
          var ts = newSeq[string]()         
-         for x in 0.. <colorNames.len:
+         for x in 0..<colorNames.len:
             if colorNames[x][0].startswith(coltypen) or colorNames[x][0].contains(coltypen):
                ts.add(colorNames[x][1])
          if ts.len == 0: ts.add(colorNames[getRndInt(0,colorNames.len - 1)][1]) # incase of no suitable string we return standard randcol     
@@ -533,20 +548,20 @@ template randCol*(): string = random(colorNames)[1]
    ##
    ## get a randomcolor from colorNames , no filter is applied 
    ##
-   ## .. code-block:: nim
+   ##.. code-block:: nim
    ##    # print a string 6 times in a random color selected from colorNames
    ##    loopy(0..5,printLn("Hello Random Color",randCol()))
    ##
    ##
 
 
-template rndCol*(r:int = getRndInt(0,254) ,g:int = getRndInt(0,254), b:int = getRndInt(0,254))  :string = "\x1b[38;2;" & $r & ";" & $b & ";" & $g & "m"
+template rndCol*(r:int = getRndInt(0,254) ,g:int = getRndInt(0,254), b:int = getRndInt(0,254)) :string = "\x1b[38;2;" & $r & ";" & $b & ";" & $g & "m"
     ## rndCol
     ## 
     ## return a randomcolor from the whole rgb spectrum in the ranges of RGB [0..254]
     ## expect this colors maybe a bit more drab than the colors returned from randCol()
     ## 
-    ## .. code-block:: nim
+    ##.. code-block:: nim
     ##    # print a string 6 times in a random color selected from rgb spectrum
     ##    loopy(0..5,printLn("Hello Random Color",rndCol()))
     ##
@@ -558,7 +573,7 @@ template randPastelCol*: string = random(pastelset)
    ##
    ## get a randomcolor from pastelSet
    ##
-   ## .. code-block:: nim
+   ##.. code-block:: nim
    ##    # print a string 6 times in a random color selected from pastelSet
    ##    loopy(0..5,printLn("Hello Random Color",randPastelCol()))
    ##
@@ -636,7 +651,7 @@ proc doFinish*()
 
 
 
-# procs lifted from terminal.nim as they are currently not exported from there
+# procs lifted from an early version of terminal.nim as they are currently not exported from there
 proc styledEchoProcessArg(s: string) = write stdout, s
 proc styledEchoProcessArg(style: Style) = setStyle({style})
 proc styledEchoProcessArg(style: set[Style]) = setStyle style
@@ -693,7 +708,7 @@ template hdx*(code:typed,frm:string = "+",width:int = tw,nxpos:int = 0):typed =
    ##
    ## width and xpos can be adjusted
    ##
-   ## .. code-block:: nim
+   ##.. code-block:: nim
    ##    hdx(printLn("Nice things happen randomly",yellowgreen,xpos = 9),width = 35,nxpos = 5)
    ##
    var xpos = nxpos
@@ -811,7 +826,7 @@ proc fmtengine[T](a:string,astring:T):string =
      # if the format string is "" no op no width than this will not be attempted
      if okstring.len > parseInt(dg) and parseInt(dg) > 0:
         var dps = ""
-        for x in 0.. <parseInt(dg):  
+        for x in 0..<parseInt(dg):  
             dps = dps & okstring[x]
         okstring = dps
      result = okstring
@@ -850,7 +865,7 @@ proc fmtx*[T](fmts:openarray[string],fstrings:varargs[T,`$`]):string =
      ##
      ## Examples :
      ##
-     ## .. code-block:: nim
+     ##.. code-block:: nim
      ##    import nimcx
      ##    echo fmtx(["","","<8.3",""," High : ","<8","","","","","","","",""],lime,"Open : ",unquote("1234.5986"),yellow,"",3456.67,red,showRune("FFEC"),white," Change:",unquote("-1.34 - 0.45%"),"  Range : ",lime,@[123,456,789])
      ##    echo fmtx(["","<18",":",">15","","",">8.2"],salmon,"nice something",steelblue,123,spaces(5),yellow,456.12345676)
@@ -869,7 +884,7 @@ proc fmtx*[T](fmts:openarray[string],fstrings:varargs[T,`$`]):string =
      # if formatstrings count not same as vararg count we bail out some error about fmts will be shown
      doassert(fmts.len == fstrings.len)
      # now iterate and generate the desired output
-     for cc in 0.. <fmts.len:
+     for cc in 0..<fmts.len:
          okresult = okresult & fmtengine(fmts[cc],fstrings[cc])
      result = okresult
 
@@ -882,7 +897,7 @@ proc showRune*(s:string) : string  =
      ##
      ## Example
      ## 
-     ## .. code-block :: nim
+     ##.. code-block :: nim
      ##      for x in 10.. 55203: printLnBiCol($x & " : " & showRune(toHex(x)))
      ##      print(showRune("FFEA"),lime)
      ##      print(showRune("FFEC"),red)
@@ -923,7 +938,7 @@ proc centerPos*(astring:string) =
      ##
      ## tries to move cursor so that string is centered when printing
      ##
-     ## .. code-block:: nim
+     ##.. code-block:: nim
      ##    var s = "Hello I am centered"
      ##    centerPos(s)
      ##    printLn(s,gray)
@@ -1111,7 +1126,7 @@ proc print*[T](astring:T,fgr:string = termwhite ,bgr:BackgroundColor ,xpos:int =
     ##
     ## Example
     ##
-    ## .. code-block:: nim
+    ##.. code-block:: nim
     ##    # To achieve colored text with styleReverse try:
     ##    setBackgroundColor(bgRed)
     ##    print("The end never comes on time ! ",pastelBlue,styled = {styleReverse})
@@ -1182,7 +1197,7 @@ proc print*[T](ss:varargs[T,`$`],fgr:string = termwhite , bgr:string = bblack, x
    ## 
    ## sep must not be wider than 1 , if it is wider the comma will be used as default otherwise default will be 1 space
    ## 
-   ## .. code-block:: nim
+   ##.. code-block:: nim
    ##    import nimcx
    ##    
    ##    print("TEST VARARGS : ",createSeqint(20).sampleSeq(8,13),getRndInt(10000,12000),createSeqint(3),newword(6,10),ff2(getRndfloat(),4),$(hiragana().sampleSeq(8,13)),randcol(),bblack,0,"") 
@@ -1228,7 +1243,7 @@ proc printLn*[T](astring:T,fgr:string = termwhite , bgr:string = bblack,xpos:int
     ##
     ## Examples
     ##
-    ## .. code-block:: nim
+    ##.. code-block:: nim
     ##    import nimcx
     ##    printLn("Yes ,  we made it.",clrainbow,brightyellow) # background has no effect with font in  clrainbow
     ##    printLn("Yes ,  we made it.",green,brightyellow)
@@ -1270,7 +1285,7 @@ proc printLn*[T](astring:T,fgr:string = termwhite , bgr:BackgroundColor,xpos:int
     ##
     ## Examples
     ## 
-    ## .. code-block:: nim
+    ##.. code-block:: nim
     ##    printLn("Yes ,  we made it.",clrainbow,brightyellow) # background has no effect with font in  clrainbow
     ##    printLn("Yes ,  we made it.",green,brightyellow)
     ##    # or use it as a replacement of echo
@@ -1288,7 +1303,7 @@ proc printy*[T](astring:varargs[T,`$`]) =
     ##
     ## similar to echo but does not issue new line
     ##
-    ## ..code-block:: nim
+    ##..code-block:: nim
     ##    printy "this is : " ,yellowgreen,1,bgreen,5,bblue," ʈəɽɭάɧɨɽ ʂəɱρʊɽɲά(άɲάʂʈάʂɣά)"
     ##
     
@@ -1305,7 +1320,7 @@ proc rainbow*[T](s : T,xpos:int = 1,fitLine:bool = false,centered:bool = false) 
     ##
     ## may not work with certain Rune
     ##
-    ## .. code-block:: nim
+    ##.. code-block:: nim
     ##
     ##    # equivalent output
     ##    rainbow("what's up ?",centered = true)
@@ -1317,9 +1332,9 @@ proc rainbow*[T](s : T,xpos:int = 1,fitLine:bool = false,centered:bool = false) 
     var nxpos = xpos
     var astr = $s
     var c = 0
-    let aseq = toSeq(0.. <colorNames.len)
+    let aseq = toSeq(0..<colorNames.len)
 
-    for x in 0.. <astr.len:
+    for x in 0..<astr.len:
        c = aseq[getRndInt(ma=aseq.len)]
        if centered == false:
           print(astr[x],colorNames[c][1],black,xpos = nxpos,fitLine)
@@ -1339,7 +1354,7 @@ proc hline*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-") =
      ##
      ## defaults full terminal width and white
      ##
-     ## .. code-block:: nim
+     ##.. code-block:: nim
      ##    hline(30,green,xpos=xpos)
      ##
      print(lt * n,col,xpos = xpos)
@@ -1353,7 +1368,7 @@ proc hlineLn*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-") =
      ##
      ## defaults full terminal width and white
      ##
-     ## .. code-block:: nim
+     ##.. code-block:: nim
      ##    hlineLn(30,green)
      ##
      hline(n,col,xpos,lt)
@@ -1367,7 +1382,7 @@ proc dline*(n:int = tw,lt:string = "-",col:string = termwhite) =
      ## draw a dashed line with given length in current terminal font color
      ## line char can be changed
      ##
-     ## .. code-block:: nim
+     ##.. code-block:: nim
      ##    dline(30)
      ##    dline(30,"/+")
      ##    dline(30,col= yellow)
@@ -1383,7 +1398,7 @@ proc dlineLn*(n:int = tw,lt:string = "-",col:string = termwhite) =
      ##
      ## and issue a new line
      ##
-     ## .. code-block:: nim
+     ##.. code-block:: nim
      ##    dline(50,":",green)
      ##    dlineLn(30)
      ##    dlineLn(30,"/+/")
@@ -1398,10 +1413,10 @@ proc decho*(z:int = 1)  =
     ##
     ## blank lines creator
     ##
-    ## .. code-block:: nim
+    ##.. code-block:: nim
     ##    decho(10)
     ## to create 10 blank lines
-    for x in 0.. <z: writeLine(stdout,"")
+    for x in 0..<z: writeLine(stdout,"")
 
 
 # simple navigation mostly mirrors terminal.nim functions
@@ -1494,14 +1509,14 @@ proc printRainbow*(s : string,styled:set[Style] = {}) =
     ##
     ## may not work with certain Rune
     ##
-    ## .. code-block:: nim
+    ##.. code-block:: nim
     ##    printRainBow("WoW So Nice",{styleUnderScore})
     ##    printRainBow("  --> No Style",{})
     ##
 
     var astr = s
     var c = 0
-    for x in 0.. <astr.len:
+    for x in 0..<astr.len:
         c = rxcol[getRndInt(ma=rxcol.len)]
         print($astr[x],colorNames[c][1],styled = styled)
 
@@ -1516,7 +1531,7 @@ proc printLnRainbow*[T](s : T,styled:set[Style] = {}) =
     ##
     ## may not work with certain Rune
     ##
-    ## .. code-block:: nim
+    ##.. code-block:: nim
     ##    printLnRainBow("WoW So Nice",{styleUnderScore})
     ##    printLnRainBow("Aha --> No Style",{})
     ##
@@ -1532,13 +1547,13 @@ proc printBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:str
      {.gcsafe.}:
         var nosepflag:bool = false
         var zz = ""
-        for ss in 0 .. <s.len:
+        for ss in 0..<s.len:
             zz = zz & s[ss] & spaces(1)
             
         var z = zz.splitty(sep)  # using splitty we retain the sep on the left side
         # in case sep occures multiple time we only consider the first one
         if z.len > 1:
-           for x in 2.. <z.len:
+           for x in 2..<z.len:
               # this now should contain the right part to be colored differently
               z[1] = z[1] & z[x]
 
@@ -1571,14 +1586,14 @@ proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:s
      ##
      ## default seperator = ":"  if not found we execute printLn with available params
      ##
-     ## .. code-block:: nim
+     ##.. code-block:: nim
      ##    import nimcx
      ##
-     ##    for x  in 0.. <3:
+     ##    for x  in 0..<3:
      ##       # here our input is varargs so weneed to specify all params
      ##        printLnBiCol("Test $1  : Ok " % $1,"this was $1 : what" % $2,23456.789,red,lime,":",0,false,{})
      
-     ##    for x  in 4.. <6:
+     ##    for x  in 4..<6:
      ##        # here we change the default colors
      ##        printLnBiCol("nice",123,":","check",@[1,2,3],cyan,lime,":",0,false,{})
      ##
@@ -1591,13 +1606,13 @@ proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:s
      {.gcsafe.}:
         var nosepflag:bool = false
         var zz =""
-        for ss in 0 .. <s.len:
+        for ss in 0..<s.len:
             zz = zz & s[ss] & spaces(1)
            
         var z = zz.splitty(sep)  # using splitty we retain the sep on the left side
         # in case sep occures multiple time we only consider the first one
         if z.len > 1:
-          for x in 2.. <z.len:
+          for x in 2..<z.len:
              z[1] = z[1] & z[x]
         else:
             # when the separator is not found
@@ -1630,7 +1645,7 @@ proc printHL*(s:string,substr:string,col:string = termwhite) =
       ##
       ## with a certain color
       ##
-      ## .. code-block:: nim
+      ##.. code-block:: nim
       ##    printHL("HELLO THIS IS A TEST","T",green)
       ##
       ## this would highlight all T in green
@@ -1650,7 +1665,7 @@ proc printLnHL*(s:string,substr:string,col:string = lightcyan) =
       ##
       ## with a certain color and issue a new line
       ##
-      ## .. code-block:: nim
+      ##.. code-block:: nim
       ##    printLnHL("HELLO THIS IS A TEST","T",yellowgreen)
       ##
       ## this would highlight all T in yellowgreen
@@ -1665,7 +1680,7 @@ proc cecho*(col:string,ggg: varargs[string, `$`] = @[""] )  =
       ## color echo w/o new line this also automically resets the color attribute
       ##
       ##
-      ## .. code-block:: nim
+      ##.. code-block:: nim
       ##     import nimcx,strfmt
       ##     cechoLn(salmon,"{:<10} : {} ==> {} --> {}".fmt("this ", "zzz ",123 ," color is something else"))
       ##     echo("ok")  # color resetted
@@ -1693,7 +1708,7 @@ proc cechoLn*(col:string,astring: varargs[string, `$`] = @[""] )  =
       ##
       ## in your exisiting projects.
       ##
-      ## .. code-block:: nim
+      ##.. code-block:: nim
       ##     import nimcx
       ##     cechoLn(steelblue,"We made it in $1 hours !" % $5)
       ##
@@ -1735,7 +1750,7 @@ proc doty*(d:int,fgr:string = white, bgr:string = black,xpos:int = 1) =
      ##
      ## if it is available on your system otherwise a rectangle may be shown
      ##
-     ## .. code-block:: nim
+     ##.. code-block:: nim
      ##      import nimcx
      ##      printLnBiCol("Test for  :  doty\n",truetomato,lime,":",0,false,{})
      ##      dotyLn(22 ,lime)
@@ -1757,7 +1772,7 @@ proc dotyLn*(d:int,fgr:string = white, bgr:string = black,xpos:int = 1) =
      ##
      ## each dot is of char length 4
 
-     ## .. code-block:: nim
+     ##.. code-block:: nim
      ##      import nimcx
      ##      loopy(0.. 100,loopy(1.. tw div 2, dotyLn(1,randcol(),xpos = random(tw - 1))))
      ##      printLnBiCol("coloredSnow","d",greenyellow,salmon)
@@ -1774,7 +1789,7 @@ proc dotyLn*(d:int,fgr:string = white, bgr:string = black,xpos:int = 1) =
 proc printDotPos*(xpos:int,dotCol:string,blink:bool) =
       ## printDotPos
       ##
-      ## prints a widedot at xpos in col dotCol and may blink ...
+      ## prints a widedot at xpos in col dotCol and may blink...
       ##
 
       curSetx(xpos)
@@ -1799,7 +1814,7 @@ proc drawRect*(h:int = 0 ,w:int = 3, frhLine:string = "_", frVLine:string = "|",
       ## blink   true or false to blink the dots
       ##
       ##
-      ## .. code-block:: nim
+      ##.. code-block:: nim
       ##    import nimcx
       ##    clearUp(18)
       ##    curSet()
@@ -2010,7 +2025,7 @@ proc getFirstMondayYear*(ayear:string):string =
     ##
     ## returns date of first monday of any given year
     ##
-    ## .. code-block:: nim
+    ##.. code-block:: nim
     ##    echo  getFirstMondayYear("2015")
     ##
     ##
@@ -2027,7 +2042,7 @@ proc getFirstMondayYearMonth*(aym:string):string =
     ##
     ## returns date of first monday in given year and month
     ##
-    ## .. code-block:: nim
+    ##.. code-block:: nim
     ##    echo  getFirstMondayYearMonth("2015-12")
     ##    echo  getFirstMondayYearMonth("2015-06")
     ##    echo  getFirstMondayYearMonth("2015-2")
@@ -2052,11 +2067,11 @@ proc getFirstMondayYearMonth*(aym:string):string =
 proc getNextMonday*(adate:string):string =
     ## getNextMonday
     ##
-    ## .. code-block:: nim
+    ##.. code-block:: nim
     ##    echo  getNextMonday(getDateStr())
     ##
     ##
-    ## .. code-block:: nim
+    ##.. code-block:: nim
     ##      import nimcx
     ##      # get next 10 mondays
     ##      var dw = "2015-08-10"
@@ -2086,7 +2101,7 @@ proc getNextMonday*(adate:string):string =
             else:
                 ndatestr = adate
 
-            for x in 0.. <7:
+            for x in 0..<7:
                 if validdate(ndatestr) == true:
                     z =  $(getdayofweek(parseInt(day(ndatestr)),parseInt(month(ndatestr)),parseInt(year(ndatestr))))
                 if z.strip() != "Monday":
@@ -2119,7 +2134,7 @@ proc dayofweek*(datestr:string):string =
     ## 
     ## returns day of week from a date in format yyyy-MM-dd
     ## 
-    ## .. code-block:: nim    
+    ##.. code-block:: nim    
     ##    echo getNextMonday("2017-07-15"),"  ",dayofweek(getNextMonday("2017-07-15"))
     ##    echo getFirstMondayYear("2018"),"  ",dayofweek(getFirstMondayYear("2018"))
     ##    echo getFirstMondayYearMonth("2018-2"),"  ",dayofweek(getFirstMondayYearMonth("2018-2"))
@@ -2152,7 +2167,7 @@ proc getRndDate*(minyear:int = parseint(year(today)) - 50,maxyear:int = parseint
          ## 
          ## default currently set to  between  +/- 50 years of today
          ## 
-         ## .. code-block:: nim
+         ##.. code-block:: nim
          ##    import nimcx
          ##    loopy2(0,100): echo getRndDate(2016,2025)
          ##    
@@ -2194,7 +2209,7 @@ proc printSlimNumber*(anumber:string,fgr:string = yellowgreen ,bgr:string = blac
     ## usufull for big counter etc , a clock can also be build easily but
     ## running in a tight while loop just uses up cpu cycles needlessly.
     ##
-    ## .. code-block:: nim
+    ##.. code-block:: nim
     ##    for x in 990.. 1005:
     ##         cleanScreen()
     ##         printSlimNumber($x)
@@ -2239,7 +2254,7 @@ proc printSlimNumber*(anumber:string,fgr:string = yellowgreen ,bgr:string = blac
 
     for x in 0.. 2:
         curSetx(xpos)
-        for y in 0.. <printseq.len:
+        for y in 0..<printseq.len:
             print(" " & printseq[y][x],fgr,bgr)
         writeLine(stdout,"")
 
@@ -2294,7 +2309,7 @@ proc printSlim* (ss:string = "", frg:string = termwhite,bgr:string = termblack,x
     ##
     ## make sure enough space is available left or right of xpos
     ##
-    ## .. code-block:: nim
+    ##.. code-block:: nim
     ##      printSlim($"82233.32",salmon,xpos = 25,align = "right")
     ##      decho(3)
     ##      printSlim($"33.87",salmon,xpos = 25,align = "right")
@@ -2357,7 +2372,7 @@ proc superHeader*(bstring:string) =
       else :
           # default or smaller
           let n = mmax - astrl
-          for x in 0.. <n:
+          for x in 0..<n:
               astring = astring & " "
           mddl = mddl + 1
 
@@ -2393,7 +2408,7 @@ proc superHeader*(bstring:string,strcol:string,frmcol:string) =
         ##
         ## can be set to clrainbow too .
         ##
-        ## .. code-block:: nim
+        ##.. code-block:: nim
         ##    import nimcx
         ##
         ##    superheader("Ok That's it for Now !",clrainbow,white)
@@ -2414,7 +2429,7 @@ proc superHeader*(bstring:string,strcol:string,frmcol:string) =
         else :
             # default or smaller
             let n = mmax - astrl
-            for x in 0.. <n:
+            for x in 0..<n:
                 astring = astring & spaces(1)
             mddl = mddl + 1
 
@@ -2459,7 +2474,7 @@ proc tupleToStr*(xs: tuple): string =
      ##
      ## code ex nim forum
      ##
-     ## .. code-block:: nim
+     ##.. code-block:: nim
      ##    echo tupleToStr((1,2))         # prints (1, 2)
      ##    echo tupleToStr((3,4))         # prints (3, 4)
      ##    echo tupleToStr(("A","B","C")) # prints (A, B, C)
@@ -2487,7 +2502,7 @@ proc getIpInfo*(ip:string):JsonNode =
      ##
      ## and can be queried like so
      ##
-     ## .. code-block:: nim
+     ##.. code-block:: nim
      ##   var jj = getIpInfo("208.80.152.201")
      ##   echo mpairs(jz)
      ##   echo jj["city"].getstr
@@ -2509,7 +2524,7 @@ proc showIpInfo*(ip:string) =
       ##
       ## Example:
       ##
-      ## .. code-block:: nim
+      ##.. code-block:: nim
       ##    showIpInfo("208.80.152.201")
       ##    showIpInfo(getHosts("bbc.com")[0])
       ##
@@ -2554,7 +2569,7 @@ proc getHosts*(dm:string):seq[string] =
     ##
     ## may resolve multiple IP pointing to same domain
     ##
-    ## .. code-block:: Nim
+    ##.. code-block:: Nim
     ##    import nimcx
     ##    var z = getHosts("bbc.co.uk")
     ##    for x in z:
@@ -2578,7 +2593,7 @@ proc getHosts*(dm:string):seq[string] =
                     s.add('.')
               s.add($int(c))
           var ss = s.split(",")
-          for x in 0.. <ss.len:
+          for x in 0..<ss.len:
               rx.add(ss[x])
 
         else:
@@ -2599,7 +2614,7 @@ proc showHosts*(dm:string) =
     ##
     ## may resolve multiple IP pointing to same domain
     ##
-    ## .. code-block:: Nim
+    ##.. code-block:: Nim
     ##    import nimcx
     ##    showHosts("bbc.co.uk")
     ##    doFinish()
@@ -2618,7 +2633,7 @@ proc pingy*(dest:string,pingcc:int = 3,col:string = termwhite) =
         ## 
         ## small utility to ping some server
         ## 
-        ## .. code-block:: nim 
+        ##.. code-block:: nim 
         ##    pingy("yahoo.com",4,dodgerblue)   # 4 pings and display progress in some color
         ##    pingy("google.com",8,aqua)
         ## 
@@ -2646,10 +2661,10 @@ template quickList*[T](c:int,d:T,cw:int = 7 ,dw:int = 15) =
       ## 
       ## cw and dw are column width adjuster 
       ## 
-      ## .. code-block:: nim
+      ##.. code-block:: nim
       ##    import nimcx      
       ##    var z = createSeqFloat(1000000,4)
-      ##    for x in 0.. <z.len:
+      ##    for x in 0..<z.len:
       ##        quicklist(x,ff2(z[x] * 100000,4),dw = 22)
 
       let fms1 = ">" & $cw
@@ -2657,13 +2672,13 @@ template quickList*[T](c:int,d:T,cw:int = 7 ,dw:int = 15) =
       echo fmtx([fms1,"",fms2],c,spaces(1),d)
 
 
-template doSomething*(body:untyped,secs:int) =
+template doSomething*(secs:int,body:untyped) =
   ## doSomething
   ## 
   ## execute some code for a certain amount of seconds
   ## 
-  ## .. code-block:: nim
-  ##    doSomething(10,myproc())  # executes my proc for ten secs
+  ##.. code-block:: nim
+  ##    doSomething(10,myproc())  # executes my proc for ten secs   , obviously this will fail if your proc uses sleep...
   ## 
   let mytime = getTime().getLocalTime()
   while toTime(getTime().getLocalTime()) < toTime(mytime) + secs.seconds : 
@@ -2675,7 +2690,7 @@ proc reverseMe*[T](xs: openarray[T]): seq[T] =
   ##
   ## reverse a sequence
   ##
-  ## .. code-block:: nim
+  ##.. code-block:: nim
   ##
   ##    var z = @["nice","bad","abc","zztop","reverser"]
   ##    printLn(z,lime)
@@ -2684,7 +2699,7 @@ proc reverseMe*[T](xs: openarray[T]): seq[T] =
 
   result = newSeq[T](xs.len)
   for i, x in xs:
-    result[^i - 1] = x # or: result[xs.high - i] = x
+     result[xs.high - i] = x
 
 
 proc reverseText*(text:string):string = 
@@ -2700,7 +2715,7 @@ proc reverseString*(text:string):string =
   ## reverses chars in a word   
   ## 
   ## 
-  ## ..code-block:: nim
+  ##..code-block:: nim
   ## 
   ##    var s = "A text to reverse could be this example 12345.0"
   ##    echo "Original      : " & s  
@@ -2721,7 +2736,7 @@ proc createSeqBool*(n:int = 10): seq[bool] {.inline.} =
      # returns a seq of random bools
      # 
      result = newSeq[bool]()
-     for x in 0.. <n: result.add(getRndBool())
+     for x in 0..<n: result.add(getRndBool())
             
 
 proc createSeqInt*(n:int = 10,mi:int = 0,ma:int = 1000) : seq[int] {.inline.} =
@@ -2733,8 +2748,8 @@ proc createSeqInt*(n:int = 10,mi:int = 0,ma:int = 1000) : seq[int] {.inline.} =
     ##
     ## gives @[4556,455,888,234,...] or similar
     ##
-    ## .. code-block:: nim
-    ##    # create a seq with 50 random integers ,of set 100 .. 2000
+    ##.. code-block:: nim
+    ##    # create a seq with 50 random integers ,of set 100.. 2000
     ##    # including the limits 100 and 2000
     ##    echo createSeqInt(50,100,2000)
 
@@ -2779,7 +2794,7 @@ proc ff2*(zz:float , n:int = 3):string =
   ## 
   ## precision is after comma given by n with default set to 3
   ## 
-  ## .. code-block:: nim
+  ##.. code-block:: nim
   ##    import nimcx
   ##    
   ##    # floats example
@@ -2816,7 +2831,7 @@ proc ff2*(zz:int64 , n:int = 0):string =
   ## ff2(12345,2)  ==> 12,345.00  # display an integer but like a float with 2 after comma pos
   ## 
   ## 
-  ## .. code-block:: nim
+  ##.. code-block:: nim
   ##    import nimcx
   ##    
   ##    # int example
@@ -2833,10 +2848,10 @@ proc ff2*(zz:int64 , n:int = 0):string =
   let zs = split($zz,".")
   let zrv = reverseme(zs[0])
  
-  for x in 0 .. <zrv.len: 
+  for x in 0..<zrv.len: 
      zrs = zrs & $zrv[x]
  
-  for x in 0.. <zrs.len:
+  for x in 0..<zrs.len:
     if sc == 2:
         nz = "," & $zrs[x] & nz
         sc = 0
@@ -2861,7 +2876,7 @@ proc getRandomFloat*(mi:float = -1.0 ,ma:float = 1.0):float =
      ## 
      ## Note: changed so to get positive and or negative floats
      ## 
-     ## .. code-block:: nim
+     ##.. code-block:: nim
      ##    echo  getRandomFloat() * 10000.00 * getRandomSignF()
      ##
      result = random(-1.0..float(1.0))
@@ -2887,19 +2902,19 @@ proc createSeqFloat*(n:int = 10,prec:int = 3) : seq[float] =
      ##
      ## form @[0.34,0.056,...] or similar
      ##
-     ## .. code-block:: nim
+     ##.. code-block:: nim
      ##    # create a seq with 50 random floats
      ##    echo createSeqFloat(50)
      ##
      ##
-     ## .. code-block:: nim
+     ##.. code-block:: nim
      ##    # create a seq with 50 random floats formated
      ##    echo createSeqFloat(50,3)
      ##
      var ffnz = prec
      if ffnz > 16: ffnz = 16
      result = newSeq[float]()
-     for wd in 0 .. <n:
+     for wd in 0..<n:
        var x = 0   
        while  x < prec:
             let afloat = parseFloat(ff2(getRndFloat(),prec))
@@ -2924,7 +2939,7 @@ proc seqLeft*[T](it : seq[T] , n: int) : seq[T] =
     ## returns a new seq with n left end elements of the original seq 
     try:
         result = it
-        if it.len >= n: result = it[0.. <n]
+        if it.len >= n: result = it[0..<n]
     except RangeError:
         discard
 
@@ -2936,7 +2951,7 @@ proc seqRight*[T](it : seq[T] , n: int) : seq[T] =
    
     try:
         result = it
-        if n <= it.len : result = it[it.len - n.. <it.len]
+        if n <= it.len : result = it[it.len - n..<it.len]
     except RangeError:
         discard        
         
@@ -2945,7 +2960,7 @@ proc seqHighLite*[T](b:seq[T],b1:seq[T],col:string=gold) =
    ## 
    ## displays the passed in seq with highlighting of subsequence
    ## 
-   ## .. code-block:: nim
+   ##.. code-block:: nim
    ##   import nimcx
    ##   var b = createSeqInt(30,1,10)
    ##   seqHighLite(b,@[5,6])   # subseq will be highlighted if found
@@ -2971,12 +2986,12 @@ proc nimcat*(curFile:string,countphrase : varargs[string,`$`] = "")=
     ## nimcat
     ## 
     ## a simple file lister which shows all rows and some stats as well as allows counting of tokens
-    ## a file name without extension will be assuemed to be .nim  ... it is the nimcat afterall
+    ## a file name without extension will be assuemed to be .nim ... it is the nimcat afterall
     ## countphrase is case sensitive
     ## this proc uses memslices and memfiles for speed
     ##  
     ##  
-    ## .. code-block: nim
+    ##.. code-block: nim
     ## 
     ##   nimcat("notes.txt")                   # show all lines
     ##   nimcat("bigdatafile.csv")
@@ -3008,7 +3023,7 @@ proc nimcat*(curFile:string,countphrase : varargs[string,`$`] = "")=
                     echo yellowgreen, align($c, 6),termwhite,":",spaces(1),wordwrap($line,maxLineWidth = tw - 8,splitLongWords = false,newLine = "\x0D\x0A" & spaces(8))
                     if ($line).len > 0:
                       var lc = 0
-                      for mc in 0 .. <countphrase.len:
+                      for mc in 0..<countphrase.len:
                           lc = ($line).count(countphrase[mc])
                           if lc > 0: phraseinline[mc].add(c)
                     
@@ -3025,7 +3040,7 @@ proc nimcat*(curFile:string,countphrase : varargs[string,`$`] = "")=
                 
             if countphrase.len > 0:
               println("\nPhraseCount stats :    \n",gold,styled={styleUnderScore})
-              for x in 0 .. <countphrase.len:
+              for x in 0..<countphrase.len:
                     printLnBiCol(fmtx(["<" & $maxphrasewidth,"",""],countphrase[x]," : " & rightarrow & " Count: ",phraseinline[x].len))
                     printLnBiCol("Lines : " , phraseinline[x],"\n" ,colLeft = cyan ,colRight = termwhite ,sep = ":",0,false,{})
             
@@ -3059,7 +3074,7 @@ proc createHash*(kata:string):auto =
     ##  
     ## Example
     ##  
-    ## .. code-block:: nim
+    ##.. code-block:: nim
     ##    var zz = readLineFromStdin("Hash a string  : ")
     ##    # var zz = readPasswordFromStdin("Hash a string  : ")   # to do not show input string
     ##    var ahash = createHash(zz)
@@ -3071,7 +3086,7 @@ proc createHash*(kata:string):auto =
 
 
 template repeats(count: int, statements: untyped) =
-  for i in 0 .. <count:
+  for i in 0..<count:
       statements
 
 proc checkspeed(ztb:float):float =
@@ -3086,12 +3101,12 @@ template benchmark*(benchmarkName: string, repeatcount:int = 1,code: typed) =
   ## for in depth benchmarking use the nimbench module available via nimble
   ## 
   ## 
-  ## .. code-block:: nim
+  ##.. code-block:: nim
   ##    benchmark("whatever",1000):
   ##        printLn("Kami makan tiga kali setiap hari.",randcol())
   ##
   ##
-  ## .. code-block:: nim
+  ##.. code-block:: nim
   ##          import nimcx,algorithm
   ##
   ##          proc doit() =
@@ -3141,13 +3156,13 @@ template benchmark*(benchmarkName: string,code: typed) =
   ## 
   ## a quick benchmark template showing cpu and epoch times without repeat
   ## 
-  ## .. code-block:: nim
+  ##.. code-block:: nim
   ##    benchmark("whatever"):
   ##      let z = 0.. 1000
   ##      loopy(z,printLn("Kami makan tiga kali setiap hari.",randcol()))
   ##
   ##
-  ## .. code-block:: nim
+  ##.. code-block:: nim
   ##
   ##   proc doit() =
   ##      var s = createSeqFloat(10,9)
@@ -3244,7 +3259,7 @@ proc newCxtimer*(aname:string = "cxtimer"):ref(CxTimer) =
      ## 
      ## simple timer with starttimer,stoptimer,laptimer,resettimer functionality
      ## 
-     ## .. code-block:: nim
+     ##.. code-block:: nim
      ##   
      ## # Example for newcxtimer usage
      ## var ct  = newCxtimer("TestTimer1")   # create a cxtimer with name TestTimer1
@@ -3384,14 +3399,14 @@ proc typeTest2*[T](x:T): T {.discardable.}  =
      # same as typetest but without showing values (which may be huge in case of seqs)
      printLnBiCol("Type       : " & $type(x),xpos = 3)   
      
-
+proc typeTest3*[T](x:T): string =   $type(x)
+     
 macro echoType*(x: typed): untyped = 
   ## echoType
   ## by @yardanico
   ## 
   let impl = x.symbol.getImpl()
   # we're called on some type
-  
   if impl.kind == nnkTypeDef:
     echo "type ", toStrLit(impl)
   # we're called on a variable
@@ -3413,7 +3428,7 @@ template withFile*(f,fn, mode, actions: untyped): untyped =
   ## 
   ## Example 1
   ## 
-  ## .. code-block:: nim
+  ##.. code-block:: nim
   ##   let curFile="/data5/notes.txt"    # some file
   ##   withFile(fs, curFile, fmRead):
   ##       var line = ""
@@ -3422,7 +3437,7 @@ template withFile*(f,fn, mode, actions: untyped): untyped =
   ##           
   ##  Example 2   
   ##    
-  ## .. code-block:: nim
+  ##.. code-block:: nim
   ##   import nimcx
   ##
   ##   let curFile="/data5/notes.txt"    # some file
@@ -3488,7 +3503,7 @@ proc showPalette*(coltype:string = "white") =
     ##   
     echo()
     let z = colPaletteLen(coltype)
-    for x in 0.. <z:
+    for x in 0..<z:
           printLn(fmtx([">3",">4"],$x,rightarrow) & " ABCD 1234567890   " & colPaletteName(coltype,x) , colPalette(coltype,x))
     printLnBiCol("\n" & coltype & "Palette items count   : " & $z)  
     echo()  
@@ -3504,7 +3519,7 @@ proc colorio*() =
     printLn(fmtx(["<20","","<20","",">5","",">5","",">5"],"ColorName in cx", spaces(2) , "HEX Code",spaces(2),"R",spaces(1),"G",spaces(1),"B") ,zippi)
     echo()
 
-    for x in 0.. <colorNames.len:
+    for x in 0..<colorNames.len:
         try:
            let zr = extractRgb(parsecolor(colorNames[x][0]))
            printLn(fmtx(["<20","","<20","",">5","",">5","",">5"],colorNames[x][0], spaces(2) , $(parsecolor(colorNames[x][0])),spaces(2),zr[0],spaces(1),zr[1],spaces(1),zr[2]) ,fgr = colorNames[x][1])
@@ -3518,7 +3533,7 @@ proc shift*[T](x: var seq[T], zz: Natural = 0): T =
      ##
      ## build in pop does the same from the other side
      ##
-     ## .. code-block:: nim
+     ##.. code-block:: nim
      ##    var a: seq[float] = @[1.5, 23.3, 3.4]
      ##    echo shift(a)
      ##    echo a
@@ -3538,7 +3553,7 @@ proc lastAnd[T](num:T): string =
   if "," in num:
     let pos =  num.rfind(",")
     var (pre, last) =
-      if pos >= 0: (num[0 .. pos-1], num[pos+1 .. num.high])
+      if pos >= 0: (num[0.. pos-1], num[pos+1.. num.high])
       else: ("", num)
     if " and " notin last:
       last = " and" & last
@@ -3616,7 +3631,7 @@ proc spellFloat*(n:float64,currency:bool = false,sep:string = ".",sepname:string
   ## default sep = "."
   ## default sepname = " dot "
   ## 
-  ## .. code-block:: nim
+  ##.. code-block:: nim
   ##  import nimcx
   ##  printLn spellFloat(0.00)
   ##  printLn spellFloat(234)
@@ -3659,7 +3674,7 @@ proc showStats*(x:Runningstat,n:int = 3,xpos:int = 1) =
      ## 
      ## adjust decimals default n = 3 as needed
      ##
-     ## .. code-block:: nim
+     ##.. code-block:: nim
      ##     import nimcx
      ##     
      ##     var rsa:Runningstat
@@ -3704,7 +3719,7 @@ proc showRegression*(x,y: seq[float | int],n:int = 5,xpos:int = 1) =
      ##
      ## quickly display RunningRegress data based on input of two openarray data series
      ## 
-     ## .. code-block:: nim
+     ##.. code-block:: nim
      ##    import nimcx
      ##    var a = @[1,2,3,4,5] 
      ##    var b = @[1,2,3,4,7] 
@@ -3750,10 +3765,10 @@ template zipWith*[T1,T2](f: untyped; xs:openarray[T1], ys:openarray[T2]): untype
   ## zipWith
   ## 
   ## 
-  ## .. code-block:: nim
+  ##.. code-block:: nim
   ##    var s1 = createSeqInt(5)
   ##    var s2 = createSeqInt(5)
-  ##    var zs = zipWith(`/`,s1,s2)   # try with +,-,*,/,div ...
+  ##    var zs = zipWith(`/`,s1,s2)   # try with +,-,*,/,div...
   ##    echo zs
   ##    
   ##    
@@ -3830,7 +3845,7 @@ proc dayOfYear*() : range[0..365] = getLocalTime(getTime()).yearday + 1
     ##
     ## actually need to start on day 1 being actually 1 , which is provided here.
     ##
-    ## .. code-block:: nim
+    ##.. code-block:: nim
     ##     var afile = "cx.nim"
     ##     var mday = getLastModificationTime(afile).dayofyear
     ##     var today = dayofyear
@@ -3850,7 +3865,7 @@ proc dayOfYear*(tt:Time) : range[0..365] = getLocalTime(tt).yearday + 1
     ##
     ## actually need to start on day 1 being actually 1 , which is provided here.
     ##
-    ## .. code-block:: nim
+    ##.. code-block:: nim
     ##     var afile = "cx.nim"
     ##     var mday  = getLastModificationTime(afile).dayofyear
     ##     var today = dayofyear
@@ -3885,7 +3900,7 @@ proc toTimeInfo*(date:string="2000-01-01"):TimeInfo =
       of  12: zmonth = mDec 
       else:
          printLnBiCol("Month error : Month = " & adate[1] & " ?? ",red,termwhite,0,false,{})
-         printLnBiCol("Exiting now : ....")
+         printLnBiCol("Exiting now :....")
          quit(0)
    
    var zday = parseint(adate[2])
@@ -3908,7 +3923,7 @@ proc checkClip*(sel:string = "primary"):string  =
      ## returns the newest entry from the Clipboard
      ## needs linux utility xclip installed
      ## 
-     ## .. code-block:: nim
+     ##.. code-block:: nim
      ##     printLnBiCol("Last Clipboard Entry : " & checkClip())
      ##
           
@@ -3916,7 +3931,7 @@ proc checkClip*(sel:string = "primary"):string  =
      var rx = ""
      if errC == 0:
          let r = split($outp," ")
-         for x in 0.. <r.len:
+         for x in 0..<r.len:
              rx = rx & " " & r[x]
      else:
          rx = "xclip returned errorcode : " & $errC & ". Clipboard not accessed correctly"
@@ -3938,7 +3953,7 @@ proc tableRune*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5)
     ## fgr allows color display and fgr = "rand" displays in random color and maxwidth for displayable items
     ## this can also be used to show items of a sequence
     ##
-    ## .. code-block:: nim
+    ##.. code-block:: nim
     ##      tableRune(cjk(),"rand")
     ##      tableRune(katakana(),yellowgreen)
     ##      tableRune(hiragana())
@@ -3947,7 +3962,7 @@ proc tableRune*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5)
     ##      
     ##      
     var c = 0
-    for x in 0.. <z.len:
+    for x in 0..<z.len:
       inc c
       if c < cols + 1 :
         
@@ -4016,8 +4031,8 @@ proc katakana*():seq[string] =
     ##
     var kat = newSeq[string]()
     # s U+30A0–U+30FF.
-    for j in parsehexint("30A0") .. parsehexint("30FF"): kat.add($Rune(j))
-    for j in parsehexint("31F0") .. parsehexint("31FF"): kat.add($Rune(j))  # Katakana Phonetic Extensions
+    for j in parsehexint("30A0").. parsehexint("30FF"): kat.add($Rune(j))
+    for j in parsehexint("31F0").. parsehexint("31FF"): kat.add($Rune(j))  # Katakana Phonetic Extensions
     result = kat
 
 
@@ -4027,17 +4042,17 @@ proc cjk*():seq[string] =
     ##
     var chzh = newSeq[string]()
     #for j in parsehexint("3400").. parsehexint("4DB5"): chzh.add($Rune(j))   # chars
-    for j in parsehexint("2E80") .. parsehexint("2EFF"): chzh.add($Rune(j))   # CJK Radicals Supplement
-    for j in parsehexint("2F00") .. parsehexint("2FDF"): chzh.add($Rune(j))   # Kangxi Radicals
-    for j in parsehexint("2FF0") .. parsehexint("2FFF"): chzh.add($Rune(j))   # Ideographic Description Characters
-    for j in parsehexint("3000") .. parsehexint("303F"): chzh.add($Rune(j))   # CJK Symbols and Punctuation
-    for j in parsehexint("31C0") .. parsehexint("31EF"): chzh.add($Rune(j))   # CJK Strokes
-    for j in parsehexint("3200") .. parsehexint("32FF"): chzh.add($Rune(j))   # Enclosed CJK Letters and Months
-    for j in parsehexint("3300") .. parsehexint("33FF"): chzh.add($Rune(j))   # CJK Compatibility
-    for j in parsehexint("3400") .. parsehexint("4DBF"): chzh.add($Rune(j))   # CJK Unified Ideographs Extension A
-    for j in parsehexint("4E00") .. parsehexint("9FBF"): chzh.add($Rune(j))   # CJK Unified Ideographs
-    #for j in parsehexint("F900") .. parsehexint("FAFF"): chzh.add($Rune(j))   # CJK Compatibility Ideographs
-    for j in parsehexint("FF00") .. parsehexint("FF60"): chzh.add($Rune(j))   # Fullwidth Forms of Roman Letters
+    for j in parsehexint("2E80").. parsehexint("2EFF"): chzh.add($Rune(j))   # CJK Radicals Supplement
+    for j in parsehexint("2F00").. parsehexint("2FDF"): chzh.add($Rune(j))   # Kangxi Radicals
+    for j in parsehexint("2FF0").. parsehexint("2FFF"): chzh.add($Rune(j))   # Ideographic Description Characters
+    for j in parsehexint("3000").. parsehexint("303F"): chzh.add($Rune(j))   # CJK Symbols and Punctuation
+    for j in parsehexint("31C0").. parsehexint("31EF"): chzh.add($Rune(j))   # CJK Strokes
+    for j in parsehexint("3200").. parsehexint("32FF"): chzh.add($Rune(j))   # Enclosed CJK Letters and Months
+    for j in parsehexint("3300").. parsehexint("33FF"): chzh.add($Rune(j))   # CJK Compatibility
+    for j in parsehexint("3400").. parsehexint("4DBF"): chzh.add($Rune(j))   # CJK Unified Ideographs Extension A
+    for j in parsehexint("4E00").. parsehexint("9FBF"): chzh.add($Rune(j))   # CJK Unified Ideographs
+    #for j in parsehexint("F900").. parsehexint("FAFF"): chzh.add($Rune(j))   # CJK Compatibility Ideographs
+    for j in parsehexint("FF00").. parsehexint("FF60"): chzh.add($Rune(j))   # Fullwidth Forms of Roman Letters
 
     result = chzh    
 
@@ -4060,7 +4075,7 @@ proc apl*():seq[string] =
     ##
     var adx = newSeq[string]()
     # s U+30A0–U+30FF.
-    for j in parsehexint("2300") .. parsehexint("23FF"): adx.add($Rune(j))
+    for j in parsehexint("2300").. parsehexint("23FF"): adx.add($Rune(j))
     result = adx
 
 
@@ -4072,7 +4087,7 @@ proc rainbow2*[T](s : T,xpos:int = 1,fitLine:bool = false,centered:bool = false,
     ##
     ## may not work with certain Rune
     ##
-    ## .. code-block:: nim
+    ##.. code-block:: nim
     ##    rainbow2("what's up ?\n",centered = true,colorset = colorsPalette("green"))
     ##
     ##
@@ -4086,7 +4101,7 @@ proc rainbow2*[T](s : T,xpos:int = 1,fitLine:bool = false,centered:bool = false,
     var okcolorset = colorset
     if okcolorset.len < 1:  okcolorset = colorNames
     
-    let a = toSeq(0.. <okcolorset.len)
+    let a = toSeq(0..<okcolorset.len)
 
     if astr in emojis or astr in hiragana() or astr in katakana() or astr in iching():
         c = a[getRndInt(ma=a.len)]
@@ -4104,7 +4119,7 @@ proc rainbow2*[T](s : T,xpos:int = 1,fitLine:bool = false,centered:bool = false,
 
     else :
 
-          for x in 0.. <astr.len:
+          for x in 0..<astr.len:
             c = a[getRndInt(ma=a.len)]
             
             if centered == false:
@@ -4122,14 +4137,14 @@ proc rainbow2*[T](s : T,xpos:int = 1,fitLine:bool = false,centered:bool = false,
 proc getColName*[T](sc:T):string = 
    ## getColName
    ## 
-   ## this functions returns the colorname based on an color escape sequence
+   ## this functions returns the colorname based of a color escape sequence
    ## 
    ## usually used with randcol() to see what color was actually returned
    ## 
    ## 
-   ## .. code-block:: nim
+   ##.. code-block:: nim
    ##  import nimcx
-   ##  for x in 0 .. 10: 
+   ##  for x in 0.. 10: 
    ##     let acol = randcol()
    ##     let acolname = getColName(acol)         
    ##     printLn(acolname,acol)  
@@ -4149,7 +4164,7 @@ proc boxChars*():seq[string] =
     ##
     var boxy = newSeq[string]()
     # s U+2500–U+257F.
-    for j in parsehexint("2500") .. parsehexint("257F"):
+    for j in parsehexint("2500").. parsehexint("257F"):
         boxy.add($RUne(j))
     result = boxy
     
@@ -4163,7 +4178,7 @@ proc optimalbox*(w:int,s:int,tl:int):int =
     ## and a minimum of s desired columns
     ## this function can be used in drawbox to calculate the width parameter
     ## 
-    ## .. code-block:: nim
+    ##.. code-block:: nim
     ##   import nimcx
     ## 
     ##   var postop = 5
@@ -4199,7 +4214,7 @@ proc drawBox*(hy:int = 1, wx:int = 1 , hsec:int = 1 ,vsec:int = 1,frCol:string =
      ##      box or it will look messed up
      ##
      ##
-     ## .. code-block:: nim
+     ##.. code-block:: nim
      ##    import nimcx,unicode
      ##    cleanscreen()
      ##    decho(5)
@@ -4265,7 +4280,7 @@ proc drawBox*(hy:int = 1, wx:int = 1 , hsec:int = 1 ,vsec:int = 1,frCol:string =
      if vsec > 1:
        vsecwidth = w div vsec
        curup(h + 1)
-       for x in 1.. <vsec:
+       for x in 1..<vsec:
            print($Rune(parsehexint("252C")),fgr = truetomato,xpos=xpos + vsecwidth * x)
            curdn(1)
            for y in 0.. h - 2 :
@@ -4281,12 +4296,12 @@ proc drawBox*(hy:int = 1, wx:int = 1 , hsec:int = 1 ,vsec:int = 1,frCol:string =
        cursetx(hpos)
        curdn(hsecheight)
 
-       for x in 1.. <hsec:
+       for x in 1..<hsec:
            print($Rune(parsehexint("251C")),fgr = truetomato,xpos=hpos)
            #print a full line right thru the vlines
            print(repeat($Rune(parsehexint("2500")),w - 1),fgr = frcol)
            # now we add the cross points
-           for x in 1.. <vsec:
+           for x in 1..<vsec:
                npos = npos + vsecwidth
                cursetx(npos)
                print($Rune(parsehexint("253C")),fgr = truetomato)
@@ -4306,7 +4321,7 @@ proc randpos*():int =
     ##
     ## returns x position
     ##
-    ## .. code-block:: nim
+    ##.. code-block:: nim
     ##
     ##    while 1 == 1:
     ##       for z in 1.. 50:
@@ -4373,7 +4388,7 @@ proc splitty*(txt:string,sep:string):seq[string] =
    ##
    var rx = newSeq[string]()
    let z = txt.split(sep)
-   for xx in 0.. <z.len:
+   for xx in 0..<z.len:
      if z[xx] != txt and z[xx] != nil:
         if xx < z.len-1:
              rx.add(z[xx] & sep)
@@ -4385,7 +4400,7 @@ proc splitty*(txt:string,sep:string):seq[string] =
 proc doFlag*[T](flagcol:string = yellowgreen,flags:int = 1,text:T = "",textcol:string = termwhite) : string {.discardable.} =
   ## doFlag
   ## 
-  ## .. code-block:: nim
+  ##.. code-block:: nim
   ##   import nimcx
   ##   
   ##   # print word Hello : in color dodgerblue followed by 6 little flags in red 
@@ -4396,7 +4411,7 @@ proc doFlag*[T](flagcol:string = yellowgreen,flags:int = 1,text:T = "",textcol:s
   ##   
 
   result = ""
-  for x in 0 .. <flags: result = result & flagcol & fullflag 
+  for x in 0..<flags: result = result & flagcol & fullflag 
   result = result & spaces(1) & textcol & $text & white
    
   
@@ -4422,7 +4437,7 @@ template infoProc*(code: untyped) =
   ## shows from where a specific function has been called and combined with checkLocals gives
   ## a nice formatted output for debugging
   ##
-  ## .. code-block:: nim
+  ##.. code-block:: nim
   ##    proc test1[T](ff:varargs[T,`$`]) =
   ##      let yu1 = @["test"]
   ##      var yu2 = "sdfsdf"
@@ -4945,7 +4960,7 @@ template cxgrid*(npos:int = 0,col:string=randcol(),coltop:string = lime) =
                echo()  
            curup(6)
  
-proc printFont*(s:string,col:string = randcol() , xpos:int = -10) = 
+proc printFont*(s:string,col:string = randcol() ,coltop:string = lime, xpos:int = -10) = 
      ## printFont
      ## 
      ## display experimental cxfont
@@ -4962,87 +4977,87 @@ proc printFont*(s:string,col:string = randcol() , xpos:int = -10) =
         case x 
             of 'a' : 
                      npos = npos - 1
-                     cxa(npos,ccol)
+                     cxa(npos,ccol,coltop)
                      npos = npos + 1
             of 'b' : 
-                     cxb(npos,ccol)
+                     cxb(npos,ccol,coltop)
                      npos = npos - 1
-            of 'c' : cxc(npos,ccol)
+            of 'c' : cxc(npos,ccol,coltop)
             of 'd' : 
-                     cxd(npos,ccol)
+                     cxd(npos,ccol,coltop)
                      npos = npos - 1
-            of 'e' : cxe(npos,ccol)
+            of 'e' : cxe(npos,ccol,coltop)
             of 'f' :
-                     cxf(npos,ccol)
+                     cxf(npos,ccol,coltop)
                      npos = npos - 1
-            of 'g' : cxg(npos,ccol)
-            of 'h' : cxh(npos,ccol)
+            of 'g' : cxg(npos,ccol,coltop)
+            of 'h' : cxh(npos,ccol,coltop)
             of 'i' : 
                      npos = npos - 2
-                     cxi(npos,ccol)
+                     cxi(npos,ccol,coltop)
                      npos = npos - 4
             of 'j' : 
-                     cxj(npos,ccol)
+                     cxj(npos,ccol,coltop)
                      npos = npos - 2
-            of 'k' : cxk(npos,ccol)
+            of 'k' : cxk(npos,ccol,coltop)
             of 'l' : 
-                     cxl(npos,ccol)
+                     cxl(npos,ccol,coltop)
                      npos = npos - 1
             of 'm' : 
-                     cxm(npos,ccol)
+                     cxm(npos,ccol,coltop)
                      npos = npos + 1
                      
-            of 'n' : cxn(npos,ccol)
-            of 'o' : cxo(npos,ccol)
+            of 'n' : cxn(npos,ccol,coltop)
+            of 'o' : cxo(npos,ccol,coltop)
             of 'p' : 
-                     cxp(npos,ccol)
+                     cxp(npos,ccol,coltop)
                      npos = npos - 1
                      
-            of 'q' : cxq(npos,ccol)
-            of 'r' : cxr(npos,ccol)
-            of 's' : cxs(npos,ccol)
-            of 't' : cxt(npos,ccol)
-            of 'u' : cxu(npos,ccol)
-            of 'v' : cxv(npos,ccol)
+            of 'q' : cxq(npos,ccol,coltop)
+            of 'r' : cxr(npos,ccol,coltop)
+            of 's' : cxs(npos,ccol,coltop)
+            of 't' : cxt(npos,ccol,coltop)
+            of 'u' : cxu(npos,ccol,coltop)
+            of 'v' : cxv(npos,ccol,coltop)
             of 'w' : 
-                     cxw(npos,ccol)
+                     cxw(npos,ccol,coltop)
                      npos = npos + 1
             of 'x' : 
                      npos = npos - 1
-                     cxx(npos,ccol)
+                     cxx(npos,ccol,coltop)
             of 'y' : 
                      npos = npos - 2
-                     cxy(npos,ccol)
+                     cxy(npos,ccol,coltop)
                      
-            of 'z' : cxz(npos,ccol)
+            of 'z' : cxz(npos,ccol,coltop)
             of '.' : 
-                     cxpoint(npos,ccol)
+                     cxpoint(npos,ccol,coltop)
                      npos = npos - 5
             of '-' : 
-                     cxhyphen(npos,ccol)
+                     cxhyphen(npos,ccol,coltop)
                      npos = npos - 3
                      
             of ' ' : npos = npos - 5
             of '1' : 
-                     cx1(npos,ccol)
+                     cx1(npos,ccol,coltop)
                      npos = npos - 2
-            of '2' : cx2(npos,ccol)
-            of '3' : cx3(npos,ccol)
-            of '4' : cx4(npos,ccol)
-            of '5' : cx5(npos,ccol)
-            of '6' : cx6(npos,ccol)
+            of '2' : cx2(npos,ccol,coltop)
+            of '3' : cx3(npos,ccol,coltop)
+            of '4' : cx4(npos,ccol,coltop)
+            of '5' : cx5(npos,ccol,coltop)
+            of '6' : cx6(npos,ccol,coltop)
             of '7' : 
-                     cx7(npos,ccol)
+                     cx7(npos,ccol,coltop)
                      npos = npos - 1
-            of '8' : cx8(npos,ccol)
-            of '9' : cx9(npos,ccol)
-            of '0' : cxzero(npos,ccol)
+            of '8' : cx8(npos,ccol,coltop)
+            of '9' : cx9(npos,ccol,coltop)
+            of '0' : cxzero(npos,ccol,coltop)
                       
             else: discard 
 
             
  
-proc printFontFancy*(s:string,col:string = randcol() , xpos:int = -10) = 
+proc printFontFancy*(s:string,col:string = randcol() ,coltop:string = rndcol(), xpos:int = -10) = 
      ## printFontFancy
      ## 
      ## display experimental cxfont with every element in random color
@@ -5219,7 +5234,7 @@ proc doInfo*() =
   printLnBiCol("Creation                      : " & $(fi.creationTime),yellowgreen,lightgrey,sep,0,false,{})
   
   when defined windows:
-        printLnBiCol("System                        : Windows ..... Really ??",red,lightgrey,sep,0,false,{})
+        printLnBiCol("System                        : Windows..... Really ??",red,lightgrey,sep,0,false,{})
   elif defined linux:
         printLnBiCol("System                        : Running on Linux" ,brightcyan,yellowgreen,sep,0,false,{})
   else:
@@ -5360,7 +5375,7 @@ proc doCxEnd*() =
   clearup()
   decho(3)
   colorio()
-  let smm = "      import nimcx and your terminal comes alive with color ...  "
+  let smm = "      import nimcx and your terminal comes alive with color...  "
   loopy2(0,6):
         cleanScreen()
         decho(2)
