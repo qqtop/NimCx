@@ -16,7 +16,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-10-30
+##     Latest      : 2017-11-02
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -274,19 +274,20 @@ proc rndRGB*():auto =
    for x in 0..<colorNames.len: cln.add(x)
    let argb =  extractRgb(parsecolor(colorNames[rndSample(cln)][0]))
    result =  rgb(argb.r,argb.g,argb.b)
+
         
        
-proc `[]`*[Idx, T, U](a: openarray[T], x: Slice[Idx,U]): seq[T] =
+proc `[]`*[T; U](a: seq[T], x: Slice[U]): seq[T] =
      # used by sampleSeq
      var L = ord(x.b) - ord(x.a) + 1
      if L >= 0:
         newSeq(result, L)
-        for i in 0..<L: result[i] = a[Idx(ord(x.a) + i)]
+        for i in 0..<L: result[i] = a[(ord(x.a) + i)]
      else:
         result = @[]
         
 
-proc sampleSeq*[T](x: openarray[T], a, b: int) : seq[T] = 
+proc sampleSeq*[T](x: seq[T], a:int, b: int) : seq[T] = 
      ## sampleSeq
      ##
      ## based on an idea in nim playground
@@ -304,6 +305,10 @@ proc sampleSeq*[T](x: openarray[T], a, b: int) : seq[T] =
      
      result =  x[a..b]
        
+
+   
+   
+   
 
 template loopy*[T](ite:T,st:untyped) =
      ## loopy
@@ -645,7 +650,7 @@ proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:s
 proc printRainbow*(s : string,styled:set[Style] = {})     ## forward declaration
 proc hline*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-")   ## forward declaration
 proc hlineLn*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-") ## forward declaration
-proc spellInteger*(n: int64): string                      ## forward declaration
+proc spellInteger*(n: int64): string                        ## forward declaration
 proc splitty*(txt:string,sep:string):seq[string]          ## forward declaration
 proc doFinish*()
 
@@ -3543,7 +3548,7 @@ proc shift*[T](x: var seq[T], zz: Natural = 0): T =
      x.delete(zz)
 
 # spellInteger 
-proc nonzero(c: string, n: int, connect=""): string =
+proc nonzero(c: string, n: int64, connect=""): string =
   # used by spellInteger
   if n == 0: "" else: connect & c & spellInteger(n)
  
@@ -3560,7 +3565,7 @@ proc lastAnd[T](num:T): string =
     num = [pre, ",", last].join()
   return num
  
-proc big(e:int, n:int): string =
+proc big(e:int, n:int64): string =
   # used by spellInteger
   if e == 0:
     spellInteger(n)
@@ -3569,12 +3574,12 @@ proc big(e:int, n:int): string =
   else:
     spellInteger(n) & " " & huge[e]
  
-iterator base1000Rev(n:int64): int =
+iterator base1000Rev(n:int64): int64 =
   # used by spellInteger 
-  var n = n
-  while n != 0:
-    let r = n mod 1000
-    n = n div 1000
+  var n1 = n
+  while n1 != 0:
+    let r = n1 mod 1000
+    n1 = n1 div 1000
     yield r
  
 proc spellInteger*(n: int64): string =
