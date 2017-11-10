@@ -12,7 +12,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-09-30
+##     Latest      : 2017-11-10
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -27,7 +27,7 @@
 ## 
 ## 
 
-import terminal,sequtils 
+import terminal,sequtils, strutils
  
 proc getfg(fg:ForegroundColor):string =
     var gFG = ord(fg)
@@ -145,6 +145,8 @@ const
       bbrightwhite*         = bbright(bgWhite)
       bbrightmagenta*       = bbright(bgMagenta)
       bbrightblack*         = bbright(bgBlack)
+      
+     
 
       # Pastel color set
 
@@ -156,14 +158,41 @@ const
       pastelyellow*         =  "\x1b[38;2;255;242;174m"
       pastelbeige*          =  "\x1b[38;2;241;226;204m"
       pastelwhite*          =  "\x1b[38;2;204;204;204m"
-
+      
+      # WIP  background escape seqs colors
+      # Note colornames ending with bg or Ibg are currently only available via echo command
+      pastelgreenbg*        = "\x1b[48;2;179;226;205m"
+      pastelorangebg*       = "\x1b[48;2;253;205;172m"
+      pastelbluebg*         = "\x1b[48;2;203;213;232m"
+      pastelpinkbg*         = "\x1b[48;2;244;202;228m"
+      pastelyellowgreenbg*  = "\x1b[48;2;230;245;201m"
+      pastelyellowbg*       = "\x1b[48;2;255;242;174m"
+      pastelbeigebg*        = "\x1b[48;2;241;226;204m"
+      pastelwhitebg*        = "\x1b[48;2;204;204;204m"
+      
+      
+      # a few colors with intensity bit set , but used only for testing as the results are confusing
+      pastelgreenIbg*       = "\x1b[48;5;179;226;205m"    # intense bit set gives some unexpected colors
+      pastelorangeIbg*      = "\x1b[48;5;253;205;172m"
+      pastelblueIbg*        = "\x1b[48;5;203;213;232m"
+      pastelpinkIbg*        = "\x1b[48;5;244;202;228m"
+      
+      
+      # TODO :  more colors
+      
       # other colors of interest
       # https://www.w3schools.com/colors/colors_trends.asp
       # http://www.javascripter.net/faq/hextorgb.htm
       truetomato*           =   "\x1b[38;2;255;100;0m"
       bigdip*               =   "\x1b[38;2;156;37;66m"
-      greenery*             =   "\x1b[38;2;136;176;75m"
+      greenery*             =   "\x1b[38;2;136;176;75m"     
       bluey*                =   "\x1b[38;2;41;194;102m"    # not displaying , showing default bluishgreen
+      
+      # other colors of interest with background bit set
+      
+      truetomatobg*         =   "\x1b[48;2;255;100;0m"
+      greenerybg*           =   "\x1b[48;2;136;176;75m"
+      blueybg*              =   "\x1b[48;2;41;194;102m"
       
       # colors lifted from colors.nim and massaged into rgb escape seqs
 
@@ -325,6 +354,7 @@ const colorNames* = @[
       ("blue", blue),
       ("blueviolet", blueviolet),
       ("bluey",bluey),
+      ("blueybg",blueybg),
       ("brown", brown),
       ("burlywood", burlywood),
       ("cadetblue", cadetblue),
@@ -367,6 +397,7 @@ const colorNames* = @[
       ("gray", gray),
       ("green", green),
       ("greenery",greenery),
+      ("greenerybg",greenerybg),
       ("greenyellow", greenyellow),
       ("honeydew", honeydew),
       ("hotpink", hotpink),
@@ -456,14 +487,23 @@ const colorNames* = @[
       ("yellow", yellow),
       ("yellowgreen", yellowgreen),
       ("pastelbeige",pastelbeige),
+      ("pastelbeigebg",pastelbeigebg),
       ("pastelblue",pastelblue),
+      ("pastelbluebg",pastelbluebg),
       ("pastelgreen",pastelgreen),
+      ("pastelgreenbg",pastelgreenbg),
       ("pastelorange",pastelorange),
+      ("pastelorangebg",pastelorangebg),
       ("pastelpink",pastelpink),
+      ("pastelpinkbg",pastelpinkbg),
       ("pastelwhite",pastelwhite),
+      ("pastelwhitebg",pastelwhitebg),
       ("pastelyellow",pastelyellow),
+      ("pastelyellowbg",pastelyellowbg),
       ("pastelyellowgreen",pastelyellowgreen),
+      ("pastelyellowgreenbg",pastelyellowgreenbg),
       ("truetomato",truetomato),
+      ("truetomatobg",truetomatobg),
       ("zcolor",zcolor),
       ("zippi",zippi)]
 
@@ -909,7 +949,12 @@ const emojis* = @[check,xmark,heart,sun,star,darkstar,umbrella,flag,snowflake,mu
                trademark,copyright,roof,skull,smile,smiley,innocent,lol,tongue,blush,
                sad,cry,rage,cat,kitty,monkey,cow]
    
-   
+
+# more emojis len 4   
+ 
+const ejm3* = @["😀","😁","😂","😃","😄","😅","😆","😇","😈","😉","😊","😋","😌","😍","😎","😏","😐","😑","😒","😓","😔","😕","😖","😗","😘","😙","😚","😛","😜","😝","😞","😟","😠","😡","😢","😣","😥","😦","😧","😨","😩","😪","😫","😭","😮","😯","😰","😱","😲","😳","😴","😵","😶","😷","😸","😹","😺","😻","😼","😽","😾","😿","🙀"]  
+const ejm4* = toSeq(parsehexint("25B6")..parsehexint("26AB"))
+
 const cards* = @[
  "🂡" ,"🂱" ,"🃁" ,"🃑",
  "🂢" ,"🂲" ,"🃂" ,"🃒",
@@ -925,7 +970,8 @@ const cards* = @[
  "🂬" ,"🂼" ,"🃌" ,"🃜",
  "🂭" ,"🂽" ,"🃍" ,"🃝",
  "🂮" ,"🂾" ,"🃎" ,"🃞",
- "🂠" ,"🂿" ,"🃏" ,"🃟"]
+ "🃏" ,"🃟"]
+ #"🂠" ,"🂿"  # removed from cards set for a cleaner look
 
 const rxCards* = toSeq(cards.low.. cards.high) # index into cards
 const rxCol* = toSeq(colorNames.low.. colorNames.high) ## index into colorNames

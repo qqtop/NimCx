@@ -16,7 +16,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-11-02
+##     Latest      : 2017-11-10
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -59,7 +59,7 @@
 ##
 ##                   some ubuntu based gnome-terminals may not be able to display all colors
 ##
-##                   as they are not correctly linked , see ubuntuu forum questions.
+##                   as they are not correctly linked , see ubuntu forum questions.
 ##
 ##                   run this awk script to see if your terminal supports truecolor
 ##
@@ -114,21 +114,24 @@
 ##     In progress : moving some of the non core procs to module cxutils.nim 
 ##                   
 ##                   moving constants to cxconsts.nim
-##                   
-##                   
-##                   
+##                  
 ##
-##     Funding     : If you are happy or unhappy feel free to send any amount of bitcoins to this wallet : 
+##     Funding     : How to make someone happy ? Here are the options :
+##     
+##                   If you are happy , unhappy or anything in between feel free to send
+##     
+##                   any amount of bitcoins to this wallet : 
 ##                                      
 ##                   194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
 ##                    
+##     
 ##                    
 
 import cxconsts,os, times, strutils,parseutils, parseopt, hashes, tables, sets, strmisc
 import osproc,macros,posix,terminal,math,stats,json,random,streams,options,memfiles
 import sequtils,httpclient,rawsockets,browsers,intsets, algorithm
 import unicode ,typeinfo, typetraits ,cpuinfo,colors,encodings,distros
-export strutils,sequtils,times,unicode,streams,hashes,terminal,cxconsts,random,options
+export strutils,sequtils,times,unicode,streams,hashes,terminal,cxconsts,random,options,json
 
 # Profiling       
 #import nimprof  # nim c -r --profiler:on --stackTrace:on cx
@@ -221,7 +224,7 @@ type
 # used to store all cxtimer results 
 var cxtimerresults* =  newSeq[Cxtimerres]() 
 
-# #start tier experimental
+# #start timer experimental
 # # under consideration use different setup to get rid of globals like cxtimerresults    
 # 
 # type 
@@ -306,8 +309,21 @@ proc sampleSeq*[T](x: seq[T], a:int, b: int) : seq[T] =
      result =  x[a..b]
        
 
+proc cxtoLower*(c: char): char = # {.inline.}=
+  if c in {'A'..'Z'}:
+    result = chr(ord(c) + (ord('a') - ord('A')))
+  else:
+    result = c   
+    
    
-   
+proc stripper*(str:string): string =
+  # stripper
+  # strip controlcodes "\ba\x00b\n\rc\fd\xc3"
+  result = ""
+  for ac in str:
+    if ord(ac) in 32..126:
+      result.add ac
+ 
    
 
 template loopy*[T](ite:T,st:untyped) =
@@ -917,8 +933,7 @@ proc unquote*(s:string):string =
       ## remove any double quotes from a string
       ##
       result = s.multiReplace(($'"',""))
-
-
+      
 
 proc cleanScreen*() =
       ## cleanScreen
@@ -2817,7 +2832,8 @@ proc ff2*(zz:float , n:int = 3):string =
         let c = rpartition($zz,".")
         var cnew = ""
         for d in c[2]:
-              if cnew.len < n:  cnew = cnew & d
+              if cnew.len < n:
+                  cnew = cnew & d
         result = ff2(parseInt(c[0])) & c[1] & cnew
 
 
@@ -5211,7 +5227,6 @@ proc doInfo*() =
   # this only makes sense for non executable files
   #printLnBiCol("Last access time to file      : " & filename & " " & $(fromSeconds(int(getLastAccessTime(filename)))),yellowgreen,lightgrey,sep,0,false,{})
   printLnBiCol("Last modificaton time of file : " & filename & " " & $(fromSeconds(int(modTime))),yellowgreen,lightgrey,sep,0,false,{})
-  #printLnBiCol("Local TimeZone                : " & $(getTzName()),yellowgreen,lightgrey,sep,0,false,{})
   printLnBiCol("Offset from UTC  in secs      : " & $(getTimeZone()),yellowgreen,lightgrey,sep,0,false,{})
   printLnBiCol("Now                           : " & now,yellowgreen,lightgrey,sep,0,false,{})
   printLnBiCol("Local Time                    : " & $getLocalTime(getTime()),yellowgreen,lightgrey,sep,0,false,{})
