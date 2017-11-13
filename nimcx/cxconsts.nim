@@ -894,20 +894,21 @@ var slimCharSet*   = @[",",".",":"," "]
 # arrows
 
 const 
-      leftarrow*           = "\u2190"
-      uparrow*             = "\u2191"
-      rightarrow*          = "\u2192"
-      downarrow*           = "\u2193"
-      leftrightarrow*      = "\u2194"
-      updownaarrow*        = "\u2195"
-      northwestarrow*      = "\u2196"
-      northeastarrow*      = "\u2197"
-      southwestarrow*      = "\u2198"
-      southeastarrow*      = "\u2199"
+      leftarrow*       = "\u2190"
+      uparrow*         = "\u2191"
+      rightarrow*      = "\u2192"
+      downarrow*       = "\u2193"
+      leftrightarrow*  = "\u2194"
+      updownaarrow*    = "\u2195"
+      northwestarrow*  = "\u2196"
+      northeastarrow*  = "\u2197"
+      southwestarrow*  = "\u2198"
+      southeastarrow*  = "\u2199"
 
-      phone*               = "\u260E"
-      fullflag*            = "\u2691"
-      enterkey*               = "↵"
+      phone*           = "\u260E"
+      fullflag*        = "\u2691"
+      enterkey*        = "↵"
+      sigma*           = "Σ"
 
 # emojis
 # mileage here may vary depending on whatever your system supports
@@ -973,6 +974,8 @@ const cards* = @[
  "🃏" ,"🃟"]
  #"🂠" ,"🂿"  # removed from cards set for a cleaner look
 
+const kotakp* =  "🂠"
+const kotakk* =  "🂿"
 const rxCards* = toSeq(cards.low.. cards.high) # index into cards
 const rxCol* = toSeq(colorNames.low.. colorNames.high) ## index into colorNames
 const rxPastelCol* = toSeq(pastelset.low.. pastelset.high) ## index into colorNames 
