@@ -440,7 +440,7 @@ proc fibonacci*(n: int):float =
     ##
     ## .. code-block:: nim
     ## 
-    ##    for x in 0.. 20: quickList(x,fibonacci(x))
+    ##    for x in 0..20: quickList(x,fibonacci(x))
     ## 
     if n < 2: 
        result = float(n)
@@ -470,11 +470,19 @@ proc memCheck*(stats:bool = false) =
 
 
 proc showCpuCores*() =
-  ## showCpuCores
-  ## 
-  printLnBiCol("System CPU cores : " & $cpuInfo.countProcessors())
+    ## showCpuCores
+    ## 
+    printLnBiCol("System CPU cores : " & $cpuInfo.countProcessors())
    
 
+proc getAmzDateString*():string =
+    ## getAmzDateString
+    ## 
+    ## get current GMT date time in amazon format  
+    ## 
+    return format(getGMTime(getTime()), iso_8601_aws) 
+   
+   
 proc getRandomPointInCircle*(radius:float) : seq[float] =
     ## getRandomPointInCircle
     ##
@@ -488,7 +496,7 @@ proc getRandomPointInCircle*(radius:float) : seq[float] =
     ##    import nimcx,math,strfmt
     ##    # get randompoints in a circle
     ##    var crad:float = 1
-    ##    for x in 0.. 100:
+    ##    for x in 0..100:
     ##       var k = getRandomPointInCircle(crad)
     ##       assert k[0] <= crad and k[1] <= crad
     ##       printLnBiCol(fmtx([">25","<6",">25"],ff2(k[0])," :",ff2(k[1])))
@@ -521,7 +529,7 @@ proc getRandomPoint*(minx:float = -500.0,maxx:float = 500.0,miny:float = -500.0,
     ## maxy  max y  value
     ##
     ## .. code-block:: nim
-    ##    for x in 0.. 10:
+    ##    for x in 0..10:
     ##    var n = getRandomPoint(-500.00,200.0,-100.0,300.00)
     ##    printLnBiCol(fmtx([">4",">5","",">6",">5"],"x:",$n.x,spaces(7),"y:",$n.y),spaces(7))
     ## 
@@ -564,7 +572,7 @@ proc getRandomPoint*(minx:int = -500 ,maxx:int = 500 ,miny:int = -500 ,maxy:int 
     ## max    x or y value
     ##
     ## .. code-block:: nim
-    ##    for x in 0.. 10:
+    ##    for x in 0..10:
     ##    var n = getRandomPoint(-500,500,-500,200)
     ##    printLnBiCol(fmtx([">4",">5","",">6",">5"],"x:",$n.x,spaces(7),"y:",$n.y),spaces(7))
     ## 
@@ -624,7 +632,7 @@ proc showRuler* (xpos:int=0,xposE:int=0,ypos:int = 0,fgr:string = termwhite,bgr:
 
      if vert == false :  # horizontalruler
 
-          for x in npos.. nposE:
+          for x in npos..nposE:
 
             if x == 1:
                 curup(1)
@@ -658,7 +666,7 @@ proc showRuler* (xpos:int=0,xposE:int=0,ypos:int = 0,fgr:string = termwhite,bgr:
             if  ypos >= th : curset()
             else: curup(ypos + 2)
 
-            for x in 0.. ypos:
+            for x in 0..ypos:
                   if x == 0: printLn(".",lime,bgr,xpos = xpos + 3)
                   elif x mod 2 == 0:
                          print(x,fgr,bgr,xpos = xpos)
@@ -702,14 +710,14 @@ proc superHeaderA*(bb:string = "",strcol:string = white,frmcol:string = green,an
       for am in 0..<animcount:
           for x in 0..<1:
             cleanScreen()
-            for zz in 0.. bb.len:
+            for zz in 0..bb.len:
                   cleanScreen()
-                  superheader($bb[0.. zz],strcol,frmcol)
+                  superheader($bb[0..zz],strcol,frmcol)
                   sleep(500)
                   curup(80)
             if anim == true:
                 for zz in countdown(bb.len,-1,1):
-                      superheader($bb[0.. zz],strcol,frmcol)
+                      superheader($bb[0..zz],strcol,frmcol)
                       sleep(100)
                       cleanScreen()
             else:
@@ -737,14 +745,14 @@ proc newWordCJK*(minwl:int = 3 ,maxwl:int = 10):string =
       ##    msgg() do : echo newWordCJK(20,20)
       # set the char set
       result = ""
-      let c5 = toSeq(minwl.. maxwl)
-      let chc = toSeq(parsehexint("3400").. parsehexint("4DB5"))
+      let c5 = toSeq(minwl..maxwl)
+      let chc = toSeq(parsehexint("3400")..parsehexint("4DB5"))
       for xx in 0..<rndSample(c5): result = result & $Rune(rndSample(chc))
 
 
 
 
-proc newWord*(minwl:int=3,maxwl:int = 10 ):string =
+proc newWord*(minwl:int=3,maxwl:int = 10):string =
     ## newWord
     ##
     ## creates a new lower case random word with chars from Letters set
@@ -757,10 +765,10 @@ proc newWord*(minwl:int=3,maxwl:int = 10 ):string =
     if minwl <= maxwl:
         var nw = ""
         # words with length range 3 to maxwl
-        let maxws = toSeq(minwl.. maxwl)
+        let maxws = toSeq(minwl..maxwl)
         # get a random length for a new word
         let nwl = rndSample(maxws)
-        let chc = toSeq(33.. 126)
+        let chc = toSeq(33..126)
         while nw.len < nwl:
           var x = rndSample(chc)
           if char(x) in Letters:
@@ -785,10 +793,10 @@ proc newWord2*(minwl:int=3,maxwl:int = 10 ):string =
     if minwl <= maxwl:
         var nw = ""
         # words with length range 3 to maxwl
-        let maxws = toSeq(minwl.. maxwl)
+        let maxws = toSeq(minwl..maxwl)
         # get a random length for a new word
         let nwl = rndSample(maxws)
-        let chc = toSeq(33.. 126)
+        let chc = toSeq(33..126)
         while nw.len < nwl:
           var x = rndSample(chc)
           if char(x) in IdentChars:
@@ -814,10 +822,10 @@ proc newWord3*(minwl:int=3,maxwl:int = 10 ,nflag:bool = true):string =
     if minwl <= maxwl:
         var nw = ""
         # words with length range 3 to maxwl
-        let maxws = toSeq(minwl.. maxwl)
+        let maxws = toSeq(minwl..maxwl)
         # get a random length for a new word
         let nwl = rndSample(maxws)
-        let chc = toSeq(33.. 126)
+        let chc = toSeq(33..126)
         while nw.len < nwl:
           var x = rndSample(chc)
           if char(x) in AllChars:
@@ -843,8 +851,8 @@ proc newHiragana*(minwl:int=3,maxwl:int = 10 ):string =
     ##
     if minwl <= maxwl:
         result = ""
-        var rhig = toSeq(12353.. 12436)  
-        var zz = rndSample(toSeq(minwl.. maxwl))
+        var rhig = toSeq(12353..12436)  
+        var zz = rndSample(toSeq(minwl..maxwl))
         while result.len < zz:
               var hig = rndSample(rhig)  
               result = result & $Rune(hig)
@@ -866,8 +874,8 @@ proc newKatakana*(minwl:int=3,maxwl:int = 10 ):string =
     ##
     if minwl <= maxwl:
         result  = ""
-        while result.len < rndSample(toSeq(minwl.. maxwl)):
-              result = result & $Rune(rndSample(toSeq(parsehexint("30A0") .. parsehexint("30FF"))))
+        while result.len < rndSample(toSeq(minwl..maxwl)):
+              result = result & $Rune(rndSample(toSeq(parsehexint("30A0")..parsehexint("30FF"))))
        
     else:
          cechoLn(red,"Error : minimum word length larger than maximum word length")
@@ -954,7 +962,7 @@ proc printBigNumber*(xnumber:string|int|int64,fgr:string = yellowgreen ,bgr:stri
     ## running in a tight while loop just uses up cpu cycles needlessly.
     ##
     ## .. code-block:: nim
-    ##    for x in 990.. 1105:
+    ##    for x in 990..1105:
     ##         cleanScreen()
     ##         printBigNumber(x)
     ##         sleepy(3)
@@ -1001,7 +1009,7 @@ proc printBigNumber*(xnumber:string|int|int64,fgr:string = yellowgreen ,bgr:stri
         of ".": printseq.add(bigdot)
         else: discard
 
-    for x in 0.. numberlen:
+    for x in 0..numberlen:
         curSetx(xpos)
         for y in 0..<printseq.len:
             if fun == false:
@@ -1046,7 +1054,7 @@ proc printBigLetters*(aword:string,fgr:string = yellowgreen ,bgr:string = black,
       # template to support printBigLetters
       #
 
-      for x in 0.. 4:
+      for x in 0..4:
         if fun == false:
            printLn(s[x],fgr = fgr,bgr = bgr ,xpos = xpos)
         else:

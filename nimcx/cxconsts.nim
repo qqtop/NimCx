@@ -982,3 +982,9 @@ const rxPastelCol* = toSeq(pastelset.low.. pastelset.high) ## index into colorNa
 
 # may or may not be available on all systems
 const wideDot* = "\xE2\x9A\xAB" & " "
+
+
+# amazon style date strings
+const iso_8601_aws* = "yyyyMMdd'T'HHmmss'Z'"
+
+

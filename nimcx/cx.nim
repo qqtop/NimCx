@@ -16,7 +16,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-11-10
+##     Latest      : 2017-11-22
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -710,17 +710,20 @@ template lowerCase*(s:string):string = toLowerAscii(s)
   ## lower cases a string
   ## 
 
-template currentLine*  = 
+template currentLine* = 
    ## currentLine
    ## 
    ## simple template to return line number , maybe usefull for debugging 
    print("[",truetomato)
    print(rightarrow,dodgerblue)
-   printBiCol(" ln:" & $(instantiationInfo().line),yellow,white,":",0,false,{})
-   curbk(1)
+   var pos:tuple[filename: string, line: int] = ( "",  -1)
+   pos = instantiationInfo()
+   printBiCol(pos.filename & "  ln:" & $(pos.line),yellow,white,":",0,false,{})
+   curBk(1)
    print("]",truetomato)
    echo()
-   
+
+
 
 template hdx*(code:typed,frm:string = "+",width:int = tw,nxpos:int = 0):typed =
    ## hdx
@@ -3766,20 +3769,26 @@ proc showRegression*(rr: RunningRegress,n:int = 5,xpos:int = 1) =
      printLnBiCol("Slope         : " & ff(rr.slope(),n),yellowgreen,white,sep,xpos = xpos,false,{})
      printLnBiCol("Correlation   : " & ff(rr.correlation(),n),yellowgreen,white,sep,xpos = xpos,false,{})
 
-     
+template currentFile*: string =
+  ## currentFile
+  ## 
+  ## returns path and current filename
+  ## 
+  var pos = instantiationInfo()
+  pos.filename      
      
 proc dprint*[T](s:T) = 
      ## dprint
      ## 
-     ## show contents of s in repr mode
+     ## debug print  show contents of s in repr mode
      ## 
-     ## usefull for debugging
+     ## usefull for debugging  (for some reason the  line number maybe off sometimes)
      ##
      echo()
-     printLn("**** REPR OUTPTUT ********",truetomato)
+     print("** REPR OUTPTUT *** ",truetomato)
+     currentLine()
      echo repr(s) 
-     curup(1)
-     printLn("**** END REPR OUTPTUT ****",truetomato)
+     printLn("** END REPR OUTPTUT ****",truetomato)
      echo()
     
 template zipWith*[T1,T2](f: untyped; xs:openarray[T1], ys:openarray[T2]): untyped =
@@ -3801,12 +3810,7 @@ template zipWith*[T1,T2](f: untyped; xs:openarray[T1], ys:openarray[T2]): untype
   res
 
 
-template currentFile*: string =
-  ## currentFile
-  ## 
-  ## returns path and current filename
-  ## 
-  instantiationInfo(-1, true).filename 
+
 
 proc newDir*(dirname:string) =
      ## newDir
