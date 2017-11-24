@@ -3775,7 +3775,32 @@ template currentFile*: string =
   ## returns path and current filename
   ## 
   var pos = instantiationInfo()
-  pos.filename      
+  pos.filename 
+  
+  
+macro debug*(n: varargs[typed]): untyped =
+  ## debug
+  ## 
+  ## ex https://stackoverflow.com/questions/47443206/how-to-debug-print-a-variable-name-and-its-value-in-nim
+  ## 
+  result = newNimNode(nnkStmtList, n)
+  for i in 0..n.len-1:
+    if n[i].kind == nnkStrLit:
+      # pure string literals are written diretly
+      result.add(newCall("write", newIdentNode("stdout"), n[i]))
+    else:
+      # other expressions are written in <expression>: <value> syntax
+      result.add(newCall("write", newIdentNode("stdout"), toStrLit(n[i])))
+      result.add(newCall("write", newIdentNode("stdout"), newStrLitNode(": ")))
+      result.add(newCall("write", newIdentNode("stdout"), n[i]))
+    if i != n.len-1:
+      # separate by ", "
+      result.add(newCall("write", newIdentNode("stdout"), newStrLitNode(", ")))
+    else:
+      # add newline
+      result.add(newCall("writeLine", newIdentNode("stdout"), newStrLitNode("")))  
+  
+  
      
 proc dprint*[T](s:T) = 
      ## dprint
@@ -4157,10 +4182,10 @@ proc rainbow2*[T](s : T,xpos:int = 1,fitLine:bool = false,centered:bool = false,
 
 
 
-proc getColName*[T](sc:T):string = 
-   ## getColName
+proc getColorName*[T](sc:T):string = 
+   ## getColorName
    ## 
-   ## this functions returns the colorname based of a color escape sequence
+   ## this functions returns the colorname based on a color escape sequence
    ## 
    ## usually used with randcol() to see what color was actually returned
    ## 
@@ -4169,7 +4194,7 @@ proc getColName*[T](sc:T):string =
    ##  import nimcx
    ##  for x in 0.. 10: 
    ##     let acol = randcol()
-   ##     let acolname = getColName(acol)         
+   ##     let acolname = getColorName(acol)         
    ##     printLn(acolname,acol)  
    ## 
    ##
@@ -4178,7 +4203,26 @@ proc getColName*[T](sc:T):string =
        if x[1] == sc:
           result = x[0]
 
-
+proc getColorConst*[T](sc:T):string = 
+   ## getColorConst
+   ## 
+   ## this functions returns the colorname constant color escape sequence based on a colorname
+   ## ready to be used in print routines , it is the reverse of the getColorName function.
+   ## usefull if we have colorname strings read in from a file or a sequence
+   ## 
+   ##.. code-block:: nim
+   ##  import nimcx
+   ##  var astringseq = split("lightgrey,pastelgreen,pastelpink,lightblue,goldenrod,truetomato,truetomato,white",sep=',')          
+   ##  for acolor in astringseq:          
+   ##      printLn("good color " & acolor , getColorConst(acolor))    
+   ## 
+   ##
+   result = "unknown color"
+   for x in colornames:
+       if x[0] == sc:
+          result = x[1]
+          
+          
 proc boxChars*():seq[string] =
 
     ## chars to draw a box
