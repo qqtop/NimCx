@@ -12,7 +12,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-11-10
+##     Latest      : 2017-11-26
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -909,6 +909,7 @@ const
       fullflag*        = "\u2691"
       enterkey*        = "↵"
       sigma*           = "Σ"
+      loopedsquare*    = "⌘"
 
 # emojis
 # mileage here may vary depending on whatever your system supports
@@ -944,6 +945,8 @@ const
     kitty*              =  "🐱"
     monkey*             =  "🐵"
     cow*                =  "🐮"
+    # other
+    
 
 
 const emojis* = @[check,xmark,heart,sun,star,darkstar,umbrella,flag,snowflake,music,scissors,
