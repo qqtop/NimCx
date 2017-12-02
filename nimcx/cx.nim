@@ -16,7 +16,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-11-22
+##     Latest      : 2017-12-02
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -538,6 +538,7 @@ template aPaletteSample*(coltype:string):int =
      var b = newSeq[int]()
      for x in 0..<colPaletteLen(coltypen): b.add(x)
      rndSample(b)
+     
 
 template randCol2*(coltype:string): auto =
          ## ::
@@ -3321,6 +3322,7 @@ proc  resetTimer*(co: ref(CxTimer)) =
       co.start = 0.00
       co.stop = 0.00
       co.lap = @[]
+proc  duration*(co:ref(CxTimer)):float {.discardable.} = co.stop - co.start       
 
 proc saveTimerResults*(b:ref(CxTimer)) =
      ## saveTimerResults
@@ -3360,7 +3362,8 @@ proc showTimerResults*(aname:string) =
              printLnBiCol("Laptimes : none recorded")
           printLnBiCol("Duration : " & $(b.stop - b.start) & " secs.")   
                
-          
+             
+               
 proc showTimerResults*() =  
      ## showTimerResults  
      ## 
@@ -3383,7 +3386,7 @@ proc showTimerResults*() =
        printLnBiCol("Duration : " & $(b.stop - b.start) & " secs.")
        
        
-proc clearTimerResults*(aname:string = "") =
+proc clearTimerResults*(aname:string = "",quiet:bool = true,xpos:int = 3) =
      ## clearTimerResults
      ## 
      ## clears cxtimerresults of one named timer or if aname == "" of timer cxtimer
@@ -3393,24 +3396,27 @@ proc clearTimerResults*(aname:string = "") =
      if bname == "": bname = "cxtimer"    # if no name given we assume defaultname cxtimer 
      loopy2(0,cxtimerresults.len):
         if cxtimerresults[xloopy].tname == bname:
-               echo()
-               print("Timer deleted : " ,goldenrod)
-               printLn(cxtimerresults[xloopy].tname ,tomato)
+               if quiet == false:
+                  echo()
+                  print("Timer deleted : " ,goldenrod,xpos = xpos)
+                  printLn(cxtimerresults[xloopy].tname ,tomato)
+                  echo()
                cxtimerresults.delete(xloopy)  
-               echo()
+               
         else:
                discard
        
-proc clearAllTimerResults*() =
+proc clearAllTimerResults*(quiet:bool = true,xpos:int = 3) =
      ## clearAllTimerResults
      ## 
-     ## clears cxtimerresults for all timers
+     ## clears cxtimerresults for all timers , set quiet to false to show feedback
      ## 
      ##  
      cxtimerresults = @[] 
      echo()
-     print("Timer deleted : " , goldenrod)
-     printLn("all",tomato)
+     if quiet == false:
+        print("Timer deleted : " , goldenrod,xpos = xpos)
+        printLn("all",tomato)
              
     
 proc `$`*[T](some:typedesc[T]): string = name(T)
