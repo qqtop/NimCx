@@ -16,7 +16,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-12-02
+##     Latest      : 2017-12-10
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -53,7 +53,7 @@
 ##       
 ##                   Terminal set encoding to UTF-8  
 ##
-##                   with var. terminal font : monospace size 9.0 - 15  tested
+##                   with var. terminal font : hack,monospace size 9.0 - 15  tested
 ##
 ##                   xterm,bash,st ,zsh  terminals support truecolor ok
 ##
@@ -93,9 +93,7 @@
 ##
 ##     Programming : qqTop
 ##
-##     Note        : may be improved at any time
-##
-##                   mileage may vary depending on the available
+##     Note        : mileage may vary depending on the available
 ##
 ##                   unicode libraries and terminal support in your system
 ##
@@ -116,16 +114,16 @@
 ##                   moving constants to cxconsts.nim
 ##                  
 ##
-##     Funding     : How to make someone happy ? Here are the options :
+##     Funding     : Here are the options :
 ##     
-##                   If you are happy , unhappy or anything in between feel free to send
-##     
-##                   any amount of bitcoins to this wallet : 
-##                                      
-##                   194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
-##                    
-##     
-##                    
+##                   You are happy             ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
+##                   
+##                   You are not happy         ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
+##                 
+##                   You are in any other mood ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
+##                                       
+##                  
+                 
 
 import cxconsts,os, times, strutils,parseutils, parseopt, hashes, tables, sets, strmisc
 import osproc,macros,posix,terminal,math,stats,json,random,streams,options,memfiles
@@ -301,8 +299,8 @@ proc sampleSeq*[T](x: seq[T], a:int, b: int) : seq[T] =
      ##.. code-block:: nim
      ##    import nimcx
      ##    let x = createSeqInt(20)
-     ##    x.sampleseq(4,8)
      ##    echo x
+     ##    echo x.sampleseq(4,8)
      ##    echo x.sampleSeq(4,8).rndSample()    # get one randomly selected value from the subsequence
      ##    
      
@@ -340,10 +338,11 @@ template loopy*[T](ite:T,st:untyped) =
 template loopy2*(mi:int = 0,ma:int = 5,st:untyped) =
      ## loopy2
      ##
-     ##  the advanced version of loopy the simple for-loop template
-     ##  which also injects the loop counter xloopy and loops over a block of code
+     ## the advanced version of loopy the simple for-loop template
+     ## which also injects the loop counter xloopy and loops over a block of code
      ##
-     ##  loopy2(1,10):
+     ##.. code-block:: nim
+     ##   loopy2(1,10):
      ##      printLnBiCol(xloopy , "  The house is in the back.",randcol(),randcol(),":",0,false,{})
      ##      printLn("Some integer : " , getRndInt())
      ##
@@ -2165,7 +2164,34 @@ proc dayofweek*(datestr:string):string =
     
     result =  $(getdayofweek(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr))))
   
-
+proc cxTimeZone*(amode:string = "long"):string = 
+   ## cxTimeZone
+   ##
+   ## returns a string with the actual timezone offset in hours as seen from UTC 
+   ## 
+   ## default long gives results parsed from getLocalTime 
+   ## like : UTC +08:00
+   ##
+   ## short
+   ## gives results like : UTC +8 
+   ## 
+   var mode = amode
+   var okmodes = @["long","short"]
+   if mode in okmodes == false:
+      mode = "long"
+   
+   if mode == "long":
+        var ltt = $(getLocalTime(getTime()))
+        result = "UTC " & ltt[ltt.len - 6 .. ltt.len]
+   elif mode == "short":
+        var gtz = getTimeZone() div 3600 * -1
+        if gtz > 0:
+            result = "UTC +" & $(gtz)
+        elif gtz == 0:
+            result = "UTC  " & $(gtz)
+        else:
+            result = "UTC -" & $(gtz)
+            
 
 proc createSeqDate*(fromDate:string,days:int = 1):seq[string] = 
      ## createSeqDate
@@ -3316,7 +3342,10 @@ proc newCxtimer*(aname:string = "cxtimer"):ref(CxTimer) =
      result = aresult
    
 proc  startTimer*(co:ref(CxTimer)) = co.start = epochTime()
-proc  lapTimer*(co:ref(CxTimer))   = co.lap.add(epochTime() - co.start)
+proc  lapTimer*(co:ref(CxTimer)):auto {.discardable.}  =
+               var tdf = epochTime() - co.start
+               co.lap.add(tdf)
+               result = tdf
 proc  stopTimer*(co: ref(CxTimer))  = co.stop = epochtime()   
 proc  resetTimer*(co: ref(CxTimer)) = 
       co.start = 0.00
@@ -3489,7 +3518,7 @@ template withFile*(f,fn, mode, actions: untyped): untyped =
   ##                   break 
   block:
         var f = streamFile(fn,mode)
-        if not isNil f:
+        if not f.isNil:
             try:
                 actions
             finally:

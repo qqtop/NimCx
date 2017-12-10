@@ -1,0 +1,60 @@
+abx	cxutils.html#abx	cxutils : abx	
+bbx	cxutils.html#bbx	cxutils : bbx	
+cbx	cxutils.html#cbx	cxutils : cbx	
+dbx	cxutils.html#dbx	cxutils : dbx	
+ebx	cxutils.html#ebx	cxutils : ebx	
+fbx	cxutils.html#fbx	cxutils : fbx	
+gbx	cxutils.html#gbx	cxutils : gbx	
+hbx	cxutils.html#hbx	cxutils : hbx	
+ibx	cxutils.html#ibx	cxutils : ibx	
+jbx	cxutils.html#jbx	cxutils : jbx	
+kbx	cxutils.html#kbx	cxutils : kbx	
+lbx	cxutils.html#lbx	cxutils : lbx	
+mbx	cxutils.html#mbx	cxutils : mbx	
+nbx	cxutils.html#nbx	cxutils : nbx	
+obx	cxutils.html#obx	cxutils : obx	
+pbx	cxutils.html#pbx	cxutils : pbx	
+qbx	cxutils.html#qbx	cxutils : qbx	
+rbx	cxutils.html#rbx	cxutils : rbx	
+sbx	cxutils.html#sbx	cxutils : sbx	
+tbx	cxutils.html#tbx	cxutils : tbx	
+ubx	cxutils.html#ubx	cxutils : ubx	
+vbx	cxutils.html#vbx	cxutils : vbx	
+wbx	cxutils.html#wbx	cxutils : wbx	
+xbx	cxutils.html#xbx	cxutils : xbx	
+ybx	cxutils.html#ybx	cxutils : ybx	
+zbx	cxutils.html#zbx	cxutils : zbx	
+hybx	cxutils.html#hybx	cxutils : hybx	
+plbx	cxutils.html#plbx	cxutils : plbx	
+ulbx	cxutils.html#ulbx	cxutils : ulbx	
+elbx	cxutils.html#elbx	cxutils : elbx	
+clbx	cxutils.html#clbx	cxutils : clbx	
+bigLetters	cxutils.html#bigLetters	cxutils : bigLetters	
+nimsx	cxutils.html#nimsx	cxutils : nimsx	
+nimsx2	cxutils.html#nimsx2	cxutils : nimsx2	
+fibonacci	cxutils.html#fibonacci,int	cxutils : fibonacci(n: int): float	
+memCheck	cxutils.html#memCheck,bool	cxutils : memCheck(stats: bool = false)	
+showCpuCores	cxutils.html#showCpuCores,	cxutils : showCpuCores()	
+getAmzDateString	cxutils.html#getAmzDateString,	cxutils : getAmzDateString(): string	
+getRandomPointInCircle	cxutils.html#getRandomPointInCircle,float	cxutils : getRandomPointInCircle(radius: float): seq[float]	
+getRandomPoint	cxutils.html#getRandomPoint,float,float,float,float	cxutils : getRandomPoint(minx: float = -500.0; maxx: float = 500.0; miny: float = -500.0;\n               maxy: float = 500.0): RpointFloat	
+getRandomPoint	cxutils.html#getRandomPoint,int,int,int,int	cxutils : getRandomPoint(minx: int = -500; maxx: int = 500; miny: int = -500; maxy: int = 500): RpointInt	
+getCard	cxutils.html#getCard.t,	cxutils : getCard(): auto	
+showRandomCard	cxutils.html#showRandomCard,int	cxutils : showRandomCard(xpos: int = centerX())	
+showRuler	cxutils.html#showRuler,int,int,int,string,string,bool	cxutils : showRuler(xpos: int = 0; xposE: int = 0; ypos: int = 0; fgr: string = termwhite;\n          bgr: string = termblack; vert: bool = false)	
+centerMark	cxutils.html#centerMark,bool	cxutils : centerMark(showpos: bool = false)	
+superHeaderA	cxutils.html#superHeaderA,string,string,string,bool,int	cxutils : superHeaderA(bb: string = &quot;&quot;; strcol: string = white; frmcol: string = green;\n             anim: bool = true; animcount: int = 1)	
+newWordCJK	cxutils.html#newWordCJK,int,int	cxutils : newWordCJK(minwl: int = 3; maxwl: int = 10): string	
+newWord	cxutils.html#newWord,int,int	cxutils : newWord(minwl: int = 3; maxwl: int = 10): string	
+newWord2	cxutils.html#newWord2,int,int	cxutils : newWord2(minwl: int = 3; maxwl: int = 10): string	
+newWord3	cxutils.html#newWord3,int,int,bool	cxutils : newWord3(minwl: int = 3; maxwl: int = 10; nflag: bool = true): string	
+newHiragana	cxutils.html#newHiragana,int,int	cxutils : newHiragana(minwl: int = 3; maxwl: int = 10): string	
+newKatakana	cxutils.html#newKatakana,int,int	cxutils : newKatakana(minwl: int = 3; maxwl: int = 10): string	
+getWanIp	cxutils.html#getWanIp,	cxutils : getWanIp(): string	
+showWanIp	cxutils.html#showWanIp,	cxutils : showWanIp()	
+printBigNumber	cxutils.html#printBigNumber,,string,string,int,bool	cxutils : printBigNumber(xnumber: string | int | int64; fgr: string = yellowgreen;\n               bgr: string = black; xpos: int = 1; fun: bool = false)	
+printBigLetters	cxutils.html#printBigLetters,string,string,string,int,int,bool	cxutils : printBigLetters(aword: string; fgr: string = yellowgreen; bgr: string = black;\n                xpos: int = 1; k: int = 7; fun: bool = false)	
+printNimSxR	cxutils.html#printNimSxR,seq[string],string,int	cxutils : printNimSxR(nimsx: seq[string]; col: string = yellowgreen; xpos: int = 1)	
+doNimUp	cxutils.html#doNimUp,int,bool	cxutils : doNimUp(xpos = 5; rev: bool = true)	
+dayOfWeekJulian	cxutils.html#dayOfWeekJulian,string	cxutils : dayOfWeekJulian(datestr: string): string	
+clearScreen	cxutils.html#clearScreen,	cxutils : clearScreen(): int	

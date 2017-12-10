@@ -10,12 +10,14 @@
 
 
 
-| Code           | Demoslib         | Tests            |
+| Code           | Demoslib         | Demos & Tests    |
 |----------------|------------------|------------------|
 | cx.nim         | cxDemo.nim       | cxTest.nim       |
 | cxconsts.nim   |                  |                  |
 | cxutils.nim    |                  |                  |
 
+
+[Documentation for nimcx.nim](https://qqtop.github.io/nimcxindex.html)
 
 [Documentation for cx.nim](https://qqtop.github.io/cx.html)
 
