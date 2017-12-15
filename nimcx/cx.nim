@@ -16,7 +16,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-12-10
+##     Latest      : 2017-12-15
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -125,8 +125,8 @@
 ##                  
                  
 
-import cxconsts,os, times, strutils,parseutils, parseopt, hashes, tables, sets, strmisc
-import osproc,macros,posix,terminal,math,stats,json,random,streams,options,memfiles
+import random,cxconsts,os, times, strutils,parseutils, parseopt, hashes, tables, sets, strmisc
+import osproc,macros,posix,terminal,math,stats,json,streams,options,memfiles
 import sequtils,httpclient,rawsockets,browsers,intsets, algorithm
 import unicode ,typeinfo, typetraits ,cpuinfo,colors,encodings,distros
 export strutils,sequtils,times,unicode,streams,hashes,terminal,cxconsts,random,options,json,httpclient
@@ -167,7 +167,7 @@ when defined(posix):
 const CXLIBVERSION* = "0.9.9"
 
 let cxstart* = epochTime()  # simple execution timing with one line see doFinish()
-randomize()                 # seed random number generator 
+randomize()                 # seed rand number generator 
 
 type
      NimCxError* = object of Exception         
@@ -262,18 +262,26 @@ proc newCxcounter*():ref(Cxcounter) =
     
 proc  add*(co:ref Cxcounter) = inc co.value 
 proc  dec*(co:ref Cxcounter) = dec co.value
-proc  reset*(co:ref CxCounter) = co.value = 0   
+proc  reset*(co:ref CxCounter) = co.value = 0  
+
+
+proc waitOn*(alen:int = 1) = 
+     ## waiton
+     ## 
+     ## stops program to wait for one or more keypresses. default = 1
+     ## 
+     discard readBuffer(stdin,cast[pointer](newString(1)),alen)
     
 proc rndSample*[T](asq:seq[T]):T =
      ## rndSample
-     ## returns one random sample from a sequence
+     ## returns one rand sample from a sequence
      randomize()
-     result = random(asq)     
+     result = rand(asq)     
      
 proc rndRGB*():auto = 
    var cln = newSeq[int]()
    for x in 0..<colorNames.len: cln.add(x)
-   let argb =  extractRgb(parsecolor(colorNames[rndSample(cln)][0]))
+   let argb =  extractRgb(parsecolor(colorNames[rand(cln)][0]))   #rndsample
    result =  rgb(argb.r,argb.g,argb.b)
 
         
@@ -301,7 +309,7 @@ proc sampleSeq*[T](x: seq[T], a:int, b: int) : seq[T] =
      ##    let x = createSeqInt(20)
      ##    echo x
      ##    echo x.sampleseq(4,8)
-     ##    echo x.sampleSeq(4,8).rndSample()    # get one randomly selected value from the subsequence
+     ##    echo x.sampleSeq(4,8).rndSample()    # get one randly selected value from the subsequence
      ##    
      
      result =  x[a..b]
@@ -373,11 +381,11 @@ proc streamFile*(filename:string,mode:FileMode): FileStream = newFileStream(file
 proc uniform*(a,b: float) : float {.inline.} =
       ## uniform
       ## 
-      ## returns a random float uniformly distributed between a and  b
+      ## returns a rand float uniformly distributed between a and  b
       ## 
       ##.. code-block:: nim
       ##   import nimcx,stats
-      ##   import "random-0.5.3/random"
+      ##   import "rand-0.5.3/rand"
       ##   proc quickTest() =
       ##        var ps : Runningstat
       ##        var  n = 100_000_000
@@ -402,7 +410,7 @@ proc uniform*(a,b: float) : float {.inline.} =
       ##   doFinish()
       ##   
       ##    
-      result = a + (b - a) * float(random(b))
+      result = a + (b - a) * float(rand(b))
 
   
 template `*`*(s:string,n:int):string =
@@ -414,11 +422,11 @@ template `*`*(s:string,n:int):string =
 proc getRndInt*(mi:int = 0 , ma: int = int.high):int  {.noInit,inline.} =
     ## getRndInt
     ##
-    ## returns a random int between mi and < ma
-    ## so for 0 or 1 we need random(0..2)
+    ## returns a rand int between mi and < ma
+    ## so for 0 or 1 we need rand(0..2)
     var maa = ma
     if ma == 1: maa = 2
-    result = random(mi..maa)
+    result = rand(mi..maa)
 
   
 
@@ -530,20 +538,20 @@ template colPaletteName*(coltype:string,n:int): auto =
 template aPaletteSample*(coltype:string):int = 
      ## aPaletteSample
      ## 
-     ##  returns an random entry (int) from a palette
+     ##  returns an rand entry (int) from a palette
      ##  see example at colPalette
      ## 
      var coltypen = coltype.toLowerAscii()
      var b = newSeq[int]()
      for x in 0..<colPaletteLen(coltypen): b.add(x)
-     rndSample(b)
+     rand(b)   #rndSample
      
 
 template randCol2*(coltype:string): auto =
          ## ::
          ##   randCol2    -- experimental
          ##   
-         ##   returns a random color based on a palette
+         ##   returns a rand color based on a palette
          ##   
          ##   palettes are filters into colorNames
          ##   
@@ -561,16 +569,16 @@ template randCol2*(coltype:string): auto =
             if colorNames[x][0].startswith(coltypen) or colorNames[x][0].contains(coltypen):
                ts.add(colorNames[x][1])
          if ts.len == 0: ts.add(colorNames[getRndInt(0,colorNames.len - 1)][1]) # incase of no suitable string we return standard randcol     
-         ts[rndSample(colPaletteIndexer(ts))]
+         ts[rand(colPaletteIndexer(ts))]  #rndsample
          
 
-template randCol*(): string = random(colorNames)[1]
+template randCol*(): string = rand(colorNames)[1]
    ## randCol
    ##
-   ## get a randomcolor from colorNames , no filter is applied 
+   ## get a randcolor from colorNames , no filter is applied 
    ##
    ##.. code-block:: nim
-   ##    # print a string 6 times in a random color selected from colorNames
+   ##    # print a string 6 times in a rand color selected from colorNames
    ##    loopy(0..5,printLn("Hello Random Color",randCol()))
    ##
    ##
@@ -579,23 +587,23 @@ template randCol*(): string = random(colorNames)[1]
 template rndCol*(r:int = getRndInt(0,254) ,g:int = getRndInt(0,254), b:int = getRndInt(0,254)) :string = "\x1b[38;2;" & $r & ";" & $b & ";" & $g & "m"
     ## rndCol
     ## 
-    ## return a randomcolor from the whole rgb spectrum in the ranges of RGB [0..254]
+    ## return a randcolor from the whole rgb spectrum in the ranges of RGB [0..254]
     ## expect this colors maybe a bit more drab than the colors returned from randCol()
     ## 
     ##.. code-block:: nim
-    ##    # print a string 6 times in a random color selected from rgb spectrum
+    ##    # print a string 6 times in a rand color selected from rgb spectrum
     ##    loopy(0..5,printLn("Hello Random Color",rndCol()))
     ##
     ##
     
    
-template randPastelCol*: string = random(pastelset)
+template randPastelCol*: string = rand(pastelset)
    ## randPastelCol
    ##
-   ## get a randomcolor from pastelSet
+   ## get a randcolor from pastelSet
    ##
    ##.. code-block:: nim
-   ##    # print a string 6 times in a random color selected from pastelSet
+   ##    # print a string 6 times in a rand color selected from pastelSet
    ##    loopy(0..5,printLn("Hello Random Color",randPastelCol()))
    ##
    ##
@@ -733,7 +741,7 @@ template hdx*(code:typed,frm:string = "+",width:int = tw,nxpos:int = 0):typed =
    ## width and xpos can be adjusted
    ##
    ##.. code-block:: nim
-   ##    hdx(printLn("Nice things happen randomly",yellowgreen,xpos = 9),width = 35,nxpos = 5)
+   ##    hdx(printLn("Nice things happen randly",yellowgreen,xpos = 9),width = 35,nxpos = 5)
    ##
    var xpos = nxpos
    var lx = repeat(frm,width div frm.len)
@@ -764,7 +772,7 @@ proc isEmpty*(val:string):bool {.inline.} =
 proc getRandomSignI*(): int = 
     ## getRandomSignI
     ## 
-    ## returns -1 or 1 integer  to have a random positive or negative multiplier
+    ## returns -1 or 1 integer  to have a rand positive or negative multiplier
     ##  
     result = 1
     if 0 == getRndInt(0,1):  result = -1
@@ -774,7 +782,7 @@ proc getRandomSignI*(): int =
 proc getRandomSignF*():float = 
     ## getRandomSignF
     ## 
-    ## returns -1.0 or 1.0 float  to have a random positive or negative multiplier
+    ## returns -1.0 or 1.0 float  to have a rand positive or negative multiplier
     ##  
     result = 1.0
     if 0 == getRndInt(0,1) : result = -1.0   
@@ -941,7 +949,7 @@ proc unquote*(s:string):string =
 proc cleanScreen*() =
       ## cleanScreen
       ##
-      ## vaery fast clear screen proc with escape seqs
+      ## very fast clear screen proc with escape seqs
       ##
       ## similar to terminal.eraseScreen() but cleans the terminal window more completely at times
       ##
@@ -1797,7 +1805,7 @@ proc dotyLn*(d:int,fgr:string = white, bgr:string = black,xpos:int = 1) =
 
      ##.. code-block:: nim
      ##      import nimcx
-     ##      loopy(0.. 100,loopy(1.. tw div 2, dotyLn(1,randcol(),xpos = random(tw - 1))))
+     ##      loopy(0.. 100,loopy(1.. tw div 2, dotyLn(1,randcol(),xpos = rand(tw - 1))))
      ##      printLnBiCol("coloredSnow","d",greenyellow,salmon)
 
      ##
@@ -2213,7 +2221,7 @@ proc createSeqDate*(fromDate:string,days:int = 1):seq[string] =
 proc getRndDate*(minyear:int = parseint(year(today)) - 50,maxyear:int = parseint(year(today)) + 50):string =  
          ## getRndDate
          ## 
-         ## returns a valid random date between 1900 and 3001 in format 2017-12-31
+         ## returns a valid rand date between 1900 and 3001 in format 2017-12-31
          ## 
          ## default currently set to  between  +/- 50 years of today
          ## 
@@ -2779,11 +2787,11 @@ proc reverseString*(text:string):string =
 
 
 
-# Convenience procs for random data creation and handling
+# Convenience procs for rand data creation and handling
 proc createSeqBool*(n:int = 10): seq[bool] {.inline.} =
      # createSeqBool
      # 
-     # returns a seq of random bools
+     # returns a seq of rand bools
      # 
      result = newSeq[bool]()
      for x in 0..<n: result.add(getRndBool())
@@ -2792,14 +2800,14 @@ proc createSeqBool*(n:int = 10): seq[bool] {.inline.} =
 proc createSeqInt*(n:int = 10,mi:int = 0,ma:int = 1000) : seq[int] {.inline.} =
     ## createSeqInt
     ##
-    ## convenience proc to create a seq of random int with
+    ## convenience proc to create a seq of rand int with
     ##
     ## default length 10
     ##
     ## gives @[4556,455,888,234,...] or similar
     ##
     ##.. code-block:: nim
-    ##    # create a seq with 50 random integers ,of set 100.. 2000
+    ##    # create a seq with 50 rand integers ,of set 100.. 2000
     ##    # including the limits 100 and 2000
     ##    echo createSeqInt(50,100,2000)
 
@@ -2849,8 +2857,8 @@ proc ff2*(zz:float , n:int = 3):string =
   ##    
   ##    # floats example
   ##    for x in 1.. 2000:
-  ##       # generate some positve and negative random float
-  ##       var z = getrandomfloat() * 2345243.132310 * getRandomSignF()
+  ##       # generate some positve and negative rand float
+  ##       var z = getrandfloat() * 2345243.132310 * getRandomSignF()
   ##       printLnBiCol(fmtx(["",">6","",">20"],"NZ ",$x," : ",ff2(z)))
   ##  
   ##       
@@ -2887,7 +2895,7 @@ proc ff2*(zz:int64 , n:int = 0):string =
   ##    
   ##    # int example
   ##    for x in 1.. 20:
-  ##       # generate some positve and negative random integer
+  ##       # generate some positve and negative rand integer
   ##       var z = getRndInt(50000,100000000) * getRandomSignI()
   ##       printLnBiCol(fmtx(["",">6","",">20.0"],"NIM ",$x," : ",z))
   ##       
@@ -2921,27 +2929,27 @@ proc ff2*(zz:int64 , n:int = 0):string =
 proc getRandomFloat*(mi:float = -1.0 ,ma:float = 1.0):float =
      ## getRandomFloat
      ##
-     ## convenience proc so we do not need to import random in calling prog
+     ## convenience proc so we do not need to import rand in calling prog
      ##
-     ## to get positive or negative random floats multiply with getRandomSignF
+     ## to get positive or negative rand floats multiply with getRandomSignF
      ## 
      ## Note: changed so to get positive and or negative floats
      ## 
      ##.. code-block:: nim
      ##    echo  getRandomFloat() * 10000.00 * getRandomSignF()
      ##
-     result = random(-1.0..float(1.0))
+     result = rand(-1.0..float(1.0))
 
-proc getRndFloat*(mi:float = -1.0 ,ma:float = 1.0):float  {.noInit,inline.} =  random(mi..ma)
+proc getRndFloat*(mi:float = -1.0 ,ma:float = 1.0):float  {.noInit,inline.} =  rand(mi..ma)
      ## getRndFloat
      ##
-     ## same as getrandomFloat()
+     ## same as getrandFloat()
      ##
 
 proc createSeqFloat*(n:int = 10,prec:int = 3) : seq[float] =
      ## createSeqFloat
      ##
-     ## convenience proc to create an unsorted seq of random floats with
+     ## convenience proc to create an unsorted seq of rand floats with
      ##
      ## default length ma = 10 ( always consider how much memory is in the system )
      ##
@@ -2954,12 +2962,12 @@ proc createSeqFloat*(n:int = 10,prec:int = 3) : seq[float] =
      ## form @[0.34,0.056,...] or similar
      ##
      ##.. code-block:: nim
-     ##    # create a seq with 50 random floats
+     ##    # create a seq with 50 rand floats
      ##    echo createSeqFloat(50)
      ##
      ##
      ##.. code-block:: nim
-     ##    # create a seq with 50 random floats formated
+     ##    # create a seq with 50 rand floats formated
      ##    echo createSeqFloat(50,3)
      ##
      var ffnz = prec
@@ -4035,7 +4043,7 @@ proc tableRune*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5)
     ## tableRune
     ##
     ## simple table routine with default 6 cols for displaying various unicode sets
-    ## fgr allows color display and fgr = "rand" displays in random color and maxwidth for displayable items
+    ## fgr allows color display and fgr = "rand" displays in rand color and maxwidth for displayable items
     ## this can also be used to show items of a sequence
     ##
     ##.. code-block:: nim
@@ -4419,7 +4427,7 @@ proc drawBox*(hy:int = 1, wx:int = 1 , hsec:int = 1 ,vsec:int = 1,frCol:string =
 proc randpos*():int =
     ## randpos
     ##
-    ## sets cursor to a random position in the visible terminal window
+    ## sets cursor to a rand position in the visible terminal window
     ##
     ## returns x position
     ##
@@ -5163,7 +5171,7 @@ proc printFont*(s:string,col:string = randcol() ,coltop:string = randcol(), xpos
 proc printFontFancy*(s:string, coltop = rndcol(),xpos:int = -10) = 
      ## printFontFancy
      ## 
-     ## display experimental cxfont with every element in random color
+     ## display experimental cxfont with every element in rand color
      ## changeing of coltop color possible
      ## 
      ## 
