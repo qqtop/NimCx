@@ -481,7 +481,109 @@ proc getAmzDateString*():string =
     ## get current GMT date time in amazon format  
     ## 
     return format(getGMTime(getTime()), iso_8601_aws) 
-   
+    
+proc dayofweek*(datestr:string):string = 
+    ## dayofweek
+    ## 
+    ## returns day of week from a date in format yyyy-MM-dd
+    ## 
+    ##.. code-block:: nim    
+    ##    echo getNextMonday("2017-07-15"),"  ",dayofweek(getNextMonday("2017-07-15"))
+    ##    echo getFirstMondayYear("2018"),"  ",dayofweek(getFirstMondayYear("2018"))
+    ##    echo getFirstMondayYearMonth("2018-2"),"  ",dayofweek(getFirstMondayYearMonth("2018-2"))
+    
+    result =  $(getdayofweek(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr))))      
+
+proc getFirstMondayYear*(ayear:string):string =
+    ## getFirstMondayYear
+    ##
+    ## returns date of first monday of any given year
+    ##
+    ##.. code-block:: nim
+    ##    echo  getFirstMondayYear("2015")
+    ##
+    ##
+ 
+    for x in 0.. 7:
+       var datestr = ayear & "-01-0" & $x
+       if validdate(datestr) == true:
+          if $(getdayofweek(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr)))) == "Monday":
+             result = datestr
+
+
+proc getFirstMondayYearMonth*(aym:string):string =
+    ## getFirstMondayYearMonth
+    ##
+    ## returns date of first monday in given year and month
+    ##
+    ##.. code-block:: nim
+    ##    echo  getFirstMondayYearMonth("2015-12")
+    ##    echo  getFirstMondayYearMonth("2015-06")
+    ##    echo  getFirstMondayYearMonth("2015-2")
+    ##
+    ## in case of invalid dates nil will be returned
+    
+
+    #var n:WeekDay
+    var amx = aym
+    for x in 0.. 7:
+       if aym.len < 7:
+          let yr = year(amx)
+          let mo = month(aym)  # this also fixes wrong months
+          amx = yr & "-" & mo
+       var datestr = amx & "-0" & $x
+       if validdate(datestr) == true:
+          if $(getdayofweek(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr)))) == "Monday":
+            result = datestr
+
+
+
+proc getNextMonday*(adate:string):string =
+    ## getNextMonday
+    ##
+    ##.. code-block:: nim
+    ##    echo  getNextMonday(getDateStr())
+    ##
+    ##
+    ##.. code-block:: nim
+    ##      import nimcx
+    ##      # get next 10 mondays
+    ##      var dw = "2015-08-10"
+    ##      for x in 1.. 10:
+    ##          dw = getNextMonday(dw)
+    ##          echo dw
+    ##
+    ##
+    ## in case of invalid dates nil will be returned
+    ##
+
+    
+    var ndatestr = ""
+    if isNil(adate) == true :
+       print("Error received a date with value : nil",red)
+    else:
+
+        if validdate(adate) == true:
+           
+            var z = $(getdayofweek(parseInt(day(adate)),parseInt(month(adate)),parseInt(year(adate))))
+            
+            if z == "Monday":
+                # so the datestr points to a monday we need to add a
+                # day to get the next one calculated
+                ndatestr = plusDays(adate,1)
+
+            else:
+                ndatestr = adate
+
+            for x in 0..<7:
+                if validdate(ndatestr) == true:
+                    z =  $(getDayOfWeek(parseInt(day(ndatestr)),parseInt(month(ndatestr)),parseInt(year(ndatestr))))
+                if z.strip() != "Monday":
+                    ndatestr = plusDays(ndatestr,1)
+                else:
+                    result = ndatestr
+
+
    
 proc getRandomPointInCircle*(radius:float) : seq[float] =
     ## getRandomPointInCircle

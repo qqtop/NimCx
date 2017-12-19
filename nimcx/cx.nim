@@ -1,5 +1,7 @@
 #Compiler options
 {.deadCodeElim: on, optimization: speed.}
+#{.passC: "-msse -msse2 -msse3 -mssse3 -march=native -mtune=native -flto".}
+#{.passL: "-msse -msse2 -msse3 -mssse3 -flto".}
 #{.deadCodeElim: on, checks: off, hints: off, warnings: off, optimization: size.}
 #  {.noforward: on.}   # future feature
 ## ::
@@ -16,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-12-15
+##     Latest      : 2017-12-19
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -49,37 +51,13 @@
 ##
 ##     Docs        : `Documentation <https://qqtop.github.io/cx.html>`_
 ##
-##     Tested      : OpenSuse Tumbleweed , Ubuntu 16.04 LTS 
+##     Tested      : OpenSuse Tumbleweed  
 ##       
 ##                   Terminal set encoding to UTF-8  
 ##
 ##                   with var. terminal font : hack,monospace size 9.0 - 15  tested
 ##
 ##                   xterm,bash,st ,zsh  terminals support truecolor ok
-##
-##                   some ubuntu based gnome-terminals may not be able to display all colors
-##
-##                   as they are not correctly linked , see ubuntu forum questions.
-##
-##                   run this awk script to see if your terminal supports truecolor
-##
-##                   script from : https://gist.github.com/XVilka/8346728
-##
-##                  ..   code-block:: nim
-##
-##                    awk 'BEGIN{
-##                        s="/\\/\\/\\/\\/\\"; s=s s s s s s s s;
-##                        for (colnum = 0; colnum<77; colnum++) {
-##                            r = 255-(colnum*255/76);
-##                            g = (colnum*510/76);
-##                            b = (colnum*255/76);
-##                            if (g>255) g = 510-g;
-##                            printf "\033[48;2;%d;%d;%dm", r,g,b;
-##                            printf "\033[38;2;%d;%d;%dm", 255-r,255-g,255-b;
-##                            printf "%s\033[0m", substr(s,colnum+1,1);
-##                        }
-##                        printf "\n";
-##                    }'
 ##
 ##
 ##     Related     :
@@ -99,7 +77,7 @@
 ##
 ##                   terminal x-axis position start with 1
 ##
-##                   proc fmtx a simple formatting utility has been added
+##                   proc fmtx a simple formatting utility has been added and works with strformat too
 ##
 ##
 ##     Installation: nimble install nimcx
@@ -112,6 +90,8 @@
 ##     In progress : moving some of the non core procs to module cxutils.nim 
 ##                   
 ##                   moving constants to cxconsts.nim
+##                   
+##     Latest      : changing time date related code to work with newest times.nim              
 ##                  
 ##
 ##     Funding     : Here are the options :
@@ -125,11 +105,13 @@
 ##                  
                  
 
-import random,cxconsts,os, times, strutils,parseutils, parseopt, hashes, tables, sets, strmisc
+import times,random,cxconsts,os,strutils,strformat,parseutils, parseopt, hashes, tables, sets, strmisc
 import osproc,macros,posix,terminal,math,stats,json,streams,options,memfiles
 import sequtils,httpclient,rawsockets,browsers,intsets, algorithm
 import unicode ,typeinfo, typetraits ,cpuinfo,colors,encodings,distros
-export strutils,sequtils,times,unicode,streams,hashes,terminal,cxconsts,random,options,json,httpclient
+export times,strutils,strformat,sequtils,unicode,streams,hashes,terminal,cxconsts,random
+export options,json,httpclient
+
 
 # Profiling       
 #import nimprof  # nim c -r --profiler:on --stackTrace:on cx
@@ -216,8 +198,8 @@ type
      
 # type used in for cxtimer
 type
+    #Cxtimerres* = tuple[tname:string,start:float,stop : float,lap:seq[float]]
     Cxtimerres* = tuple[tname:string,start:float,stop : float,lap:seq[float]]
-    
 
 # used to store all cxtimer results 
 var cxtimerresults* =  newSeq[Cxtimerres]() 
@@ -284,6 +266,13 @@ proc rndRGB*():auto =
    let argb =  extractRgb(parsecolor(colorNames[rand(cln)][0]))   #rndsample
    result =  rgb(argb.r,argb.g,argb.b)
 
+   
+template `<>`* (a, b: untyped): untyped =
+  ## unequal operator 
+  ## 
+  ## 
+  ## 
+  not (a == b)
         
        
 proc `[]`*[T; U](a: seq[T], x: Slice[U]): seq[T] =
@@ -313,15 +302,64 @@ proc sampleSeq*[T](x: seq[T], a:int, b: int) : seq[T] =
      ##    
      
      result =  x[a..b]
-       
+     
+     
+proc checkTrueColorSupport*(): string  =
+     # checkTrueColorSupport
+     # 
+     # checks for truecolor support in a terminal 
+     # 
+     result = $(getEnv("COLORTERM").toLowerAscii in ["truecolor", "24bit"])
 
+     
 proc cxtoLower*(c: char): char = # {.inline.}=
   if c in {'A'..'Z'}:
     result = chr(ord(c) + (ord('a') - ord('A')))
   else:
     result = c   
+
+
+# experimental truecolors    
     
+proc cxTrueColorSet*(max:int = 888 , step: int = 12):seq[string] =
+   ## cxTrueColorSet
+   ## 
+   ## generates a seq with truecolors  
+   ## defaults are reasonable 843750 colors to choose from 
+   ## 
+   ## 
+   ## 
+   ## 
+   result = @[]
+   for r in countup(0,max,step):
+     for b in countup(0,max,step):
+       for g in countup(0,max,step):
+          result.add("\x1b[38;2;$1;$2;$3m" % [$r,$b,$g])
+          result.add("\x1b[48;2;$1;$2;$3m" % [$r,$b,$g]) 
+          
+          
+let cxTrueCol = cxTrueColorSet()          
+ 
+    
+proc color38*() : int =
+   # random truecolor ex 38 set
+   var lcol = rand(cxTrueCol.len)
+   while lcol mod 2 <> 0 : lcol = rand(cxTrueCol.len)
+   result = lcol
    
+proc color48*() : int =
+   # random truecolor ex 48 set
+   var rcol = rand(cxTrueCol.len)
+   while rcol mod 2 == 0 : rcol = rand(cxTrueCol.len)
+   result = rcol   
+
+proc color3848*() : int =
+     # random truecolor ex 38 and 48 set
+    result = rand(cxTrueCol.len)
+     
+#  end experimental truecolors     
+ 
+ 
 proc stripper*(str:string): string =
   # stripper
   # strip controlcodes "\ba\x00b\n\rc\fd\xc3"
@@ -356,15 +394,9 @@ template loopy2*(mi:int = 0,ma:int = 5,st:untyped) =
      ##
      for xloopy {.inject.} in mi..<ma: st  
      
+      
      
-template now*:string = getDateStr() & " " & getClockStr()
-     ## now
-     ## 
-     ## returns date and time string
-     ## 
-     
-     
-template today*:string = getDateStr() 
+template cxtoday*:string = getDateStr() 
      ## today
      ## 
      ## returns date string
@@ -608,16 +640,6 @@ template randPastelCol*: string = rand(pastelset)
    ##
    ##
  
-    
-    
-   
-template `<>`* (a, b: untyped): untyped =
-  ## unequal operator 
-  ## 
-  ## 
-  ## 
-  not (a == b)
-
 converter toTwInt(x: cushort): int = result = int(x)  
   
 
@@ -871,7 +893,7 @@ proc fmtx*[T](fmts:openarray[string],fstrings:varargs[T,`$`]):string =
      ## ::
      ##   simple format utility similar to strfmt to accommodate our needs
      ##   implemented :  right or left align within given param and float precision
-     ##   returns a string   
+     ##   returns a string and seems to work fine with strformat 
      ##
      ##   Some observations:
      ##
@@ -1947,37 +1969,37 @@ proc month*(aDate:string) : string =
 proc year*(aDate:string) : string = aDate.split("-")[0]
      ## Format yyyy
 
-
-proc intervalsecs*(startDate,endDate:string) : float =
-      ## interval procs returns time elapsed between two dates in secs,hours etc.
-      #  since all interval routines call intervalsecs error message display also here
-      #
-      if validdate(startDate) and validdate(endDate):
-          var f     = "yyyy-MM-dd"
-          result = toSeconds(toTime(endDate.parse(f)))  - toSeconds(toTime(startDate.parse(f)))
-      else:
-          printLn("Error: " &  startDate & "/" & endDate & " --> Format yyyy-MM-dd required",red)
-          #result = -0.0
-          
-
-proc intervalmins*(startDate,endDate:string) : float =
-           result = intervalsecs(startDate,endDate) / 60
-          
-
-proc intervalhours*(startDate,endDate:string) : float =
-         result = intervalsecs(startDate,endDate) / 3600
-        
-proc intervaldays*(startDate,endDate:string) : float =
-          result = intervalsecs(startDate,endDate) / 3600 / 24
-          
-proc intervalweeks*(startDate,endDate:string) : float =
-          result = intervalsecs(startDate,endDate) / 3600 / 24 / 7
-          
-proc intervalmonths*(startDate,endDate:string) : float =
-          result = intervalsecs(startDate,endDate) / 3600 / 24 / 365  * 12
-          
-proc intervalyears*(startDate,endDate:string) : float =
-          result = intervalsecs(startDate,endDate) / 3600 / 24 / 365
+# 
+# proc intervalsecs*(startDate,endDate:string) : float =
+#       ## interval procs returns time elapsed between two dates in secs,hours etc.
+#       #  since all interval routines call intervalsecs error message display also here
+#       #
+#       if validdate(startDate) and validdate(endDate):
+#           var f     = "yyyy-MM-dd"
+#           result = toSeconds(toTime(endDate.parse(f)))  - toSeconds(toTime(startDate.parse(f)))
+#       else:
+#           printLn("Error: " &  startDate & "/" & endDate & " --> Format yyyy-MM-dd required",red)
+#           #result = -0.0
+#           
+# 
+# proc intervalmins*(startDate,endDate:string) : float =
+#            result = intervalsecs(startDate,endDate) / 60
+#           
+# 
+# proc intervalhours*(startDate,endDate:string) : float =
+#          result = intervalsecs(startDate,endDate) / 3600
+#         
+# proc intervaldays*(startDate,endDate:string) : float =
+#           result = intervalsecs(startDate,endDate) / 3600 / 24
+#           
+# proc intervalweeks*(startDate,endDate:string) : float =
+#           result = intervalsecs(startDate,endDate) / 3600 / 24 / 7
+#           
+# proc intervalmonths*(startDate,endDate:string) : float =
+#           result = intervalsecs(startDate,endDate) / 3600 / 24 / 365  * 12
+#           
+# proc intervalyears*(startDate,endDate:string) : float =
+#           result = intervalsecs(startDate,endDate) / 3600 / 24 / 365
           
 proc compareDates*(startDate,endDate:string) : int =
      # dates must be in form yyyy-MM-dd
@@ -2004,7 +2026,7 @@ proc compareDates*(startDate,endDate:string) : int =
 
 
 
-proc fx(nx:TimeInfo):string =
+proc fx(nx:DateTime):string =
         result = nx.format("yyyy-MM-dd")
 
 
@@ -2019,7 +2041,7 @@ proc plusDays*(aDate:string,days:int):string =
    ##
    if validdate(aDate) == true:
       var rxs = ""
-      let tifo = parse(aDate,"yyyy-MM-dd") # this returns a TimeInfo type
+      let tifo = parse(aDate,"yyyy-MM-dd") # this returns a DateTime type
       var myinterval = initInterval()
       myinterval.days = days
       rxs = fx(tifo + myinterval)
@@ -2041,7 +2063,7 @@ proc minusDays*(aDate:string,days:int):string =
 
    if validdate(aDate) == true:
       var rxs = ""
-      let tifo = parse(aDate,"yyyy-MM-dd") # this returns a TimeInfo type
+      let tifo = parse(aDate,"yyyy-MM-dd") # this returns a DateTime type
       var myinterval = initInterval()
       myinterval.days = days
       rxs = fx(tifo - myinterval)
@@ -2049,97 +2071,6 @@ proc minusDays*(aDate:string,days:int):string =
    else:
       cechoLn(red,"Date error : ",aDate)
       result = "Error"
-
-
-proc getFirstMondayYear*(ayear:string):string =
-    ## getFirstMondayYear
-    ##
-    ## returns date of first monday of any given year
-    ##
-    ##.. code-block:: nim
-    ##    echo  getFirstMondayYear("2015")
-    ##
-    ##
- 
-    for x in 0.. 7:
-       var datestr = ayear & "-01-0" & $x
-       if validdate(datestr) == true:
-          if $(getdayofweek(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr)))) == "Monday":
-             result = datestr
-
-
-proc getFirstMondayYearMonth*(aym:string):string =
-    ## getFirstMondayYearMonth
-    ##
-    ## returns date of first monday in given year and month
-    ##
-    ##.. code-block:: nim
-    ##    echo  getFirstMondayYearMonth("2015-12")
-    ##    echo  getFirstMondayYearMonth("2015-06")
-    ##    echo  getFirstMondayYearMonth("2015-2")
-    ##
-    ## in case of invalid dates nil will be returned
-    
-
-    #var n:WeekDay
-    var amx = aym
-    for x in 0.. 7:
-       if aym.len < 7:
-          let yr = year(amx)
-          let mo = month(aym)  # this also fixes wrong months
-          amx = yr & "-" & mo
-       var datestr = amx & "-0" & $x
-       if validdate(datestr) == true:
-          if $(getdayofweek(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr)))) == "Monday":
-            result = datestr
-
-
-
-proc getNextMonday*(adate:string):string =
-    ## getNextMonday
-    ##
-    ##.. code-block:: nim
-    ##    echo  getNextMonday(getDateStr())
-    ##
-    ##
-    ##.. code-block:: nim
-    ##      import nimcx
-    ##      # get next 10 mondays
-    ##      var dw = "2015-08-10"
-    ##      for x in 1.. 10:
-    ##          dw = getNextMonday(dw)
-    ##          echo dw
-    ##
-    ##
-    ## in case of invalid dates nil will be returned
-    ##
-
-    
-    var ndatestr = ""
-    if isNil(adate) == true :
-       print("Error received a date with value : nil",red)
-    else:
-
-        if validdate(adate) == true:
-           
-            var z = $(getdayofweek(parseInt(day(adate)),parseInt(month(adate)),parseInt(year(adate))))
-            
-            if z == "Monday":
-                # so the datestr points to a monday we need to add a
-                # day to get the next one calculated
-                ndatestr = plusDays(adate,1)
-
-            else:
-                ndatestr = adate
-
-            for x in 0..<7:
-                if validdate(ndatestr) == true:
-                    z =  $(getdayofweek(parseInt(day(ndatestr)),parseInt(month(ndatestr)),parseInt(year(ndatestr))))
-                if z.strip() != "Monday":
-                    ndatestr = plusDays(ndatestr,1)
-                else:
-                    result = ndatestr
-
 
 
 
@@ -2159,18 +2090,8 @@ proc createSeqDate*(fromDate:string,toDate:string):seq[string] =
          aDate = plusDays(aDate,1)  
      result = aresult    
          
-         
-proc dayofweek*(datestr:string):string = 
-    ## dayofweek
-    ## 
-    ## returns day of week from a date in format yyyy-MM-dd
-    ## 
-    ##.. code-block:: nim    
-    ##    echo getNextMonday("2017-07-15"),"  ",dayofweek(getNextMonday("2017-07-15"))
-    ##    echo getFirstMondayYear("2018"),"  ",dayofweek(getFirstMondayYear("2018"))
-    ##    echo getFirstMondayYearMonth("2018-2"),"  ",dayofweek(getFirstMondayYearMonth("2018-2"))
-    
-    result =  $(getdayofweek(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr))))
+     
+
   
 proc cxTimeZone*(amode:string = "long"):string = 
    ## cxTimeZone
@@ -2180,25 +2101,15 @@ proc cxTimeZone*(amode:string = "long"):string =
    ## default long gives results parsed from getLocalTime 
    ## like : UTC +08:00
    ##
-   ## short
-   ## gives results like : UTC +8 
-   ## 
+  
    var mode = amode
    var okmodes = @["long","short"]
    if mode in okmodes == false:
       mode = "long"
    
    if mode == "long":
-        var ltt = $(getLocalTime(getTime()))
-        result = "UTC " & ltt[ltt.len - 6 .. ltt.len]
-   elif mode == "short":
-        var gtz = getTimeZone() div 3600 * -1
-        if gtz > 0:
-            result = "UTC +" & $(gtz)
-        elif gtz == 0:
-            result = "UTC  " & $(gtz)
-        else:
-            result = "UTC -" & $(gtz)
+        var ltt = $now()
+        result = "UTC" & $ltt[($ltt).len - 6 .. ($ltt).len]     
             
 
 proc createSeqDate*(fromDate:string,days:int = 1):seq[string] = 
@@ -2218,7 +2129,7 @@ proc createSeqDate*(fromDate:string,days:int = 1):seq[string] =
      result = aresult    
          
 
-proc getRndDate*(minyear:int = parseint(year(today)) - 50,maxyear:int = parseint(year(today)) + 50):string =  
+proc getRndDate*(minyear:int = parseint(year(cxtoday)) - 50,maxyear:int = parseint(year(cxtoday)) + 50):string =  
          ## getRndDate
          ## 
          ## returns a valid rand date between 1900 and 3001 in format 2017-12-31
@@ -2738,10 +2649,9 @@ template doSomething*(secs:int,body:untyped) =
   ##.. code-block:: nim
   ##    doSomething(10,myproc())  # executes my proc for ten secs   , obviously this will fail if your proc uses sleep...
   ## 
-  let mytime = getTime().getLocalTime()
-  while toTime(getTime().getLocalTime()) < toTime(mytime) + secs.seconds : 
-      body
-    
+  let mytime = now() #getTime().getLocalTime()
+  while toTime(now()) < toTime(mytime) + secs.seconds : 
+      body  
 
 proc reverseMe*[T](xs: openarray[T]): seq[T] =
   ## reverseMe
@@ -3344,8 +3254,8 @@ proc newCxtimer*(aname:string = "cxtimer"):ref(CxTimer) =
      ## 
      
      var aresult = (ref(CxTimer))(name:aname)
-     aresult.start = 0.00
-     aresult.stop = 0.00
+     aresult.start = 0
+     aresult.stop = 0
      aresult.lap = @[]
      result = aresult
    
@@ -3354,10 +3264,10 @@ proc  lapTimer*(co:ref(CxTimer)):auto {.discardable.}  =
                var tdf = epochTime() - co.start
                co.lap.add(tdf)
                result = tdf
-proc  stopTimer*(co: ref(CxTimer))  = co.stop = epochtime()   
+proc  stopTimer*(co: ref(CxTimer))  = co.stop = epochTime()
 proc  resetTimer*(co: ref(CxTimer)) = 
-      co.start = 0.00
-      co.stop = 0.00
+      co.start = 0.0
+      co.stop = 0.0
       co.lap = @[]
 proc  duration*(co:ref(CxTimer)):float {.discardable.} = co.stop - co.start       
 
@@ -3387,8 +3297,8 @@ proc showTimerResults*(aname:string) =
        var b = cxtimerresults[xloopy]
        if b.tname == bname:
           printLnBiCol("Timer    : " & $(b.tname))
-          printLnBiCol("Start    : " & $fromSeconds(b.start))
-          printLnBiCol("Stop     : " & $fromSeconds(b.stop))
+          printLnBiCol("Start    : " & $fromUnix(int(b.start)))
+          printLnBiCol("Stop     : " & $fromUnix(int(b.stop)))
           printLnBiCol("Laptimes : ")
           if b.lap.len > 0:
              printLnBiCol("Laptimes : ")
@@ -3411,8 +3321,8 @@ proc showTimerResults*() =
        var b = cxtimerresults[xloopy]
        echo()
        printLnBiCol("Timer    : " & $(b.tname))
-       printLnBiCol("Start    : " & $fromSeconds(b.start))
-       printLnBiCol("Stop     : " & $fromSeconds(b.stop))
+       printLnBiCol("Start    : " & $fromUnix(int(b.start)))
+       printLnBiCol("Stop     : " & $fromUnix(int(b.stop)))
        if b.lap.len > 0:
           printLnBiCol("Laptimes : ")
           loopy2(0,b.lap.len):
@@ -3926,54 +3836,15 @@ proc localTime*() : auto =
   ## 
   ## quick access to local time for printing
   ## 
-  result = getTime().getLocalTime
+  result = now()
 
 
-proc dayOfYear*() : range[0..365] = getLocalTime(getTime()).yearday + 1
-    ## dayOfYear
-    ##
-    ## returns the day of the year for a given Time
-    ##
-    ## note Nim yearday starts with Jan 1 being 0 however many application
-    ##
-    ## actually need to start on day 1 being actually 1 , which is provided here.
-    ##
-    ##.. code-block:: nim
-    ##     var afile = "cx.nim"
-    ##     var mday = getLastModificationTime(afile).dayofyear
-    ##     var today = dayofyear
-    ##     printLnBiCol("Last Modified on day  : " & $mday)
-    ##     printLnBiCol("Day of Current year   : " & $today)
-    ##
-    ##
-
-
-
-proc dayOfYear*(tt:Time) : range[0..365] = getLocalTime(tt).yearday + 1
-    ## dayOfYear
-    ##
-    ## returns the day of the year for a given Time
-    ##
-    ## note Nim yearday starts with Jan 1 being 0 however many application
-    ##
-    ## actually need to start on day 1 being actually 1 , which is provided here.
-    ##
-    ##.. code-block:: nim
-    ##     var afile = "cx.nim"
-    ##     var mday  = getLastModificationTime(afile).dayofyear
-    ##     var today = dayofyear
-    ##     printLnBiCol("Last Modified on day  : " & $mday)
-    ##     printLnBiCol("Day of Current year   : " & $today)
-    ##
-    ##
-
-
-proc toTimeInfo*(date:string="2000-01-01"):TimeInfo =
+proc toTimeInfo*(date:string="2000-01-01"): DateTime =
    ## toTimeInfo
    ## 
    ## converts a date of format yyyy-mm-dd to timeInfo
    ## 
-   var fresult:TimeInfo = getLocalTime(getTime())   # we init the TimeInfo object to avoid some future warning being displayed
+   
    var adate = date.split("-")
    var zyear = parseint(adate[0])
    var enzmonth = parseint(adate[1])
@@ -3997,17 +3868,18 @@ proc toTimeInfo*(date:string="2000-01-01"):TimeInfo =
          quit(0)
    
    var zday = parseint(adate[2])
-   fresult.year = zyear
-   fresult.month = zmonth
-   fresult.monthday = zday
-   result = fresult
-
-proc epochSecs*(date:string="2000-01-01"):int =
+   result.year = zyear
+   result.month = zmonth
+   result.monthday = zday
+   result
+   
+   
+proc epochSecs*(date:string="2000-01-01"):auto =
    ## epochSecs
    ##
    ## converts a date into secs since unix time 0
    ##
-   result  =  int(toSeconds(toTime(toTimeInfo(date))))
+   result  =  toUnix(toTime(toTimeInfo(date)))
 
   
 proc checkClip*(sel:string = "primary"):string  = 
@@ -4211,7 +4083,7 @@ proc rainbow2*[T](s : T,xpos:int = 1,fitLine:bool = false,centered:bool = false,
     else :
 
           for x in 0..<astr.len:
-            c = a[getRndInt(ma=a.len)]
+            c = a[getRndInt(ma = a.len - 1)]
             
             if centered == false:
                 print(astr[x],okcolorset[c][1],black,xpos = nxpos,fitLine)
@@ -5316,12 +5188,12 @@ proc doInfo*() =
   printLnBiCol("Last compilation on           : " & CompileDate &  " at " & CompileTime,yellowgreen,lightgrey,sep,0,false,{})
   # this only makes sense for non executable files
   #printLnBiCol("Last access time to file      : " & filename & " " & $(fromSeconds(int(getLastAccessTime(filename)))),yellowgreen,lightgrey,sep,0,false,{})
-  printLnBiCol("Last modificaton time of file : " & filename & " " & $(fromSeconds(int(modTime))),yellowgreen,lightgrey,sep,0,false,{})
-  printLnBiCol("Offset from UTC  in secs      : " & $(getTimeZone()),yellowgreen,lightgrey,sep,0,false,{})
-  printLnBiCol("Now                           : " & now,yellowgreen,lightgrey,sep,0,false,{})
-  printLnBiCol("Local Time                    : " & $getLocalTime(getTime()),yellowgreen,lightgrey,sep,0,false,{})
-  printLnBiCol("GMT                           : " & $getGMTime(getTime()),yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("Last modificaton time of file : " & filename & " " & $(fromUnix(int(modTime))),yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("Offset from UTC in hours      : " & cxTimeZone(),yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("UTC Time                      : " & $now().utc,yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("Local Time                    : " & $now().local,yellowgreen,lightgrey,sep,0,false,{})
   printLnBiCol("Environment Info              : " & os.getEnv("HOME"),yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("TrueColor                     : " & checktruecolorsupport(),goldenrod,lightgrey,sep,0,false,{})
   printLnBiCol("File exists                   : " & $(existsFile filename),yellowgreen,lightgrey,sep,0,false,{})
   printLnBiCol("Dir exists                    : " & $(existsDir "/"),yellowgreen,lightgrey,sep,0,false,{})
   printLnBiCol("AppDir                        : " & getAppDir(),yellowgreen,lightgrey,sep,0,false,{})
@@ -5475,7 +5347,7 @@ proc handler*() {.noconv.} =
     cechoLn(yellowgreen,"Thank you for using        : " & getAppFilename())
     hlineLn()
     printLnBiCol(fmtx(["<","<11",">9"],"Last compilation on        : " , CompileDate , CompileTime),brightcyan,termwhite,":",0,false,{})
-    printLnBiCol(fmtx(["<","<11",">9"],"Exit handler invocation at : " , today() , getClockStr()),pastelorange,termwhite,":",0,false,{})
+    printLnBiCol(fmtx(["<","<11",">9"],"Exit handler invocation at : " , cxtoday() , getClockStr()),pastelorange,termwhite,":",0,false,{})
     hlineLn()
     printBiCol("Nim Version   : " & NimVersion)
     print(" | ",brightblack)

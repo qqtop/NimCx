@@ -62,7 +62,7 @@ const
       cfb2* = "△"
       # circles
       cfb4* = "⭕"    # shadowed circle
-      cfb5* = "⬤"   # black circle
+      cfb5* = "⬤"    # black circle
 
 const
 
@@ -904,7 +904,17 @@ const
       northeastarrow*  = "\u2197"
       southwestarrow*  = "\u2198"
       southeastarrow*  = "\u2199"
+      
+      # other arrow set 
+      lrarrow*  = "⮀"
+      rlarrow*  = "⮂"
+      udarrow*  = "⮁"
+      daarrow*  = "⮃"
+      larrow*   = "⭠"
+      barrow*   = "⭤"
+      uarrow*   = "⭡"
 
+      # vars
       phone*           = "\u260E"
       fullflag*        = "\u2691"
       enterkey*        = "↵"
@@ -946,7 +956,8 @@ const
     monkey*             =  "🐵"
     cow*                =  "🐮"
     # other
-    
+    errorsymbol*        = "🔥"
+    errorsymbol2*       = "𝐄"
 
 
 const emojis* = @[check,xmark,heart,sun,star,darkstar,umbrella,flag,snowflake,music,scissors,
