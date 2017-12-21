@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-12-19
+##     Latest      : 2017-12-21
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -91,7 +91,7 @@
 ##                   
 ##                   moving constants to cxconsts.nim
 ##                   
-##     Latest      : changing time date related code to work with newest times.nim              
+##     Latest      : changed time date related code to work with newest times.nim              
 ##                  
 ##
 ##     Funding     : Here are the options :
@@ -102,7 +102,7 @@
 ##                 
 ##                   You are in any other mood ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
 ##                                       
-##                  
+##                   
                  
 
 import times,random,cxconsts,os,strutils,strformat,parseutils, parseopt, hashes, tables, sets, strmisc
@@ -226,7 +226,7 @@ type
   Cxcounter* =  object
       value*: int
 
-proc newCxcounter*():ref(Cxcounter) =
+proc newCxCounter*():ref(Cxcounter) =
     ## newCxcounter
     ## 
     ## set up a new cxcounter
@@ -320,14 +320,15 @@ proc cxtoLower*(c: char): char = # {.inline.}=
 
 
 # experimental truecolors    
-    
-proc cxTrueColorSet*(max:int = 888 , step: int = 12):seq[string] =
+# current setup appends 38 and 48 colors into a seq
+
+proc cxTrueColorSet(max:int = 888 , step: int = 12):seq[string] =
    ## cxTrueColorSet
    ## 
    ## generates a seq with truecolors  
    ## defaults are reasonable 843750 colors to choose from 
    ## 
-   ## 
+   ## the colors are stored as numbers with odd for 38 types and even for 48 types
    ## 
    ## 
    result = @[]
@@ -337,25 +338,24 @@ proc cxTrueColorSet*(max:int = 888 , step: int = 12):seq[string] =
           result.add("\x1b[38;2;$1;$2;$3m" % [$r,$b,$g])
           result.add("\x1b[48;2;$1;$2;$3m" % [$r,$b,$g]) 
           
-          
-let cxTrueCol = cxTrueColorSet()          
+proc getCxTrueColorSet*(max:int = 888,step:int = 12):auto = cxTrueColorSet(max,step)          
  
-    
-proc color38*() : int =
+   
+proc color38*(cxTrueCol:seq[string]) : int =
    # random truecolor ex 38 set
    var lcol = rand(cxTrueCol.len)
    while lcol mod 2 <> 0 : lcol = rand(cxTrueCol.len)
    result = lcol
    
-proc color48*() : int =
+proc color48*(cxTrueCol:seq[string]) : int =
    # random truecolor ex 48 set
    var rcol = rand(cxTrueCol.len)
    while rcol mod 2 == 0 : rcol = rand(cxTrueCol.len)
    result = rcol   
 
-proc color3848*() : int =
+proc color3848*(cxTrueCol:seq[string]) : int =
      # random truecolor ex 38 and 48 set
-    result = rand(cxTrueCol.len)
+     result = rand(cxTrueCol.len)
      
 #  end experimental truecolors     
  
@@ -376,7 +376,7 @@ template loopy*[T](ite:T,st:untyped) =
      ## the lazy programmer's quick simple for-loop template
      ##
      ##.. code-block:: nim
-     ##       loopy(0.. 10,printLn("The house is in the back.",randcol()))
+     ##       loopy(0..<10,printLn("The house is in the back.",randcol()))
      ##
      for x in ite: st
 
@@ -1112,13 +1112,13 @@ proc print*[T](astring:T,fgr:string = termwhite ,bgr:string = bblack,xpos:int = 
                     if x != rx.high:
                         case fgr
                         of clrainbow : printRainbow(substr,styled) 
-                        else: styledEchoPrint(fgr,styled,substr,termwhite)  #orig
-                        
+                        #else: styledEchoPrint(fgr,styled,substr,termwhite)  #orig
+                        else: styledEchoPrint(fgr,styled,substr,bgr) 
             else:
                 case fgr
                         of clrainbow : printRainbow($s,styled)
-                        else: styledEchoPrint(fgr,styled,s,termwhite)  #orig
-                        
+                        #else: styledEchoPrint(fgr,styled,s,termwhite)  #orig
+                        else: styledEchoPrint(fgr,styled,s,bgr)
         else:
         
             case fgr
@@ -1215,12 +1215,13 @@ proc print*[T](astring:T,fgr:string = termwhite ,bgr:BackgroundColor ,xpos:int =
                     if x != rx.high:
                         case fgr
                         of clrainbow   : printRainbow(substr,styled)
-                        else: styledEchoPrint(fgr,styled,substr,termwhite)
+                        #else: styledEchoPrint(fgr,styled,substr,termwhite) # orig
+                        else: styledEchoPrint(fgr,styled,substr,bgr)
             else:
                 case fgr
                         of clrainbow   : printRainbow($s,styled)
-                        else: styledEchoPrint(fgr,styled,s,termwhite)
-
+                        #else: styledEchoPrint(fgr,styled,s,termwhite)
+                        else: styledEchoPrint(fgr,styled,s,bgr)
         else:
         
             case fgr
