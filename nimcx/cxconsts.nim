@@ -47,7 +47,10 @@ proc bbright(bg:BackgroundColor): string =
     inc(gBG, 60)
     result = "\e[" & $gBG & 'm' 
  
- 
+const   
+      # the empty block rune  , display it like so:  echo showRune($RuneEmpty)
+      RuneEmpty* = 0xFFFD
+
 const
       # block chars for font building 
       efb1* = "▀"
@@ -889,7 +892,6 @@ var slimNumberSet* = newSeq[string]()
 for x in 0.. 9: slimNumberSet.add($(x))
 var slimCharSet*   = @[",",".",":"," "]
 # 
-
 
 # arrows
 

@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-12-21
+##     Latest      : 2017-12-22
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -246,6 +246,39 @@ proc  add*(co:ref Cxcounter) = inc co.value
 proc  dec*(co:ref Cxcounter) = dec co.value
 proc  reset*(co:ref CxCounter) = co.value = 0  
 
+type
+     Cxline* {.inheritable.} = object        # a line type object startpos= = leftdot endpos == rightdor
+        startpos*: int                      # xpos of the leftdot                 default 1
+        endpos*  : int                      # xpos of the rightdot                default 2
+        text*    : string                   # text                                default none
+        textcolor* : string                 # text color                          default termwhite
+        textstyle* : set[Style]             # text styled
+        textpos* : int                      # position of text from startpos      default 3
+        textbracketopen*  : string          # open bracket surounding the text    default [
+        textbracketclose* : string          # close bracket surrounding the text  default ]
+        textbracketcolor* : string          # color of the open,close bracket     default dodgerblue
+        linecolor* : string                 # color of the line char              default aqua
+        linechar*  : string                 # line char                           default efs2    # see cxconsts.nim
+        dotleftcolor* : string              # color of left dot                   default yellow
+        dotrightcolor*: string              # color of right dot                  default magenta
+        newline* : string                   # new line char                       default \L
+        
+proc newcxline*():Cxline =
+        result.startpos = 1         
+        result.endpos   = 2
+        result.text     = ""
+        result.textcolor = termwhite
+        result.textstyle = {}
+        result.textpos  = 3
+        result.textbracketopen = "["
+        result.textbracketclose = "]"
+        result.textbracketcolor = dodgerblue
+        result.linecolor   = aqua
+        result.linechar = efs2
+        result.dotleftcolor = yellow
+        result.dotrightcolor = magenta
+        result.newline = "\L"
+
 
 proc waitOn*(alen:int = 1) = 
      ## waiton
@@ -255,10 +288,10 @@ proc waitOn*(alen:int = 1) =
      discard readBuffer(stdin,cast[pointer](newString(1)),alen)
     
 proc rndSample*[T](asq:seq[T]):T =
-     ## rndSample
+     ## rndSample  
      ## returns one rand sample from a sequence
      randomize()
-     result = rand(asq)     
+     result = random(asq)     
      
 proc rndRGB*():auto = 
    var cln = newSeq[int]()
@@ -266,6 +299,9 @@ proc rndRGB*():auto =
    let argb =  extractRgb(parsecolor(colorNames[rand(cln)][0]))   #rndsample
    result =  rgb(argb.r,argb.g,argb.b)
 
+# char converters
+converter toInt(x: char): int = result = ord(x)
+converter toChar(x: int): char = result = chr(x)  
    
 template `<>`* (a, b: untyped): untyped =
   ## unequal operator 
@@ -277,10 +313,10 @@ template `<>`* (a, b: untyped): untyped =
        
 proc `[]`*[T; U](a: seq[T], x: Slice[U]): seq[T] =
      # used by sampleSeq
-     var L = ord(x.b) - ord(x.a) + 1
-     if L >= 0:
-        newSeq(result, L)
-        for i in 0..<L: result[i] = a[(ord(x.a) + i)]
+     var al = ord(x.b) - ord(x.a) + 1
+     if al >= 0:
+        newSeq(result, al)
+        for i in 0..<al: result[i] = a[(ord(x.a) + i)]
      else:
         result = @[]
         
@@ -343,19 +379,19 @@ proc getCxTrueColorSet*(max:int = 888,step:int = 12):auto = cxTrueColorSet(max,s
    
 proc color38*(cxTrueCol:seq[string]) : int =
    # random truecolor ex 38 set
-   var lcol = rand(cxTrueCol.len)
-   while lcol mod 2 <> 0 : lcol = rand(cxTrueCol.len)
+   var lcol = rand(cxTrueCol.len - 1)
+   while lcol mod 2 <> 0 : lcol = rand(cxTrueCol.len - 1)
    result = lcol
    
 proc color48*(cxTrueCol:seq[string]) : int =
    # random truecolor ex 48 set
-   var rcol = rand(cxTrueCol.len)
-   while rcol mod 2 == 0 : rcol = rand(cxTrueCol.len)
+   var rcol = rand(cxTrueCol.len - 1)
+   while rcol mod 2 == 0 : rcol = rand(cxTrueCol.len - 1)
    result = rcol   
 
 proc color3848*(cxTrueCol:seq[string]) : int =
      # random truecolor ex 38 and 48 set
-     result = rand(cxTrueCol.len)
+     result = rand(cxTrueCol.len - 1)
      
 #  end experimental truecolors     
  
@@ -1773,6 +1809,30 @@ proc cechoLn*(col:string,astring: varargs[string, `$`] = @[""] )  =
       cecho(col ,z)
 
 
+        
+
+proc printCxLine*(aline:var Cxline) =
+     ## printCxLine
+     ## 
+     ## prints a horizontal line for frames with text as specified in an Cxline object
+     ## see cxlineobjectE1.nim for an example
+     ## 
+     var xpos = aline.startpos
+     var rdotpos = xpos   # this will become the end position
+     aline.endpos = aline.startpos + aline.endpos
+     print(".",aline.dotleftcolor,xpos = aline.startpos)
+     rdotpos = rdotpos + 1
+     hline(aline.endpos - aline.startpos - 1,aline.linecolor,xpos = xpos + 1,lt = aline.linechar)  
+     rdotpos = rdotpos + aline.endpos - aline.startpos
+     print(aline.textbracketopen,aline.textbracketcolor,xpos = xpos + aline.textpos)  
+     rdotpos = rdotpos + 1
+     print(aline.text,aline.textcolor,styled=aline.textstyle)
+     print(aline.textbracketclose,aline.textbracketcolor)
+     rdotpos = rdotpos + 1
+     print("." & aline.newline,aline.dotrightcolor,xpos = rdotpos - 3)
+                    
+      
+      
 proc showColors*() =
   ## showColors
   ##
@@ -2110,7 +2170,7 @@ proc cxTimeZone*(amode:string = "long"):string =
    
    if mode == "long":
         var ltt = $now()
-        result = "UTC" & $ltt[($ltt).len - 6 .. ($ltt).len]     
+        result = "UTC" & $ltt[(($ltt).len - 6)..($ltt).len]     
             
 
 proc createSeqDate*(fromDate:string,days:int = 1):seq[string] = 

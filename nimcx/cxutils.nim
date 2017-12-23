@@ -696,7 +696,7 @@ template getCard* :auto =
     ##    print(getCard(),randCol(),xpos = centerX())  # get card and print in random color at xpos
     ##    doFinish()
     ##
-    cards[rndSample(rxCards)]
+    cards[rand(rxCards)]
 
 proc showRandomCard*(xpos:int = centerX()) = 
     ## showRandomCard
@@ -849,7 +849,7 @@ proc newWordCJK*(minwl:int = 3 ,maxwl:int = 10):string =
       result = ""
       let c5 = toSeq(minwl..maxwl)
       let chc = toSeq(parsehexint("3400")..parsehexint("4DB5"))
-      for xx in 0..<rndSample(c5): result = result & $Rune(rndSample(chc))
+      for xx in 0..<random(c5): result = result & $Rune(random(chc))
 
 
 
@@ -869,10 +869,10 @@ proc newWord*(minwl:int=3,maxwl:int = 10):string =
         # words with length range 3 to maxwl
         let maxws = toSeq(minwl..maxwl)
         # get a random length for a new word
-        let nwl = rndSample(maxws)
+        let nwl = random(maxws)
         let chc = toSeq(33..126)
         while nw.len < nwl:
-          var x = rndSample(chc)
+          var x = rand(chc)
           if char(x) in Letters:
               nw = nw & $char(x)
         result = normalize(nw)   # return in lower case , cleaned up
@@ -897,10 +897,10 @@ proc newWord2*(minwl:int=3,maxwl:int = 10 ):string =
         # words with length range 3 to maxwl
         let maxws = toSeq(minwl..maxwl)
         # get a random length for a new word
-        let nwl = rndSample(maxws)
+        let nwl = random(maxws)
         let chc = toSeq(33..126)
         while nw.len < nwl:
-          var x = rndSample(chc)
+          var x = rand(chc)
           if char(x) in IdentChars:
               nw = nw & $char(x)
         result = normalize(nw)   # return in lower case , cleaned up
@@ -926,10 +926,10 @@ proc newWord3*(minwl:int=3,maxwl:int = 10 ,nflag:bool = true):string =
         # words with length range 3 to maxwl
         let maxws = toSeq(minwl..maxwl)
         # get a random length for a new word
-        let nwl = rndSample(maxws)
+        let nwl = rand(maxws)
         let chc = toSeq(33..126)
         while nw.len < nwl:
-          var x = rndSample(chc)
+          var x = random(chc)
           if char(x) in AllChars:
               nw = nw & $char(x)
         if nflag == true:
@@ -954,9 +954,9 @@ proc newHiragana*(minwl:int=3,maxwl:int = 10 ):string =
     if minwl <= maxwl:
         result = ""
         var rhig = toSeq(12353..12436)  
-        var zz = rndSample(toSeq(minwl..maxwl))
+        var zz = random(toSeq(minwl..maxwl))
         while result.len < zz:
-              var hig = rndSample(rhig)  
+              var hig = rand(rhig)  
               result = result & $Rune(hig)
        
     else:
@@ -976,8 +976,8 @@ proc newKatakana*(minwl:int=3,maxwl:int = 10 ):string =
     ##
     if minwl <= maxwl:
         result  = ""
-        while result.len < rndSample(toSeq(minwl..maxwl)):
-              result = result & $Rune(rndSample(toSeq(parsehexint("30A0")..parsehexint("30FF"))))
+        while result.len < random(toSeq(minwl..maxwl)):
+              result = result & $Rune(random(toSeq(parsehexint("30A0")..parsehexint("30FF"))))
        
     else:
          cechoLn(red,"Error : minimum word length larger than maximum word length")
@@ -1277,18 +1277,18 @@ proc doNimUp*(xpos = 5, rev:bool = true) =
       curup(15)
       printBigLetters("NIM",fgr=randcol(),xpos = xpos + 33)
       curdn(15)
-
-proc dayOfWeekJulian*(datestr:string): string =
-   ## dayOfWeekJulian
-   ##
-   ## returns the day of the week of a date given in format yyyy-MM-dd as string
-   ##
-   ## actually starts to fail with 2100-03-01 which shud be a monday but this proc says tuesday
-   ## 
-   ## due to shortcomings in the julian calendar .
-   ##
-   ## 
-   result = $(getdayofweekjulian(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr))))
+# 
+# proc dayOfWeekJulian*(datestr:string): string =
+#    ## dayOfWeekJulian  # deprecated and will be removed
+#    ##
+#    ## returns the day of the week of a date given in format yyyy-MM-dd as string
+#    ##
+#    ## actually starts to fail with 2100-03-01 which shud be a monday but this proc says tuesday
+#    ## 
+#    ## due to shortcomings in the julian calendar .
+#    ##
+#    ## 
+#    result = $(getdayofweekjulian(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr))))
 
    
 proc clearScreen*():int {.discardable.} =
