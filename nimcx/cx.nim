@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-12-22
+##     Latest      : 2017-12-24
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -107,10 +107,10 @@
 
 import times,random,cxconsts,os,strutils,strformat,parseutils, parseopt, hashes, tables, sets, strmisc
 import osproc,macros,posix,terminal,math,stats,json,streams,options,memfiles
-import sequtils,httpclient,rawsockets,browsers,intsets, algorithm
+import sequtils,httpclient,rawsockets,browsers,intsets, algorithm,stats
 import unicode ,typeinfo, typetraits ,cpuinfo,colors,encodings,distros
 export times,strutils,strformat,sequtils,unicode,streams,hashes,terminal,cxconsts,random
-export options,json,httpclient
+export options,json,httpclient,stats
 
 
 # Profiling       
@@ -246,8 +246,10 @@ proc  add*(co:ref Cxcounter) = inc co.value
 proc  dec*(co:ref Cxcounter) = dec co.value
 proc  reset*(co:ref CxCounter) = co.value = 0  
 
+var cxTrueCol* = newSeq[string]()           # a global for conveniently holding truecolor codes if used
+
 type
-     Cxline* {.inheritable.} = object        # a line type object startpos= = leftdot endpos == rightdor
+     Cxline* {.inheritable.} = object       # a line type object startpos= = leftdot endpos == rightdor
         startpos*: int                      # xpos of the leftdot                 default 1
         endpos*  : int                      # xpos of the rightdot                default 2
         text*    : string                   # text                                default none
@@ -278,6 +280,67 @@ proc newcxline*():Cxline =
         result.dotleftcolor = yellow
         result.dotrightcolor = magenta
         result.newline = "\L"
+        
+        
+        
+converter toTwInt(x: cushort): int = result = int(x)  
+  
+
+proc getTerminalWidth*() : int =
+        ## getTerminalWidth
+        ##
+        ## get linux terminal width in columns
+        ## a terminalwidth function is now incorporated in Nim dev after 2016-09-02
+        ## which maybe is slightly slower than the one presented here
+        ## 
+       
+        type WinSize = object
+          row, col, xpixel, ypixel: cushort
+        const TIOCGWINSZ = 0x5413
+        proc ioctl(fd: cint, request: culong, argp: pointer)
+          {.importc, header: "<sys/ioctl.h>".}
+        var size: WinSize
+        ioctl(0, TIOCGWINSZ, addr size)
+        result = toTwInt(size.col)
+
+
+template tw* : int = getTerminalwidth() ## latest terminal width always available in tw
+
+proc getTerminalHeight*() : int =
+        ## getTerminalHeight
+        ##
+        ## get linux terminal height in rows
+        ##
+
+        type WinSize = object
+          row, col, xpixel, ypixel: cushort
+        const TIOCGWINSZ = 0x5413
+        proc ioctl(fd: cint, request: culong, argp: pointer)
+          {.importc, header: "<sys/ioctl.h>".}
+        var size: WinSize
+        ioctl(0, TIOCGWINSZ, addr size)
+        result = toTwInt(size.row)
+
+
+template th* : int = getTerminalheight() ## latest terminalheight always available in th
+
+
+# forward declarations
+proc ff*(zz:float,n:int = 5):string
+proc ff2*(zz:float,n:int = 3):string
+proc ff2*(zz:int64,n:int = 0):string
+converter colconv*(cx:string) : string
+proc rainbow*[T](s : T,xpos:int = 1,fitLine:bool = false ,centered:bool = false)  ## forward declaration
+proc print*[T](astring:T,fgr:string = termwhite ,bgr:string = bblack,xpos:int = 0,fitLine:bool = false ,centered:bool = false,styled : set[Style]= {},substr:string = "")
+proc printLn*[T](astring:T,fgr:string = termwhite , bgr:string = bblack,xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {},substr:string = "")
+proc printBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) 
+proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) 
+proc printRainbow*(s : string,styled:set[Style] = {})     ## forward declaration
+proc hline*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-")   ## forward declaration
+proc hlineLn*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-") ## forward declaration
+proc spellInteger*(n: int64): string                        ## forward declaration
+proc splitty*(txt:string,sep:string):seq[string]          ## forward declaration
+proc doFinish*()
 
 
 proc waitOn*(alen:int = 1) = 
@@ -340,13 +403,15 @@ proc sampleSeq*[T](x: seq[T], a:int, b: int) : seq[T] =
      result =  x[a..b]
      
      
-proc checkTrueColorSupport*(): string  =
+proc checkTrueColorSupport*(): bool  =
      # checkTrueColorSupport
      # 
      # checks for truecolor support in a terminal 
      # 
-     result = $(getEnv("COLORTERM").toLowerAscii in ["truecolor", "24bit"])
-
+     var tcs = $(getEnv("COLORTERM").toLowerAscii in ["truecolor", "24bit"])
+     if tcs == "true":  result = true
+     else            :  result = false
+     
      
 proc cxtoLower*(c: char): char = # {.inline.}=
   if c in {'A'..'Z'}:
@@ -393,6 +458,7 @@ proc color3848*(cxTrueCol:seq[string]) : int =
      # random truecolor ex 38 and 48 set
      result = rand(cxTrueCol.len - 1)
      
+ 
 #  end experimental truecolors     
  
  
@@ -676,67 +742,6 @@ template randPastelCol*: string = rand(pastelset)
    ##
    ##
  
-converter toTwInt(x: cushort): int = result = int(x)  
-  
-
-proc getTerminalWidth*() : int =
-        ## getTerminalWidth
-        ##
-        ## get linux terminal width in columns
-        ## a terminalwidth function is now incorporated in Nim dev after 2016-09-02
-        ## which maybe is slightly slower than the one presented here
-        ## 
-       
-        type WinSize = object
-          row, col, xpixel, ypixel: cushort
-        const TIOCGWINSZ = 0x5413
-        proc ioctl(fd: cint, request: culong, argp: pointer)
-          {.importc, header: "<sys/ioctl.h>".}
-        var size: WinSize
-        ioctl(0, TIOCGWINSZ, addr size)
-        result = toTwInt(size.col)
-
-
-template tw* : int = getTerminalwidth() ## latest terminal width always available in tw
-
-
-proc getTerminalHeight*() : int =
-        ## getTerminalHeight
-        ##
-        ## get linux terminal height in rows
-        ##
-
-        type WinSize = object
-          row, col, xpixel, ypixel: cushort
-        const TIOCGWINSZ = 0x5413
-        proc ioctl(fd: cint, request: culong, argp: pointer)
-          {.importc, header: "<sys/ioctl.h>".}
-        var size: WinSize
-        ioctl(0, TIOCGWINSZ, addr size)
-        result = toTwInt(size.row)
-
-
-template th* : int = getTerminalheight() ## latest terminalheight always available in th
-
-
-# forward declarations
-proc ff*(zz:float,n:int = 5):string
-proc ff2*(zz:float,n:int = 3):string
-proc ff2*(zz:int64,n:int = 0):string
-converter colconv*(cx:string) : string
-proc rainbow*[T](s : T,xpos:int = 1,fitLine:bool = false ,centered:bool = false)  ## forward declaration
-proc print*[T](astring:T,fgr:string = termwhite ,bgr:string = bblack,xpos:int = 0,fitLine:bool = false ,centered:bool = false,styled : set[Style]= {},substr:string = "")
-proc printLn*[T](astring:T,fgr:string = termwhite , bgr:string = bblack,xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {},substr:string = "")
-proc printBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) 
-proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) 
-proc printRainbow*(s : string,styled:set[Style] = {})     ## forward declaration
-proc hline*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-")   ## forward declaration
-proc hlineLn*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-") ## forward declaration
-proc spellInteger*(n: int64): string                        ## forward declaration
-proc splitty*(txt:string,sep:string):seq[string]          ## forward declaration
-proc doFinish*()
-
-
 
 # procs lifted from an early version of terminal.nim as they are currently not exported from there
 proc styledEchoProcessArg(s: string) = write stdout, s
@@ -979,6 +984,8 @@ proc fmtx*[T](fmts:openarray[string],fstrings:varargs[T,`$`]):string =
      result = okresult
 
 
+     
+     
 proc showRune*(s:string) : string  =
      ## showRune
      ## ::
@@ -3451,8 +3458,7 @@ macro echoType*(x: typed): untyped =
   else:
     echo "type ", impl.getTypeInst(), " = ", toStrLit(impl.getTypeImpl())
 
-
-
+ 
      
 template withFile*(f,fn, mode, actions: untyped): untyped =
   ## withFile
@@ -5254,7 +5260,7 @@ proc doInfo*() =
   printLnBiCol("UTC Time                      : " & $now().utc,yellowgreen,lightgrey,sep,0,false,{})
   printLnBiCol("Local Time                    : " & $now().local,yellowgreen,lightgrey,sep,0,false,{})
   printLnBiCol("Environment Info              : " & os.getEnv("HOME"),yellowgreen,lightgrey,sep,0,false,{})
-  printLnBiCol("TrueColor                     : " & checktruecolorsupport(),goldenrod,lightgrey,sep,0,false,{})
+  printLnBiCol("TrueColor                     : " & $checktruecolorsupport(),goldenrod,lightgrey,sep,0,false,{})
   printLnBiCol("File exists                   : " & $(existsFile filename),yellowgreen,lightgrey,sep,0,false,{})
   printLnBiCol("Dir exists                    : " & $(existsDir "/"),yellowgreen,lightgrey,sep,0,false,{})
   printLnBiCol("AppDir                        : " & getAppDir(),yellowgreen,lightgrey,sep,0,false,{})
@@ -5332,6 +5338,61 @@ proc doByeBye*() =
   printLn(yellowgreen & "Mem -> " &  lightsteelblue & "Used : " & white & ff2(getOccupiedMem()) & lightsteelblue & "  Free : " & white & ff2(getFreeMem()) & lightsteelblue & "  Total : " & white & ff2(getTotalMem() ))
   doFinish()
 
+  
+   
+proc showCxTrueColorPalette*(max:int = 888,step: int = 12) = 
+   ## showTrueColorPalette
+   ## 
+   ## play with truecolors
+   ## 
+   ## shows truecolors ,in order not run out of memory adjust max and sep carefully 
+   ## e.g max 888 step 4 needs abt 4.3 GB free and has  22,179,134 color shades to select from
+   ## default has 843,750 palette entries in cxTruecCol
+   ## 
+   ## cxTrueCol is a initial empty global defined in cx.nim which will only be filled
+   ## with a call to getCxTrueColorSet() ,also see there how the Palette is build up
+   ## 
+   ## 
+   ## press ctrl-c if showTrueColorPalette runs too long ....
+   ## 
+
+
+   var astep = step
+   while max mod astep <> 0: astep = astep + 1
+   if checktruecolorsupport() == true:
+      # controll the size of our truecolor cache 
+      # default max 888, increase by too much we may have memory issues
+      # defaul step 12 , decrease by too much we may have memory issues  tested with steps 4 - 16 ,
+      # lower steps longer compile time 
+      cxTrueCol = getcxTrueColorSet(max = max,step = astep)  
+      let cxtlen = $cxTruecol.len
+      var testLine = newcxline()
+      for lcol in countup(0,cxTruecol.len - 1,2): 
+            var tcol  = color38(cxTrueCol)
+            var bcol  = color38(cxTrueCol)
+            var dlcol = color38(cxTrueCol)
+            var drcol = color38(cxTrueCol)
+            testLine.startpos = 10  #getRndInt(3,50)
+            testLine.endpos = 100
+            testLine.linecolor        = cxTrueCol[lcol]
+            testLine.textbracketcolor = cxTrueCol[bcol]
+            testLine.dotleftcolor     = cxTrueCol[dlcol]
+            testLine.dotrightcolor    = cxTrueCol[drcol]
+            testLine.textpos = 8
+            testLine.text = fmtx(["<16","<14",">10",""], "ABCDEFG 12345","cxTruecolor : " ,$lcol," of " & cxtlen & spaces(1))
+            testLine.textcolor = cxTrueCol[lcol]
+            testLine.textstyle = {styleReverse}
+            testLine.newline = "\L"                  # need a new line character here or we overwrite 
+            printcxline(testLine)
+      printLnBiCol("Palette length : " & ff2(cxTruecol.len),colLeft = truetomato,colRight = lime)   
+      
+   else:
+      printLnBicol("Error : cxTrueCol truecolor scheme can not be used on this terminal/konsole",colLeft=red,styled = {stylereverse})
+      doFinish()
+     
+  
+  
+  
 
 # code below borrowed from distros.nim  and made exportable 
 var unameRes, releaseRes: string                      
