@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-12-24
+##     Latest      : 2017-12-25
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -91,7 +91,9 @@
 ##                   
 ##                   moving constants to cxconsts.nim
 ##                   
-##     Latest      : changed time date related code to work with newest times.nim              
+##     Latest      : changed time date related code to work with newest times.nim 
+## 
+##                   added more procs for truecolor support 
 ##                  
 ##
 ##     Funding     : Here are the options :
@@ -102,6 +104,7 @@
 ##                 
 ##                   You are in any other mood ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
 ##                                       
+##                   
 ##                   
                  
 
@@ -142,7 +145,7 @@ when defined(windows):
 
 when defined(posix):
   {.hint    : "\x1b[38;2;154;205;50m \u2691  NimCx     :" &  "\x1b[38;2;255;215;0m Officially works on Linux only." & spaces(13) & "\x1b[38;2;154;205;50m \u2691".}
-  {.hint     :"\x1b[38;2;154;205;50m \u2691  Compiling :" &  "\x1b[38;2;255;100;0m Please wait , Nim will be right back ! \xE2\x9A\xAB" &  " " &  "\xE2\x9A\xAB" & spaces(2)  & "\x1b[38;2;154;205;50m \u2691" & spaces(1) .} 
+  {.hint    : "\x1b[38;2;154;205;50m \u2691  Compiling :" &  "\x1b[38;2;255;100;0m Please wait , Nim will be right back ! \xE2\x9A\xAB" &  " " &  "\xE2\x9A\xAB" & spaces(2)  & "\x1b[38;2;154;205;50m \u2691" & spaces(1) .} 
   {.hints: off.}   # turn on off as per requirement
   
   
@@ -247,6 +250,8 @@ proc  dec*(co:ref Cxcounter) = dec co.value
 proc  reset*(co:ref CxCounter) = co.value = 0  
 
 var cxTrueCol* = newSeq[string]()           # a global for conveniently holding truecolor codes if used
+var colorNumber38* = 0  # used as a temp storage of a random truecolor number drawn from the 38 set
+var colorNumber48* = 1  # used as a temp storage of a random truecolor number drawn from the 48 set
 
 type
      Cxline* {.inheritable.} = object       # a line type object startpos= = leftdot endpos == rightdor
@@ -329,10 +334,9 @@ template th* : int = getTerminalheight() ## latest terminalheight always availab
 proc ff*(zz:float,n:int = 5):string
 proc ff2*(zz:float,n:int = 3):string
 proc ff2*(zz:int64,n:int = 0):string
-converter colconv*(cx:string) : string
 proc rainbow*[T](s : T,xpos:int = 1,fitLine:bool = false ,centered:bool = false)  ## forward declaration
-proc print*[T](astring:T,fgr:string = termwhite ,bgr:string = bblack,xpos:int = 0,fitLine:bool = false ,centered:bool = false,styled : set[Style]= {},substr:string = "")
-proc printLn*[T](astring:T,fgr:string = termwhite , bgr:string = bblack,xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {},substr:string = "")
+proc print*[T](astring:T,fgr:string = termwhite ,bgr:BackgroundColor = bgBlack,xpos:int = 0,fitLine:bool = false ,centered:bool = false,styled : set[Style]= {},substr:string = "")
+proc printLn*[T](astring:T,fgr:string = termwhite , bgr:BackgroundColor = bgBlack,xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {},substr:string = "")
 proc printBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) 
 proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) 
 proc printRainbow*(s : string,styled:set[Style] = {})     ## forward declaration
@@ -436,11 +440,29 @@ proc cxTrueColorSet(max:int = 888 , step: int = 12):seq[string] =
    for r in countup(0,max,step):
      for b in countup(0,max,step):
        for g in countup(0,max,step):
-          result.add("\x1b[38;2;$1;$2;$3m" % [$r,$b,$g])
-          result.add("\x1b[48;2;$1;$2;$3m" % [$r,$b,$g]) 
+          var rbx = "$1;$2;$3m" % [$r,$b,$g]
+          result.add("\x1b[38;2;" & rbx)
+          result.add("\x1b[48;2;" & rbx) 
           
-proc getCxTrueColorSet*(max:int = 888,step:int = 12):auto = cxTrueColorSet(max,step)          
- 
+          
+proc getCxTrueColorSet*(max:int = 888,step:int = 12):bool {.discardable.} =
+     ## getcxTrueColorSet
+     ## 
+     ## this function fill the global cxTruCol seq with  truecolor values
+     ## and needs to be run once if true color functionality to be used
+     ## 
+     ##  
+     result = false
+     if checktruecolorsupport() == true:
+           {.hints: on.}
+           {.hint    : "\x1b[38;2;154;205;50m \u2691  Processing " & "\x1b[38;2;255;100;0m getCxTrueColorset ! \xE2\x9A\xAB" &  " " &  "\xE2\x9A\xAB" & spaces(2)  & "\x1b[38;2;154;205;50m \u2691" & spaces(1) .} 
+           {.hints: off.}
+           cxTrueCol = cxTrueColorSet(max,step) 
+           result = true
+     else:
+          result = false
+          printLnBicol("Error : cxTrueCol truecolor scheme can not be used on this terminal/konsole",colLeft=red,styled = {stylereverse})
+          doFinish() 
    
 proc color38*(cxTrueCol:seq[string]) : int =
    # random truecolor ex 38 set
@@ -458,7 +480,25 @@ proc color3848*(cxTrueCol:seq[string]) : int =
      # random truecolor ex 38 and 48 set
      result = rand(cxTrueCol.len - 1)
      
- 
+proc rndTrueCol*() : auto = 
+    ## rndTrueCol
+    ## 
+    ## returns a random color from the truecolorset for use as 
+    ## foregroundcolor in var. print functions
+    ## 
+    colornumber38 = color38(cxTrueCol)
+    result = cxTrueCol[colornumber38]
+
+proc rndTrueCol2*() : auto = 
+    ## rndTrueCol
+    ## 
+    ## returns a random color from the truecolorset for use as 
+    ## foregroundcolor in var. print functions
+    ## 
+    colornumber48 = color48(cxTrueCol)
+    result = cxTrueCol[colornumber48]
+    
+    
 #  end experimental truecolors     
  
  
@@ -1056,136 +1096,12 @@ proc checkColor*(colname: string): bool =
              result = true
      
 
-converter colconv*(cx:string) : string =
-     # converter so we can use the same terminal color names for
-     # fore- and background colors in print and printLn procs.
-     var bg = ""
-     case cx
-      of black        : bg = bblack
-      of white        : bg = bwhite
-      of green        : bg = bgreen
-      of yellow       : bg = byellow
-      of cyan         : bg = bcyan
-      of magenta      : bg = bmagenta
-      of red          : bg = bred
-      of blue         : bg = bblue
-      of brightred    : bg = bbrightred
-      of brightgreen  : bg = bbrightgreen
-      of brightblue   : bg = bbrightblue
-      of brightcyan   : bg = bbrightcyan
-      of brightyellow : bg = bbrightyellow
-      of brightwhite  : bg = bbrightwhite
-      of brightmagenta: bg = bbrightmagenta
-      of brightblack  : bg = bbrightblack
-      of gray         : bg = gray
-      else            : bg = bblack # default
-     result = bg
-
-
-proc print*[T](astring:T,fgr:string = termwhite ,bgr:string = bblack,xpos:int = 0,fitLine:bool = false ,centered:bool = false,styled : set[Style]= {},substr:string = "") =
-    ## ::
-    ## print
-    ## 
-    ## original print with bgr = string which is mostly ignored
-    ## 
-    ## if bgr = any of the Backgroundcolor terminal types then the print proc below will be called
-    ## 
-    ## fgr / bgr  fore and background colors can be set
-    ##
-    ## xpos allows positioning on x-axis
-    ##
-    ## fitLine = true will try to write the text into the current line irrespective of xpos
-    ##
-    ## centered = true will try to center and disregard xpos
-    ## 
-    ## styled allows style parameters to be set 
-    ##
-    ## available styles :
-    ##
-    ## styleBright = 1,            # bright text
-    ##
-    ## styleDim,                   # dim text
-    ##
-    ## styleUnknown,               # unknown
-    ##
-    ## styleUnderscore = 4,        # underscored text
-    ##
-    ## styleBlink,                 # blinking/bold text
-    ##
-    ## styleReverse = 7,           # reverses currentforground and backgroundcolor
-    ##
-    ## styleHidden                 # hidden text
-    ##
-    ##
-    ## for extended colorset background colors use styleReverse
-    ##
-    ## or use 2 or more print statements for the desired effect
-    ##
-    {.gcsafe.}:
-        var npos = xpos
-        
-        if bgr.startswith("bgre"):
-           setBackgroundColor(bgred)
-
-        if centered == false:
-
-            if npos > 0:  # the result of this is our screen position start with 1
-                setCursorXPos(npos)
-
-            if ($astring).len + xpos >= tw:
-
-                if fitLine == true:
-                    # force to write on same line within in terminal whatever the xpos says
-                    npos = tw - ($astring).len
-                    setCursorXPos(npos)
-
-        else:
-            # centered == true
-            npos = centerX() - ($astring).len div 2 - 1
-            setCursorXPos(npos)
-
-
-        if styled != {}:
-            var s = $astring
-                        
-            if substr.len > 0:
-                var rx = s.split(substr)
-                for x in rx.low.. rx.high:
-                    writestyled(rx[x],{})
-                    if x != rx.high:
-                        case fgr
-                        of clrainbow : printRainbow(substr,styled) 
-                        #else: styledEchoPrint(fgr,styled,substr,termwhite)  #orig
-                        else: styledEchoPrint(fgr,styled,substr,bgr) 
-            else:
-                case fgr
-                        of clrainbow : printRainbow($s,styled)
-                        #else: styledEchoPrint(fgr,styled,s,termwhite)  #orig
-                        else: styledEchoPrint(fgr,styled,s,bgr)
-        else:
-        
-            case fgr
-            of clrainbow: rainbow(" " & $astring,npos)
-            else:
-                try:
-                   write(stdout,fgr & colconv(bgr) & $(astring))
-                except:
-                   echo $(astring)
-
-        # reset to white/black only if any changes
-        if fgr != $fgWhite or bgr != $bgBlack:
-           setForeGroundColor(fgWhite)
-           setBackGroundColor(bgBlack)
-        
-        
-
-
 proc print*[T](astring:T,fgr:string = termwhite ,bgr:BackgroundColor ,xpos:int = 0,fitLine:bool = false ,centered:bool = false,styled : set[Style]= {},substr:string = "") =
  
     ## ::
     ##   print
     ## 
-    ##   this is the newer print which uses terminal Backgroundcolor to cover all situations
+    ##   uses standard terminal Backgroundcolor to cover all situations
     ##
     ##   basically similar to terminal.nim styledWriteLine with more functionality
     ##   
@@ -1281,11 +1197,113 @@ proc print*[T](astring:T,fgr:string = termwhite ,bgr:BackgroundColor ,xpos:int =
            setForeGroundColor(fgWhite)
            setBackGroundColor(bgBlack)
 
+
+proc print2*[T](astring:T,fgr:string = termwhite ,xpos:int = 0,fitLine:bool = false ,centered:bool = false,styled : set[Style]= {},substr:string = "") =
+ 
+    ## ::
+    ##   print2
+    ## 
+    ##   the old print routine with backgroundcolor set to black only
+    ##
+    ##   basically similar to terminal.nim styledWriteLine with more functionality
+    ##   
+    ##   fgr / bgr  fore and background colors can be set
+    ##  
+    ##   xpos allows positioning on x-axis
+    ##  
+    ##   fitLine = true will try to write the text into the current line irrespective of xpos
+    ##  
+    ##   centered = true will try to center and disregard xpos
+    ##   
+    ##   styled allows style parameters to be set 
+    ##  
+    ##   available styles :
+    ##  
+    ##   styleBright = 1,            # bright text
+    ##  
+    ##   styleDim,                   # dim text
+    ##  
+    ##   styleUnknown,               # unknown
+    ##  
+    ##   styleUnderscore = 4,        # underscored text
+    ##  
+    ##   styleBlink,                 # blinking/bold text
+    ##  
+    ##   styleReverse = 7,           # reverses currentforground and backgroundcolor
+    ##  
+    ##   styleHidden                 # hidden text
+    ##  
+    ##  
+    ##   for extended colorset background colors use styleReverse
+    ##  
+    ##   or use 2 or more print statements for the desired effect
+    ##
+    ## Example
+    ##
+    ##.. code-block:: nim
+    ##    # To achieve colored text with styleReverse try:
+    ##    setBackgroundColor(bgRed)
+    ##    print("The end never comes on time ! ",pastelBlue,styled = {styleReverse})
+    ##
+    {.gcsafe.}:
+        var npos = xpos
+        
+        if centered == false:
+
+            if npos > 0:  # the result of this is our screen position start with 1
+                setCursorXPos(npos)
+
+            if ($astring).len + xpos >= tw:
+
+                if fitLine == true:
+                    # force to write on same line within in terminal whatever the xpos says
+                    npos = tw - ($astring).len
+                    setCursorXPos(npos)
+
+        else:
+            # centered == true
+            npos = centerX() - ($astring).len div 2 - 1
+            setCursorXPos(npos)
+
+
+        if styled != {}:
+            var s = $astring
+                        
+            if substr.len > 0:
+                var rx = s.split(substr)
+                for x in rx.low.. rx.high:
+                    writestyled(rx[x],{})
+                    if x != rx.high:
+                        case fgr
+                        of clrainbow   : printRainbow(substr,styled)
+                        #else: styledEchoPrint(fgr,styled,substr,termwhite) # orig
+                        else: styledEchoPrint(fgr,styled,substr,bgBlack)
+            else:
+                case fgr
+                        of clrainbow   : printRainbow($s,styled)
+                        #else: styledEchoPrint(fgr,styled,s,termwhite)
+                        else: styledEchoPrint(fgr,styled,s,bgBlack)
+        else:
+        
+            case fgr
+            of clrainbow: rainbow(spaces(1) & $astring,npos)
+            else: 
+                setBackGroundColor(bgBlack)
+                try:
+                    #write(stdout,fgr & $astring)
+                    styledEchoPrint(fgr,{},$astring,bgBlack)
+                except:
+                    echo astring
+
+        # reset to white/black only if any changes
+        #if fgr != $fgWhite or bgr != bgBlack:
+        setForeGroundColor(fgWhite)
+        setBackGroundColor(bgBlack)
            
            
 
 
-proc print*[T](ss:varargs[T,`$`],fgr:string = termwhite , bgr:string = bblack, xpos:int = 0, sep:string = spaces(1)) =
+proc print*[T](ss:varargs[T,`$`],fgr:string = termwhite , bgr:BackgroundColor = bgBlack, xpos:int = 0, sep:string = spaces(1)) =
    ## print
    ## 
    ## a print routine which allows printing of varargs in desired color , position and separator
@@ -1313,10 +1331,10 @@ proc print*[T](ss:varargs[T,`$`],fgr:string = termwhite , bgr:string = bblack, x
       oldxlen =  oldxlen + ss[x].len + 1
                 
 
-proc printLn*[T](astring:T,fgr:string = termwhite , bgr:string = bblack,xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {},substr:string = "") =  
+proc printLn2*[T](astring:T,fgr:string = termwhite , xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {},substr:string = "") =  
     ## 
     ## ::
-    ##   printLn
+    ##   printLn2
     ## 
     ##   original with bgr:string
     ##   
@@ -1353,7 +1371,7 @@ proc printLn*[T](astring:T,fgr:string = termwhite , bgr:string = bblack,xpos:int
     ##        printLn("The end never comes on time ! ",randcol(),bRed,styled = {styleReverse})
     ##        sleepy(0.5)
     ##
-    print($(astring) & "\L",fgr,bgr,xpos,fitLine,centered,styled,substr)
+    print2($(astring) & "\L",fgr,xpos,fitLine,centered,styled,substr)
    
 
 proc printLn*[T](astring:T,fgr:string = termwhite , bgr:BackgroundColor,xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {},substr:string = "") =
@@ -1434,11 +1452,11 @@ proc rainbow*[T](s : T,xpos:int = 1,fitLine:bool = false,centered:bool = false) 
     for x in 0..<astr.len:
        c = aseq[getRndInt(ma=aseq.len)]
        if centered == false:
-          print(astr[x],colorNames[c][1],black,xpos = nxpos,fitLine)
+          print(astr[x],colorNames[c][1],bgblack,xpos = nxpos,fitLine)
        else:
           # need to calc the center here and increment by x
           nxpos = centerX() - ($astr).len div 2  + x - 1
-          print(astr[x],colorNames[c][1],black,xpos=nxpos,fitLine)
+          print(astr[x],colorNames[c][1],bgblack,xpos=nxpos,fitLine)
        inc nxpos
 
 
@@ -1663,12 +1681,12 @@ proc printBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:str
         if nosepflag == false:
 
                 if centered == false:
-                    print(z[0],fgr = colLeft,bgr = black,xpos = xpos,styled = styled)
-                    print(z[1],fgr = colRight,bgr = black,styled = styled)
+                    print(z[0],fgr = colLeft,bgr = bgblack,xpos = xpos,styled = styled)
+                    print(z[1],fgr = colRight,bgr = bgblack,styled = styled)
                 else:  # centered == true
                     let npos = centerX() - (zz).len div 2 - 1
-                    print(z[0],fgr = colLeft,bgr = black,xpos = npos,styled = styled)
-                    print(z[1],fgr = colRight,bgr = black,styled = styled)
+                    print(z[0],fgr = colLeft,bgr = bgblack,xpos = npos,styled = styled)
+                    print(z[1],fgr = colRight,bgr = bgblack,styled = styled)
 
 
 
@@ -1720,19 +1738,19 @@ proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:s
         if nosepflag == false:
 
             if centered == false:
-                print(z[0],fgr = colLeft,bgr = black,xpos = xpos,styled = styled)
+                print(z[0],fgr = colLeft,bgr = bgBlack,xpos = xpos,styled = styled)
                 if colRight == clrainbow:   # we currently do this as rainbow implementation has changed
-                        printLn(z[1],fgr = randcol(),bgr = black,styled = styled)
+                        printLn(z[1],fgr = randcol(),bgr = bgBlack,styled = styled)
                 else:
-                        printLn(z[1],fgr = colRight,bgr = black,styled = styled)
+                        printLn(z[1],fgr = colRight,bgr = bgBlack,styled = styled)
 
             else:  # centered == true
                 let npos = centerX() - zz.len div 2 - 1
-                print(z[0],fgr = colLeft,bgr = black,xpos = npos)
+                print(z[0],fgr = colLeft,bgr = bgBlack,xpos = npos)
                 if colRight == clrainbow:   
-                        printLn(z[1],fgr = randcol(),bgr = black,styled = styled)
+                        printLn(z[1],fgr = randcol(),bgr = bgBlack,styled = styled)
                 else:
-                        printLn(z[1],fgr = colRight,bgr = black,styled = styled)
+                        printLn(z[1],fgr = colRight,bgr = bgBlack,styled = styled)
 
 
 proc printHL*(s:string,substr:string,col:string = termwhite) =
@@ -1846,7 +1864,7 @@ proc showColors*() =
   ## display all colorNames in color !
   ##
   for x in colorNames:
-     print(fmtx(["<22"],x[0]) & spaces(2) & "▒".repeat(10) & spaces(2) & "⌘".repeat(10) & spaces(2) & "ABCD abcd 1234567890 --> " & " Nim Colors  " , x[1],black)
+     print(fmtx(["<22"],x[0]) & spaces(2) & "▒".repeat(10) & spaces(2) & "⌘".repeat(10) & spaces(2) & "ABCD abcd 1234567890 --> " & " Nim Colors  " , x[1],bgBlack)
      printLn(fmtx(["<23"],"  " & x[0]) ,x[1],styled = {styleReverse},substr =  fmtx(["<23"],"  " & x[0]))
      sleepy(0.015)
   decho(2)
@@ -1862,7 +1880,7 @@ macro dotColors*(): untyped =
 
 
 
-proc doty*(d:int,fgr:string = white, bgr:string = black,xpos:int = 1) =
+proc doty*(d:int,fgr:string = white, bgr:BackgroundColor = bgBlack,xpos:int = 1) =
      ## doty
      ##
      ## prints number d of widedot ⏺  style dots in given fore/background color
@@ -1886,7 +1904,7 @@ proc doty*(d:int,fgr:string = white, bgr:string = black,xpos:int = 1) =
      else: print(astring = astr,fgr,bgr,xpos)
 
 
-proc dotyLn*(d:int,fgr:string = white, bgr:string = black,xpos:int = 1) =
+proc dotyLn*(d:int,fgr:string = white, bgr:BackgroundColor = bgBlack,xpos:int = 1) =
      ## dotyLn
      ##
      ## prints number d of widedot ⏺  style dots in given fore/background color and issues new line
@@ -2233,7 +2251,7 @@ proc getRndDate*(minyear:int = parseint(year(cxtoday)) - 50,maxyear:int = parsei
                  result = nd
 
 
-proc printSlimNumber*(anumber:string,fgr:string = yellowgreen ,bgr:string = black,xpos:int = 1) =
+proc printSlimNumber*(anumber:string,fgr:string = yellowgreen ,bgr:BackgroundColor = bgBlack,xpos:int = 1) =
     ## printSlimNumber
     ##
     ## # will shortly be deprecated use:  printSlim
@@ -2327,16 +2345,16 @@ proc slimC(x:string):T7 =
   result = nnx
 
 
-proc prsn(x:int,fgr:string = termwhite,bgr:string = termblack,xpos:int = 0) =
+proc prsn(x:int,fgr:string = termwhite,bgr:BackgroundColor = bgBlack,xpos:int = 0) =
      # print routine for slim numbers
      for x in slimN(x).zx: printLn(x,fgr = fgr,bgr = bgr,xpos = xpos)
 
-proc prsc(x:string,fgr:string = termwhite,bgr:string = termblack,xpos:int = 0) =
+proc prsc(x:string,fgr:string = termwhite,bgr:BackgroundColor = bgBlack,xpos:int = 0) =
      # print routine for slim chars
      for x in slimc(x).zx: printLn($x,fgr = fgr,bgr = bgr,xpos = xpos)
 
 
-proc printSlim* (ss:string = "", frg:string = termwhite,bgr:string = termblack,xpos:int = 0,align:string = "left") =
+proc printSlim* (ss:string = "", frg:string = termwhite,bgr:BackgroundColor = bgBlack,xpos:int = 0,align:string = "left") =
     ## printSlim
     ##
     ## prints available slim numbers and slim chars
@@ -3906,7 +3924,7 @@ proc localTime*() : auto =
   result = now()
 
 
-proc toTimeInfo*(date:string="2000-01-01"): DateTime =
+proc toTimeInfo*(date:string = "2000-01-01"): DateTime =
    ## toTimeInfo
    ## 
    ## converts a date of format yyyy-mm-dd to timeInfo
@@ -4109,59 +4127,59 @@ proc apl*():seq[string] =
     result = adx
 
 
-
-proc rainbow2*[T](s : T,xpos:int = 1,fitLine:bool = false,centered:bool = false, colorset:seq[(string, string)] = colorNames) =
-    ## rainbow2
-    ##
-    ## multicolored string  based on colorsets  see pastelSet
-    ##
-    ## may not work with certain Rune
-    ##
-    ##.. code-block:: nim
-    ##    rainbow2("what's up ?\n",centered = true,colorset = colorsPalette("green"))
-    ##
-    ##
-    ##
-    var nxpos = xpos
-    let astr = $s
-    var c = 0
-    
-    # in case the passed in set contains nothing , maybe a unsuitable filter was used then
-    # we use the original full colorNames seq
-    var okcolorset = colorset
-    if okcolorset.len < 1:  okcolorset = colorNames
-    
-    let a = toSeq(0..<okcolorset.len)
-
-    if astr in emojis or astr in hiragana() or astr in katakana() or astr in iching():
-        c = a[getRndInt(ma=a.len)]
-         
-        if centered == false:
-            print(astr,colorset[c][1],black,xpos = nxpos,fitLine)
-
-        else:
-              # need to calc the center here and increment by x
-              nxpos = centerX() - (astr).len div 2  - 1
-              print(astr,okcolorset[c][1],black,xpos=nxpos,fitLine)
-
-        inc nxpos
-
-
-    else :
-
-          for x in 0..<astr.len:
-            c = a[getRndInt(ma = a.len - 1)]
-            
-            if centered == false:
-                print(astr[x],okcolorset[c][1],black,xpos = nxpos,fitLine)
-
-            else:
-                # need to calc the center here and increment by x
-                nxpos = centerX() - ($astr).len div 2  + x - 1
-                print(astr[x],okcolorset[c][1],black,xpos=nxpos,fitLine)
-
-            inc nxpos
-
+# 
+# proc rainbow2*[T](s : T,xpos:int = 1,fitLine:bool = false,centered:bool = false, colorset:seq[(string, string)] = colorNames) =
+#     ## rainbow2    deprecated needs to be rewritten
+#     ##
+#     ## multicolored string  based on colorsets  see pastelSet
+#     ##
+#     ## may not work with certain Rune
+#     ##
+#     ##.. code-block:: nim
+#     ##    rainbow2("what's up ?\n",centered = true,colorset = colorsPalette("green"))
+#     ##
+#     ##
+#     ##
+#     var nxpos = xpos
+#     let astr = $s
+#     var c = 0
+#     
+#     # in case the passed in set contains nothing , maybe a unsuitable filter was used then
+#     # we use the original full colorNames seq
+#     var okcolorset = colorset
+#     if okcolorset.len < 1:  okcolorset = colorNames
+#     
+#     let a = toSeq(0..<okcolorset.len)
+# 
+#     if astr in emojis or astr in hiragana() or astr in katakana() or astr in iching():
+#         c = a[getRndInt(ma=a.len)]
+#          
+#         if centered == false:
+#             print(astr,colorset[c][1],bgblack,xpos = nxpos,fitLine)
+# 
+#         else:
+#               # need to calc the center here and increment by x
+#               nxpos = centerX() - (astr).len div 2  - 1
+#               print(astr,okcolorset[c][1],bgblack,xpos=nxpos,fitLine)
+# 
+#         inc nxpos
+# 
+# 
+#     else :
+# 
+#           for x in 0..<astr.len:
+#             c = a[getRndInt(ma = a.len - 1)]
+#             
+#             if centered == false:
+#                 print(astr[x],okcolorset[c][1],bgblack,xpos = nxpos,fitLine)
+# 
+#             else:
+#                 # need to calc the center here and increment by x
+#                 nxpos = centerX() - ($astr).len div 2  + x - 1
+#                 print(astr[x],okcolorset[c][1],bgblack,xpos=nxpos,fitLine)
+# 
+#             inc nxpos
+# 
 
 
 proc getColorName*[T](sc:T):string = 
@@ -4547,456 +4565,456 @@ proc qqTop*() =
 # experimental font building  
 
 
-template cxZero*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cxZero*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
       
          let xpos = npos + 5
-         println(efb3 * 7,coltop,xpos = xpos)
-         println(efb2 * 7,col,xpos = xpos)
-         loopy(0..2,printLn(efb2 * 2 & spaces(3) & efb2 * 2 ,col,xpos = xpos))
-         println(efb2 * 7,col,xpos = xpos)
+         printLn2(efb3 * 7,coltop,xpos = xpos)
+         printLn2(efb2 * 7,col,xpos = xpos)
+         loopy(0..2,printLn2(efb2 * 2 & spaces(3) & efb2 * 2 ,col,xpos = xpos))
+         printLn2(efb2 * 7,col,xpos = xpos)
          curup(6)         
           
-template cx1*(npos:int = 0,col:string=randcol(),coltop:string = randcol()) =    
+template cx1*(npos:int = 0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =    
        
           let xpos = npos+5
-          printLn(spaces(4) & efb3 * 2 ,coltop,xpos=xpos)
-          println(spaces(3) & efb1 & efb2 * 2 ,col,xpos=xpos)
-          println(spaces(1) & efb1 & spaces(2) & efb2 * 2 ,col,xpos=xpos)
-          println(spaces(4) & efb2 * 2 ,col,xpos=xpos)
-          println(spaces(4) & efs2 * 2,col,xpos=xpos)
-          println(spaces(4) & efb2 * 2 ,col,xpos=xpos)
+          printLn2(spaces(4) & efb3 * 2 ,coltop,xpos=xpos)
+          printLn2(spaces(3) & efb1 & efb2 * 2 ,col,xpos=xpos)
+          printLn2(spaces(1) & efb1 & spaces(2) & efb2 * 2 ,col,xpos=xpos)
+          printLn2(spaces(4) & efb2 * 2 ,col,xpos=xpos)
+          printLn2(spaces(4) & efs2 * 2,col,xpos=xpos)
+          printLn2(spaces(4) & efb2 * 2 ,col,xpos=xpos)
           curup(6) 
            
            
-template cx2*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cx2*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
       
          let xpos = npos + 5
-         println(spaces(2) & efb3 * 4 & spaces(4),coltop,xpos = xpos)
-         println(spaces(1) & efs2 & efb1 * 4 & efs2 & spaces(2),col,xpos = xpos)
-         printLn(spaces(6) & efs2 * 1 & spaces(1),col,xpos = xpos)
-         printLn(spaces(2) & efs2 * 3  & efb1 & spaces(3),col,xpos = xpos)
-         printLn(spaces(1) & efs2 * 1  & spaces(4)  & spaces(2),col,xpos = xpos)
-         println(spaces(1) & efb1 * 1 & efb2 * 4  & efb1 * 1 & spaces(2),col,xpos = xpos)
+         printLn2(spaces(2) & efb3 * 4 & spaces(4),coltop,xpos = xpos)
+         printLn2(spaces(1) & efs2 & efb1 * 4 & efs2 & spaces(2),col,xpos = xpos)
+         printLn2(spaces(6) & efs2 * 1 & spaces(1),col,xpos = xpos)
+         printLn2(spaces(2) & efs2 * 3  & efb1 & spaces(3),col,xpos = xpos)
+         printLn2(spaces(1) & efs2 * 1  & spaces(4)  & spaces(2),col,xpos = xpos)
+         printLn2(spaces(1) & efb1 * 1 & efb2 * 4  & efb1 * 1 & spaces(2),col,xpos = xpos)
          curup(6) 
  
         
            
             
-template cx3*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cx3*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
 
         let xpos = npos+5
-        printLn(spaces(1) & efb3 * 6,coltop,xpos=xpos)
-        printLn(spaces(1) & efb2 * 6,col,xpos=xpos)
-        printLn(spaces(5) & efb2 * 2,col,xpos=xpos)
-        printLn(spaces(3) & efs2 * 3 & spaces(1),col,xpos=xpos)
-        printLn(spaces(5) & efb2 * 2,col,xpos=xpos)
-        printLn(spaces(1) & efb2 * 6,col,xpos=xpos)
+        printLn2(spaces(1) & efb3 * 6,coltop,xpos=xpos)
+        printLn2(spaces(1) & efb2 * 6,col,xpos=xpos)
+        printLn2(spaces(5) & efb2 * 2,col,xpos=xpos)
+        printLn2(spaces(3) & efs2 * 3 & spaces(1),col,xpos=xpos)
+        printLn2(spaces(5) & efb2 * 2,col,xpos=xpos)
+        printLn2(spaces(1) & efb2 * 6,col,xpos=xpos)
         curup(6)      
 
 
-template cx4*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cx4*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
       
         let xpos = npos+5
-        printLn(spaces(5) & efb3 * 1,coltop,xpos=xpos)
-        printLn(spaces(5) & efb2 * 1,col,xpos=xpos)
-        printLn(spaces(3) & efb1 * 1 & spaces(1) & efs2 & spaces(3),col,xpos=xpos)
-        printLn(spaces(1) & efs2 * 1 & spaces(3) & efb2,col,xpos=xpos)
-        printLn(spaces(0) & efs2 * 1 & spaces(1) & efs2 & spaces(1) & efs2 * 4,col,xpos=xpos)
-        printLn(spaces(4) & efb2 * 2,col,xpos=xpos)
+        printLn2(spaces(5) & efb3 * 1,coltop,xpos=xpos)
+        printLn2(spaces(5) & efb2 * 1,col,xpos=xpos)
+        printLn2(spaces(3) & efb1 * 1 & spaces(1) & efs2 & spaces(3),col,xpos=xpos)
+        printLn2(spaces(1) & efs2 * 1 & spaces(3) & efb2,col,xpos=xpos)
+        printLn2(spaces(0) & efs2 * 1 & spaces(1) & efs2 & spaces(1) & efs2 * 4,col,xpos=xpos)
+        printLn2(spaces(4) & efb2 * 2,col,xpos=xpos)
         curup(6)               
             
            
               
-template cx5*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cx5*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
       
          let xpos = npos + 5
-         println(spaces(2) & efb3 * 5 & spaces(4),coltop,xpos = xpos)
-         println(spaces(1) & efs2 & efb1 * 5 & spaces(2),col,xpos = xpos)
-         printLn(spaces(1) & efs2 * 1 & spaces(7),col,xpos = xpos)
-         printLn(spaces(1) & efb1 & spaces(0) & efs2 * 2 & spaces(1) & efs2 & spaces(3),col,xpos = xpos)
-         printLn(spaces(6) & efb1 * 1 & spaces(1),col,xpos = xpos)
-         println(spaces(1) & efb1 * 1 & efb2 * 3  & efb1 & spaces(3),col,xpos = xpos)
+         printLn2(spaces(2) & efb3 * 5 & spaces(4),coltop,xpos = xpos)
+         printLn2(spaces(1) & efs2 & efb1 * 5 & spaces(2),col,xpos = xpos)
+         printLn2(spaces(1) & efs2 * 1 & spaces(7),col,xpos = xpos)
+         printLn2(spaces(1) & efb1 & spaces(0) & efs2 * 2 & spaces(1) & efs2 & spaces(3),col,xpos = xpos)
+         printLn2(spaces(6) & efb1 * 1 & spaces(1),col,xpos = xpos)
+         printLn2(spaces(1) & efb1 * 1 & efb2 * 3  & efb1 & spaces(3),col,xpos = xpos)
          curup(6)               
                             
               
               
               
-template cx6*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cx6*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
       
          let xpos = npos + 5
-         println(spaces(2) & efb3 * 4 & spaces(4),coltop,xpos = xpos)
-         println(spaces(1) & efs2 & efb1 * 4 & spaces(3),col,xpos = xpos)
-         printLn(spaces(1) & efs2 * 1 & spaces(7),col,xpos = xpos)
-         printLn(spaces(1) & efb2 & spaces(1) & efs2 * 1 & spaces(1) & efs2 & spaces(3),col,xpos = xpos)
-         printLn(spaces(1) & efs2 * 1 & spaces(4) & efb1 * 1 & spaces(1),col,xpos = xpos)
-         println(spaces(2) & efb1 & efb2 * 2  & efb1 & spaces(3),col,xpos = xpos)
+         printLn2(spaces(2) & efb3 * 4 & spaces(4),coltop,xpos = xpos)
+         printLn2(spaces(1) & efs2 & efb1 * 4 & spaces(3),col,xpos = xpos)
+         printLn2(spaces(1) & efs2 * 1 & spaces(7),col,xpos = xpos)
+         printLn2(spaces(1) & efb2 & spaces(1) & efs2 * 1 & spaces(1) & efs2 & spaces(3),col,xpos = xpos)
+         printLn2(spaces(1) & efs2 * 1 & spaces(4) & efb1 * 1 & spaces(1),col,xpos = xpos)
+         printLn2(spaces(2) & efb1 & efb2 * 2  & efb1 & spaces(3),col,xpos = xpos)
          curup(6)               
               
      
               
-template cx7*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cx7*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
       
          let xpos = npos + 5
-         println(efb3 * 7,coltop,xpos = xpos)
-         println(efb2 * 7,col,xpos = xpos)
-         printLn(spaces(5) & efs2 * 1  & efb1 ,col,xpos = xpos)
-         loopy(0..2,printLn(spaces(4) & efb2 * 2 ,col,xpos = xpos))
+         printLn2(efb3 * 7,coltop,xpos = xpos)
+         printLn2(efb2 * 7,col,xpos = xpos)
+         printLn2(spaces(5) & efs2 * 1  & efb1 ,col,xpos = xpos)
+         loopy(0..2,printLn2(spaces(4) & efb2 * 2 ,col,xpos = xpos))
          curup(6)  
  
 
-template cx8*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cx8*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
       
          let xpos = npos + 5
-         println(spaces(2) & efb3 * 4 & spaces(4),coltop,xpos = xpos)
-         println(spaces(1) & efs2 & efb1 & efb1 * 2  & efb1 & efs2 & spaces(2),col,xpos = xpos)
-         printLn(spaces(1) & efs2 * 1  & spaces(4) & efs2 * 1 & spaces(1),col,xpos = xpos)
-         printLn(spaces(2) & efb1 &  efs2 * 2  & efb1 * 1 & spaces(1),col,xpos = xpos)
-         printLn(spaces(1) & efs2 * 1  & spaces(4) & efs2 * 1 & spaces(1),col,xpos = xpos)
-         println(spaces(2) & efb1 & efb2 * 2  & efb1 & spaces(3),col,xpos = xpos)
+         printLn2(spaces(2) & efb3 * 4 & spaces(4),coltop,xpos = xpos)
+         printLn2(spaces(1) & efs2 & efb1 & efb1 * 2  & efb1 & efs2 & spaces(2),col,xpos = xpos)
+         printLn2(spaces(1) & efs2 * 1  & spaces(4) & efs2 * 1 & spaces(1),col,xpos = xpos)
+         printLn2(spaces(2) & efb1 &  efs2 * 2  & efb1 * 1 & spaces(1),col,xpos = xpos)
+         printLn2(spaces(1) & efs2 * 1  & spaces(4) & efs2 * 1 & spaces(1),col,xpos = xpos)
+         printLn2(spaces(2) & efb1 & efb2 * 2  & efb1 & spaces(3),col,xpos = xpos)
          curup(6) 
  
  
  
  
-template cx9*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cx9*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
       
          let xpos = npos + 5
-         println(spaces(1) & efb3 * 6,coltop,xpos = xpos)
-         println(efs2 & efb1 * 3 & efb2 * 3,col,xpos = xpos)
-         printLn(spaces(0) & efs2 * 1  & spaces(4) & efb2 * 2,col,xpos = xpos)
-         printLn(spaces(1) & efb1 &  efs2 * 3 & efb1 * 2,col,xpos = xpos)
-         loopy(0..1,printLn(spaces(5) & efb2 * 2 ,col,xpos = xpos))
+         printLn2(spaces(1) & efb3 * 6,coltop,xpos = xpos)
+         printLn2(efs2 & efb1 * 3 & efb2 * 3,col,xpos = xpos)
+         printLn2(spaces(0) & efs2 * 1  & spaces(4) & efb2 * 2,col,xpos = xpos)
+         printLn2(spaces(1) & efb1 &  efs2 * 3 & efb1 * 2,col,xpos = xpos)
+         loopy(0..1,printLn2(spaces(5) & efb2 * 2 ,col,xpos = xpos))
          curup(6)  
  
  
  
-proc cx10*(npos:int = 0,col:string=randcol(),coltop:string = randcol()) =
+proc cx10*(npos:int = 0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
      cx1(npos,col,coltop)
      cxzero(npos + 9,col,coltop)
  
  
  
-template cxa*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cxa*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
         let xpos = npos + 5
-        printLn(spaces(4) & efb3 * 2 & spaces(3), coltop,xpos=xpos)
-        printLn(spaces(4) & efb2 * 2,col,xpos=xpos)
-        printLn(spaces(2) & efb2 * 2 & spaces(2) & efb2 * 2,col,xpos=xpos)
-        printLn(spaces(2) & efs2 * 6 ,col,xpos=xpos)
-        printLn(spaces(1) & efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
-        printLn(spaces(1) & efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
+        printLn2(spaces(4) & efb3 * 2 & spaces(3), coltop,xpos=xpos)
+        printLn2(spaces(4) & efb2 * 2,col,xpos=xpos)
+        printLn2(spaces(2) & efb2 * 2 & spaces(2) & efb2 * 2,col,xpos=xpos)
+        printLn2(spaces(2) & efs2 * 6 ,col,xpos=xpos)
+        printLn2(spaces(1) & efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
+        printLn2(spaces(1) & efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
         curup(6)
                       
             
-template cxb*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cxb*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
       
          let xpos = npos + 5
-         printLn(efb3 * 5, coltop,xpos=xpos)
-         println(efb2 * 4 & spaces(1) & efb2,col,xpos=xpos)
-         println(efb2 * 2 & spaces(4) & efb2,col,xpos=xpos)
-         println(efb2 * 3 & efs2 &  spaces(0) & efs2 * 2,col,xpos=xpos)
-         println(efb2 * 2 & spaces(4) & efb2,col,xpos=xpos)
-         println(efb2 * 4 & spaces(1) & efb2,col,xpos=xpos)
+         printLn2(efb3 * 5, coltop,xpos=xpos)
+         printLn2(efb2 * 4 & spaces(1) & efb2,col,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(4) & efb2,col,xpos=xpos)
+         printLn2(efb2 * 3 & efs2 &  spaces(0) & efs2 * 2,col,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(4) & efb2,col,xpos=xpos)
+         printLn2(efb2 * 4 & spaces(1) & efb2,col,xpos=xpos)
          curup(6)
 
-template cxc*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cxc*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
 
         let xpos = npos+5
-        printLn(spaces(1) & efb3 * 6,coltop,xpos=xpos)
-        printLn(spaces(1) & efb2 * 6,col,xpos=xpos)
-        printLn(efb2 * 2,col,xpos=xpos)
-        printLn(efs2 * 2,col,xpos=xpos)
-        printLn(efb2 * 2,col,xpos=xpos)
-        printLn(spaces(1) & efb2 * 6,col,xpos=xpos)
+        printLn2(spaces(1) & efb3 * 6,coltop,xpos=xpos)
+        printLn2(spaces(1) & efb2 * 6,col,xpos=xpos)
+        printLn2(efb2 * 2,col,xpos=xpos)
+        printLn2(efs2 * 2,col,xpos=xpos)
+        printLn2(efb2 * 2,col,xpos=xpos)
+        printLn2(spaces(1) & efb2 * 6,col,xpos=xpos)
         curup(6)
               
               
-template cxd*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cxd*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
       
          let xpos = npos + 5
-         printLn(efb3 * 5, coltop,xpos=xpos)
-         println(efb2 * 4 & spaces(1) & efb2,col,xpos=xpos)
-         println(efb2 * 2 & spaces(4) & efb2,col,xpos=xpos)
-         println(efb2 * 2 & spaces(4) & efs2,col,xpos=xpos)
-         println(efb2 * 2 & spaces(4) & efb2,col,xpos=xpos)
-         println(efb2 * 4 & spaces(1) & efb2,col,xpos=xpos)
+         printLn2(efb3 * 5, coltop,xpos=xpos)
+         println2(efb2 * 4 & spaces(1) & efb2,col,xpos=xpos)
+         println2(efb2 * 2 & spaces(4) & efb2,col,xpos=xpos)
+         println2(efb2 * 2 & spaces(4) & efs2,col,xpos=xpos)
+         println2(efb2 * 2 & spaces(4) & efb2,col,xpos=xpos)
+         println2(efb2 * 4 & spaces(1) & efb2,col,xpos=xpos)
          curup(6)
 
          
   
-template cxe*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cxe*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
       
          let xpos = npos + 5
-         printLn(efb3 * 7, coltop,xpos=xpos)
-         println(efb2 * 7, col,xpos=xpos)
-         println(efb2 * 2, col,xpos=xpos)
-         println(efb2 * 5, col,xpos=xpos)
-         println(efb2 * 2, col,xpos=xpos)
-         println(efb2 * 7, col,xpos=xpos)
+         printLn2(efb3 * 7, coltop,xpos=xpos)
+         printLn2(efb2 * 7, col,xpos=xpos)
+         printLn2(efb2 * 2, col,xpos=xpos)
+         printLn2(efb2 * 5, col,xpos=xpos)
+         printLn2(efb2 * 2, col,xpos=xpos)
+         printLn2(efb2 * 7, col,xpos=xpos)
          curup(6)  
  
-template cxf*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cxf*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
       
          let xpos = npos + 5
-         printLn(efb3 * 7, coltop,xpos=xpos)
-         println(efb2 * 7, col,xpos=xpos)
-         println(efb2 * 2, col,xpos=xpos)
-         println(efb2 * 5, col,xpos=xpos)
-         println(efb2 * 2, col,xpos=xpos)
-         println(efb2 * 2, col,xpos=xpos)
+         printLn2(efb3 * 7, coltop,xpos=xpos)
+         printLn2(efb2 * 7, col,xpos=xpos)
+         printLn2(efb2 * 2, col,xpos=xpos)
+         printLn2(efb2 * 5, col,xpos=xpos)
+         printLn2(efb2 * 2, col,xpos=xpos)
+         printLn2(efb2 * 2, col,xpos=xpos)
          curup(6)  
  
 
-template cxg*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cxg*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
 
         let xpos = npos+5
-        printLn(spaces(1) & efb3 * 6,coltop,xpos=xpos)
-        printLn(spaces(1) & efb2 * 6,col,xpos=xpos)
-        printLn(efb2 * 2,col,xpos=xpos)
-        printLn(efb2 * 2 & spaces(2) & efs2 * 3,col,xpos=xpos)
-        printLn(efb2 * 2 & spaces(3) & efb2 * 2,col,xpos=xpos)
-        printLn(spaces(1) & efb2 * 6,col,xpos=xpos)
+        printLn2(spaces(1) & efb3 * 6,coltop,xpos=xpos)
+        printLn2(spaces(1) & efb2 * 6,col,xpos=xpos)
+        printLn2(efb2 * 2,col,xpos=xpos)
+        printLn2(efb2 * 2 & spaces(2) & efs2 * 3,col,xpos=xpos)
+        printLn2(efb2 * 2 & spaces(3) & efb2 * 2,col,xpos=xpos)
+        printLn2(spaces(1) & efb2 * 6,col,xpos=xpos)
         curup(6)
              
-template cxh*(npos:int=0,col:string=randcol(),coltop:string = randcol()) =
+template cxh*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
         let xpos = npos + 5
-        printLn(efb3 * 2 & spaces(4) & efb3 * 2, coltop,xpos=xpos)
-        printLn(efb2 * 2 & spaces(4) & efb2 * 2, col,xpos=xpos)
-        printLn(efb2 * 2 & spaces(4) & efb2 * 2, col,xpos=xpos)
-        printLn(efb2 * 2 & efs2 * 4 & efb2 * 2, col,xpos=xpos)
-        printLn(efb2 * 2 & spaces(4) & efb2 * 2, col,xpos=xpos)
-        printLn(efb2 * 2 & spaces(4) & efb2 * 2, col,xpos=xpos)
+        printLn2(efb3 * 2 & spaces(4) & efb3 * 2, coltop,xpos=xpos)
+        printLn2(efb2 * 2 & spaces(4) & efb2 * 2, col,xpos=xpos)
+        printLn2(efb2 * 2 & spaces(4) & efb2 * 2, col,xpos=xpos)
+        printLn2(efb2 * 2 & efs2 * 4 & efb2 * 2, col,xpos=xpos)
+        printLn2(efb2 * 2 & spaces(4) & efb2 * 2, col,xpos=xpos)
+        printLn2(efb2 * 2 & spaces(4) & efb2 * 2, col,xpos=xpos)
         curup(6)   
  
-template cxi*(npos:int = 0,col:string=randcol(),coltop:string = randcol()) =    
+template cxi*(npos:int = 0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =    
 
         loopy2(0,2):
            let xpos = xloopy+npos+7
-           printLn(efb3 ,coltop,xpos=xpos)
-           loopy(0..4,printLn(efb2,col,xpos=xpos))
+           printLn2(efb3 ,coltop,xpos=xpos)
+           loopy(0..4,printLn2(efb2,col,xpos=xpos))
            curup(6)
            
              
-template cxj*(npos:int = 0,col:string=randcol(),coltop:string = randcol()) =    
+template cxj*(npos:int = 0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =    
 
         loopy2(0,2):
            let xpos = xloopy+npos+5
-           printLn(spaces(2) & efb3 * 2 ,coltop,xpos=xpos)
-           loopy(0..2,printLn(spaces(2) & efb2 * 2,col,xpos=xpos))
-           printLn(efs2 & spaces(1) & efb2 * 2,col,xpos = xpos)
-           printLn(spaces(1) & efb2 & efb2,col,xpos=xpos)
+           printLn2(spaces(2) & efb3 * 2 ,coltop,xpos=xpos)
+           loopy(0..2,printLn2(spaces(2) & efb2 * 2,col,xpos=xpos))
+           printLn2(efs2 & spaces(1) & efb2 * 2,col,xpos = xpos)
+           printLn2(spaces(1) & efb2 & efb2,col,xpos=xpos)
            curup(6) 
            
            
            
-template cxk*(npos:int = 0,col:string=randcol(),coltop:string = randcol()) =    
+template cxk*(npos:int = 0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =    
        
            let xpos = npos+5
-           printLn(efb3 * 2 & spaces(4) & efb3 * 2,coltop,xpos=xpos)
-           println(efb2 * 2 & spaces(4) & efb1 * 2,col,xpos=xpos)
-           println(efb2 * 2 & spaces(2) & efs2 * 2,col,xpos=xpos)
-           println(efb2 * 2 & efs2 * 2,col,xpos=xpos)
-           println(efb2 * 2 & spaces(2) & efs2 * 2,col,xpos=xpos)
-           println(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
+           printLn2(efb3 * 2 & spaces(4) & efb3 * 2,coltop,xpos=xpos)
+           printLn2(efb2 * 2 & spaces(4) & efb1 * 2,col,xpos=xpos)
+           printLn2(efb2 * 2 & spaces(2) & efs2 * 2,col,xpos=xpos)
+           printLn2(efb2 * 2 & efs2 * 2,col,xpos=xpos)
+           printLn2(efb2 * 2 & spaces(2) & efs2 * 2,col,xpos=xpos)
+           printLn2(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
            curup(6)          
          
-template cxl*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cxl*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
       
          let xpos = npos + 5
-         printLn(efb3 * 2, coltop,xpos=xpos)
-         println(efb2 * 2, col,xpos=xpos)
-         println(efb2 * 2 ,col,xpos=xpos)
-         println(efb2 * 2 ,col,xpos=xpos)
-         println(efb2 * 2 ,col,xpos=xpos)
-         println(efb2 * 7, col,xpos=xpos)
+         printLn2(efb3 * 2, coltop,xpos=xpos)
+         printLn2(efb2 * 2, col,xpos=xpos)
+         printLn2(efb2 * 2 ,col,xpos=xpos)
+         printLn2(efb2 * 2 ,col,xpos=xpos)
+         printLn2(efb2 * 2 ,col,xpos=xpos)
+         printLn2(efb2 * 7, col,xpos=xpos)
          curup(6)
               
-template cxm*(npos:int=0,col:string=randcol(),coltop:string = randcol()) =
+template cxm*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
         let xpos = npos + 5
-        printLn(efb3 * 2 & spaces(5) & efb3 * 2, coltop,xpos=xpos)
-        printLn(efb2 * 2 & efs2 & spaces(3) & efs2 & efb2 * 2, col,xpos=xpos)
-        printLn(efb2 * 2 & spaces(1) & efs2 & spaces(1) & efs2 & spaces(1) & efb2 * 2, col,xpos=xpos)
-        printLn(efb2 * 2 & spaces(2) & efs2 & spaces(2) & efb2 * 2, col,xpos=xpos)
-        printLn(efb2 * 2 & spaces(5) & efb2 * 2, col,xpos=xpos)
-        printLn(efb2 * 2 & spaces(5) & efb2 * 2, col,xpos=xpos)
+        printLn2(efb3 * 2 & spaces(5) & efb3 * 2, coltop,xpos=xpos)
+        printLn2(efb2 * 2 & efs2 & spaces(3) & efs2 & efb2 * 2, col,xpos=xpos)
+        printLn2(efb2 * 2 & spaces(1) & efs2 & spaces(1) & efs2 & spaces(1) & efb2 * 2, col,xpos=xpos)
+        printLn2(efb2 * 2 & spaces(2) & efs2 & spaces(2) & efb2 * 2, col,xpos=xpos)
+        printLn2(efb2 * 2 & spaces(5) & efb2 * 2, col,xpos=xpos)
+        printLn2(efb2 * 2 & spaces(5) & efb2 * 2, col,xpos=xpos)
         curup(6) 
         
-template cxn*(npos:int=0,col:string=randcol(),coltop:string = randcol()) =
+template cxn*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
         let xpos = npos + 5
-        printLn(efb3 * 2 & spaces(4) & efb3 * 2, coltop,xpos=xpos)
-        printLn(efb2 * 2 & efs2 & spaces(3) & efb2 * 2, col,xpos=xpos)
-        printLn(efb2 * 2 & spaces(1) & efs2 & spaces(2) & efb2 * 2, col,xpos=xpos)
-        printLn(efb2 * 2 & spaces(2) & efs2 & spaces(1) & efb2 * 2, col,xpos=xpos)
-        printLn(efb2 * 2 & spaces(3) & efs2 & efb2 * 2, col,xpos=xpos)
-        printLn(efb2 * 2 & spaces(4) & efb2 * 2, col,xpos=xpos)
+        printLn2(efb3 * 2 & spaces(4) & efb3 * 2, coltop,xpos=xpos)
+        printLn2(efb2 * 2 & efs2 & spaces(3) & efb2 * 2, col,xpos=xpos)
+        printLn2(efb2 * 2 & spaces(1) & efs2 & spaces(2) & efb2 * 2, col,xpos=xpos)
+        printLn2(efb2 * 2 & spaces(2) & efs2 & spaces(1) & efb2 * 2, col,xpos=xpos)
+        printLn2(efb2 * 2 & spaces(3) & efs2 & efb2 * 2, col,xpos=xpos)
+        printLn2(efb2 * 2 & spaces(4) & efb2 * 2, col,xpos=xpos)
         curup(6)  
  
-template cxo*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cxo*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
       
          let xpos = npos + 5
-         printLn(spaces(2) & efb3 * 4, coltop,xpos=xpos)
-         println(spaces(2) & efb2 * 4, col,xpos=xpos)
-         println(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
-         println(efb2 * 2 & spaces(4) & efs2 * 2,col,xpos=xpos)
-         println(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
-         println(spaces(2) & efb2 * 3 & efb2,col,xpos=xpos)
+         printLn2(spaces(2) & efb3 * 4, coltop,xpos=xpos)
+         printLn2(spaces(2) & efb2 * 4, col,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(4) & efs2 * 2,col,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
+         printLn2(spaces(2) & efb2 * 3 & efb2,col,xpos=xpos)
          curup(6) 
           
-template cxp*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cxp*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
       
          let xpos = npos + 5
-         printLn(efb3 * 5, coltop,xpos=xpos)
-         println(efb2 * 4 & spaces(1) & efb2,col,xpos=xpos)
-         println(efb2 * 2 & spaces(4) & efb2,col,xpos=xpos)
-         println(efb2 * 3 & efs2 &  spaces(0) & efs2 * 2,col,xpos=xpos)
-         println(efb2 * 2 ,col,xpos=xpos)
-         println(efb2 * 2,col,xpos=xpos)
+         printLn2(efb3 * 5, coltop,xpos=xpos)
+         printLn2(efb2 * 4 & spaces(1) & efb2,col,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(4) & efb2,col,xpos=xpos)
+         printLn2(efb2 * 3 & efs2 &  spaces(0) & efs2 * 2,col,xpos=xpos)
+         printLn2(efb2 * 2 ,col,xpos=xpos)
+         printLn2(efb2 * 2,col,xpos=xpos)
          curup(6)
    
        
  
-template cxq*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cxq*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
       
          let xpos = npos + 5
-         printLn(spaces(2) & efb3 * 4, coltop,xpos=xpos)
-         println(spaces(2) & efb2 * 3 & efb2,col,xpos=xpos)
-         println(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
-         println(efb2 * 2 & spaces(4) & efs2 * 2,col,xpos=xpos)
-         println(efb2 * 2 & spaces(3) & efs2 & efb2 * 2,col,xpos=xpos)
-         println(spaces(2) & efb2 * 3 & efb2 & "\\",col,xpos=xpos)
+         printLn2(spaces(2) & efb3 * 4, coltop,xpos=xpos)
+         printLn2(spaces(2) & efb2 * 3 & efb2,col,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(4) & efs2 * 2,col,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(3) & efs2 & efb2 * 2,col,xpos=xpos)
+         printLn2(spaces(2) & efb2 * 3 & efb2 & "\\",col,xpos=xpos)
          curup(6) 
 
-template cxr*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cxr*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
       
          let xpos = npos + 5
-         printLn(efb3 * 5, coltop,xpos=xpos)
-         println(efb2 * 4 & spaces(1) & efb2,col,xpos=xpos)
-         println(efb2 * 2 & spaces(3) & efb3 & efb2,col,xpos=xpos)
-         println(efb2 * 2 & efs2 * 2 &  spaces(0) & efs2 * 1,col,xpos=xpos)
-         println(efb2 * 2 & spaces(1) & efs2,col,xpos=xpos)
-         println(efb2 * 2 & spaces(3) & efb2 * 2,col,xpos=xpos)
+         printLn2(efb3 * 5, coltop,xpos=xpos)
+         printLn2(efb2 * 4 & spaces(1) & efb2,col,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(3) & efb3 & efb2,col,xpos=xpos)
+         printLn2(efb2 * 2 & efs2 * 2 &  spaces(0) & efs2 * 1,col,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(1) & efs2,col,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(3) & efb2 * 2,col,xpos=xpos)
          curup(6)
  
-template cxs*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cxs*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
       
          let xpos = npos + 5
-         printLn(spaces(3) & efb3 * 5, coltop,xpos=xpos)
-         println(spaces(1) & efb1 & spaces(1) & efb1 * 5,col,xpos=xpos)
-         println(efb1 * 1 & spaces(1) & efs2 * 1 ,col,xpos=xpos)
-         println(spaces(4) & efb1 & efs2 * 1 ,col,xpos=xpos)
-         println(spaces(5) & efs2 * 2,col,xpos=xpos)
-         println(efb2 * 5 &  efs2  * 1 & efb1  * 1 ,col,xpos=xpos)
+         printLn2(spaces(3) & efb3 * 5, coltop,xpos=xpos)
+         printLn2(spaces(1) & efb1 & spaces(1) & efb1 * 5,col,xpos=xpos)
+         printLn2(efb1 * 1 & spaces(1) & efs2 * 1 ,col,xpos=xpos)
+         printLn2(spaces(4) & efb1 & efs2 * 1 ,col,xpos=xpos)
+         printLn2(spaces(5) & efs2 * 2,col,xpos=xpos)
+         printLn2(efb2 * 5 &  efs2  * 1 & efb1  * 1 ,col,xpos=xpos)
          curup(6)  
   
  
-template cxt*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cxt*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
       
          let xpos = npos + 5
-         printLn(efb3 * 8, coltop,xpos=xpos)
-         println(efb2 * 8,col,xpos=xpos)
-         loopy(0..3,println(spaces(3) & efb2 * 2 ,col,xpos=xpos))
+         printLn2(efb3 * 8, coltop,xpos=xpos)
+         printLn2(efb2 * 8,col,xpos=xpos)
+         loopy(0..3,printLn2(spaces(3) & efb2 * 2 ,col,xpos=xpos))
          curup(6)   
          
             
          
-template cxu*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cxu*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
       
          let xpos = npos + 5
-         printLn(efb3 * 2 & spaces(4) & efb3 * 2,coltop,xpos=xpos)
-         println(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
-         println(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
-         println(efb2 * 2 & spaces(4) & efs2 * 2,col,xpos=xpos)
-         println(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
-         println(spaces(1) & efb2 * 6 ,col,xpos=xpos)
+         printLn2(efb3 * 2 & spaces(4) & efb3 * 2,coltop,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(4) & efs2 * 2,col,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
+         printLn2(spaces(1) & efb2 * 6 ,col,xpos=xpos)
          curup(6)         
          
 
          
-template cxv*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cxv*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
       
          let xpos = npos + 5
-         printLn(efb3 * 2 & spaces(4) & efb3 * 2,coltop,xpos=xpos)
-         println(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
-         println(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
-         println(efb2 * 2 & spaces(4) & efs2 * 2,col,xpos=xpos)
-         println(spaces(1) & efb2 * 2 & spaces(2) & efb2 * 2,col,xpos=xpos)
-         println(spaces(3) & efb2 * 2 ,col,xpos=xpos)
+         printLn2(efb3 * 2 & spaces(4) & efb3 * 2,coltop,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(4) & efs2 * 2,col,xpos=xpos)
+         printLn2(spaces(1) & efb2 * 2 & spaces(2) & efb2 * 2,col,xpos=xpos)
+         printLn2(spaces(3) & efb2 * 2 ,col,xpos=xpos)
          curup(6)          
          
          
-template cxw*(npos:int=0,col:string=randcol(),coltop:string = randcol()) =
+template cxw*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
         let xpos = npos + 5
-        printLn(efb3 * 2 & spaces(5) & efb3 * 2, coltop,xpos=xpos)
-        printLn(efb2 * 2 & spaces(5) & efb2 * 2, col,xpos=xpos)
-        printLn(efb2 * 2 & spaces(5) & efb2 * 2, col,xpos=xpos)
-        printLn(efb2 * 2 & spaces(2) & efs2 & spaces(2) & efb2 * 2, col,xpos=xpos)
-        printLn(spaces(1) & efb1 * 2 & spaces(0) & efs2 &  spaces(1) & efs2 & spaces(0) & efb1 * 2, col,xpos=xpos)
-        printLn(spaces(2) & efb2 * 2 &  spaces(1) & efb2 * 2, col,xpos=xpos)
+        printLn2(efb3 * 2 & spaces(5) & efb3 * 2, coltop,xpos=xpos)
+        printLn2(efb2 * 2 & spaces(5) & efb2 * 2, col,xpos=xpos)
+        printLn2(efb2 * 2 & spaces(5) & efb2 * 2, col,xpos=xpos)
+        printLn2(efb2 * 2 & spaces(2) & efs2 & spaces(2) & efb2 * 2, col,xpos=xpos)
+        printLn2(spaces(1) & efb1 * 2 & spaces(0) & efs2 &  spaces(1) & efs2 & spaces(0) & efb1 * 2, col,xpos=xpos)
+        printLn2(spaces(2) & efb2 * 2 &  spaces(1) & efb2 * 2, col,xpos=xpos)
         curup(6)          
  
               
-template cxx*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cxx*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
         let xpos = npos+5
-        printLn(spaces(1) & efb3 * 2 & spaces(3) & efb3 * 2 & spaces(1) ,coltop,xpos=xpos)
-        printLn(spaces(1) & efb2 * 2 & spaces(3) & efb2 * 2 & spaces(1) ,col,xpos=xpos)
-        printLn(spaces(2) & efs2 * 2 & spaces(1) & efs2 * 2 & spaces(2) ,col,xpos=xpos)
-        printLn(spaces(4) & efl1 * 2 & spaces(4),col,xpos=xpos)
-        printLn(spaces(2) & efs2 * 2 & spaces(1) & efs2 * 2 & spaces(2) ,col,xpos=xpos)
-        printLn(spaces(1) & efb2 * 2 & spaces(3) & efb2 * 2 & spaces(1),col,xpos=xpos)
+        printLn2(spaces(1) & efb3 * 2 & spaces(3) & efb3 * 2 & spaces(1) ,coltop,xpos=xpos)
+        printLn2(spaces(1) & efb2 * 2 & spaces(3) & efb2 * 2 & spaces(1) ,col,xpos=xpos)
+        printLn2(spaces(2) & efs2 * 2 & spaces(1) & efs2 * 2 & spaces(2) ,col,xpos=xpos)
+        printLn2(spaces(4) & efl1 * 2 & spaces(4),col,xpos=xpos)
+        printLn2(spaces(2) & efs2 * 2 & spaces(1) & efs2 * 2 & spaces(2) ,col,xpos=xpos)
+        printLn2(spaces(1) & efb2 * 2 & spaces(3) & efb2 * 2 & spaces(1),col,xpos=xpos)
         curup(6)
 
             
             
                    
-template cxy*(npos:int=0,col: string=randcol(),coltop:string = randcol()) = 
+template cxy*(npos:int=0,col: string=rndTrueCol(),coltop:string = rndTrueCol()) = 
         let xpos = npos + 5
-        printLn(spaces(1) & efb3 * 2 & spaces(3) & efb3 * 2, coltop,xpos=xpos)
-        printLn(spaces(1) & efb2 * 2 & spaces(3) & efb2 * 2,col,xpos=xpos)
-        printLn(spaces(2) & efs2 * 2 & spaces(1) & efs2 * 2,col,xpos=xpos)
-        printLn(spaces(4) & efl1 * 2,col,xpos=xpos)
-        printLn(spaces(4) & efl1 * 2,col,xpos=xpos)
-        printLn(spaces(3) & efl1 * 4,col,xpos=xpos)
+        printLn2(spaces(1) & efb3 * 2 & spaces(3) & efb3 * 2, coltop,xpos=xpos)
+        printLn2(spaces(1) & efb2 * 2 & spaces(3) & efb2 * 2,col,xpos=xpos)
+        printLn2(spaces(2) & efs2 * 2 & spaces(1) & efs2 * 2,col,xpos=xpos)
+        printLn2(spaces(4) & efl1 * 2,col,xpos=xpos)
+        printLn2(spaces(4) & efl1 * 2,col,xpos=xpos)
+        printLn2(spaces(3) & efl1 * 4,col,xpos=xpos)
         curup(6)
              
 
  
-template cxz*(npos:int=0,col:string=randcol(),coltop:string = randcol()) = 
+template cxz*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
       
          let xpos = npos + 5
-         printLn(efb3 * 8, coltop,xpos=xpos)
-         println(efb2 * 8,col,xpos=xpos)
-         println(spaces(6) & efb2 * 2 ,col,xpos=xpos)
-         println(spaces(3) & efb2 * 2 ,col,xpos=xpos)
-         println(spaces(0) & efb2 * 2 ,col,xpos=xpos)
-         println(efb2 * 8,col,xpos=xpos)    
+         printLn2(efb3 * 8, coltop,xpos=xpos)
+         printLn2(efb2 * 8,col,xpos=xpos)
+         printLn2(spaces(6) & efb2 * 2 ,col,xpos=xpos)
+         printLn2(spaces(3) & efb2 * 2 ,col,xpos=xpos)
+         printLn2(spaces(0) & efb2 * 2 ,col,xpos=xpos)
+         printLn2(efb2 * 8,col,xpos=xpos)    
          curup(6)
  
  
  
-template cxpoint*(npos:int = 0,col:string=randcol(),coltop:string = randcol()) =    
+template cxpoint*(npos:int = 0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =    
        
            let xpos = npos+5
-           printLn(efb3 * 0 ,coltop,xpos=xpos)
-           println(efb2 * 0 ,col,xpos=xpos)
-           println(efb2 * 0 ,col,xpos=xpos)
-           println(efb2 * 0 ,col,xpos=xpos)
-           println(efb3 * 2 ,coltop,xpos=xpos)
-           println(efb2 * 2 ,col,xpos=xpos)
+           printLn2(efb3 * 0 ,coltop,xpos=xpos)
+           printLn2(efb2 * 0 ,col,xpos=xpos)
+           printLn2(efb2 * 0 ,col,xpos=xpos)
+           printLn2(efb2 * 0 ,col,xpos=xpos)
+           printLn2(efb3 * 2 ,coltop,xpos=xpos)
+           printLn2(efb2 * 2 ,col,xpos=xpos)
            curup(6)   
  
  
  
-template cxhyphen*(npos:int = 0,col:string=randcol(),coltop:string = randcol()) =    
+template cxhyphen*(npos:int = 0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =    
        
            let xpos = npos+5
-           printLn(efb3 * 0 ,coltop,xpos=xpos)
-           println(efb2 * 0 ,col,xpos=xpos)
-           println(efb3 * 5 ,coltop,xpos=xpos)
-           println(efb2 * 5 ,col,xpos=xpos)
-           println(efb2 * 0 ,coltop,xpos=xpos)
-           println(efb2 * 0 ,col,xpos=xpos)
+           printLn2(efb3 * 0 ,coltop,xpos=xpos)
+           printLn2(efb2 * 0 ,col,xpos=xpos)
+           printLn2(efb3 * 5 ,coltop,xpos=xpos)
+           printLn2(efb2 * 5 ,col,xpos=xpos)
+           printLn2(efb2 * 0 ,coltop,xpos=xpos)
+           printLn2(efb2 * 0 ,col,xpos=xpos)
            curup(6)    
        
-template cxgrid*(npos:int = 0,col:string=randcol(),coltop:string = lime) =    
+template cxgrid*(npos:int = 0,col:string=rndTrueCol(),coltop:string = lime) =    
            # for testing purpose
            let xpos = npos+5
            let xwd  = 9
@@ -5005,11 +5023,11 @@ template cxgrid*(npos:int = 0,col:string=randcol(),coltop:string = lime) =
            echo()
            loopy2(0,5):
                loopy2(0,xwd) :
-                  print(efb2  ,randcol2(col),xpos=xpos + xloopy)
+                  print(efb2 ,randcol2(col),xpos=xpos + xloopy)
                echo()  
            curup(6)
  
-proc printFont*(s:string,col:string = randcol() ,coltop:string = randcol(), xpos:int = -10) = 
+proc printFont*(s:string,col:string = rndTrueCol() ,coltop:string = rndTrueCol(), xpos:int = -10) = 
      ## printFont
      ## 
      ## display experimental cxfont
@@ -5107,7 +5125,7 @@ proc printFont*(s:string,col:string = randcol() ,coltop:string = randcol(), xpos
             
 #proc printFontFancy*(s:string,col:string = rndcol(),coltop:string = rndcol(), xpos:int = -10) = 
      
-proc printFontFancy*(s:string, coltop = rndcol(),xpos:int = -10) = 
+proc printFontFancy*(s:string, coltop1 = rndcol(),xpos:int = -10) = 
      ## printFontFancy
      ## 
      ## display experimental cxfont with every element in rand color
@@ -5116,6 +5134,7 @@ proc printFontFancy*(s:string, coltop = rndcol(),xpos:int = -10) =
      ## 
      ## 
      var npos = xpos
+     var coltop = rndTrueCol()
      for x in s.toLowerAscii:
         npos += 10
         case x 
@@ -5222,15 +5241,15 @@ proc printMadeWithNim*(npos:int = tw div 2 - 60) =
         ## 
         echo()
         var xpos = npos
-        cxm(xpos,randcol(),coltop=red)
-        cxa(xpos + 10,randcol(),coltop=red)
-        cxd(xpos + 21,randcol(),coltop=red)
-        cxe(xpos + 30,randcol(),coltop=red)
+        cxm(xpos,rndTrueCol(),coltop=red)
+        cxa(xpos + 10,rndTrueCol(),coltop=red)
+        cxd(xpos + 21,rndTrueCol(),coltop=red)
+        cxe(xpos + 30,rndTrueCol(),coltop=red)
         
-        cxw(xpos + 42,randcol(),coltop=red)
-        cxi(xpos + 52,randcol(),coltop=red)
-        cxt(xpos + 58,randcol(),coltop=red)
-        cxh(xpos + 68,randcol(),coltop=red)
+        cxw(xpos + 42,rndTrueCol(),coltop=red)
+        cxi(xpos + 52,rndTrueCol(),coltop=red)
+        cxt(xpos + 58,rndTrueCol(),coltop=red)
+        cxh(xpos + 68,rndTrueCol(),coltop=red)
         
         cxn(xpos + 82,dodgerblue,coltop=gold)
         cxi(xpos + 90,truetomato,coltop=gold)
@@ -5341,7 +5360,7 @@ proc doByeBye*() =
   
    
 proc showCxTrueColorPalette*(max:int = 888,step: int = 12) = 
-   ## showTrueColorPalette
+   ## showCxTrueColorPalette
    ## 
    ## play with truecolors
    ## 
@@ -5359,15 +5378,15 @@ proc showCxTrueColorPalette*(max:int = 888,step: int = 12) =
 
    var astep = step
    while max mod astep <> 0: astep = astep + 1
-   if checktruecolorsupport() == true:
+   if getcxTrueColorSet(max = max,step = astep)  == true:
       # controll the size of our truecolor cache 
       # default max 888, increase by too much we may have memory issues
       # defaul step 12 , decrease by too much we may have memory issues  tested with steps 4 - 16 ,
       # lower steps longer compile time 
-      cxTrueCol = getcxTrueColorSet(max = max,step = astep)  
+      
       let cxtlen = $cxTruecol.len
       var testLine = newcxline()
-      for lcol in countup(0,cxTruecol.len - 1,2): 
+      for lcol in countup(0,cxTruecol.len - 1,2): # not step size 2 so we only select 38 colors
             var tcol  = color38(cxTrueCol)
             var bcol  = color38(cxTrueCol)
             var dlcol = color38(cxTrueCol)
@@ -5379,20 +5398,13 @@ proc showCxTrueColorPalette*(max:int = 888,step: int = 12) =
             testLine.dotleftcolor     = cxTrueCol[dlcol]
             testLine.dotrightcolor    = cxTrueCol[drcol]
             testLine.textpos = 8
-            testLine.text = fmtx(["<16","<14",">10",""], "ABCDEFG 12345","cxTruecolor : " ,$lcol," of " & cxtlen & spaces(1))
-            testLine.textcolor = cxTrueCol[lcol]
+            testLine.text = fmtx(["<15","<14",">8",""], "ABCDEFG 12345","cxTruecolor : " ,$lcol," of " & cxtlen & spaces(1))
+            testLine.textcolor = cxTrueCol[lcol]  # change this to tcol to have text in a random truecolor
             testLine.textstyle = {styleReverse}
             testLine.newline = "\L"                  # need a new line character here or we overwrite 
             printcxline(testLine)
       printLnBiCol("Palette length : " & ff2(cxTruecol.len),colLeft = truetomato,colRight = lime)   
       
-   else:
-      printLnBicol("Error : cxTrueCol truecolor scheme can not be used on this terminal/konsole",colLeft=red,styled = {stylereverse})
-      doFinish()
-     
-  
-  
-  
 
 # code below borrowed from distros.nim  and made exportable 
 var unameRes, releaseRes: string                      
@@ -5413,7 +5425,7 @@ proc theEnd*() =
        printfontfancy("THE END",xpos = xloopy)
        sleepy(0.02)
        cleanscreen()
-  printfontfancy("qqtop",coltop = red,xpos = tw div 3 - 20)     
+  printfontfancy("qqtop",coltop1 = red,xpos = tw div 3 - 20)     
   decho(10)
 
 
@@ -5499,7 +5511,8 @@ proc doCxEnd*() =
         decho(8)
         printMadeWithNim()
         decho(8)
-        rainbow2(smm,centered = false,colorset = colorsPalette("pastel"))
+        
+        #rainbow2(smm,centered = false,colorset = colorsPalette("pastel"))  # currently deprecated await rewrite
         print(innocent,truetomato)
         for x in 0.. (tw - 2) div 5: print(innocent,randcol())
         sleepy(0.15)
@@ -5514,6 +5527,8 @@ decho(2)
 # automatic exit messages , it may not work in tight loops involving execCMD or
 # waiting for readLine() inputs.
 setControlCHook(handler)
+getcxTrueColorSet() # we just preload the cxTrueCol seq
+
 # this will reset any color changes in the terminal
 # so no need for this line in the calling prog
 system.addQuitProc(resetAttributes)

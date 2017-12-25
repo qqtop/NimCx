@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-09-30
+##     Latest      : 2017-12-25
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -706,7 +706,7 @@ proc showRandomCard*(xpos:int = centerX()) =
     print(getCard(),randCol(),xpos = xpos)
 
 
-proc showRuler* (xpos:int=0,xposE:int=0,ypos:int = 0,fgr:string = termwhite,bgr:string = termblack , vert:bool = false) =
+proc showRuler* (xpos:int=0,xposE:int=0,ypos:int = 0,fgr:string = termwhite,bgr:BackgroundColor = bgBlack, vert:bool = false) =
      ## ruler
      ##
      ## simple terminal ruler indicating dot x positions to give a feedback
@@ -1012,7 +1012,7 @@ proc showWanIp*() =
 
 # large font printing, numbers are implemented
 
-proc printBigNumber*(xnumber:string|int|int64,fgr:string = yellowgreen ,bgr:string = black,xpos:int = 1,fun:bool = false) =
+proc printBigNumber*(xnumber:string|int|int64,fgr:string = yellowgreen ,bgr:BackgroundColor = bgBlack,xpos:int = 1,fun:bool = false) =
     ## printBigNumber
     ##
     ## prints a string in big block font
@@ -1094,7 +1094,7 @@ proc printBigNumber*(xnumber:string|int|int64,fgr:string = yellowgreen ,bgr:stri
 
 
 
-proc printBigLetters*(aword:string,fgr:string = yellowgreen ,bgr:string = black,xpos:int = 1,k:int = 7,fun:bool = false) =
+proc printBigLetters*(aword:string,fgr:string = yellowgreen ,bgr:BackgroundColor = bgBlack,xpos:int = 1,k:int = 7,fun:bool = false) =
   ## printBigLetters
   ##
   ## prints big block letters in desired color at desired position
