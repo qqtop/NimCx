@@ -1023,7 +1023,6 @@ proc fmtx*[T](fmts:openarray[string],fstrings:varargs[T,`$`]):string =
          okresult = okresult & fmtengine(fmts[cc],fstrings[cc])
      result = okresult
 
-
      
      
 proc showRune*(s:string) : string  =
@@ -1100,7 +1099,9 @@ proc print*[T](astring:T,fgr:string = termwhite ,bgr:BackgroundColor ,xpos:int =
  
     ## ::
     ##   print
-    ## 
+    ##   
+    ##   use colornames like darkseagreen , salmon etc as foregroundcolors or use truecolor codes
+    ##   
     ##   uses standard terminal Backgroundcolor to cover all situations
     ##
     ##   basically similar to terminal.nim styledWriteLine with more functionality
@@ -1142,7 +1143,8 @@ proc print*[T](astring:T,fgr:string = termwhite ,bgr:BackgroundColor ,xpos:int =
     ##    # To achieve colored text with styleReverse try:
     ##    setBackgroundColor(bgRed)
     ##    print("The end never comes on time ! ",pastelBlue,styled = {styleReverse})
-    ##
+    ##    print("whats up with truecolors now ? ",cxTrueCol[34567],bgRed,xpos = 10styled={})
+    ##    echo()
     {.gcsafe.}:
         var npos = xpos
         
@@ -1203,7 +1205,7 @@ proc print2*[T](astring:T,fgr:string = termwhite ,xpos:int = 0,fitLine:bool = fa
     ## ::
     ##   print2
     ## 
-    ##   the old print routine with backgroundcolor set to black only
+    ##   the old print routine with backgroundcolor set to black only  , required by printfont proc
     ##
     ##   basically similar to terminal.nim styledWriteLine with more functionality
     ##   
@@ -1392,11 +1394,11 @@ proc printLn*[T](astring:T,fgr:string = termwhite , bgr:BackgroundColor,xpos:int
     ##     
     ##    -  all
     ##  
-    ##   Colornames supported for background color:
-    ##  
-    ##     - white,red,green,blue,yellow,cyan,magenta,black 
-    ##     - brightwhite,brightred,brightgreen,brightblue,brightyellow,
-    ##     - brightcyan,brightmagenta,brightblack
+    ##   Colornames supported for background color: BackGroundColors
+    ##   
+    ##   - use stleBrigh and styleReverse for variouse effects
+    ##   
+    ##   - if using truecolors from the cxTrueCol pool note the difference between odd and even numbers
     ##
     ## Examples
     ## 
@@ -5511,10 +5513,8 @@ proc doCxEnd*() =
         decho(8)
         printMadeWithNim()
         decho(8)
-        
-        #rainbow2(smm,centered = false,colorset = colorsPalette("pastel"))  # currently deprecated await rewrite
         print(innocent,truetomato)
-        for x in 0.. (tw - 2) div 5: print(innocent,randcol())
+        for x in 0..<(tw - 1) div runeLen(innocent) div 2: print(innocent,rndTrueCol())
         sleepy(0.15)
         curup(1)
   echo() 

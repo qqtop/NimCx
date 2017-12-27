@@ -1,9 +1,8 @@
 # NimCx   ![Image](https://camo.githubusercontent.com/b0224997019dec4e51d692c722ea9bee2818c837/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f6c6963656e73652f6d6173686170652f6170697374617475732e737667)   ![Image](https://raw.githubusercontent.com/yglukhov/nimble-tag/master/nimble.png)
 
 
-![Image](http://qqtop.github.io/nimcxfont.png?raw=true)
+![Image](http://qqtop.github.io/madewithnim2018.png?raw=true)
 
-![Image](http://qqtop.github.io/nimfbm.png?raw=true)
 
  NIMCX - Color and Utilities for the Linux Terminal
 --------------------------------------------------------
@@ -36,6 +35,8 @@ Installation :
 
 ```
 
+
+![Image](http://qqtop.github.io/nimfbm.png?raw=true)
 
 
 Example usage of print procs 
