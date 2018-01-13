@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-12-25
+##     Latest      : 2018-01-13
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -91,6 +91,8 @@
 ##                   
 ##                   moving constants to cxconsts.nim
 ##                   
+##                   improving cxtruecolor related procs .
+##                   
 ##     Latest      : changed time date related code to work with newest times.nim 
 ## 
 ##                   added more procs for truecolor support 
@@ -144,8 +146,8 @@ when defined(windows):
   {.hint    : "CX does not support Windows at this stage , you are on your own !".}
 
 when defined(posix):
-  {.hint    : "\x1b[38;2;154;205;50m \u2691  NimCx     :" &  "\x1b[38;2;255;215;0m Officially works on Linux only." & spaces(13) & "\x1b[38;2;154;205;50m \u2691".}
-  {.hint    : "\x1b[38;2;154;205;50m \u2691  Compiling :" &  "\x1b[38;2;255;100;0m Please wait , Nim will be right back ! \xE2\x9A\xAB" &  " " &  "\xE2\x9A\xAB" & spaces(2)  & "\x1b[38;2;154;205;50m \u2691" & spaces(1) .} 
+  {.hint    : "\x1b[38;2;154;205;50m \u2691  NimCx      :" &  "\x1b[38;2;255;215;0m Officially works on Linux only." & spaces(13) & "\x1b[38;2;154;205;50m \u2691".}
+  {.hint    : "\x1b[38;2;154;205;50m \u2691  Compiling  :" &  "\x1b[38;2;255;100;0m Please wait , Nim will be right back ! \xE2\x9A\xAB" &  " " &  "\xE2\x9A\xAB" & spaces(2)  & "\x1b[38;2;154;205;50m \u2691".} 
   {.hints: off.}   # turn on off as per requirement
   
   
@@ -249,14 +251,24 @@ proc  add*(co:ref Cxcounter) = inc co.value
 proc  dec*(co:ref Cxcounter) = dec co.value
 proc  reset*(co:ref CxCounter) = co.value = 0  
 
-var cxTrueCol* = newSeq[string]()           # a global for conveniently holding truecolor codes if used
-var colorNumber38* = 0  # used as a temp storage of a random truecolor number drawn from the 38 set
-var colorNumber48* = 1  # used as a temp storage of a random truecolor number drawn from the 48 set
+var cxTrueCol* = newSeq[string]()  # a global for conveniently holding truecolor codes if used
+var colorNumber38* = 0      # used as a temp storage of a random truecolor number drawn from the 38 set
+var colorNumber48* = 1      # used as a temp storage of a random truecolor number drawn from the 48 set
+
+   
+type 
+
+     CxLineType*  = enum
+         cxHorizontal = "horizontal"        # works ok
+         cxVertical   = "vertical"          # not yet implemented
+         
 
 type
      Cxline* {.inheritable.} = object       # a line type object startpos= = leftdot endpos == rightdor
         startpos*: int                      # xpos of the leftdot                 default 1
         endpos*  : int                      # xpos of the rightdot                default 2
+        toppos*  : int                      # ypos of top dot                     default 1
+        botpos*  : int                      # ypos of bottom dot                  default 1
         text*    : string                   # text                                default none
         textcolor* : string                 # text color                          default termwhite
         textstyle* : set[Style]             # text styled
@@ -268,11 +280,14 @@ type
         linechar*  : string                 # line char                           default efs2    # see cxconsts.nim
         dotleftcolor* : string              # color of left dot                   default yellow
         dotrightcolor*: string              # color of right dot                  default magenta
-        newline* : string                   # new line char                       default \L
+        linetype*  : CxLineType             # cxHorizontal,cxVertical,cxS         default cxHorizontal  
+        newline*   : string                 # new line char                       default \L
         
 proc newcxline*():Cxline =
         result.startpos = 1         
         result.endpos   = 2
+        result.toppos   = 1
+        result.botpos   = 1
         result.text     = ""
         result.textcolor = termwhite
         result.textstyle = {}
@@ -340,7 +355,7 @@ proc printLn*[T](astring:T,fgr:string = termwhite , bgr:BackgroundColor = bgBlac
 proc printBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) 
 proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) 
 proc printRainbow*(s : string,styled:set[Style] = {})     ## forward declaration
-proc hline*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-")   ## forward declaration
+proc hline*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-") : string  ## forward declaration
 proc hlineLn*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-") ## forward declaration
 proc spellInteger*(n: int64): string                        ## forward declaration
 proc splitty*(txt:string,sep:string):seq[string]          ## forward declaration
@@ -427,25 +442,32 @@ proc cxtoLower*(c: char): char = # {.inline.}=
 # experimental truecolors    
 # current setup appends 38 and 48 colors into a seq
 
-proc cxTrueColorSet(max:int = 888 , step: int = 12):seq[string] =
+proc cxTrueColorSet(min:int = 0 ,max:int = 888 , step: int = 12,flag48:bool = false):seq[string] =
    ## cxTrueColorSet
    ## 
    ## generates a seq with truecolors  
    ## defaults are reasonable 843750 colors to choose from 
    ## 
    ## the colors are stored as numbers with odd for 38 types and even for 48 types
-   ## 
+   ## 38 types refers to: "\x1b[38;2;....m"
+   ## 48 types refers to: "\x1b[48;2;....m"
+   ## colors, the main difference currently is that 48 types write in color on
+   ## reversed background color , overall it seems best and fastest to use 38 types only
+   ## with styleReverse , but font color for any text will be in one color only.
+   ## so depending on what the desired outcome is  a little experimentation
+   ## will be needed for the right combination. 
    ## 
    result = @[]
-   for r in countup(0,max,step):
-     for b in countup(0,max,step):
-       for g in countup(0,max,step):
+   for r in countup(min,max,step):
+     for b in countup(min,max,step):
+       for g in countup(min,max,step):
           var rbx = "$1;$2;$3m" % [$r,$b,$g]
           result.add("\x1b[38;2;" & rbx)
-          result.add("\x1b[48;2;" & rbx) 
+          if flag48 == true:
+            result.add("\x1b[48;2;" & rbx) 
           
           
-proc getCxTrueColorSet*(max:int = 888,step:int = 12):bool {.discardable.} =
+proc getCxTrueColorSet*(min:int = 0,max:int = 888,step:int = 12,flag48:bool = false):bool {.discardable.} =
      ## getcxTrueColorSet
      ## 
      ## this function fill the global cxTruCol seq with  truecolor values
@@ -455,9 +477,9 @@ proc getCxTrueColorSet*(max:int = 888,step:int = 12):bool {.discardable.} =
      result = false
      if checktruecolorsupport() == true:
            {.hints: on.}
-           {.hint    : "\x1b[38;2;154;205;50m \u2691  Processing " & "\x1b[38;2;255;100;0m getCxTrueColorset ! \xE2\x9A\xAB" &  " " &  "\xE2\x9A\xAB" & spaces(2)  & "\x1b[38;2;154;205;50m \u2691" & spaces(1) .} 
+           {.hint    : "\x1b[38;2;154;205;50m \u2691  Processing :" & "\x1b[38;2;255;100;0m getCxTrueColorset ! \xE2\x9A\xAB" &  " " &  "\xE2\x9A\xAB" & spaces(2)  & "\x1b[38;2;154;205;50m \u2691" & spaces(1) .} 
            {.hints: off.}
-           cxTrueCol = cxTrueColorSet(max,step) 
+           cxTrueCol = cxTrueColorSet(min,max,step) 
            result = true
      else:
           result = false
@@ -1464,7 +1486,7 @@ proc rainbow*[T](s : T,xpos:int = 1,fitLine:bool = false,centered:bool = false) 
 
 
 # output  horizontal lines
-proc hline*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-") =
+proc hline*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-"):string {.discardable.} =
      ## hline
      ##
      ## draw a full line in stated length and color no linefeed will be issued
@@ -1475,10 +1497,10 @@ proc hline*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-") =
      ##    hline(30,green,xpos=xpos)
      ##
      print(lt * n,col,xpos = xpos)
+     result = lt * n     # new we return the line string without color and pos formating in case needed
 
 
-
-proc hlineLn*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-") =
+proc hlineLn*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-") {.discardable.} =
      ## hlineLn
      ##
      ## draw a full line in stated length and color a linefeed will be issued
@@ -1488,7 +1510,7 @@ proc hlineLn*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-") =
      ##.. code-block:: nim
      ##    hlineLn(30,green)
      ##
-     hline(n,col,xpos,lt)
+     discard hline(n,col,xpos,lt)
      echo()
 
 
@@ -1841,23 +1863,51 @@ proc cechoLn*(col:string,astring: varargs[string, `$`] = @[""] )  =
 proc printCxLine*(aline:var Cxline) =
      ## printCxLine
      ## 
-     ## prints a horizontal line for frames with text as specified in an Cxline object
+     ## prints a horizontal or vertical line for frames with text as specified in an Cxline object
      ## see cxlineobjectE1.nim for an example
      ## 
-     var xpos = aline.startpos
-     var rdotpos = xpos   # this will become the end position
-     aline.endpos = aline.startpos + aline.endpos
-     print(".",aline.dotleftcolor,xpos = aline.startpos)
-     rdotpos = rdotpos + 1
-     hline(aline.endpos - aline.startpos - 1,aline.linecolor,xpos = xpos + 1,lt = aline.linechar)  
-     rdotpos = rdotpos + aline.endpos - aline.startpos
-     print(aline.textbracketopen,aline.textbracketcolor,xpos = xpos + aline.textpos)  
-     rdotpos = rdotpos + 1
-     print(aline.text,aline.textcolor,styled=aline.textstyle)
-     print(aline.textbracketclose,aline.textbracketcolor)
-     rdotpos = rdotpos + 1
-     print("." & aline.newline,aline.dotrightcolor,xpos = rdotpos - 3)
-                    
+     
+     case aline.linetype 
+       of cxVertical :
+#             # not ok yet  difficult to implement due to pos and terminal height considerations
+#             # needs to be rethought , maybe create the line horizontal and then print
+#             # in required colors vertically or something
+#             # 
+#             var xpos = aline.startpos
+#             var rdotpos = xpos   # this will become the end position if 
+#             aline.endpos = aline.startpos + aline.endpos
+#              # maybe we should prebuild as horizontal line and then just print downwards
+#             var vline = "." # top dot
+#             vline = hline(aline.endpos - aline.startpos - 1,lt = aline.linechar)
+#             vline = vline & "."
+#             # at this point we have a line but no text , so we need to find a better way to 
+#             # add text into the line within the top/bottom vals and later print it in desired colors
+#             # from startpos down to bottom pos
+              discard
+                               
+       of cxHorizontal :
+            # ok
+            var xpos = aline.startpos
+            var rdotpos = xpos   # this will become the end position if 
+            aline.endpos = aline.startpos + aline.endpos
+            print(".",aline.dotleftcolor,xpos = aline.startpos)
+            rdotpos = rdotpos + 1
+            discard hline(aline.endpos - aline.startpos - 1,aline.linecolor,xpos = xpos + 1,lt = aline.linechar)  
+            rdotpos = rdotpos + aline.endpos - aline.startpos
+            print(aline.textbracketopen,aline.textbracketcolor,xpos = xpos + aline.textpos)  
+            rdotpos = rdotpos + 1
+            print(aline.text,aline.textcolor,styled=aline.textstyle)
+            print(aline.textbracketclose,aline.textbracketcolor)
+            rdotpos = rdotpos + 1
+            print("." & aline.newline,aline.dotrightcolor,xpos = rdotpos - 3)
+            
+               
+       else:
+       
+           printLnBiCol("Error  : Wrong linetype specified ",red,black,":",xpos = 3,false,{})
+           quit(1)
+      
+      
       
       
 proc showColors*() =
@@ -5384,7 +5434,7 @@ proc showCxTrueColorPalette*(max:int = 888,step: int = 12) =
       # controll the size of our truecolor cache 
       # default max 888, increase by too much we may have memory issues
       # defaul step 12 , decrease by too much we may have memory issues  tested with steps 4 - 16 ,
-      # lower steps longer compile time 
+      # smaller steps need longer compile time 
       
       let cxtlen = $cxTruecol.len
       var testLine = newcxline()
@@ -5393,18 +5443,22 @@ proc showCxTrueColorPalette*(max:int = 888,step: int = 12) =
             var bcol  = color38(cxTrueCol)
             var dlcol = color38(cxTrueCol)
             var drcol = color38(cxTrueCol)
-            testLine.startpos = 10  #getRndInt(3,50)
+            var fm = getMaxMem()
+            testLine.startpos = 5  
             testLine.endpos = 100
             testLine.linecolor        = cxTrueCol[lcol]
             testLine.textbracketcolor = cxTrueCol[bcol]
             testLine.dotleftcolor     = cxTrueCol[dlcol]
             testLine.dotrightcolor    = cxTrueCol[drcol]
             testLine.textpos = 8
-            testLine.text = fmtx(["<15","<14",">8",""], "ABCDEFG 12345","cxTruecolor : " ,$lcol," of " & cxtlen & spaces(1))
+            testLine.text = fmtx(["<20","<14",">8",""], "Occ Mem: $1 " % $fm  ,"cxTruecolor : " ,$lcol," of " & cxtlen & spaces(1))
             testLine.textcolor = cxTrueCol[lcol]  # change this to tcol to have text in a random truecolor
             testLine.textstyle = {styleReverse}
             testLine.newline = "\L"                  # need a new line character here or we overwrite 
             printcxline(testLine)
+            if fm < 2000000:
+               break
+            
       printLnBiCol("Palette length : " & ff2(cxTruecol.len),colLeft = truetomato,colRight = lime)   
       
 
@@ -5527,7 +5581,7 @@ decho(2)
 # automatic exit messages , it may not work in tight loops involving execCMD or
 # waiting for readLine() inputs.
 setControlCHook(handler)
-getcxTrueColorSet() # we just preload the cxTrueCol seq
+getcxTrueColorSet() # we just preload the cxTrueCol seq in default mode
 
 # this will reset any color changes in the terminal
 # so no need for this line in the calling prog
