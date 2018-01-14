@@ -5504,7 +5504,6 @@ proc showCxTrueColorPalette*(max:int = 888,step: int = 12) =
             var bcol  = color38(cxTrueCol)
             var dlcol = color38(cxTrueCol)
             var drcol = color38(cxTrueCol)
-            var fm = getMaxMem()
             testLine.startpos = 5  
             testLine.endpos = 100
             testLine.linecolor        = cxTrueCol[lcol]
@@ -5512,15 +5511,13 @@ proc showCxTrueColorPalette*(max:int = 888,step: int = 12) =
             testLine.dotleftcolor     = cxTrueCol[dlcol]
             testLine.dotrightcolor    = cxTrueCol[drcol]
             testLine.textpos = 8
-            testLine.text = fmtx(["<20","<14",">8",""], "Occ Mem: $1 " % $fm  ,"cxTruecolor : " ,$lcol," of " & cxtlen & spaces(1))
+            testLine.text = fmtx(["<20","<14",">8",""], "Testing" ,"cxTruecolor : " ,$lcol," of " & cxtlen & spaces(1))
             testLine.textcolor = cxTrueCol[lcol]  # change this to tcol to have text in a random truecolor
             testLine.textstyle = {styleReverse}
             testLine.newline = "\L"                  # need a new line character here or we overwrite 
             printcxline(testLine)
-            if fm < 2000000:
-               break
-            
-      printLnBiCol("Palette length : " & ff2(cxTruecol.len),colLeft = truetomato,colRight = lime)   
+                       
+      printLnBiCol("\n    Palette Entries : " & ff2(cxTruecol.len),colLeft = truetomato,colRight = lime)   
       
 
 # code below borrowed from distros.nim  and made exportable 
