@@ -849,7 +849,7 @@ proc newWordCJK*(minwl:int = 3 ,maxwl:int = 10):string =
       result = ""
       let c5 = toSeq(minwl..maxwl)
       let chc = toSeq(parsehexint("3400")..parsehexint("4DB5"))
-      for xx in 0..<random(c5): result = result & $Rune(random(chc))
+      for xx in 0..<rand(c5): result = result & $Rune(rand(chc))
 
 
 
@@ -869,7 +869,7 @@ proc newWord*(minwl:int=3,maxwl:int = 10):string =
         # words with length range 3 to maxwl
         let maxws = toSeq(minwl..maxwl)
         # get a random length for a new word
-        let nwl = random(maxws)
+        let nwl = rand(maxws)
         let chc = toSeq(33..126)
         while nw.len < nwl:
           var x = rand(chc)
@@ -897,7 +897,7 @@ proc newWord2*(minwl:int=3,maxwl:int = 10 ):string =
         # words with length range 3 to maxwl
         let maxws = toSeq(minwl..maxwl)
         # get a random length for a new word
-        let nwl = random(maxws)
+        let nwl = rand(maxws)
         let chc = toSeq(33..126)
         while nw.len < nwl:
           var x = rand(chc)
@@ -929,7 +929,7 @@ proc newWord3*(minwl:int=3,maxwl:int = 10 ,nflag:bool = true):string =
         let nwl = rand(maxws)
         let chc = toSeq(33..126)
         while nw.len < nwl:
-          var x = random(chc)
+          var x = rand(chc)
           if char(x) in AllChars:
               nw = nw & $char(x)
         if nflag == true:
@@ -954,7 +954,7 @@ proc newHiragana*(minwl:int=3,maxwl:int = 10 ):string =
     if minwl <= maxwl:
         result = ""
         var rhig = toSeq(12353..12436)  
-        var zz = random(toSeq(minwl..maxwl))
+        var zz = rand(toSeq(minwl..maxwl))
         while result.len < zz:
               var hig = rand(rhig)  
               result = result & $Rune(hig)
@@ -976,8 +976,8 @@ proc newKatakana*(minwl:int=3,maxwl:int = 10 ):string =
     ##
     if minwl <= maxwl:
         result  = ""
-        while result.len < random(toSeq(minwl..maxwl)):
-              result = result & $Rune(random(toSeq(parsehexint("30A0")..parsehexint("30FF"))))
+        while result.len < rand(toSeq(minwl..maxwl)):
+              result = result & $Rune(rand(toSeq(parsehexint("30A0")..parsehexint("30FF"))))
        
     else:
          cechoLn(red,"Error : minimum word length larger than maximum word length")

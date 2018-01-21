@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-01-14
+##     Latest      : 2018-01-21
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -100,21 +100,20 @@
 ##
 ##     Funding     : Here are the options :
 ##     
-##                   You are happy             ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
+##                   You are happy              ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
 ##                   
-##                   You are not happy         ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
+##                   You are not happy          ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
 ##                 
-##                   You are in any other mood ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
+##                   You are in any other state ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
 ##                                       
 ##                   
-##                   
-                 
+##                        
 
 import times,random,cxconsts,os,strutils,strformat,parseutils, parseopt, hashes, tables, sets, strmisc
 import osproc,macros,posix,terminal,math,stats,json,streams,options,memfiles
 import sequtils,httpclient,rawsockets,browsers,intsets, algorithm,stats
 import unicode ,typeinfo, typetraits ,cpuinfo,colors,encodings,distros
-export times,strutils,strformat,sequtils,unicode,streams,hashes,terminal,cxconsts,random
+export times,strutils,strformat,sequtils,unicode,streams,hashes,terminal,colors,cxconsts,random
 export options,json,httpclient,stats
 
 
@@ -194,7 +193,7 @@ var benchmarkresults* =  newSeq[Benchmarkres]()
 
 
 type
-  CxTimer* =  object {.packed.}
+    CxTimer* =  object {.packed.}
       name* : string
       start*: float
       stop  : float
@@ -203,8 +202,10 @@ type
      
 # type used in for cxtimer
 type
-    #Cxtimerres* = tuple[tname:string,start:float,stop : float,lap:seq[float]]
-    Cxtimerres* = tuple[tname:string,start:float,stop : float,lap:seq[float]]
+    Cxtimerres* = tuple[tname:string,
+                        start:float,
+                        stop :float,
+                        lap  :seq[float]]
 
 # used to store all cxtimer results 
 var cxtimerresults* =  newSeq[Cxtimerres]() 
@@ -251,9 +252,11 @@ proc  add*(co:ref Cxcounter) = inc co.value
 proc  dec*(co:ref Cxcounter) = dec co.value
 proc  reset*(co:ref CxCounter) = co.value = 0  
 
+# support variables for cxTrueColor related routines
+# cxTrueColor allows unlimited , subject to system memory , generation of truecolors in nim 
 var cxTrueCol* = newSeq[string]()  # a global for conveniently holding truecolor codes if used
-var colorNumber38* = 0      # used as a temp storage of a random truecolor number drawn from the 38 set
-var colorNumber48* = 1      # used as a temp storage of a random truecolor number drawn from the 48 set
+var colorNumber38* = 0             # used as a temp storage of a random truecolor number drawn from the 38 set
+var colorNumber48* = 1             # used as a temp storage of a random truecolor number drawn from the 48 set
 
    
 type 
@@ -262,9 +265,9 @@ type
          cxHorizontal = "horizontal"        # works ok
          cxVertical   = "vertical"          # not yet implemented
          
-
+# cxLine is a line creation object with several properties
 type
-     Cxline* {.inheritable.} = object       # a line type object startpos= = leftdot endpos == rightdor
+     Cxline* {.inheritable.} = object       # a line type object startpos= = leftdot, endpos == rightdor
         startpos*: int                      # xpos of the leftdot                 default 1
         endpos*  : int                      # xpos of the rightdot                default 2
         toppos*  : int                      # ypos of top dot                     default 1
@@ -283,23 +286,27 @@ type
         linetype*  : CxLineType             # cxHorizontal,cxVertical,cxS         default cxHorizontal  
         newline*   : string                 # new line char                       default \L
         
-proc newcxline*():Cxline =
-        result.startpos = 1         
-        result.endpos   = 2
-        result.toppos   = 1
-        result.botpos   = 1
-        result.text     = ""
-        result.textcolor = termwhite
-        result.textstyle = {}
-        result.textpos  = 3
-        result.textbracketopen = "["
-        result.textbracketclose = "]"
-        result.textbracketcolor = dodgerblue
-        result.linecolor   = aqua
-        result.linechar = efs2
-        result.dotleftcolor = yellow
-        result.dotrightcolor = magenta
-        result.newline = "\L"
+proc newCxLine*():Cxline =
+     ## newCxLine 
+     ## 
+     ## creates a new cxLine object with some defaults , ready to be changed according to needs
+     ## 
+     result.startpos  = 1         
+     result.endpos    = 2
+     result.toppos    = 1
+     result.botpos    = 1
+     result.text      = ""
+     result.textcolor = termwhite
+     result.textstyle = {}
+     result.textpos   = 3
+     result.textbracketopen  = "["
+     result.textbracketclose = "]"
+     result.textbracketcolor = dodgerblue
+     result.linecolor     = aqua
+     result.linechar      = efs2
+     result.dotleftcolor  = yellow
+     result.dotrightcolor = magenta
+     result.newline       = "\L"
         
         
         
@@ -315,16 +322,16 @@ proc getTerminalWidth*() : int =
         ## 
        
         type WinSize = object
-          row, col, xpixel, ypixel: cushort
+            row, col, xpixel, ypixel: cushort
         const TIOCGWINSZ = 0x5413
         proc ioctl(fd: cint, request: culong, argp: pointer)
-          {.importc, header: "<sys/ioctl.h>".}
+             {.importc, header: "<sys/ioctl.h>".}
         var size: WinSize
         ioctl(0, TIOCGWINSZ, addr size)
         result = toTwInt(size.col)
 
 
-template tw* : int = getTerminalwidth() ## latest terminal width always available in tw
+template tw* : int = getTerminalwidth() ## tw , a global where latest terminal width is always available 
 
 proc getTerminalHeight*() : int =
         ## getTerminalHeight
@@ -333,16 +340,16 @@ proc getTerminalHeight*() : int =
         ##
 
         type WinSize = object
-          row, col, xpixel, ypixel: cushort
+            row, col, xpixel, ypixel: cushort
         const TIOCGWINSZ = 0x5413
         proc ioctl(fd: cint, request: culong, argp: pointer)
-          {.importc, header: "<sys/ioctl.h>".}
+            {.importc, header: "<sys/ioctl.h>".}
         var size: WinSize
         ioctl(0, TIOCGWINSZ, addr size)
         result = toTwInt(size.row)
 
 
-template th* : int = getTerminalheight() ## latest terminalheight always available in th
+template th* : int = getTerminalheight() ## th , a global where latest terminal height is always available 
 
 
 # forward declarations
@@ -355,9 +362,9 @@ proc printLn*[T](astring:T,fgr:string = termwhite , bgr:BackgroundColor = bgBlac
 proc printBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) 
 proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) 
 proc printRainbow*(s : string,styled:set[Style] = {})     ## forward declaration
-proc hline*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-") : string  ## forward declaration
-proc hlineLn*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-") ## forward declaration
-proc spellInteger*(n: int64): string                        ## forward declaration
+proc hline*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-") : string {.discardable.} ## forward declaration
+proc hlineLn*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-") : string {.discardable.}## forward declaration
+proc spellInteger*(n: int64): string                      ## forward declaration
 proc splitty*(txt:string,sep:string):seq[string]          ## forward declaration
 proc doFinish*()
 
@@ -373,9 +380,14 @@ proc rndSample*[T](asq:seq[T]):T =
      ## rndSample  
      ## returns one rand sample from a sequence
      randomize()
-     result = random(asq)     
+     result = rand(asq)     
      
 proc rndRGB*():auto = 
+   # rndRGB
+   # 
+   # returns a random RGB value from colors available in colorNames 
+   # see cxconsts.nim for available values
+   # 
    var cln = newSeq[int]()
    for x in 0..<colorNames.len: cln.add(x)
    let argb =  extractRgb(parsecolor(colorNames[rand(cln)][0]))   #rndsample
@@ -425,24 +437,31 @@ proc sampleSeq*[T](x: seq[T], a:int, b: int) : seq[T] =
 proc checkTrueColorSupport*(): bool  =
      # checkTrueColorSupport
      # 
-     # checks for truecolor support in a terminal 
+     # checks for truecolor support in a linux terminal 
+     # if supported the nim true colorcolors will be enabled
+     # allowing colors named in cxTrueColors be used in var. print commands
      # 
-     var tcs = $(getEnv("COLORTERM").toLowerAscii in ["truecolor", "24bit"])
-     if tcs == "true":  result = true
-     else            :  result = false
+     # 
+     result = false
+     if $(getEnv("COLORTERM").toLowerAscii in ["truecolor", "24bit"]) == "true":
+       enableTrueColors()
+       result = true
      
      
-proc cxtoLower*(c: char): char = # {.inline.}=
-  if c in {'A'..'Z'}:
-    result = chr(ord(c) + (ord('a') - ord('A')))
-  else:
-    result = c   
+     
+proc cxtoLower*(c: char): char = 
+     ## cxtoLower
+     ## 
+     ## same as toLowerAscii()
+     ## 
+     result = c
+     if c in {'A'..'Z'}: result = chr(ord(c) + (ord('a') - ord('A')))
+  
 
 
-# experimental truecolors    
-# current setup appends 38 and 48 colors into a seq
+# experimental truecolors support exceeding colors available from stdlib   
 
-proc cxTrueColorSet(min:int = 0 ,max:int = 888 , step: int = 12,flag48:bool = false):seq[string] =
+proc cxTrueColorSet(min:int = 0 ,max:int = 888 , step: int = 12,flag48:bool = false):seq[string] {.inline.} =
    ## cxTrueColorSet
    ## 
    ## generates a seq with truecolors  
@@ -454,32 +473,38 @@ proc cxTrueColorSet(min:int = 0 ,max:int = 888 , step: int = 12,flag48:bool = fa
    ## colors, the main difference currently is that 48 types write in color on
    ## reversed background color , overall it seems best and fastest to use 38 types only
    ## with styleReverse , but font color for any text will be in one color only.
-   ## so depending on what the desired outcome is  a little experimentation
-   ## will be needed for the right combination. 
+   ## so depending on what the desired outcome is a little experimentation
+   ## will be needed for the right combination, styleBright also works 
+   ## with certain truecolors now directly availabe in Nim stdlib the best usage
+   ## for extended truecolors is something like so 
+   ## 
+   ##.. code-block:: nim
+   ##     printLnTrue("Color me with truecolors ",fgr = rndcol(), bgr = "coldodgerblue") 
+   ## 
+   ## here there fgr color is drawn from colorNames and the background color from the cxTruecolor set
    ## 
    result = @[]
    for r in countup(min,max,step):
-     for b in countup(min,max,step):
+     for b in countdown(max,min,step):
        for g in countup(min,max,step):
-          var rbx = "$1;$2;$3m" % [$r,$b,$g]
+          let rbx = "$1;$2;$3m" % [$r,$b,$g]
           result.add("\x1b[38;2;" & rbx)
-          if flag48 == true:
-            result.add("\x1b[48;2;" & rbx) 
+          if flag48 == true: result.add("\x1b[48;2;" & rbx) 
           
           
 proc getCxTrueColorSet*(min:int = 0,max:int = 888,step:int = 12,flag48:bool = false):bool {.discardable.} =
      ## getcxTrueColorSet
      ## 
-     ## this function fill the global cxTruCol seq with  truecolor values
+     ## this function fills the global cxTruCol seq with  truecolor values
      ## and needs to be run once if true color functionality to be used
-     ## 
+     ## with other than default values
      ##  
      result = false
      if checktruecolorsupport() == true:
            {.hints: on.}
            {.hint    : "\x1b[38;2;154;205;50m \u2691  Processing :" & "\x1b[38;2;255;100;0m getCxTrueColorset ! \xE2\x9A\xAB" &  " " &  "\xE2\x9A\xAB" & spaces(2)  & "\x1b[38;2;154;205;50m \u2691" & spaces(1) .} 
            {.hints: off.}
-           cxTrueCol = cxTrueColorSet(min,max,step) 
+           cxTrueCol = cxTrueColorSet(min,max,step,flag48) 
            result = true
      else:
           result = false
@@ -505,7 +530,7 @@ proc color3848*(cxTrueCol:seq[string]) : int =
 proc rndTrueCol*() : auto = 
     ## rndTrueCol
     ## 
-    ## returns a random color from the truecolorset for use as 
+    ## returns a random color from the cxtruecolorset for use as 
     ## foregroundcolor in var. print functions
     ## 
     colornumber38 = color38(cxTrueCol)
@@ -514,7 +539,7 @@ proc rndTrueCol*() : auto =
 proc rndTrueCol2*() : auto = 
     ## rndTrueCol
     ## 
-    ## returns a random color from the truecolorset for use as 
+    ## returns a random color from the cxtruecolorset for use as 
     ## foregroundcolor in var. print functions
     ## 
     colornumber48 = color48(cxTrueCol)
@@ -549,10 +574,11 @@ template loopy2*(mi:int = 0,ma:int = 5,st:untyped) =
      ## loopy2
      ##
      ## the advanced version of loopy the simple for-loop template
-     ## which also injects the loop counter xloopy and loops over a block of code
-     ##
+     ## which also injects the loop counter xloopy if loopy2() was called with parameters
+     ## if called without parameters xloopy will not be injected .
+     ## 
      ##.. code-block:: nim
-     ##   loopy2(1,10):
+     ##   loopy2(1,10):2
      ##      printLnBiCol(xloopy , "  The house is in the back.",randcol(),randcol(),":",0,false,{})
      ##      printLn("Some integer : " , getRndInt())
      ##
@@ -1047,7 +1073,7 @@ proc fmtx*[T](fmts:openarray[string],fstrings:varargs[T,`$`]):string =
 
      
      
-proc showRune*(s:string) : string  =
+proc showRune*(s:string) : string {.discardable.} =
      ## showRune
      ## ::
      ##   utility proc to show a single unicode char given in hex representation
@@ -1062,6 +1088,8 @@ proc showRune*(s:string) : string  =
      ##
      ##
      result = $Rune(parseHexInt(s))
+     
+     
 
 
 proc unquote*(s:string):string =
@@ -1117,7 +1145,14 @@ proc checkColor*(colname: string): bool =
              result = true
      
 
-proc print*[T](astring:T,fgr:string = termwhite ,bgr:BackgroundColor ,xpos:int = 0,fitLine:bool = false ,centered:bool = false,styled : set[Style]= {},substr:string = "") =
+proc print*[T](astring :T,
+               fgr     : string     = termwhite,
+               bgr     : BackgroundColor,
+               xpos    : int        = 0,
+               fitLine : bool       = false,
+               centered: bool       = false,
+               styled  : set[Style] = {},
+               substr  : string     = "") =
  
     ## ::
     ##   print
@@ -1190,7 +1225,6 @@ proc print*[T](astring:T,fgr:string = termwhite ,bgr:BackgroundColor ,xpos:int =
 
         if styled != {}:
             var s = $astring
-                        
             if substr.len > 0:
                 var rx = s.split(substr)
                 for x in rx.low.. rx.high:
@@ -1221,8 +1255,101 @@ proc print*[T](astring:T,fgr:string = termwhite ,bgr:BackgroundColor ,xpos:int =
            setForeGroundColor(fgWhite)
            setBackGroundColor(bgBlack)
 
+proc cxPrint*[T](ss    :T,
+             fontcolor : string = "colWhite",
+             bgr       : string = black,
+             xpos      : int = 1,
+             styled    : set[Style] = {styleReverse})  =
+             
+      ## cxPrint
+      ## 
+      ## truecolor print function
+      ## 
+      ## see cxtruecolE1.nim  for example usage
+      ## 
+      ## Fontcolors can be drawn from cxColorNames , a seq specified in cxconsts.nim
+      ## Example to specify a fontcolor:
+      ## 
+      ##  a) a random color as string   :  fontcolor = cxcolornames[rndSample(txcol)][0]
+      ##  b) a random color as constant :  fontcolor = cxcolornames[rndSample(txcol)][1]
+      ##  c) directly named as string   :  fontcolor = "coldarkslategray"    # a color in cxColorNames string field
+      ##  d) directly named as const    :  fontcolor = coldarkslategray      # a color in cxColorNames constant field
+      ## 
+      ## Backgroundcolors can be drawn from cxTrueColor palette which is by default available with 421,875 colors
+      ## larger color palettes can be generated with getcxTrueColorSet() 
+      ## all palette colors in cxTrueColorSet can be shown with showCxTrueColorPalette()  
+      ## Backgroundcolors can also be drawn from the colorNames seq  specified in cxconsts.nim
+      ## 
+      ## Example to specify a Backgroundcolor :
+      ##  a) a random background color from cxtruecolor seq  :  bgr = rndtruecol2() 
+      ##  b) a color from the cxTrueColor seq                :  bgr = cxTrueCol[65451])
+      ##  c) a specified color from colorNames seq           :  bgr = darkgreen
+      
+      var s = $ss  
+   
+      for xbgr in  0..<txCol.len:
+          if cxcolornames[xbgr][0] == toLowerAscii(fontcolor):   # as we are doing styleReverse we set it as backgroundcolor 
+             setBackgroundColor cxcolornames[xbgr][1]
+              
+      print(s,fgr = bgr,xpos = xpos,styled=styled) 
+      
+proc cxPrintLn*[T](ss       : T,
+                   fontcolor: string = "colWhite",
+                   bgr      : string = black,
+                   xpos     : int = 1,
+                   styled   : set[Style] = {styleReverse}) =
+      ## cxPrintLn
+      ## 
+      ## truecolor printLn function
+      ##           
+      ## see cxtruecolE1.nim  for example usage
+      ## 
+      
+      let s = $ss
+      for xbgr in  0..<txCol.len:
+         if cxcolornames[xbgr][0] == toLowerAscii(fontcolor):
+            setBackgroundColor cxcolornames[xbgr][1]
+      printLn(s,fgr = bgr,xpos = xpos,styled=styled) 
+      
+ 
+proc cxPrint*[T](ss       : T,
+                 fontcolor: auto = colWhite,
+                 bgr      : string = black,
+                 xpos     : int = 1,
+                 styled   : set[Style] = {styleReverse}) =
+      ## cxPrint
+      ## 
+      ## truecolor print function
+      ##             
+      ## see cxtruecolE1.nim  for example usage
+      ## 
+      
+      let s = $ss
+      setBackgroundColor fontcolor
+      print(s,fgr = bgr,xpos = xpos,styled=styled)  
+      
+proc cxPrintLn*[T](ss       : T,
+                   fontcolor: auto = colWhite,
+                   bgr      : string = "colBlack",
+                   xpos     : int = 1,
+                   styled   : set[Style] = {styleReverse}) =
 
-proc print2*[T](astring:T,fgr:string = termwhite ,xpos:int = 0,fitLine:bool = false ,centered:bool = false,styled : set[Style]= {},substr:string = "") =
+      ## cxPrintLn
+      ## 
+      ## truecolor printLn function
+      ##     
+      ## see cxtruecolE1.nim  for example usage
+      ## 
+      
+      let s = $ss
+      setBackgroundColor fontcolor
+      printLn(s,fgr = bgr,xpos = xpos,styled=styled)  
+            
+           
+           
+           
+
+proc print2*[T](astring:T,fgr:string = termwhite,xpos:int = 0,fitLine:bool = false ,centered:bool = false,styled : set[Style]= {},substr:string = "") =
  
     ## ::
     ##   print2
@@ -1327,7 +1454,12 @@ proc print2*[T](astring:T,fgr:string = termwhite ,xpos:int = 0,fitLine:bool = fa
            
 
 
-proc print*[T](ss:varargs[T,`$`],fgr:string = termwhite , bgr:BackgroundColor = bgBlack, xpos:int = 0, sep:string = spaces(1)) =
+proc print*[T](ss:varargs[T,`$`],
+           fgr : string = termwhite ,
+           bgr : BackgroundColor = bgBlack,
+           xpos: int = 0,
+           sep : string = spaces(1)) =
+           
    ## print
    ## 
    ## a print routine which allows printing of varargs in desired color , position and separator
@@ -1355,7 +1487,13 @@ proc print*[T](ss:varargs[T,`$`],fgr:string = termwhite , bgr:BackgroundColor = 
       oldxlen =  oldxlen + ss[x].len + 1
                 
 
-proc printLn2*[T](astring:T,fgr:string = termwhite , xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {},substr:string = "") =  
+proc printLn2*[T](astring:T,
+              fgr     : string = termwhite,
+              xpos    : int = 0,
+              fitLine : bool = false,
+              centered: bool = false,
+              styled  : set[Style] = {},
+              substr  : string = "") =  
     ## 
     ## ::
     ##   printLn2
@@ -1396,7 +1534,7 @@ proc printLn2*[T](astring:T,fgr:string = termwhite , xpos:int = 0,fitLine:bool =
     ##        sleepy(0.5)
     ##
     print2($(astring) & "\L",fgr,xpos,fitLine,centered,styled,substr)
-   
+    
 
 proc printLn*[T](astring:T,fgr:string = termwhite , bgr:BackgroundColor,xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {},substr:string = "") =
     ## :: 
@@ -1500,7 +1638,7 @@ proc hline*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-"):string {
      result = lt * n     # new we return the line string without color and pos formating in case needed
 
 
-proc hlineLn*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-") {.discardable.} =
+proc hlineLn*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-"):string {.discardable.} =
      ## hlineLn
      ##
      ## draw a full line in stated length and color a linefeed will be issued
@@ -1510,8 +1648,8 @@ proc hlineLn*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-") {.disc
      ##.. code-block:: nim
      ##    hlineLn(30,green)
      ##
-     discard hline(n,col,xpos,lt)
-     echo()
+     result = hline(n,col,xpos,lt) & "/n"
+     
 
 
 
@@ -1892,7 +2030,7 @@ proc printCxLine*(aline:var Cxline) =
             aline.endpos = aline.startpos + aline.endpos
             print(".",aline.dotleftcolor,xpos = aline.startpos)
             rdotpos = rdotpos + 1
-            discard hline(aline.endpos - aline.startpos - 1,aline.linecolor,xpos = xpos + 1,lt = aline.linechar)  
+            hline(aline.endpos - aline.startpos - 1,aline.linecolor,xpos = xpos + 1,lt = aline.linechar)  
             rdotpos = rdotpos + aline.endpos - aline.startpos
             print(aline.textbracketopen,aline.textbracketcolor,xpos = xpos + aline.textpos)  
             rdotpos = rdotpos + 1
@@ -4037,26 +4175,26 @@ proc localTime*() : auto =
   result = now()
 
 
-proc toTimeInfo*(date:string = "2000-01-01"): DateTime =
-   ## toTimeInfo
+proc toDateTime*(date:string = "2000-01-01"): DateTime =
+   ## toDateTime
    ## 
-   ## converts a date of format yyyy-mm-dd to timeInfo
+   ## converts a date of format yyyy-mm-dd to DateTime
    ## 
    
    var adate = date.split("-")
-   var zyear = parseint(adate[0])
+   let zyear = parseint(adate[0])
    var enzmonth = parseint(adate[1])
    var zmonth : Month
    case enzmonth 
-      of  1: zmonth = mJan
-      of  2: zmonth = mFeb
-      of  3: zmonth = mMar
-      of  4: zmonth = mApr
-      of  5: zmonth = mMay
-      of  6: zmonth = mJun
-      of  7: zmonth = mJul 
-      of  8: zmonth = mAug 
-      of  9: zmonth = mSep 
+      of   1: zmonth = mJan
+      of   2: zmonth = mFeb
+      of   3: zmonth = mMar
+      of   4: zmonth = mApr
+      of   5: zmonth = mMay
+      of   6: zmonth = mJun
+      of   7: zmonth = mJul 
+      of   8: zmonth = mAug 
+      of   9: zmonth = mSep 
       of  10: zmonth = mOct 
       of  11: zmonth = mNov 
       of  12: zmonth = mDec 
@@ -4077,7 +4215,7 @@ proc epochSecs*(date:string="2000-01-01"):auto =
    ##
    ## converts a date into secs since unix time 0
    ##
-   result  =  toUnix(toTime(toTimeInfo(date)))
+   result  =  toUnix(toTime(toDateTime(date)))
 
   
 proc checkClip*(sel:string = "primary"):string  = 
@@ -5472,14 +5610,14 @@ proc doByeBye*() =
 
   
    
-proc showCxTrueColorPalette*(max:int = 888,step: int = 12) = 
+proc showCxTrueColorPalette*(max:int = 888,step: int = 12,flag48:bool = false) {.inline.} = 
    ## showCxTrueColorPalette
    ## 
    ## play with truecolors
    ## 
    ## shows truecolors ,in order not run out of memory adjust max and sep carefully 
    ## e.g max 888 step 4 needs abt 4.3 GB free and has  22,179,134 color shades to select from
-   ## default has 843,750 palette entries in cxTruecCol
+   ## default has 421,750 palette entries in cxTruecCol 
    ## 
    ## cxTrueCol is a initial empty global defined in cx.nim which will only be filled
    ## with a call to getCxTrueColorSet() ,also see there how the Palette is build up
@@ -5491,15 +5629,15 @@ proc showCxTrueColorPalette*(max:int = 888,step: int = 12) =
 
    var astep = step
    while max mod astep <> 0: astep = astep + 1
-   if getcxTrueColorSet(max = max,step = astep)  == true:
+   if getcxTrueColorSet(max = max,step = astep,flag48 = flag48) == true:
       # controll the size of our truecolor cache 
       # default max 888, increase by too much we may have memory issues
       # defaul step 12 , decrease by too much we may have memory issues  tested with steps 4 - 16 ,
       # smaller steps need longer compile time 
       
-      let cxtlen = $cxTruecol.len
+      let cxtlen = $(cxTruecol.len)
       var testLine = newcxline()
-      for lcol in countup(0,cxTruecol.len - 1,2): # not step size 2 so we only select 38 colors
+      for lcol in countup(0,cxTruecol.len - 1,2): # note step size 2 so we only select 38 type colors
             var tcol  = color38(cxTrueCol)
             var bcol  = color38(cxTrueCol)
             var dlcol = color38(cxTrueCol)
@@ -5516,7 +5654,8 @@ proc showCxTrueColorPalette*(max:int = 888,step: int = 12) =
             testLine.textstyle = {styleReverse}
             testLine.newline = "\L"                  # need a new line character here or we overwrite 
             printcxline(testLine)
-                       
+      
+      printLnBicol("\n    Note            : cxTrueColor Value can be used like so : cxTrueCol[value] ",colLeft = truetomato)
       printLnBiCol("\n    Palette Entries : " & ff2(cxTruecol.len),colLeft = truetomato,colRight = lime)   
       
 
@@ -5626,7 +5765,8 @@ proc doCxEnd*() =
         printMadeWithNim()
         decho(8)
         print(innocent,truetomato)
-        for x in 0..<(tw - 1) div runeLen(innocent) div 2: print(innocent,rndTrueCol())
+        for x in 0..<(tw - 3) div runeLen(innocent) div 2: print(innocent,rndTrueCol())
+        print(innocent,truetomato)
         sleepy(0.15)
         curup(1)
   echo() 
