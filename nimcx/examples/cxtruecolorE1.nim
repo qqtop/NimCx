@@ -96,7 +96,31 @@ proc playCxPrint() =
     cxPrint("Colored Font , Same Back     ", fontcolor = cxcolornames[rndSample(txcol)][0], bgr = darkslategray,xpos = 2)  
     cxPrint("Colored Font , Colored Back  ", fontcolor = cxcolornames[rndSample(txcol)][0], bgr = rndtruecol2(),xpos = 35) 
     cxPrintLn("Same Font  , Colored Back  Background Palette Length : $1 " % ff2(cxtrueCol.len) , fontcolor = "colcoral" , bgr = rndtruecol2(),xpos = 72)    
-
+  echo()
+  cxPrintln("All available Font Colors in cxColorNames",colWhite,darkSlategray)
+  echo()
+  for x in txcol:
+     cxPrintLn(fmtx(["<90"],"Font : $1 "% [cxcolornames[x][0]]),
+               fontcolor = cxcolornames[x][0],
+               bgr       = black,
+               xpos      = 1)
+     
+     # 
+     cxPrintLn(fmtx(["<60"],"Back0 : " & $402261 & " Palette Length : $1" % [ff2(cxtrueCol.len)]),
+               fontcolor = cxcolornames[x][0],
+               bgr       = cxTruecol[402260],
+               xpos      = 1)
+     for n in 1..24:   
+        # play with different m values and multiplication factors etc.   
+        var m = n * 76
+        cxPrintLn(fmtx(["<4","<10","<22","<33"],"Back" ,$n  , "cxTrueCol[" & $(402260 + m) & "]" , " Palette Length : $1" % [ff2(cxtrueCol.len)]),
+               fontcolor = cxcolornames[x][0],
+               bgr       = cxTruecol[402260 + m],
+               xpos      = 1)          
+     echo()          
+#      print cleareol
+#      echo()
+  
   echo()  
   # fontcolor ex the cxcolornames set
   # background color ex the colorNames set
@@ -146,26 +170,19 @@ proc playCxPrint() =
   echo()
   # 2 printtrue statements and a printlntrue
   printLn("Passing fontcolor as string")
-  cxPrint("Nice printTrue statement ",fontcolor = "colgoldenrod",bgr = darkslategray)
-  cxPrint(" Ok Ok, Nice printTrue statement ",fontcolor = "colyellowgreen",bgr = darkslategray,xpos = 30,styled = {stylereverse})
-  cxPrintLn("Nice printTrue statement",fontcolor = "colPink",bgr = darkblue,xpos = 65)
+  cxPrint("Nice cxPrint statement ",fontcolor = "colgoldenrod",bgr = darkslategray)
+  cxPrint(" Another , cxPrint statement ",fontcolor = "colyellowgreen",bgr = darkslategray,xpos = 30,styled = {stylereverse})
+  cxPrintLn(" cxPrintLn statement",fontcolor = "colPink",bgr = darkblue,xpos = 65)
   
   # experiment with cxPrintLn
   printLn("Passing fontcolor as const")
-  cxPrint("Nice printTrue statement ",fontcolor = colgoldenrod,bgr = darkslategray)
-  cxPrint(" Ok Ok, Nice printTrue statement ",fontcolor = colyellowgreen,bgr = darkslategray,xpos = 30,styled = {stylereverse})
-  cxPrintLn("Nice printTrue statement",fontcolor = colPink,bgr = darkblue,xpos = 65)
+  cxPrint("Nice cxPrint statement ",fontcolor = colgoldenrod,bgr = darkslategray)
+  cxPrint(" Another , cxPrint statement ",fontcolor = colyellowgreen,bgr = darkslategray,xpos = 30,styled = {stylereverse})
+  cxPrintLn(" cxPrintLn statement",fontcolor = colPink,bgr = darkblue,xpos = 65)
   
   decho(2)
-  cxPrintLn("----->  end of playPrintTrue",bgr = rndcol())      # this ok with default fontcolor colWhite and bgr drawn from colorNames
-  cxPrintLn("----->  end of playPrintTrue",fontcolor = colSalmon,bgr = cxTrueCol[65451]) # or  fontcolor from the cxcolornames set and bgr selected from cxTruecolorscxPrintLn("----->  end of playPrintTrue",bgr = "colgreen")  # this fails
-  # all random
-  loopy2(0,10):
-    
-    cxPrintLn("----->  end of playPrintTrue Loop : $1  Fontcolor from cxcolornames  Bgr from cxTrueCol  Palette Length : $2    " % [$xloopy,$cxtrueCol.len],fontcolor = cxcolornames[rand(cxcolornames.len - 1)][1],bgr = rndTrueCol())    # ex cxTrueCol
-    cxPrintLn("----->  end of playPrintTrue Loop : $1  Fontcolor from cxcolornames  Bgr from colornames pastelset" % $xloopy,fontcolor = cxcolornames[rand(cxcolornames.len - 1)][1],bgr = randpastelcol()) # ex colorNames
-    cxPrintLn("----->  end of playPrintTrue Loop : $1  Fontcolor from cxcolornames  Bgr from colornames pastelset" % $xloopy,fontcolor = cxcolornames[rand(cxcolornames.len - 1)][1],bgr = cxTrueCol[421874]) # ex colorNames
-    echo()
+  cxPrintLn("----->  end of playcxPrint",bgr = rndcol())      # this ok with default fontcolor colWhite and bgr drawn from colorNames
+  
 ############################################################################################################################### 
 
 # another demo fontcolornames and backgroundcolor values
@@ -177,14 +194,15 @@ proc playWildColors() =
         cxprintln("TESTING  FontColor = $1   Bgr Color = cxTrueCol[$2]"  % [cxColorNames[x][0],$bcolno],cxColorNames[x][0],cxTrueCol[bcolno])
 
 # select one or more items to play with  . Had enough ?  Ctrl-C
-playSpectrum()
+#playSpectrum()
 # decho(2)
 # playRGB(585,6765,951)
 # decho(2)
-# playCxPrint()
+playCxPrint()
 # decho(2)
 # showCxTrueColorPalette(step = 12)   # default step = 12  reduce for more colors increase for less step = 4 needs about 4GB free mem
 # decho(2)
 # playWildColors()
+
 
 doFinish()

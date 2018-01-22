@@ -95,7 +95,7 @@
 ##                   
 ##     Latest      : changed time date related code to work with newest times.nim 
 ## 
-##                   added more procs for truecolor support 
+##                   added more procs for truecolor support see cxPrint etc.
 ##                  
 ##
 ##     Funding     : Here are the options :
@@ -1853,7 +1853,14 @@ proc printBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:str
 
 
 
-proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) =
+proc printLnBiCol*[T](s:varargs[T,`$`],
+                   colLeft : string = yellowgreen,
+                   colRight: string = termwhite,
+                   sep     : string = ":",
+                   xpos    : int = 0,
+                   centered: bool = false,
+                   styled  : set[Style]= {}) =
+                   
      ## printLnBiCol
      ##
      ## changes to prev. versions:
@@ -1915,7 +1922,10 @@ proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:s
                         printLn(z[1],fgr = colRight,bgr = bgBlack,styled = styled)
 
 
-proc printHL*(s:string,substr:string,col:string = termwhite) =
+proc printHL*(s     : string,
+              substr: string,
+              col   : string = termwhite) =
+              
       ## printHL
       ##
       ## print and highlight all appearances of a substring 
@@ -1935,7 +1945,10 @@ proc printHL*(s:string,substr:string,col:string = termwhite) =
              print(substr,col)
 
 
-proc printLnHL*(s:string,substr:string,col:string = lightcyan) =
+proc printLnHL*(s      : string,
+                substr : string,
+                col    : string = lightcyan) =
+                
       ## printLnHL
       ##
       ## print and highlight all appearances of a char or substring of a string
@@ -1951,7 +1964,9 @@ proc printLnHL*(s:string,substr:string,col:string = lightcyan) =
       printHL($(s) & "\L",substr,col)
 
 
-proc cecho*(col:string,ggg: varargs[string, `$`] = @[""] )  =
+proc cecho*(col: string,
+            ggg: varargs[string, `$`] = @[""] )  =
+            
       ## cecho
       ##
       ## color echo w/o new line this also automically resets the color attribute
@@ -1974,7 +1989,9 @@ proc cecho*(col:string,ggg: varargs[string, `$`] = @[""] )  =
       write(stdout,termwhite)
 
 
-proc cechoLn*(col:string,astring: varargs[string, `$`] = @[""] )  =
+proc cechoLn*(col    : string,
+              astring: varargs[string, `$`] = @[""] )  =
+              
       ## cechoLn
       ##
       ## color echo with new line
@@ -2026,7 +2043,7 @@ proc printCxLine*(aline:var Cxline) =
        of cxHorizontal :
             # ok
             var xpos = aline.startpos
-            var rdotpos = xpos   # this will become the end position if 
+            var rdotpos = xpos   # this will become the end position 
             aline.endpos = aline.startpos + aline.endpos
             print(".",aline.dotleftcolor,xpos = aline.startpos)
             rdotpos = rdotpos + 1
