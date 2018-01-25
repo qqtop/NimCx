@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-01-21
+##     Latest      : 2018-01-25
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -91,7 +91,7 @@
 ##                   
 ##                   moving constants to cxconsts.nim
 ##                   
-##                   improving cxtruecolor related procs .
+##                   improving experimental cxtruecolor related procs .
 ##                   
 ##     Latest      : changed time date related code to work with newest times.nim 
 ## 
@@ -252,8 +252,9 @@ proc  add*(co:ref Cxcounter) = inc co.value
 proc  dec*(co:ref Cxcounter) = dec co.value
 proc  reset*(co:ref CxCounter) = co.value = 0  
 
-# support variables for cxTrueColor related routines
+# support variables for experimental cxTrueColor related routines
 # cxTrueColor allows unlimited , subject to system memory , generation of truecolors in nim 
+# see examples cxtruecolorE1.nim  for usage
 var cxTrueCol* = newSeq[string]()  # a global for conveniently holding truecolor codes if used
 var colorNumber38* = 0             # used as a temp storage of a random truecolor number drawn from the 38 set
 var colorNumber48* = 1             # used as a temp storage of a random truecolor number drawn from the 48 set
@@ -434,20 +435,18 @@ proc sampleSeq*[T](x: seq[T], a:int, b: int) : seq[T] =
      result =  x[a..b]
      
      
-proc checkTrueColorSupport*(): bool  =
+proc checkTrueColorSupport*(): bool  {.discardable.} =
      # checkTrueColorSupport
      # 
      # checks for truecolor support in a linux terminal 
-     # if supported the nim true colorcolors will be enabled
-     # allowing colors named in cxTrueColors be used in var. print commands
+     # if supported the nim truecolors will be enabled
      # 
-     # 
-     result = false
      if $(getEnv("COLORTERM").toLowerAscii in ["truecolor", "24bit"]) == "true":
-       enableTrueColors()
-       result = true
-     
-     
+          enableTrueColors()
+          result = true 
+     else:
+         printLnBiCol("[Note] : No trueColor support on this terminal/konsole")
+         result = false
      
 proc cxtoLower*(c: char): char = 
      ## cxtoLower
@@ -458,8 +457,12 @@ proc cxtoLower*(c: char): char =
      if c in {'A'..'Z'}: result = chr(ord(c) + (ord('a') - ord('A')))
   
 
-
-# experimental truecolors support exceeding colors available from stdlib   
+###########################################################################
+# experimental 
+# truecolors support exceeding colors available from stdlib   
+# the generated cxtruecolor numbers are only valid within the context of
+# the parameters set in cxTrueColorSet , a call with different params
+# will currently give different color numbers  
 
 proc cxTrueColorSet(min:int = 0 ,max:int = 888 , step: int = 12,flag48:bool = false):seq[string] {.inline.} =
    ## cxTrueColorSet
@@ -495,9 +498,10 @@ proc cxTrueColorSet(min:int = 0 ,max:int = 888 , step: int = 12,flag48:bool = fa
 proc getCxTrueColorSet*(min:int = 0,max:int = 888,step:int = 12,flag48:bool = false):bool {.discardable.} =
      ## getcxTrueColorSet
      ## 
-     ## this function fills the global cxTruCol seq with  truecolor values
-     ## and needs to be run once if true color functionality to be used
-     ## with other than default values
+     ## this function fills the global cxTrueCol seq with truecolor values
+     ## and needs to be run once if truecolor functionality exceeding stdlib support 
+     ## needs to be used 
+     ## this function is not called within cx.nim to keep size and memory needs low.
      ##  
      result = false
      if checktruecolorsupport() == true:
@@ -505,6 +509,7 @@ proc getCxTrueColorSet*(min:int = 0,max:int = 888,step:int = 12,flag48:bool = fa
            {.hint    : "\x1b[38;2;154;205;50m \u2691  Processing :" & "\x1b[38;2;255;100;0m getCxTrueColorset ! \xE2\x9A\xAB" &  " " &  "\xE2\x9A\xAB" & spaces(2)  & "\x1b[38;2;154;205;50m \u2691" & spaces(1) .} 
            {.hints: off.}
            cxTrueCol = cxTrueColorSet(min,max,step,flag48) 
+           #printLnBiCol("cxTrueCol Length : " & $cxtruecol.len)
            result = true
      else:
           result = false
@@ -535,6 +540,7 @@ proc rndTrueCol*() : auto =
     ## 
     colornumber38 = color38(cxTrueCol)
     result = cxTrueCol[colornumber38]
+   
 
 proc rndTrueCol2*() : auto = 
     ## rndTrueCol
@@ -547,7 +553,7 @@ proc rndTrueCol2*() : auto =
     
     
 #  end experimental truecolors     
- 
+#################################################################################################################### 
  
 proc stripper*(str:string): string =
   # stripper
@@ -1255,13 +1261,16 @@ proc print*[T](astring :T,
            setForeGroundColor(fgWhite)
            setBackGroundColor(bgBlack)
 
+           
 proc cxPrint*[T](ss    :T,
              fontcolor : string = "colWhite",
              bgr       : string = black,
              xpos      : int = 1,
              styled    : set[Style] = {styleReverse})  =
              
-      ## cxPrint
+      ## cxPrint     
+      ## 
+      ## Experimental
       ## 
       ## truecolor print function
       ## 
@@ -1275,15 +1284,17 @@ proc cxPrint*[T](ss    :T,
       ##  c) directly named as string   :  fontcolor = "coldarkslategray"    # a color in cxColorNames string field
       ##  d) directly named as const    :  fontcolor = coldarkslategray      # a color in cxColorNames constant field
       ## 
-      ## Backgroundcolors can be drawn from cxTrueColor palette which is by default available with 421,875 colors
+      ## Backgroundcolors can be drawn from cxTrueColor palette which can be enabled with a call
+      ## to getcxTrueColorSet() which generates 421,875 colors
       ## larger color palettes can be generated with getcxTrueColorSet() 
       ## all palette colors in cxTrueColorSet can be shown with showCxTrueColorPalette()  
       ## Backgroundcolors can also be drawn from the colorNames seq  specified in cxconsts.nim
       ## 
       ## Example to specify a Backgroundcolor :
-      ##  a) a random background color from cxtruecolor seq  :  bgr = rndtruecol2() 
-      ##  b) a color from the cxTrueColor seq                :  bgr = cxTrueCol[65451])
-      ##  c) a specified color from colorNames seq           :  bgr = darkgreen
+      ##  
+      ##  a) a random background color from cxTrueColor palette :  bgr = rndtruecol2() 
+      ##  b) a color from the cxTrueColor palette               :  bgr = cxTrueCol[65451])
+      ##  c) a specified color from colorNames seq              :  bgr = darkgreen
       
       var s = $ss  
    
@@ -1319,6 +1330,8 @@ proc cxPrint*[T](ss       : T,
                  styled   : set[Style] = {styleReverse}) =
       ## cxPrint
       ## 
+      ## Experimental
+      ## 
       ## truecolor print function
       ##             
       ## see cxtruecolE1.nim  for example usage
@@ -1335,6 +1348,9 @@ proc cxPrintLn*[T](ss       : T,
                    styled   : set[Style] = {styleReverse}) =
 
       ## cxPrintLn
+      ##
+      ## 
+      ## Experimental
       ## 
       ## truecolor printLn function
       ##     
@@ -1345,9 +1361,7 @@ proc cxPrintLn*[T](ss       : T,
       setBackgroundColor fontcolor
       printLn(s,fgr = bgr,xpos = xpos,styled=styled)  
             
-           
-           
-           
+       
 
 proc print2*[T](astring:T,fgr:string = termwhite,xpos:int = 0,fitLine:bool = false ,centered:bool = false,styled : set[Style]= {},substr:string = "") =
  
@@ -1556,7 +1570,7 @@ proc printLn*[T](astring:T,fgr:string = termwhite , bgr:BackgroundColor,xpos:int
     ##  
     ##   Colornames supported for background color: BackGroundColors
     ##   
-    ##   - use stleBrigh and styleReverse for variouse effects
+    ##   - use styleBright and styleReverse for variouse effects
     ##   
     ##   - if using truecolors from the cxTrueCol pool note the difference between odd and even numbers
     ##
@@ -4394,62 +4408,6 @@ proc apl*():seq[string] =
     for j in parsehexint("2300").. parsehexint("23FF"): adx.add($Rune(j))
     result = adx
 
-
-# 
-# proc rainbow2*[T](s : T,xpos:int = 1,fitLine:bool = false,centered:bool = false, colorset:seq[(string, string)] = colorNames) =
-#     ## rainbow2    deprecated needs to be rewritten
-#     ##
-#     ## multicolored string  based on colorsets  see pastelSet
-#     ##
-#     ## may not work with certain Rune
-#     ##
-#     ##.. code-block:: nim
-#     ##    rainbow2("what's up ?\n",centered = true,colorset = colorsPalette("green"))
-#     ##
-#     ##
-#     ##
-#     var nxpos = xpos
-#     let astr = $s
-#     var c = 0
-#     
-#     # in case the passed in set contains nothing , maybe a unsuitable filter was used then
-#     # we use the original full colorNames seq
-#     var okcolorset = colorset
-#     if okcolorset.len < 1:  okcolorset = colorNames
-#     
-#     let a = toSeq(0..<okcolorset.len)
-# 
-#     if astr in emojis or astr in hiragana() or astr in katakana() or astr in iching():
-#         c = a[getRndInt(ma=a.len)]
-#          
-#         if centered == false:
-#             print(astr,colorset[c][1],bgblack,xpos = nxpos,fitLine)
-# 
-#         else:
-#               # need to calc the center here and increment by x
-#               nxpos = centerX() - (astr).len div 2  - 1
-#               print(astr,okcolorset[c][1],bgblack,xpos=nxpos,fitLine)
-# 
-#         inc nxpos
-# 
-# 
-#     else :
-# 
-#           for x in 0..<astr.len:
-#             c = a[getRndInt(ma = a.len - 1)]
-#             
-#             if centered == false:
-#                 print(astr[x],okcolorset[c][1],bgblack,xpos = nxpos,fitLine)
-# 
-#             else:
-#                 # need to calc the center here and increment by x
-#                 nxpos = centerX() - ($astr).len div 2  + x - 1
-#                 print(astr[x],okcolorset[c][1],bgblack,xpos=nxpos,fitLine)
-# 
-#             inc nxpos
-# 
-
-
 proc getColorName*[T](sc:T):string = 
    ## getColorName
    ## 
@@ -4761,7 +4719,7 @@ proc showTerminalSize*() =
       ## height is always available via th
       ##
       ##
-      cechoLn(yellowgreen,"Terminal : " & lime & " W " & white & $tw & red & " x" & lime & " H " & white & $th)
+      cechoLn(yellowgreen,"[Terminal Size] " & lime & " W " & white & $tw & red & " x" & lime & " H " & white & $th)
 
 
 # Info and handlers procs for quick information
@@ -4833,7 +4791,7 @@ proc qqTop*() =
 # experimental font building  
 
 
-template cxZero*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cxZero*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
          let xpos = npos + 5
          printLn2(efb3 * 7,coltop,xpos = xpos)
@@ -4842,7 +4800,7 @@ template cxZero*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()
          printLn2(efb2 * 7,col,xpos = xpos)
          curup(6)         
           
-template cx1*(npos:int = 0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =    
+template cx1*(npos:int = 0,col:string=rndCol(),coltop:string = rndCol()) =    
        
           let xpos = npos+5
           printLn2(spaces(4) & efb3 * 2 ,coltop,xpos=xpos)
@@ -4854,7 +4812,7 @@ template cx1*(npos:int = 0,col:string=rndTrueCol(),coltop:string = rndTrueCol())
           curup(6) 
            
            
-template cx2*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cx2*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
          let xpos = npos + 5
          printLn2(spaces(2) & efb3 * 4 & spaces(4),coltop,xpos = xpos)
@@ -4868,7 +4826,7 @@ template cx2*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
         
            
             
-template cx3*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cx3*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
 
         let xpos = npos+5
         printLn2(spaces(1) & efb3 * 6,coltop,xpos=xpos)
@@ -4880,7 +4838,7 @@ template cx3*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
         curup(6)      
 
 
-template cx4*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cx4*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
         let xpos = npos+5
         printLn2(spaces(5) & efb3 * 1,coltop,xpos=xpos)
@@ -4893,7 +4851,7 @@ template cx4*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
             
            
               
-template cx5*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cx5*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
          let xpos = npos + 5
          printLn2(spaces(2) & efb3 * 5 & spaces(4),coltop,xpos = xpos)
@@ -4907,7 +4865,7 @@ template cx5*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
               
               
               
-template cx6*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cx6*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
          let xpos = npos + 5
          printLn2(spaces(2) & efb3 * 4 & spaces(4),coltop,xpos = xpos)
@@ -4920,7 +4878,7 @@ template cx6*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
               
      
               
-template cx7*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cx7*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
          let xpos = npos + 5
          printLn2(efb3 * 7,coltop,xpos = xpos)
@@ -4930,7 +4888,7 @@ template cx7*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
          curup(6)  
  
 
-template cx8*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cx8*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
          let xpos = npos + 5
          printLn2(spaces(2) & efb3 * 4 & spaces(4),coltop,xpos = xpos)
@@ -4944,7 +4902,7 @@ template cx8*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
  
  
  
-template cx9*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cx9*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
          let xpos = npos + 5
          printLn2(spaces(1) & efb3 * 6,coltop,xpos = xpos)
@@ -4956,13 +4914,13 @@ template cx9*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
  
  
  
-proc cx10*(npos:int = 0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
+proc cx10*(npos:int = 0,col:string=rndCol(),coltop:string = rndCol()) =
      cx1(npos,col,coltop)
      cxzero(npos + 9,col,coltop)
  
  
  
-template cxa*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cxa*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
         let xpos = npos + 5
         printLn2(spaces(4) & efb3 * 2 & spaces(3), coltop,xpos=xpos)
         printLn2(spaces(4) & efb2 * 2,col,xpos=xpos)
@@ -4973,7 +4931,7 @@ template cxa*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
         curup(6)
                       
             
-template cxb*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cxb*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
          let xpos = npos + 5
          printLn2(efb3 * 5, coltop,xpos=xpos)
@@ -4984,7 +4942,7 @@ template cxb*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
          printLn2(efb2 * 4 & spaces(1) & efb2,col,xpos=xpos)
          curup(6)
 
-template cxc*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cxc*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
 
         let xpos = npos+5
         printLn2(spaces(1) & efb3 * 6,coltop,xpos=xpos)
@@ -4996,7 +4954,7 @@ template cxc*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
         curup(6)
               
               
-template cxd*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cxd*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
          let xpos = npos + 5
          printLn2(efb3 * 5, coltop,xpos=xpos)
@@ -5009,7 +4967,7 @@ template cxd*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
 
          
   
-template cxe*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cxe*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
          let xpos = npos + 5
          printLn2(efb3 * 7, coltop,xpos=xpos)
@@ -5020,7 +4978,7 @@ template cxe*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
          printLn2(efb2 * 7, col,xpos=xpos)
          curup(6)  
  
-template cxf*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cxf*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
          let xpos = npos + 5
          printLn2(efb3 * 7, coltop,xpos=xpos)
@@ -5032,7 +4990,7 @@ template cxf*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
          curup(6)  
  
 
-template cxg*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cxg*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
 
         let xpos = npos+5
         printLn2(spaces(1) & efb3 * 6,coltop,xpos=xpos)
@@ -5043,7 +5001,7 @@ template cxg*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
         printLn2(spaces(1) & efb2 * 6,col,xpos=xpos)
         curup(6)
              
-template cxh*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
+template cxh*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
         let xpos = npos + 5
         printLn2(efb3 * 2 & spaces(4) & efb3 * 2, coltop,xpos=xpos)
         printLn2(efb2 * 2 & spaces(4) & efb2 * 2, col,xpos=xpos)
@@ -5053,7 +5011,7 @@ template cxh*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
         printLn2(efb2 * 2 & spaces(4) & efb2 * 2, col,xpos=xpos)
         curup(6)   
  
-template cxi*(npos:int = 0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =    
+template cxi*(npos:int = 0,col:string=rndCol(),coltop:string = rndCol()) =    
 
         loopy2(0,2):
            let xpos = xloopy+npos+7
@@ -5062,7 +5020,7 @@ template cxi*(npos:int = 0,col:string=rndTrueCol(),coltop:string = rndTrueCol())
            curup(6)
            
              
-template cxj*(npos:int = 0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =    
+template cxj*(npos:int = 0,col:string=rndCol(),coltop:string = rndCol()) =    
 
         loopy2(0,2):
            let xpos = xloopy+npos+5
@@ -5074,7 +5032,7 @@ template cxj*(npos:int = 0,col:string=rndTrueCol(),coltop:string = rndTrueCol())
            
            
            
-template cxk*(npos:int = 0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =    
+template cxk*(npos:int = 0,col:string=rndCol(),coltop:string = rndCol()) =    
        
            let xpos = npos+5
            printLn2(efb3 * 2 & spaces(4) & efb3 * 2,coltop,xpos=xpos)
@@ -5085,7 +5043,7 @@ template cxk*(npos:int = 0,col:string=rndTrueCol(),coltop:string = rndTrueCol())
            printLn2(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
            curup(6)          
          
-template cxl*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cxl*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
          let xpos = npos + 5
          printLn2(efb3 * 2, coltop,xpos=xpos)
@@ -5096,7 +5054,7 @@ template cxl*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
          printLn2(efb2 * 7, col,xpos=xpos)
          curup(6)
               
-template cxm*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
+template cxm*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
         let xpos = npos + 5
         printLn2(efb3 * 2 & spaces(5) & efb3 * 2, coltop,xpos=xpos)
         printLn2(efb2 * 2 & efs2 & spaces(3) & efs2 & efb2 * 2, col,xpos=xpos)
@@ -5106,7 +5064,7 @@ template cxm*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
         printLn2(efb2 * 2 & spaces(5) & efb2 * 2, col,xpos=xpos)
         curup(6) 
         
-template cxn*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
+template cxn*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
         let xpos = npos + 5
         printLn2(efb3 * 2 & spaces(4) & efb3 * 2, coltop,xpos=xpos)
         printLn2(efb2 * 2 & efs2 & spaces(3) & efb2 * 2, col,xpos=xpos)
@@ -5116,7 +5074,7 @@ template cxn*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
         printLn2(efb2 * 2 & spaces(4) & efb2 * 2, col,xpos=xpos)
         curup(6)  
  
-template cxo*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cxo*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
          let xpos = npos + 5
          printLn2(spaces(2) & efb3 * 4, coltop,xpos=xpos)
@@ -5127,7 +5085,7 @@ template cxo*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
          printLn2(spaces(2) & efb2 * 3 & efb2,col,xpos=xpos)
          curup(6) 
           
-template cxp*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cxp*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
          let xpos = npos + 5
          printLn2(efb3 * 5, coltop,xpos=xpos)
@@ -5140,7 +5098,7 @@ template cxp*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
    
        
  
-template cxq*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cxq*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
          let xpos = npos + 5
          printLn2(spaces(2) & efb3 * 4, coltop,xpos=xpos)
@@ -5151,7 +5109,7 @@ template cxq*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
          printLn2(spaces(2) & efb2 * 3 & efb2 & "\\",col,xpos=xpos)
          curup(6) 
 
-template cxr*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cxr*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
          let xpos = npos + 5
          printLn2(efb3 * 5, coltop,xpos=xpos)
@@ -5162,7 +5120,7 @@ template cxr*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
          printLn2(efb2 * 2 & spaces(3) & efb2 * 2,col,xpos=xpos)
          curup(6)
  
-template cxs*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cxs*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
          let xpos = npos + 5
          printLn2(spaces(3) & efb3 * 5, coltop,xpos=xpos)
@@ -5174,7 +5132,7 @@ template cxs*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
          curup(6)  
   
  
-template cxt*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cxt*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
          let xpos = npos + 5
          printLn2(efb3 * 8, coltop,xpos=xpos)
@@ -5184,7 +5142,7 @@ template cxt*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
          
             
          
-template cxu*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cxu*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
          let xpos = npos + 5
          printLn2(efb3 * 2 & spaces(4) & efb3 * 2,coltop,xpos=xpos)
@@ -5197,7 +5155,7 @@ template cxu*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
          
 
          
-template cxv*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cxv*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
          let xpos = npos + 5
          printLn2(efb3 * 2 & spaces(4) & efb3 * 2,coltop,xpos=xpos)
@@ -5209,7 +5167,7 @@ template cxv*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
          curup(6)          
          
          
-template cxw*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
+template cxw*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
         let xpos = npos + 5
         printLn2(efb3 * 2 & spaces(5) & efb3 * 2, coltop,xpos=xpos)
         printLn2(efb2 * 2 & spaces(5) & efb2 * 2, col,xpos=xpos)
@@ -5220,20 +5178,20 @@ template cxw*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
         curup(6)          
  
               
-template cxx*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cxx*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
         let xpos = npos+5
         printLn2(spaces(1) & efb3 * 2 & spaces(3) & efb3 * 2 & spaces(1) ,coltop,xpos=xpos)
         printLn2(spaces(1) & efb2 * 2 & spaces(3) & efb2 * 2 & spaces(1) ,col,xpos=xpos)
         printLn2(spaces(2) & efs2 * 2 & spaces(1) & efs2 * 2 & spaces(2) ,col,xpos=xpos)
         printLn2(spaces(4) & efl1 * 2 & spaces(4),col,xpos=xpos)
         printLn2(spaces(2) & efs2 * 2 & spaces(1) & efs2 * 2 & spaces(2) ,col,xpos=xpos)
-        printLn2(spaces(1) & efb2 * 2 & spaces(3) & efb2 * 2 & spaces(1),col,xpos=xpos)
+        printLn2(spaces(1) & efb2 * 2 & spaces(3) & efb2 * 2 & spaces(1) ,col,xpos=xpos)
         curup(6)
 
             
             
                    
-template cxy*(npos:int=0,col: string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cxy*(npos:int=0,col: string=rndCol(),coltop:string = rndCol()) = 
         let xpos = npos + 5
         printLn2(spaces(1) & efb3 * 2 & spaces(3) & efb3 * 2, coltop,xpos=xpos)
         printLn2(spaces(1) & efb2 * 2 & spaces(3) & efb2 * 2,col,xpos=xpos)
@@ -5245,7 +5203,7 @@ template cxy*(npos:int=0,col: string=rndTrueCol(),coltop:string = rndTrueCol()) 
              
 
  
-template cxz*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) = 
+template cxz*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
          let xpos = npos + 5
          printLn2(efb3 * 8, coltop,xpos=xpos)
@@ -5258,7 +5216,7 @@ template cxz*(npos:int=0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =
  
  
  
-template cxpoint*(npos:int = 0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =    
+template cxpoint*(npos:int = 0,col:string=rndCol(),coltop:string = rndCol()) =    
        
            let xpos = npos+5
            printLn2(efb3 * 0 ,coltop,xpos=xpos)
@@ -5271,7 +5229,7 @@ template cxpoint*(npos:int = 0,col:string=rndTrueCol(),coltop:string = rndTrueCo
  
  
  
-template cxhyphen*(npos:int = 0,col:string=rndTrueCol(),coltop:string = rndTrueCol()) =    
+template cxhyphen*(npos:int = 0,col:string=rndCol(),coltop:string = rndCol()) =    
        
            let xpos = npos+5
            printLn2(efb3 * 0 ,coltop,xpos=xpos)
@@ -5282,7 +5240,7 @@ template cxhyphen*(npos:int = 0,col:string=rndTrueCol(),coltop:string = rndTrueC
            printLn2(efb2 * 0 ,col,xpos=xpos)
            curup(6)    
        
-template cxgrid*(npos:int = 0,col:string=rndTrueCol(),coltop:string = lime) =    
+template cxgrid*(npos:int = 0,col:string=rndCol(),coltop:string = lime) =    
            # for testing purpose
            let xpos = npos+5
            let xwd  = 9
@@ -5291,11 +5249,11 @@ template cxgrid*(npos:int = 0,col:string=rndTrueCol(),coltop:string = lime) =
            echo()
            loopy2(0,5):
                loopy2(0,xwd) :
-                  print(efb2 ,randcol2(col),xpos=xpos + xloopy)
+                  print(efb2 ,rndCol2(col),xpos=xpos + xloopy)
                echo()  
            curup(6)
  
-proc printFont*(s:string,col:string = rndTrueCol() ,coltop:string = rndTrueCol(), xpos:int = -10) = 
+proc printFont*(s:string,col:string = rndCol() ,coltop:string = rndCol(), xpos:int = -10) = 
      ## printFont
      ## 
      ## display experimental cxfont
@@ -5496,7 +5454,7 @@ proc printNimCx*(npos:int = tw div 2 - 30) =
         cxn(xpos,dodgerblue,coltop=gold)
         cxi(xpos+10,truetomato,coltop=gold)
         cxm(xpos+17,gold,coltop=gold)
-        let colc = randcol2("light")
+        let colc = randCol2("light")
         cxc(xpos+29, colc,coltop=red)
         cxx(xpos+38,coltop=red) 
         echo()
@@ -5509,15 +5467,15 @@ proc printMadeWithNim*(npos:int = tw div 2 - 60) =
         ## 
         echo()
         var xpos = npos
-        cxm(xpos,rndTrueCol(),coltop=red)
-        cxa(xpos + 10,rndTrueCol(),coltop=red)
-        cxd(xpos + 21,rndTrueCol(),coltop=red)
-        cxe(xpos + 30,rndTrueCol(),coltop=red)
+        cxm(xpos     ,rndCol(),coltop=red)
+        cxa(xpos + 10,rndCol(),coltop=red)
+        cxd(xpos + 21,rndCol(),coltop=red)
+        cxe(xpos + 30,rndCol(),coltop=red)
         
-        cxw(xpos + 42,rndTrueCol(),coltop=red)
-        cxi(xpos + 52,rndTrueCol(),coltop=red)
-        cxt(xpos + 58,rndTrueCol(),coltop=red)
-        cxh(xpos + 68,rndTrueCol(),coltop=red)
+        cxw(xpos + 42,rndCol(),coltop=red)
+        cxi(xpos + 52,rndCol(),coltop=red)
+        cxt(xpos + 58,rndCol(),coltop=red)
+        cxh(xpos + 68,rndCol(),coltop=red)
         
         cxn(xpos + 82,dodgerblue,coltop=gold)
         cxi(xpos + 90,truetomato,coltop=gold)
@@ -5627,8 +5585,11 @@ proc doByeBye*() =
 
   
    
-proc showCxTrueColorPalette*(max:int = 888,step: int = 12,flag48:bool = false) {.inline.} = 
+proc showCxTrueColorPalette*(min:int=0,max:int = 888,step: int = 12,flag48:bool = false) {.inline.} = 
    ## showCxTrueColorPalette
+   ## 
+   ## 
+   ## Experimental
    ## 
    ## play with truecolors
    ## 
@@ -5646,7 +5607,7 @@ proc showCxTrueColorPalette*(max:int = 888,step: int = 12,flag48:bool = false) {
 
    var astep = step
    while max mod astep <> 0: astep = astep + 1
-   if getcxTrueColorSet(max = max,step = astep,flag48 = flag48) == true:
+   if getcxTrueColorSet(min = min,max = max,step = astep,flag48 = flag48) == true:
       # controll the size of our truecolor cache 
       # default max 888, increase by too much we may have memory issues
       # defaul step 12 , decrease by too much we may have memory issues  tested with steps 4 - 16 ,
@@ -5670,7 +5631,7 @@ proc showCxTrueColorPalette*(max:int = 888,step: int = 12,flag48:bool = false) {
             testLine.textcolor = cxTrueCol[lcol]  # change this to tcol to have text in a random truecolor
             testLine.textstyle = {styleReverse}
             testLine.newline = "\L"                  # need a new line character here or we overwrite 
-            printcxline(testLine)
+            printCxLine(testLine)
       
       printLnBicol("\n    Note            : cxTrueColor Value can be used like so : cxTrueCol[value] ",colLeft = truetomato)
       printLnBiCol("\n    Palette Entries : " & ff2(cxTruecol.len),colLeft = truetomato,colRight = lime)   
@@ -5782,7 +5743,7 @@ proc doCxEnd*() =
         printMadeWithNim()
         decho(8)
         print(innocent,truetomato)
-        for x in 0..<(tw - 3) div runeLen(innocent) div 2: print(innocent,rndTrueCol())
+        for x in 0..<(tw - 3) div runeLen(innocent) div 2: print(innocent,rndCol())
         print(innocent,truetomato)
         sleepy(0.15)
         curup(1)
@@ -5796,8 +5757,10 @@ decho(2)
 # automatic exit messages , it may not work in tight loops involving execCMD or
 # waiting for readLine() inputs.
 setControlCHook(handler)
-getcxTrueColorSet() # we just preload the cxTrueCol seq in default mode
 
+#uncomment following line to have global support for cxTrueCol inside cx if needed
+getcxTrueColorSet()         # preload the cxTrueCol seq in default mode
+#checktruecolorsupport()    # comment out if above line uncommented
 # this will reset any color changes in the terminal
 # so no need for this line in the calling prog
 system.addQuitProc(resetAttributes)

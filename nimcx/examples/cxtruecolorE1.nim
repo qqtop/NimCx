@@ -8,7 +8,7 @@ import nimcx
 # this demos also show how to exceed the named colors in Nim stdlib and run millions of colors
 # provided there is enough memory in the system
 # 
-# 2018-01-21
+# 2018-01-25
 
 proc cxSpectrum(colval:int = 255,dval:int = 76 ,adj:int = 1) =
   ## cxspectrum
@@ -41,9 +41,10 @@ proc cxSpectrum(colval:int = 255,dval:int = 76 ,adj:int = 1) =
   
 proc playSpectrum() =
    decho(2)
-   cxspectrum(colval = 255,dval = 76,adj = 2)        # orig test parameter 255,76,2
-   decho(2)
-   cxspectrum(colval = 255,dval = 15,adj = 8)       
+   cxspectrum(colval = 255,dval = 76,adj = 6)        # orig test parameter 255,76,2
+   print cleareol
+   #decho(2)
+   #cxspectrum(colval = 255,dval = 15,adj = 8)       
    #getcxtruecolorset(0,1200,12,false)               # do not set max to high as it eats all memory default in cx is 0,888,12,false           
    #cxspectrum(colval = 1800,dval = 1216,adj = 152)  # change dval for more in between shades
 
@@ -193,16 +194,56 @@ proc playWildColors() =
      for bcolno in countup(0,cxTrueCol.len - 1,76): # change step size for more or less granularity  ---> less is more
         cxprintln("TESTING  FontColor = $1   Bgr Color = cxTrueCol[$2]"  % [cxColorNames[x][0],$bcolno],cxColorNames[x][0],cxTrueCol[bcolno])
 
+###############################################################################################################################
+
+# show a color gradient on a line
+# still needs more work
+
+proc playGradient() =
+     var npos = 1
+     for x in countup(0,cxTrueCol.len,152):
+       inc npos
+       cxPrint(" ",colWhite,cxTrueCol[1 + x],xpos = npos)
+       if npos  > tw - 2: 
+          echo()
+          npos = 1
+        
+################################################################################################################################     
+proc RGBcx(r:int,g:int,b:int) : int =
+    result = -1
+    for x in 0..<cxTrueCol.len:
+       var pattern = $r & ";" & $g & ";" & $b & ";"
+       printLnBiCol("Checking pattern : " & pattern & cxtruecol[x])
+       if cxtruecol[x].contains(pattern) == true:
+          result = x
+          break
+             
+             
+proc playFindRGB(r:int,g:int,b:int) =
+     var ok = RGBcx(r,g,b)
+     if ok > -1:
+        printLn("RGB : " & $r & ";" & $g & ";" & $b & ";" & " in cxTrueCol. Result  : " & $ok)
+     else:
+        printLn("RGB : " & $r & ";" & $g & ";" & $b & ";" & " in cxTrueCol. Result  : not found")
+        
+     printLn(rightarrow & "  " & $ok)
+################################################################################################################################
 # select one or more items to play with  . Had enough ?  Ctrl-C
-#playSpectrum()
+# playSpectrum()
 # decho(2)
-# playRGB(585,6765,951)
+# color vals ex http://www.colorhexa.com/color-names
+# playRGB(93,138,168,true)  # french blue
+# playRGB(15,77,146,true)   # yale blue
+# playRGB(115,134,120,true) # xanadu
+# playRGB(0,115,207,true)   # true blue
 # decho(2)
 playCxPrint()
 # decho(2)
-# showCxTrueColorPalette(step = 12)   # default step = 12  reduce for more colors increase for less step = 4 needs about 4GB free mem
+#showCxTrueColorPalette(min = 0,max = 888,step = 14,true)   # default step = 12  reduce for more colors increase for less step = 4 needs about 4GB free mem
 # decho(2)
 # playWildColors()
-
+# playGradient()
+decho(2)
+#playFindRGB(888,0,852)
 
 doFinish()
