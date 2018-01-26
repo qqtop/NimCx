@@ -42,14 +42,13 @@ Installation :
 Example usage of print procs 
 
 
-![Image](http://qqtop.github.io/sierpcxdemp.png?raw=true)
+![Image](http://qqtop.github.io/sierpred.png?raw=true)
 
 
-Screenshots from cxTest
-
-![Image](http://qqtop.github.io/nimcarpet.png?raw=true)
+![Image](http://qqtop.github.io/nimspectrum.png?raw=true)
 
 
+![Image](http://qqtop.github.io/nimblues.png?raw=true)
 
 
 ```nimrod         
@@ -71,10 +70,6 @@ dofinish()
 ![Image](http://qqtop.github.io/nimcolors36.png?raw=true)
 
 ![Image](http://qqtop.github.io/truecolor1.png?raw=true)
-
-![Image](http://qqtop.github.io/nimblues.png?raw=true)
-
-![Image](http://qqtop.github.io/innocent.png?raw=true)
 
 ![Image](http://qqtop.github.io/nimbox.png?raw=true)
 
