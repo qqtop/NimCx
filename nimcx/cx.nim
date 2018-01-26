@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-01-25
+##     Latest      : 2018-01-26
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -5449,7 +5449,7 @@ proc printNimCx*(npos:int = tw div 2 - 30) =
         ## 
         ##  experiments in block font building , default is center in terminal
         ## 
-        echo()
+        #echo()
         var xpos = npos
         cxn(xpos,dodgerblue,coltop=gold)
         cxi(xpos+10,truetomato,coltop=gold)
@@ -5457,7 +5457,7 @@ proc printNimCx*(npos:int = tw div 2 - 30) =
         let colc = randCol2("light")
         cxc(xpos+29, colc,coltop=red)
         cxx(xpos+38,coltop=red) 
-        echo()
+        #echo()
               
 
 proc printMadeWithNim*(npos:int = tw div 2 - 60) =
@@ -5480,9 +5480,16 @@ proc printMadeWithNim*(npos:int = tw div 2 - 60) =
         cxn(xpos + 82,dodgerblue,coltop=gold)
         cxi(xpos + 90,truetomato,coltop=gold)
         cxm(xpos + 96,gold,coltop=gold)
-        
         echo()
-              
+
+proc printNim*(npos:int = tw div 2 - 60) =  
+        echo()
+        var xpos = npos
+        cxn(xpos,brightcyan,coltop=red)
+        cxi(xpos + 9,brightcyan,coltop=lime)
+        cxm(xpos + 16,brightcyan,coltop=red)
+        echo()  
+        
 # end experimental font      
   
 

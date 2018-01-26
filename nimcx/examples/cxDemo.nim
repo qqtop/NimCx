@@ -80,51 +80,18 @@ proc centerNimDemo*() =
    var b = " C,C++,Python,Rust,Scala,Fortran,Cobol,Go"  
    cleanScreen()  
    
-   for x in 0.. 4:
+   for x in 0..4:
            centerPos(b)
            printLn(b,gray,styled = {styleDim})
            
-   sleepy(0.1)
+   sleepy(0.05)
    echo()
    printLn("Nim",lime,centered=true)
    echo()
-   for x in 0.. 4:
+   for x in 0..4:
       centerpos(b)   
       printLn(b,gray,styled = {styleDim})
       
-            
-proc movNimDemo*() =
-    ## movNim
-    ## 
-    ## Demo moving Nim
-    ## 
-    ## .. code-block:: nim
-    ##    import cx 
-    ##    decho(5)
-    ##    movNimDemo()
-    ##    printNimSxR(salmon)
-    ##    printNimSxR(lime,55)
-    ##    doFinish()
-    ##
-    cleanScreen()
-    for xpos in 1.. tw - nimsx[0].len + 20:
-        if float(xpos mod 8) == 0.0:
-            printNimSxR(nimsx,xpos = xpos)
-            sleepy(0.025)
-        else:
-          printNimSxR(nimsx,xpos = xpos)
-        sleepy(0.025)
-        cleanScreen()
-
-    for xpos in countdown(tw - nimsx[0].len + 20 ,1,1):
-        if float(xpos mod 8) == 0.0:
-            printNimSxR(nimsx,red,xpos=xpos)
-            sleepy(0.025)
-        else:
-          printNimSxR(nimsx,gray,xpos)
-        sleepy(0.025)
-        cleanScreen()
-
 
 
 proc randomCardsDemo*() =
@@ -132,8 +99,8 @@ proc randomCardsDemo*() =
    ## 
    ## Demo for colorful cards deck ...
    decho(2)
-   for z in 0.. <th - 3:
-      for zz in 0.. <tw div 2 - 1:
+   for z in 0..<th - 3:
+      for zz in 0..<tw div 2 - 1:
           print cards[rndSample(rxCards)],randCol()
       writeLine(stdout,"") 
     
@@ -169,7 +136,7 @@ proc happyEmojis*() =
   decho(2)
   cechoLn(lime & emojis[7] & yellowgreen & " Happy Emojis " & lime & emojis[7])
   echo()
-  for x in 0.. <emojis.len:
+  for x in 0..<emojis.len:
       var ejs = fmtx(["<4","",""],$x," : ",emojis[x])
       printLnBiCol(ejs,colleft=white,colRight=randcol())
   decho(2)
@@ -186,7 +153,7 @@ proc ndLineDemo*() =
   ## 
   curup(1)
   var c = (tw.float / 2.76666).int 
-  for x in 0.. <c:
+  for x in 0..<c:
       if x == c div 2 :
         print($x,lime,styled = {styleBlink},substr = $x)
       else:  
@@ -233,9 +200,9 @@ proc sierpCarpetDemo*(n:int=2,xpos:int = 1) =
   ## 
   ## draws the carpet in color
   ## 
-  for i in 0 .. <(3^n):
+  for i in 0..<(3^n):
     cursetx(xpos)
-    for j in 0 .. <(3^n):
+    for j in 0..<(3^n):
       if inCarpet(i, j):
         print("* ",skyblue)
       else:
@@ -249,14 +216,21 @@ proc sierpCarpetDemo2*(n:int=2,xpos:int = 1,sa:string = "* ",sb:string = spaces(
   ## 
   ## draws the carpet in color and allowing change of characters 
   ## 
-  for i in 0 .. <(3^n):
+ 
+  for i in 0..<(3^n):
+    
     cursetx(xpos)
-    for j in 0 .. <(3^n):
+    var npos = xpos
+    for j in 0..<(3^n):
+      inc npos
       if inCarpet(i, j):
-        print(sa,randcol())
+          # print(sa,randcol())
+          #cxprint(sa,cxcolornames[rndSample(txcol)][1],xpos = npos)
+          cxprint(sa,colRed,xpos = npos)
       else:
-          print(sb,randcol(),styled = {stylereverse,styleunderscore,styleblink})
-     
+          #print(sb,randcol(),styled = {stylereverse,styleunderscore})
+          print(sb,truetomato,styled = {stylereverse,styleunderscore})
+          #  cxprint(sb,cxcolornames[rndSample(txcol)][1],rndtruecol2(),xpos = npos)
     echo()
 
     
@@ -319,7 +293,11 @@ proc bigPanelDemo*() =
         var c = 0
        
         for y in {'A'..'Z'}:
-            printBigLetters($y,fgr = steelblue,bgr = black,xpos = xpos,fun = true)
+            printBigLetters($y,fgr = steelblue,
+                            bgr = bgblack,
+                            xpos = xpos,
+                            k = 7,
+                            fun = true)
             inc c
             if c == 13 :
                decho(8)
@@ -369,29 +347,7 @@ proc colorCJKDemo*() =
     sleepy(1) 
     decho(3)
     
-    
-proc rainbow2Demo*() =
-  
-      # shows possible use of rainbow2 
-                      
-      var hi = iching()
-      var n  = 15
-
-      centerMark()
-      echo()
-      rainbow2("Iching it and know the future. Or not.",centered = true,colorset = colorspalette("pastel"))
-      echo()
-
-      for w in hi:
-        for x in 0.. n:
-          rainbow2(w,xpos = centerX() - n div 2 * w.len + x * w.len,colorset = colorNames)
-        echo()
-
-      rainbow2("What's up ?\n",centered = true,colorset = colorspalette("light"))
-      centerMark()
-
-
-  
+     
 proc rulerDemo*(xpos:int = 0,ypos:int = 12) =
   
     var avcol1 = randcol()
