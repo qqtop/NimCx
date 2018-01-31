@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-01-26
+##     Latest      : 2018-01-31
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -3392,7 +3392,7 @@ proc checkHash*[T](kata:string,hsx:T)  =
   if hash(kata) == hsx:
         printLnBiCol("Hash Status : ok")
   else:
-        printLnBiCol("Hash Status : fail",red,termwhite,":",0,false{})
+        printLnBiCol("Hash Status : fail",red,termwhite,":",0,false,{})
 
 
 proc verifyHash*[T](kata:string,hsx:T):bool  =
@@ -4929,7 +4929,7 @@ template cxa*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
         printLn2(spaces(1) & efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
         printLn2(spaces(1) & efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
         curup(6)
-                      
+        
             
 template cxb*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
@@ -5249,7 +5249,7 @@ template cxgrid*(npos:int = 0,col:string=rndCol(),coltop:string = lime) =
            echo()
            loopy2(0,5):
                loopy2(0,xwd) :
-                  print(efb2 ,rndCol2(col),xpos=xpos + xloopy)
+                  cxprint(efb2 ,colgreen,xpos=xpos + xloopy)
                echo()  
            curup(6)
  
@@ -5606,7 +5606,6 @@ proc showCxTrueColorPalette*(min:int=0,max:int = 888,step: int = 12,flag48:bool 
    ## 
    ## cxTrueCol is a initial empty global defined in cx.nim which will only be filled
    ## with a call to getCxTrueColorSet() ,also see there how the Palette is build up
-   ## 
    ## 
    ## press ctrl-c if showTrueColorPalette runs too long ....
    ## 
