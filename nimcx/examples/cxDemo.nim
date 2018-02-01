@@ -295,7 +295,7 @@ proc doNimUp*(xpos = 5, rev:bool = true) =
           printLn("   $$$$$$$$$  $$         $$",randcol(),xpos=60)
           printLn("    $        $$$$     $$$$ ",randcol(),xpos=60)
           printLn("    $$    $$$$$$    $$$$$$ ",randcol(),xpos=60)
-          printLn("     $$$$$$    $$  $$      ",randcol(),/media/lxuser/nimcxindex theindex.htmlxpos=60)
+          printLn("     $$$$$$    $$  $$      ",randcol(),xpos=60)
           printLn("       $     $$$ $$$       ",randcol(),xpos=60)
           printLn("        $$$$$$$$$$         ",randcol(),xpos=60)
 
