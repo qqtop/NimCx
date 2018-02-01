@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-12-25
+##     Latest      : 2018-02-01
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -1210,73 +1210,6 @@ proc printNimSxR*(nimsx:seq[string],col:string = yellowgreen, xpos: int = 1) =
 
     for x in nimsx :
           printLn(" ".repeat(xpos) & x,randcol())
-
-
-proc doNimUp*(xpos = 5, rev:bool = true) = 
-      ## doNimUp
-      ## 
-      ## A Nim dumbs up logo 
-      ## 
-      ## 
-      cleanScreen()
-      decho(2)
-      if rev == true:
-          
-          printLn("        $$$$               ".reversed,randcol(),xpos = xpos)
-          printLn("       $$  $               ".reversed,randcol(),xpos = xpos)
-          printLn("       $   $$              ".reversed,randcol(),xpos = xpos)
-          printLn("       $   $$              ".reversed,randcol(),xpos = xpos)
-          printLn("       $$   $$             ".reversed,randcol(),xpos = xpos)
-          printLn("        $    $$            ".reversed,randcol(),xpos = xpos)
-          printLn("        $$    $$$          ".reversed,randcol(),xpos = xpos)
-          printLn("         $$     $$         ".reversed,randcol(),xpos = xpos)
-          printLn("         $$      $$        ".reversed,randcol(),xpos = xpos)
-          printLn("          $       $$       ".reversed,randcol(),xpos = xpos)
-          printLn("    $$$$$$$        $$      ".reversed,randcol(),xpos = xpos)
-          printLn("  $$$               $$$$$  ".reversed,randcol(),xpos = xpos)
-          printLn(" $$    $$$$            $$$ ".reversed,randcol(),xpos = xpos)
-          printLn(" $   $$$  $$$            $$".reversed,randcol(),xpos = xpos)
-          printLn(" $$        $$$            $".reversed,randcol(),xpos = xpos)
-          printLn("  $$    $$$$$$            $".reversed,randcol(),xpos = xpos)
-          printLn("  $$$$$$$    $$           $".reversed,randcol(),xpos = xpos)
-          printLn("  $$       $$$$           $".reversed,randcol(),xpos = xpos)
-          printLn("   $$$$$$$$$  $$         $$".reversed,randcol(),xpos = xpos)
-          printLn("    $        $$$$     $$$$ ".reversed,randcol(),xpos = xpos)
-          printLn("    $$    $$$$$$    $$$$$$ ".reversed,randcol(),xpos = xpos)
-          printLn("     $$$$$$    $$  $$      ".reversed,randcol(),xpos = xpos)
-          printLn("       $     $$$ $$$       ".reversed,randcol(),xpos = xpos)
-          printLn("        $$$$$$$$$$         ".reversed,randcol(),xpos = xpos)
-
-      else:
-        
-          printLn("        $$$$               ",randcol(),xpos=60)
-          printLn("       $$  $               ",randcol(),xpos=60)
-          printLn("       $   $$              ",randcol(),xpos=60)
-          printLn("       $   $$              ",randcol(),xpos=60)
-          printLn("       $$   $$             ",randcol(),xpos=60)
-          printLn("        $    $$            ",randcol(),xpos=60)
-          printLn("        $$    $$$          ",randcol(),xpos=60)
-          printLn("         $$     $$         ",randcol(),xpos=60)
-          printLn("         $$      $$        ",randcol(),xpos=60)
-          printLn("          $       $$       ",randcol(),xpos=60)
-          printLn("    $$$$$$$        $$      ",randcol(),xpos=60)
-          printLn("  $$$               $$$$$  ",randcol(),xpos=60)
-          printLn(" $$    $$$$            $$$ ",randcol(),xpos=60)
-          printLn(" $   $$$  $$$            $$",randcol(),xpos=60)
-          printLn(" $$        $$$            $",randcol(),xpos=60)
-          printLn("  $$    $$$$$$            $",randcol(),xpos=60)
-          printLn("  $$$$$$$    $$           $",randcol(),xpos=60)
-          printLn("  $$       $$$$           $",randcol(),xpos=60)
-          printLn("   $$$$$$$$$  $$         $$",randcol(),xpos=60)
-          printLn("    $        $$$$     $$$$ ",randcol(),xpos=60)
-          printLn("    $$    $$$$$$    $$$$$$ ",randcol(),xpos=60)
-          printLn("     $$$$$$    $$  $$      ",randcol(),xpos=60)
-          printLn("       $     $$$ $$$       ",randcol(),xpos=60)
-          printLn("        $$$$$$$$$$         ",randcol(),xpos=60)
-
-      curup(15)
-      printFont("NIM",randcol(),xpos = xpos + 33)
-      curdn(15)
 
 proc clearScreen*():int {.discardable.} =
      ## clearScreen
