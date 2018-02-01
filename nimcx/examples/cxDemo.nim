@@ -1,13 +1,14 @@
-import nimcx,strutils,strfmt,times,math
-
+import cx,cxutils
 
 ## small rough demos repository for var. procs in cx.nim
 ## this file is imported by cxTest.nim to actually run the demos
 
+## 2018-01-30  - status messy currently in rewrite plan
 
 proc futureIsNimDemo*(posx:int = 0) = 
       ## futureIsNim
-      ## 
+      ##        ██   █   ██   ███ ██ 
+
       ## demo example of a box drawn with doty procs and 2 text lines
       ## 
       ## max xpos = 20
@@ -105,26 +106,26 @@ proc randomCardsDemo*() =
       writeLine(stdout,"") 
     
 
-proc randomCardsClockDemo*() = 
-    ## randomCardsClockDemo
-    ## 
-    ## 
-    ## 
-
-    for x in countdown(10,0):
-        randomCardsDemo()
-        curup(th div 2)
-        if x == 0:
-                printSlimNumber($getClockStr(),fgr=lime,xpos=25)
-        else:
-                printSlimNumber($getClockStr(),fgr=lime,xpos=15)       
-        if x > 0:
-            curup(7)
-            printBigNumber($x,truetomato,xpos = 75)
-        curSet()
-        sleepy(0.3)
-
-    curdn(th)
+# proc randomCardsClockDemo*() = 
+#     ## randomCardsClockDemo
+#     ## 
+#     ## 
+#     ## 
+# 
+#     for x in countdown(10,0):
+#         randomCardsDemo()
+#         curup(th div 2)
+#         if x == 0:
+#                 printSlimNumber($getClockStr(),fgr=lime,xpos=25)
+#         else:
+#                 printSlimNumber($getClockStr(),fgr=lime,xpos=15)       
+#         if x > 0:
+#             curup(7)
+#             printBigNumber($x,truetomato,xpos = 75)
+#         curSet()
+#         sleepy(0.3)
+# 
+#     curdn(th)
 
 
 proc happyEmojis*() =
@@ -143,31 +144,31 @@ proc happyEmojis*() =
 
 
 
-proc ndLineDemo*() =
-  ## ndLineDemo
-  ## 
-  ## Numbered dots line demo
-  ## 
-  ## test with bash terminal only , styleBlink may not work with some terminals
-  ## 
-  ## 
-  curup(1)
-  var c = (tw.float / 2.76666).int 
-  for x in 0..<c:
-      if x == c div 2 :
-        print($x,lime,styled = {styleBlink},substr = $x)
-      else:  
-        print($x,goldenrod,styled = {styleBright},substr = $x)  
-      curdn(1)
-      curbk(1)
-      if x == c div 2 :
-        print(".",lime,styled = {styleBright,styleBlink},substr = ".")
-      else:
-        print(".",truetomato)
-      curup(1)
-      curfw(1)
-  decho(2)
-
+# proc ndLineDemo*() =
+#   ## ndLineDemo
+#   ## 
+#   ## Numbered dots line demo
+#   ## 
+#   ## test with bash terminal only , styleBlink may not work with some terminals
+#   ## 
+#   ## 
+#   curup(1)
+#   var c = (tw.float / 2.76666).int 
+#   for x in 0..<c:
+#       if x == c div 2 :
+#         print($x,lime,styled = {styleBlink},substr = $x)
+#       else:  
+#         print($x,goldenrod,styled = {styleBright},substr = $x)  
+#       curdn(1)
+#       curbk(1)
+#       if x == c div 2 :
+#         print(".",lime,styled = {styleBright,styleBlink},substr = ".")
+#       else:
+#         print(".",truetomato)
+#       curup(1)
+#       curfw(1)
+#   decho(2)
+# 
 
 
 #### sierpcarpet small snippet I lifted from somewhere and colorized
@@ -232,7 +233,39 @@ proc sierpCarpetDemo2*(n:int=2,xpos:int = 1,sa:string = "* ",sb:string = spaces(
           print(sb,truetomato,styled = {stylereverse,styleunderscore})
           #  cxprint(sb,cxcolornames[rndSample(txcol)][1],rndtruecol2(),xpos = npos)
     echo()
-
+# printLn(heart & " Nim " & heart,red)    
+# print(smile,randcol())  
+# print(copyright,randcol())
+# print(trademark,randcol())  
+# print(roof,lime)
+# print(snowflake,randcol())  
+# print(music,lime)
+# print(xmark,randcol())  
+# print(check,randcol())
+# print(scissors,randcol())  
+# print(darkstar,randcol())
+# print(star,randcol())  
+# print(umbrella,randcol())
+# print(flag,randcol())  
+# print(skull,randcol())
+# print(heart,red)  
+# 
+# println(sun,randcol())
+# print(innocent,randcol())
+# print(lol,randcol())
+# print(smiley,randcol())
+# print(tongue,randcol())
+# print(blush,randcol())
+# print(sad,randcol())
+# print(cry,randcol())
+# print(rage,randcol())
+# print(cat,randcol())
+# print(kitty,randcol())
+# print(monkey,randcol())
+# printLn(cow,randcol())
+# 
+# happyemojis()
+# sleepy(2)
     
 proc allRuneTest() =
     # shows 58000 unicode chars in color with their ord numbers
@@ -252,101 +285,137 @@ proc drawRectDemo*() =
   drawRect(9,20,frhLine = "=",frvLine = wideDot , frCol = randCol(),xpos = 35,blink = true)
   curup(10)
   drawRect(6,14,frhLine = "~",frvLine = "$" , frCol = randCol(),xpos = 70,blink = true)
+# 
+# proc bigPanelDemo*() =
+#         ## bigPanelDemo
+#         ## 
+#         ## best viewed in full width terminal
+#         ## 
+#                 
+#         var xpos = 16
+#         var c = 0
+#        
+#         for y in {'A'..'Z'}:
+#             printBigLetters($y,fgr = steelblue,
+#                             bgr = bgblack,
+#                             xpos = xpos,
+#                             k = 7,
+#                             fun = true)
+#             inc c
+#             if c == 13 :
+#                decho(8)
+#                xpos = 16
+#             elif c == 26 :   
+#                decho(8)
+#                xpos = 1
+#             else:
+#                xpos = xpos # printLn(heart & " Nim " & heart,red)    
+#             
+#             if c > 26:
+#               break
+#         
+#         
+#         decho(4)
+#         xpos = 6     
+#         printBigLetters("-",xpos = xpos + 11,fun = true)
+#         printBigLetters("+",xpos = xpos + 20,fun = true)
+#         printBigNumber(0123456789,xpos = xpos + 29,fun = true)
+#         decho(10)
+#         printBigLetters(repeat("_",15),fgr = randcol(),xpos = 10,fun = true)
+#         decho(8)
+#         printBigLetters("CX-COLOR",xpos = 40 ,fun=true)
+#         decho(5)
+#         printBigLetters(repeat("_",15),fgr = randcol(),xpos = 10,fun = true)
+#         decho(8)
 
 
-
-proc wideDotFieldDemo*()=
-  ## wideDotFieldDemo
-  ## 
-  ## draws random col widedots
-  ## 
-   
-  loopy(0.. 10,loopy(1.. tw div 2, dotyLn(1,randcol(),xpos = getRndInt(0,tw - 1))))
-  printlnBiCol("coloredSnow",colLeft=greenyellow,colRight=salmon,sep="d")
-
-
-proc cxYourNimDemo*() =
-    # cxYourNimDemo
-    # 
-    # best viewed on a full width terminal
-    # 
-    for y in 0.. 9:
-      cleanScreen()  
-      curdn(10)
-      for x in 0.. 4:
-         curfw(10)
-         println(cbx[x] & xbx[x] & hybx[x] & " " & cbx[x] & obx[x] & lbx[x] & obx[x] & rbx[x] & "  " & ybx[x] & obx[x] & ubx[x] & rbx[x] & "  " & nbx[x] & ibx[x] & mbx[x],randcol())
-      sleepy(0.1)
-    decho(10)    
-    
-
-
-
-
-proc bigPanelDemo*() =
-        ## bigPanelDemo
-        ## 
-        ## best viewed in full width terminal
-        ## 
-                
-        var xpos = 16
-        var c = 0
-       
-        for y in {'A'..'Z'}:
-            printBigLetters($y,fgr = steelblue,
-                            bgr = bgblack,
-                            xpos = xpos,
-                            k = 7,
-                            fun = true)
-            inc c
-            if c == 13 :
-               decho(8)
-               xpos = 16
-            elif c == 26 :   
-               decho(8)
-               xpos = 1
-            else:
-               xpos = xpos + 8
-            
-            if c > 26:
-              break
-        
-        
-        decho(4)
-        xpos = 6     
-        printBigLetters("-",xpos = xpos + 11,fun = true)
-        printBigLetters("+",xpos = xpos + 20,fun = true)
-        printBigNumber(0123456789,xpos = xpos + 29,fun = true)
-        decho(10)
-        printBigLetters(repeat("_",15),fgr = randcol(),xpos = 10,fun = true)
-        decho(8)
-        printBigLetters("CX-COLOR",xpos = 40 ,fun=true)
-        decho(5)
-        printBigLetters(repeat("_",15),fgr = randcol(),xpos = 10,fun = true)
-        decho(8)
+# print(smile,randcol())  
+# print(copyright,randcol())
+# print(trademark,randcol())  
+# print(roof,lime)
+# print(snowflake,randcol())  
+# print(music,lime)
+# print(xmark,randcol())  
+# print(check,randcol())
+# print(scissors,randcol())  
+# print(darkstar,randcol())
+# print(star,randcol())  
+# print(umbrella,randcol())
+# print(flag,randcol())  
+# print(skull,randcol())
+# print(heart,red)  
+# 
+# println(sun,randcol())
+# print(innocent,randcol())
+# print(lol,randcol())
+# print(smiley,randcol())
+# print(tongue,randcol())
+# print(blush,randcol())
+# print(sad,randcol())
+# print(cry,randcol())
+# print(rage,randcol())
+# print(cat,randcol())
+# print(kitty,randcol())
+# print(monkey,randcol())
+# printLn(cow,randcol())
+# 
+# happyemojis()
+# sleepy(2)+ 8
+#             
+#             if c > 26:
+#               break
+#         
+#         
+#         decho(4)
+#         xpos = 6     
+#         printBigLetters("-",xpos = xpos + 11,fun = true)
+#         printBigLetters("+",xpos = xpos + 20,fun = true)
+#         printBigNumber(0123456789,xpos = xpos + 29,fun = true)
+#         decho(10)
+#         printBigLetters(repeat("_",15),fgr = randcol(),xpos = 10,fun = true)
+#         decho(8)
+#         printBigLetters("CX-COLOR",xpos = 40 ,fun=true)
+#         decho(5)
+#         printBigLetters(repeat("_",15),fgr = randcol(),xpos = 10,fun = true)
+#         decho(8)
 
       
    
 
 proc colorCJKDemo*() =   
-    ## colorCJKDemo
-    ##
+    ## colorCJKDemo            
     ## carpet with CJK characters
     ##
     decho(2)
-    printBigLetters("NIM  CARPET",xpos = 37,fun = true) 
-    decho(6)
+    printFont("NIM  CARPET",xpos = 8) 
+    decho(7)
     for y in 0.. 25:
        curSetx(15)
-       for x in 0.. 52:
-           print(newwordCJK(1,1),randcol())
+       for x in 0..52:
+           #print(newWordCJK(1,1),randcol())
+           cxprint(newWordCJK(1,1),rndCxFgrCol(),xpos = 15 + x * 2 )
        echo()
     echo()   
-    printBigLetters("--  NIM",randcol(),xpos = 15)  
-    printBigNumber("0.17.1 --",randcol(),xpos = 58)
+    printFont("--NIM",randcol(),xpos = 0)  
+    printFont("0.17.3--",randcol(),xpos = 47)
     sleepy(1) 
     decho(3)
     
+    
+proc printFontTest*() =
+    printFontFancy("Random--" & newWord(3,6),randcol2("rod"),xpos = 0)
+    decho(10)
+    printFont("nimcx",randcol2("blue"),xpos = 30)
+    decho(10)
+    printFont("You like it ")
+    printFont("now.",red,xpos=80)
+    decho(10)
+    printFontFancy("You like it ")
+    printFont("now.",red,xpos = 80)
+    decho(10)
+    printFontFancy("1234567890.0")
+    decho(10)
+        
      
 proc rulerDemo*(xpos:int = 0,ypos:int = 12) =
   

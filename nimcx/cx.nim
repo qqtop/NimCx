@@ -397,7 +397,11 @@ proc rndRGB*():auto =
 # char converters
 converter toInt(x: char): int = result = ord(x)
 converter toChar(x: int): char = result = chr(x)  
-   
+
+template rndCxFgrCol*():untyped =  cxColorNames[rndSample(txcol)][0]
+template rndCxBgrCol*():untyped =  rndtruecol2() 
+
+
 template `<>`* (a, b: untyped): untyped =
   ## unequal operator 
   ## 

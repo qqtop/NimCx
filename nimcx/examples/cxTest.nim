@@ -1,87 +1,94 @@
 
 ## cxTest.nim
 ## 
-## rough testing for nimcx.nim 
+## VERY rough testing for cx.nim  
+## 
+## Staus : 2018-02-01  WIP
 ## 
 ## best run in a large console window
+## 
 
 
-import nimcx,cxDemo,sequtils,times,unicode
+#import cx,cxDemo,cxutils   # local debug tests
+import nimcx,cxDemo         # if nimble installed
 
-superHeader("Testing print and echo procs from cx.nim and run demos")
+superHeader("nimCx Testing ")
 
 let s = "Test color string"
 let n = 1234567
 let f = 123.4567
 let l = @[1234,4567,654]
+var testno = newCxcounter()
+
 
 
 # background colors for print and println are standard terminal colors
 # to use other colors use styled = {stylereverse}
+# also set cxPrint routines
+proc nextTest() =
+     testno.add
+     decho(3)
+     cxPrintLn("nimCx   TEST No. :   " & $testno.value & spaces(1) & red & downarrow, colBeige,darkslategray,xpos = 1)   # random cols
+     #cxPrintLn("nimCx   TEST No. :   " & $testno.value, rndCxFgrCol(),rndCxBgrCol(),xpos = 1)   # random cols
+     decho(1)
 
-printLn(s,white,brightblack)
-printLn(n,white,red,xpos = 20)
-printLn(f,white,blue,xpos = 50)
+nextTest()     
+printLn(s  & "white on black)",white,bgblack)
+
+nextTest()
+printLn(n,white,bgred,xpos = 20)
+
+nextTest()
+printLn(f,white,bgblue,xpos = 50)
+
+nextTest()
 printLn($f,rosybrown,styled = {stylereverse},substr = $f)
-decho(2)
 
-printLn(s,lime)
-printLn(n,brightgreen)
-printLn(f,greenyellow)
-printLn(l,rosybrown)
-decho(2)
-
+nextTest()
 printLnRainbow(s,{})
 printLnRainbow(n,{})
-printLnRainbow(f,{})
-printLnrainbow(l,{styleUnderscore})
+printLnRainbow(f,{stylereverse})
+printLn(l,styled={styleUnderscore})
 decho(2)
 
-
-printLn(s,clrainbow,styled = {styleUnderScore,styleBlink},substr = s)
+nextTest()
+printLn(s,clrainbow,styled = {styleUnderScore,styleBlink,stylereverse},substr = s)
 decho(2)
 
-# change color upon first separator 
+nextTest()
+# # change color upon first separator 
 printLnBiCol(s,colleft=brightgreen,colRight=brightwhite,sep="c")
 printLnBiCol(s,sep="c")  # default colors
+printLnBiCol(s,colLeft=red,colRight=goldenrod,sep="c",xpos=5,false,{})
 decho(2)
 
-# all in one color
+nextTest()
 printLn(fmtx(["","","","","","",""],s,spaces(1),n,spaces(1),f,spaces(1),l),greenyellow)      
-# all in one color with new background 
-print(fmtx(["","","","","","",""],s,spaces(1),n,spaces(1),f,spaces(1),l),brightyellow,brightblue)
-echo()
-
-printLn(s,clrainbow,brightyellow)  
-printLn(s,lime)
-decho(1)
-
-print(s,black,brightmagenta)
-printLn(s &  " ---> this is white at position x = 45",xpos = 45)
-
+printLn(fmtx(["","","","","","",""],s,spaces(1),n,spaces(1),f,spaces(1),l),yellow,bgblue)
+cxPrintln(fmtx(["","","","","","",""],s,spaces(1),n,spaces(1),f,spaces(1),l),colyellow,darkblue)
+nexttest()
 
 printLn("Everyone and the cat likes fresh salmon.",yellowgreen,styled = {styleUnderScore},substr = "the cat")
-decho(2)
-
-print("123423456576782312345",lightseagreen,styled = {stylereverse},substr = "23")
-echo()
+printLn("123423456576782312345",lightseagreen,styled = {stylereverse},substr = "23")
 printLn("The dog blinks . ",rosybrown,styled = {styleUnderScore,styleBlink},substr = "dog")
-
-
-# compare usage to achieve same output
-# difference between print and cecho procs is that cecho accepts varargs too
-                            
-cecho(salmon,"Everyone and the cat likes fresh salmon. ")
-cecho(steelblue,"The dog disagrees here. ")
-cechoLn(greenyellow,"Cannot please everyone. ",pastelpink,"Indeed !")
-
-# the system echo works too but needs color reset at the end, styleConstants also do not work
-# similar to the just introduced styledwrite and resetStyle 
-echo(salmon,"Everyone and the cat likes fresh salmon. ",steelblue,"The dog disagrees here. ",greenyellow,"Cannot please everyone.",termwhite,"")
-
+nextTest() 
+# 
+# # compare usage to achieve same output
+# # difference between print and cecho procs is that cecho accepts varargs too
+#                             
+# cecho(salmon,"Everyone and the cat likes fresh salmon. ")
+# cecho(steelblue,"The dog disagrees here. ")
+# cechoLn(greenyellow,"Cannot please everyone. ",pastelpink,"Indeed !")
+# 
+# # the system echo works too but needs color reset at the end, styleConstants also do not work
+# # now better to use the newer styledwrite and resetStyle 
+echo(salmon,"Everyone and the cat likes f#rulerDemo
+nextTest()
+rulerDemo()
+decho(10)  resh salmon. ",steelblue,"The dog disagrees here. ",greenyellow,"Cannot please everyone.",termwhite,"")
 echo(pastelpink,"Yippie ",lightblue,"Wow!",termwhite,"")
-echo()
 
+# 
 echo(pastelblue," ",int.high)
 echo(pastelgreen,int.low)
 dlineLn(21,col = lime)
@@ -94,86 +101,74 @@ printLn("Cannot please everyone.",greenyellow)
 decho(2)
 
 dline() # white dashed line
-printLn(repeat("✈",tw),yellowgreen)
+printLn(repeat("✈",tw - 2),yellowgreen)
 dline(60,lt = "/+",truetomato) 
 printLn("  -->  truetomato",truetomato)
 decho(2)
 
+nextTest()
+# 
 echo() 
-superHeader("Sierp Carpet in Multi Color - Sierp Carpet in Multi Color",clrainbow,lightsteelblue)
+superHeader("Sierp Carpet in Multi Color - Sierp Carpet in Multi Color",white,lightblue)
 echo()
 sierpCarpetDemo(3)
 decho(3)
-
-
-printSlimNumber($getClockStr() & "  ",pastelpink,black,xpos=25)
+# 
+nextTest()
+printSlimNumber($getClockStr() & "  ",pastelpink,bgblack,xpos=25)
+decho(5)
+nexttest() 
+printBigNumber($getClockStr(),fgr=darkgoldenrod,xpos=10)
 decho(5)
 
-printBigNumber($getClockStr(),fgr=salmon,xpos=10)
-decho(5)
+# nextTest()
+# superHeader("Nim Colors ")
+# # show a full list of colorNames availabale
+# showColors()
+# decho(2)
+# 
+# 
 
-superHeader("Nim Colors ")
-# show a full list of colorNames availabale
-showColors()
-decho(2)
-
-
+nextTest()
 var mycol = "green"  
-
+showPalette(mycol)
+mycol = "blue"
+showPalette(mycol)
+mycol = "al"
 showPalette(mycol)
 
+
+nextTest() 
 echo colPaletteName("green",5) #show entry 5 of the green palette
 println("something blue ", colPalette("blue",5) )  #show entry 5 of the blue palette
-
-decho(2)
-# showing randcol with custom palette selection and full randcol with all colors
-for x in 0.. <colPaletteLen(mycol):   
-  print(rightarrow & "what 12345678909 ",randCol2(mycol))
-  println("  what 12345678909 ",randCol())
-  
-  
-
+# 
+nextTest()
+# # showing randcol with custom palette selection and full randcol with all colors on the side
+for x in 0..<colPaletteLen(mycol):   
+   print(rightarrow & "what 12345678909 ",randCol2(mycol))
+   println(spaces(5) & rightarrow & "  what 12345678909 ",randCol())
+#   
+#   
+nexttest() 
 for x in 0.. 10:
-    centerMark()
-    echo()
-    sleepy(0.1)
-
+     centerMark()
+     echo()
+     sleepy(0.1)
+     
+     
+nextTest()
 flyNimDemo()
-
-decho(3)
-ndLineDemo()
-
-decho(2)
-sleepy(3.5)
-   
-movNimDemo()   
-
-clearUp(18)
-curSet()
+ 
+ 
+nextTest()
 drawRectDemo()
-
 decho(5)  
 sleepy(3)
 
-widedotfieldDemo()
 
-sleepy(1)
-decho(3)
-
-
-decho(3)
-randomCardsClockDemo() 
-decho(2)
-
-
-#testing bigblock characters
-cxYourNimDemo()
-sleepy(2)
-decho(10)
-
-
-# testing emojis
-
+nextTest()
+# # testing emojis
+# 
 printLn(heart & " Nim " & heart,red)    
 print(smile,randcol())  
 print(copyright,randcol())
@@ -203,104 +198,48 @@ print(rage,randcol())
 print(cat,randcol())
 print(kitty,randcol())
 print(monkey,randcol())
-printLn(cow,randcol())
+printLn(cow,randcol())#rulerDemo
+nextTest()
+rulerDemo()
+decho(10)  
 
 happyemojis()
 sleepy(2)
 
-colorCJKDemo()
-decho(5)    
 
-bigPanelDemo()
-sleepy(2)
-
-#rulerDemo
-cleanScreen()
-rulerDemo()
-  
-
-decho(15)
-var twc = tw div 2
+nextTest() 
+decho(5)
 showTerminalSize()
-printLnBiCol("Terminal Center : " & $twc)
+centerMark()
+printLnBiCol(rightarrow & " Terminal Center : " & $(tw div 2))
+decho(8)
+
+nextTest() 
+colorCJKDemo()   # nimcarpet
+decho(15) 
 
 
-
-# show sierpcarpetdemo2
-
-cleanscreen()
-decho(2)
-for x in 1.. 100:
-        curset()
-        decho(2)
-        sierpCarpetDemo2(2,10," " & $Rune(9961) & " "," " & $Rune(9924) & " ")
-        sleepy(0.02)
-decho(5)
-
-
-# here showing iching
-rainbow2Demo()
-decho(5)
-sleepy(2)
-
-
-# experimental font tests
-   
+# # experimental font tests
+#
+nextTest()
 animNimcx()   
 decho(8) 
-printMini()
-decho(10)
-sleepy(1) 
 
-loopy2(0,10):
-    cleanscreen()
-    cx1(1)
-    cx2(10)
-    cx3(20)
-    cx4(30)
-    cx5(40)
-    cx6(50)
-    cx7(60)
-    cx8(70)
-    cx9(80)
-    cxzero(90)
-    cxpoint(100)
-    cxhyphen(110)
-    decho(10)
-    loopy2(0,6):
-       cxgrid(10 * xloopy,col = "blue",coltop=red)
-       cxgrid(10 * xloopy + 60,col = "light",coltop=blue)
-    sleepy(0.5)
-
-    
-    
-proc printFontTest() =
-    printFontFancy("Random--" & newWord(3,6),randcol2("rod"),xpos = 0)
-    decho(10)
-    printFont("nimcx",randcol2("blue"),30)
-    decho(10)
-    printFont("You like it ")
-    printFont("now.",red,80)
-    decho(10)
-    printFontFancy("You like it ")
-    printFont("now.",red,80)
-    decho(10)
-    printFontFancy("1234567890.0")
-    decho(10)
-    
-cleanscreen()    
+   
+nextTest()   
 printFonttest()
 sleepy(5)
 decho(10)
-cleanscreen()
+
+nextTest()
 printNimcx()
-decho(10)
+
+nexttest()
+decho(15)
 doNimUp()
-decho(10)
+decho(8)
 printMadeWithNim()
 
-
 decho(10)
-showWanIp()
 
 doFinish()

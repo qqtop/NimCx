@@ -706,7 +706,7 @@ proc showRandomCard*(xpos:int = centerX()) =
     print(getCard(),randCol(),xpos = xpos)
 
 
-proc showRuler* (xpos:int=0,xposE:int=0,ypos:int = 0,fgr:string = termwhite,bgr:BackgroundColor = bgBlack, vert:bool = false) =
+proc showRuler* (xpos:int=0,xposE:int=0,ypos:int = 0,fgr:string = white,bgr:BackgroundColor = bgBlack, vert:bool = false) =
      ## ruler
      ##
      ## simple terminal ruler indicating dot x positions to give a feedback
@@ -1275,22 +1275,9 @@ proc doNimUp*(xpos = 5, rev:bool = true) =
           printLn("        $$$$$$$$$$         ",randcol(),xpos=60)
 
       curup(15)
-      printBigLetters("NIM",fgr=randcol(),xpos = xpos + 33)
+      printFont("NIM",randcol(),xpos = xpos + 33)
       curdn(15)
-# 
-# proc dayOfWeekJulian*(datestr:string): string =
-#    ## dayOfWeekJulian  # deprecated and will be removed
-#    ##
-#    ## returns the day of the week of a date given in format yyyy-MM-dd as string
-#    ##
-#    ## actually starts to fail with 2100-03-01 which shud be a monday but this proc says tuesday
-#    ## 
-#    ## due to shortcomings in the julian calendar .
-#    ##
-#    ## 
-#    result = $(getdayofweekjulian(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr))))
 
-   
 proc clearScreen*():int {.discardable.} =
      ## clearScreen
      ## 
