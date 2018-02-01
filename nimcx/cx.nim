@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-01-31
+##     Latest      : 2018-02-01
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -51,7 +51,7 @@
 ##
 ##     Docs        : `Documentation <https://qqtop.github.io/cx.html>`_
 ##
-##     Tested      : OpenSuse Tumbleweed  
+##     Tested      : OpenSuse Tumbleweed (KDE) , Parrotsec (Debian Testing)
 ##       
 ##                   Terminal set encoding to UTF-8  
 ##
@@ -109,8 +109,9 @@
 ##                   
 ##                        
 
-import times,random,cxconsts,os,strutils,strformat,parseutils, parseopt, hashes, tables, sets, strmisc
-import osproc,macros,posix,terminal,math,stats,json,streams,options,memfiles
+import cxconsts
+import times,random,os,osproc,strutils,strformat,parseutils, parseopt, hashes, tables, sets, strmisc
+import macros,posix,terminal,math,stats,json,streams,options,memfiles
 import sequtils,httpclient,rawsockets,browsers,intsets, algorithm,stats
 import unicode ,typeinfo, typetraits ,cpuinfo,colors,encodings,distros
 export times,strutils,strformat,sequtils,unicode,streams,hashes,terminal,colors,cxconsts,random

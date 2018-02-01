@@ -32,7 +32,7 @@
 ##
 ##     Docs        : https://qqtop.github.io/cxutils.html   
 ##
-##     Tested      : OpenSuse Tumbleweed 
+##     Tested      : OpenSuse Tumbleweed ,Debian Testing
 ##  
 
 import os,osproc,cx,math,stats,cpuinfo,httpclient,browsers
