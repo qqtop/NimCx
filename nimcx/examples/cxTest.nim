@@ -1,9 +1,9 @@
 
 ## cxTest.nim
 ## 
-## VERY rough testing for cx.nim  
+## VERY rough testing for nimcx.nim  errors may occur 
 ## 
-## Staus : 2018-02-01  WIP
+## Status : 2018-02-01  WIP
 ## 
 ## best run in a large console window
 ## 
@@ -21,10 +21,6 @@ let l = @[1234,4567,654]
 var testno = newCxcounter()
 
 
-
-# background colors for print and println are standard terminal colors
-# to use other colors use styled = {stylereverse}
-# also set cxPrint routines
 proc nextTest() =
      testno.add
      decho(3)
@@ -32,6 +28,15 @@ proc nextTest() =
      #cxPrintLn("nimCx   TEST No. :   " & $testno.value, rndCxFgrCol(),rndCxBgrCol(),xpos = 1)   # random cols
      decho(1)
 
+nextTest()
+superHeader("Nim Colors ")
+sleepy(0.7)
+# show a full list of colorNames availabale
+showColors()
+sleepy(1)
+decho(2)
+
+     
 nextTest()     
 printLn(s  & "white on black)",white,bgblack)
 
@@ -82,12 +87,7 @@ nextTest()
 # 
 # # the system echo works too but needs color reset at the end, styleConstants also do not work
 # # now better to use the newer styledwrite and resetStyle 
-echo(salmon,"Everyone and the cat likes f#rulerDemo
-nextTest()
-rulerDemo()
-decho(10)  resh salmon. ",steelblue,"The dog disagrees here. ",greenyellow,"Cannot please everyone.",termwhite,"")
-echo(pastelpink,"Yippie ",lightblue,"Wow!",termwhite,"")
-
+echo(salmon,"Everyone and the cat likes ffresh salmon. ")
 # 
 echo(pastelblue," ",int.high)
 echo(pastelgreen,int.low)
@@ -107,27 +107,19 @@ printLn("  -->  truetomato",truetomato)
 decho(2)
 
 nextTest()
-# 
 echo() 
 superHeader("Sierp Carpet in Multi Color - Sierp Carpet in Multi Color",white,lightblue)
 echo()
 sierpCarpetDemo(3)
 decho(3)
-# 
+ 
 nextTest()
 printSlimNumber($getClockStr() & "  ",pastelpink,bgblack,xpos=25)
 decho(5)
+
 nexttest() 
 printBigNumber($getClockStr(),fgr=darkgoldenrod,xpos=10)
 decho(5)
-
-# nextTest()
-# superHeader("Nim Colors ")
-# # show a full list of colorNames availabale
-# showColors()
-# decho(2)
-# 
-# 
 
 nextTest()
 var mycol = "green"  
@@ -137,18 +129,18 @@ showPalette(mycol)
 mycol = "al"
 showPalette(mycol)
 
-
 nextTest() 
 echo colPaletteName("green",5) #show entry 5 of the green palette
 println("something blue ", colPalette("blue",5) )  #show entry 5 of the blue palette
-# 
+
+
 nextTest()
 # # showing randcol with custom palette selection and full randcol with all colors on the side
 for x in 0..<colPaletteLen(mycol):   
    print(rightarrow & "what 12345678909 ",randCol2(mycol))
    println(spaces(5) & rightarrow & "  what 12345678909 ",randCol())
-#   
-#   
+   
+   
 nexttest() 
 for x in 0.. 10:
      centerMark()
@@ -166,46 +158,10 @@ decho(5)
 sleepy(3)
 
 
+#rulerDemo
 nextTest()
-# # testing emojis
-# 
-printLn(heart & " Nim " & heart,red)    
-print(smile,randcol())  
-print(copyright,randcol())
-print(trademark,randcol())  
-print(roof,lime)
-print(snowflake,randcol())  
-print(music,lime)
-print(xmark,randcol())  
-print(check,randcol())
-print(scissors,randcol())  
-print(darkstar,randcol())
-print(star,randcol())  
-print(umbrella,randcol())
-print(flag,randcol())  
-print(skull,randcol())
-print(heart,red)  
-
-println(sun,randcol())
-print(innocent,randcol())
-print(lol,randcol())
-print(smiley,randcol())
-print(tongue,randcol())
-print(blush,randcol())
-print(sad,randcol())
-print(cry,randcol())
-print(rage,randcol())
-print(cat,randcol())
-print(kitty,randcol())
-print(monkey,randcol())
-printLn(cow,randcol())#rulerDemo
-nextTest()
-rulerDemo()
+showRuler()
 decho(10)  
-
-happyemojis()
-sleepy(2)
-
 
 nextTest() 
 decho(5)
@@ -216,15 +172,10 @@ decho(8)
 
 nextTest() 
 colorCJKDemo()   # nimcarpet
-decho(15) 
+decho(28) 
 
 
-# # experimental font tests
-#
-nextTest()
-animNimcx()   
-decho(8) 
-
+# experimental font tests
    
 nextTest()   
 printFonttest()
@@ -238,6 +189,8 @@ nexttest()
 decho(15)
 doNimUp()
 decho(8)
+
+nextTest()
 printMadeWithNim()
 
 decho(10)

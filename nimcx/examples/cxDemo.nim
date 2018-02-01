@@ -1,51 +1,10 @@
-import cx,cxutils
+import nimcx
 
 ## small rough demos repository for var. procs in cx.nim
 ## this file is imported by cxTest.nim to actually run the demos
+## may and will change anytime
 
-## 2018-01-30  - status messy currently in rewrite plan
-
-proc futureIsNimDemo*(posx:int = 0) = 
-      ## futureIsNim
-      ##        ██   █   ██   ███ ██ 
-
-      ## demo example of a box drawn with doty procs and 2 text lines
-      ## 
-      ## max xpos = 20
-      ## 
-      ## .. code-block:: nim
-      ##    import cx
-      ##    cleanScreen()
-      ##    for x in 0.. 10:
-      ##        centerMark()
-      ##        echo()
-      ##        sleepy(0.1)
-      ##    flyNimDemo()
-      ##    futureIsNimDemo(20)
-           
-      var xpos = posx 
-      if xpos > 35:
-         xpos = 35
-         
-      drawRect(7,29 ,frhLine = widedot,frvLine = wideDot , frCol = randCol(),xpos = xpos)
-     
-      curup(5)
-      curSetx(xpos)
-      doty(1,red)
-      print(" ",clrainbow,xpos = xpos + 20)
-      doty(1,lime)
-      doty(1,tomato)
-      print(" Nim",salmon)
-      doty(1,tomato)
-      doty(1,lime)
-      # 2nd text line
-      curdn(1)
-      curSetx(xpos)
-      #doty(1,red)
-      curSetx(xpos + 17)
-      print("The future is now !",steelblue)
-      curdn(5)
-
+## 2018-02-01  - WIP 
 
 
 proc flyNimDemo*(astring:string = "  Fly Nim",col:string = red,tx:float = 0.04) =
@@ -419,8 +378,8 @@ proc printFontTest*() =
      
 proc rulerDemo*(xpos:int = 0,ypos:int = 12) =
   
-    var avcol1 = randcol()
-    var ahcol1 = randcol()
+    var avcol1 = rndcol()
+    var ahcol1 = rndcol()
     for nxpos in countup(0,tw-3): 
       cleanscreen() 
       showRuler(fgr=ahcol1) # top
