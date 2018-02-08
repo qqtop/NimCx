@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-02-01
+##     Latest      : 2018-02-08
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -36,13 +36,9 @@
 ##                   
 ##                   all files are automatically imported with : import nimcx
 ##                   
-##                   Some procs may mirror functionality available in stdlib moduls and will be deprecated if
+##                   Some procs may mirror functionality available in stdlib and will be deprecated 
 ##                   
-##                   similar or better appear in the stdlib. Overtime more procs will be pushed into
-##                   
-##                   cxutils.nim and the upcoming cxsnippets.nim and not longer imported via cxnim to
-##                   
-##                   keep everything small and usefull.
+##                   in due course. 
 ##
 ##
 ##     Usage       : import nimcx
@@ -264,8 +260,8 @@ var colorNumber48* = 1             # used as a temp storage of a random truecolo
 type 
 
      CxLineType*  = enum
-         cxHorizontal = "horizontal"        # works ok
-         cxVertical   = "vertical"          # not yet implemented
+        cxHorizontal = "horizontal"        # works ok
+        cxVertical   = "vertical"          # not yet implemented
          
 # cxLine is a line creation object with several properties
 type
@@ -312,7 +308,7 @@ proc newCxLine*():Cxline =
         
         
         
-converter toTwInt(x: cushort): int = result = int(x)  
+converter toTwInt*(x: cushort): int = result = int(x)  
   
 
 proc getTerminalWidth*() : int =
@@ -400,8 +396,22 @@ converter toInt(x: char): int = result = ord(x)
 converter toChar(x: int): char = result = chr(x)  
 
 template rndCxFgrCol*():untyped =  cxColorNames[rndSample(txcol)][0]
-template rndCxBgrCol*():untyped =  rndtruecol2() 
-
+    ## rndCxFgrCol
+    ## 
+    ## gets a random foreground color for cxPrint or cxPrintLn procs
+    ## from cxColorNames seq defined in cxconsts.nim
+    ## 
+    
+    
+template rndCxBgrCol*():untyped =   
+    ## rndCxBgrCol
+    ## 
+    ## gets a random background color for cxPrint or cxPrintLn procs
+    ## from the cxTrueColor seq . defaults to a pool of 843750 colors 
+    ## which can be changed , See  getcxTrueColorSet()
+    ## 
+    colornumber48 = color48(cxTrueCol)
+    cxTrueCol[colornumber48]
 
 template `<>`* (a, b: untyped): untyped =
   ## unequal operator 
@@ -424,8 +434,6 @@ proc `[]`*[T; U](a: seq[T], x: Slice[U]): seq[T] =
 proc sampleSeq*[T](x: seq[T], a:int, b: int) : seq[T] = 
      ## sampleSeq
      ##
-     ## based on an idea in nim playground
-     ## 
      ## returns a continuous subseq a..b from an array or seq if a >= b
      ## 
      ## 
@@ -517,56 +525,46 @@ proc getCxTrueColorSet*(min:int = 0,max:int = 888,step:int = 12,flag48:bool = fa
            #printLnBiCol("cxTrueCol Length : " & $cxtruecol.len)
            result = true
      else:
-          result = false
-          printLnBicol("Error : cxTrueCol truecolor scheme can not be used on this terminal/konsole",colLeft=red,styled = {stylereverse})
-          doFinish() 
+           result = false
+           printLnBicol("Error : cxTrueCol truecolor scheme can not be used on this terminal/konsole",colLeft=red,styled = {stylereverse})
+           doFinish() 
    
 proc color38*(cxTrueCol:seq[string]) : int =
-   # random truecolor ex 38 set
-   var lcol = rand(cxTrueCol.len - 1)
-   while lcol mod 2 <> 0 : lcol = rand(cxTrueCol.len - 1)
-   result = lcol
+     # random truecolor ex 38 set
+     var lcol = rand(cxTrueCol.len - 1)
+     while lcol mod 2 <> 0 : lcol = rand(cxTrueCol.len - 1)
+     result = lcol
    
 proc color48*(cxTrueCol:seq[string]) : int =
-   # random truecolor ex 48 set
-   var rcol = rand(cxTrueCol.len - 1)
-   while rcol mod 2 == 0 : rcol = rand(cxTrueCol.len - 1)
-   result = rcol   
+     # random truecolor ex 48 set
+     var rcol = rand(cxTrueCol.len - 1)
+     while rcol mod 2 == 0 : rcol = rand(cxTrueCol.len - 1)
+     result = rcol   
 
 proc color3848*(cxTrueCol:seq[string]) : int =
      # random truecolor ex 38 and 48 set
      result = rand(cxTrueCol.len - 1)
      
 proc rndTrueCol*() : auto = 
-    ## rndTrueCol
-    ## 
-    ## returns a random color from the cxtruecolorset for use as 
-    ## foregroundcolor in var. print functions
-    ## 
-    colornumber38 = color38(cxTrueCol)
-    result = cxTrueCol[colornumber38]
+     ## rndTrueCol
+     ## 
+     ## returns a random color from the cxtruecolorset for use as 
+     ## foreground color in var. print functions
+     ## 
+     colornumber38 = color38(cxTrueCol)
+     result = cxTrueCol[colornumber38]
    
-
-proc rndTrueCol2*() : auto = 
-    ## rndTrueCol
-    ## 
-    ## returns a random color from the cxtruecolorset for use as 
-    ## foregroundcolor in var. print functions
-    ## 
-    colornumber48 = color48(cxTrueCol)
-    result = cxTrueCol[colornumber48]
-    
     
 #  end experimental truecolors     
 #################################################################################################################### 
  
 proc stripper*(str:string): string =
-  # stripper
-  # strip controlcodes "\ba\x00b\n\rc\fd\xc3"
-  result = ""
-  for ac in str:
-    if ord(ac) in 32..126:
-      result.add ac
+     # stripper
+     # strip controlcodes "\ba\x00b\n\rc\fd\xc3"
+     result = ""
+     for ac in str:
+       if ord(ac) in 32..126:
+         result.add ac
  
    
 
@@ -617,8 +615,8 @@ proc uniform*(a,b: float) : float {.inline.} =
       ## returns a rand float uniformly distributed between a and  b
       ## 
       ##.. code-block:: nim
+      ##   # run in terminal with min. 30 rows
       ##   import nimcx,stats
-      ##   import "rand-0.5.3/rand"
       ##   proc quickTest() =
       ##        var ps : Runningstat
       ##        var  n = 100_000_000
@@ -653,20 +651,20 @@ template `*`*(s:string,n:int):string =
 
    
 proc getRndInt*(mi:int = 0 , ma: int = int.high):int  {.noInit,inline.} =
-    ## getRndInt
-    ##
-    ## returns a rand int between mi and < ma
-    ## so for 0 or 1 we need rand(0..2)
-    var maa = ma
-    if ma == 1: maa = 2
-    result = rand(mi..maa)
+     ## getRndInt
+     ##
+     ## returns a rand int between mi and < ma
+     ## so for 0 or 1 we need rand(0..2)
+     var maa = ma
+     if ma == 1: maa = 2
+     result = rand(mi..maa)
 
   
 
 proc getRndBool*():bool = 
-      if getRndInt(0,1) == 0:
+     if getRndInt(0,1) == 0:
          result = false
-      else:
+     else:
          result = true
     
     
@@ -707,7 +705,7 @@ template colPalette*(coltype:string,n:int): auto =
          ##     echo()
          ##     loopy2(0,colPaletteLen(mycol)):
          ##         printLn("Here we go " & rightarrow * 3 & spaces(2) & colPaletteName(mycol,xloopy), colPalette(mycol,xloopy))
-         ##    doFinish()
+         ##     doFinish()
          ##
          var m = n
          var ts = newseq[string]()         
@@ -806,15 +804,15 @@ template randCol2*(coltype:string): auto =
          
 
 template randCol*(): string = rand(colorNames)[1]
-   ## randCol
-   ##
-   ## get a randcolor from colorNames , no filter is applied 
-   ##
-   ##.. code-block:: nim
-   ##    # print a string 6 times in a rand color selected from colorNames
-   ##    loopy(0..5,printLn("Hello Random Color",randCol()))
-   ##
-   ##
+     ## randCol
+     ##
+     ## get a randcolor from colorNames , no filter is applied 
+     ##
+     ##.. code-block:: nim
+     ##    # print a string 6 times in a rand color selected from colorNames
+     ##    loopy(0..5,printLn("Hello Random Color",randCol()))
+     ##
+   
 
 
 template rndCol*(r:int = getRndInt(0,254) ,g:int = getRndInt(0,254), b:int = getRndInt(0,254)) :string = "\x1b[38;2;" & $r & ";" & $b & ";" & $g & "m"
@@ -831,15 +829,15 @@ template rndCol*(r:int = getRndInt(0,254) ,g:int = getRndInt(0,254), b:int = get
     
    
 template randPastelCol*: string = rand(pastelset)
-   ## randPastelCol
-   ##
-   ## get a randcolor from pastelSet
-   ##
-   ##.. code-block:: nim
-   ##    # print a string 6 times in a rand color selected from pastelSet
-   ##    loopy(0..5,printLn("Hello Random Color",randPastelCol()))
-   ##
-   ##
+     ## randPastelCol
+     ##
+     ## get a randcolor from pastelSet
+     ##
+     ##.. code-block:: nim
+     ##    # print a string 6 times in a rand color selected from pastelSet
+     ##    loopy(0..5,printLn("Hello Random Color",randPastelCol()))
+     ##
+     ##
  
 
 # procs lifted from an early version of terminal.nim as they are currently not exported from there
@@ -903,7 +901,7 @@ template hdx*(code:typed,frm:string = "+",width:int = tw,nxpos:int = 0):typed =
    ## width and xpos can be adjusted
    ##
    ##.. code-block:: nim
-   ##    hdx(printLn("Nice things happen randly",yellowgreen,xpos = 9),width = 35,nxpos = 5)
+   ##    hdx(printLn("Nice things happen randomly",yellowgreen,xpos = 9),width = 35,nxpos = 5)
    ##
    var xpos = nxpos
    var lx = repeat(frm,width div frm.len)
@@ -1211,8 +1209,18 @@ proc print*[T](astring :T,
     ##    # To achieve colored text with styleReverse try:
     ##    setBackgroundColor(bgRed)
     ##    print("The end never comes on time ! ",pastelBlue,styled = {styleReverse})
-    ##    print("whats up with truecolors now ? ",cxTrueCol[34567],bgRed,xpos = 10styled={})
+    ##    print("whats up with truecolors now ? ",cxTrueCol[34567],bgRed,xpos = 10,styled={})
     ##    echo()
+    ##
+    ## There are many more possibilities using the print and PrintLn statements
+    ##
+    ##.. code-block:: nim
+    ##   
+    ##   printLnBiCol("this is a " & rightarrow & "  " & termStrikethrough & "print" &  termclear & " aaah,sorry ",colLeft = goldenrod,colRight = cyan,sep = termclear)
+    ##   printLnBiCol(" a printLnBiCol example " & termnegative & "changing color to lime after here" & termclear & " this is lime colored text",colLeft=salmon,colRight = lime,sep=termclear,styled={})
+    ##
+    ##
+    ##
     {.gcsafe.}:
         var npos = xpos
         
@@ -1297,7 +1305,7 @@ proc cxPrint*[T](ss    :T,
       ## 
       ## Example to specify a Backgroundcolor :
       ##  
-      ##  a) a random background color from cxTrueColor palette :  bgr = rndtruecol2() 
+      ##  a) a random background color from cxTrueColor palette :  bgr = rndCxBgrCol() 
       ##  b) a color from the cxTrueColor palette               :  bgr = cxTrueCol[65451])
       ##  c) a specified color from colorNames seq              :  bgr = darkgreen
       
@@ -3802,7 +3810,7 @@ template withFile*(f,fn, mode, actions: untyped): untyped =
   ##                   if aline.contains(sw) == true:
   ##                       inc oc
   ##                       printBiCol(fmtx(["<8",">6","","<7","<6"],"Line :",lc,rightarrow,"Count : ",oc))
-  ##                       printHl(aline,sw,green)
+  ##                       printHl(aline,sw,yellowgreen)
   ##                       echo()
   ##               except:
   ##                   break 
@@ -4177,13 +4185,40 @@ proc newDir*(dirname:string) =
         printLn("Directory " & dirname & " already exists !",red)
 
 
+# 
+# proc remDir*(dirname:string) =
+#      ## remDir
+#      ##
+#      ## deletes an existing directory , all subdirectories and files  and provides some feedback
+#      ##
+#      ## root and home directory removal is disallowed 
+#      ## 
+#      ## this obviously is a dangerous proc handle with care !!
+#      ##
+# 
+#      if dirname == "/home" or dirname == "/" :
+#         printLn("Directory " & dirname & " removal not allowed !",brightred)
+# 
+#      else:
+# 
+#         if existsDir(dirname):
+# 
+#             try:
+#                 removeDir(dirname)
+#                 printLn("Directory " & dirname & " deleted ok",yellowgreen)
+#             except OSError:
+#                 printLn("Directory " & dirname & " deletion failed",red)
+#         else:
+#             printLn("Directory " & dirname & " does not exists !",red)
 
-proc remDir*(dirname:string) =
+proc remDir*(dirname:string):bool {.discardable.} =
      ## remDir
      ##
      ## deletes an existing directory , all subdirectories and files  and provides some feedback
      ##
-     ## root and home directory removal is disallowed
+     ## root and home directory removal is disallowed 
+     ## 
+     ## this obviously is a dangerous proc handle with care !!
      ##
 
      if dirname == "/home" or dirname == "/" :
@@ -4196,10 +4231,13 @@ proc remDir*(dirname:string) =
             try:
                 removeDir(dirname)
                 printLn("Directory " & dirname & " deleted ok",yellowgreen)
+                result = true
             except OSError:
                 printLn("Directory " & dirname & " deletion failed",red)
+                result = false
         else:
             printLn("Directory " & dirname & " does not exists !",red)
+            result = false
 
 
 
@@ -5360,7 +5398,7 @@ proc printFontFancy*(s:string, coltop1 = rndcol(),xpos:int = -10) =
      ## printFontFancy
      ## 
      ## display experimental cxfont with every element in rand color
-     ## changeing of coltop color possible
+     ## changing of coltop color possible
      ## 
      ## 
      ## 
@@ -5754,7 +5792,7 @@ proc doCxEnd*() =
         printMadeWithNim()
         decho(8)
         print(innocent,truetomato)
-        for x in 0..<(tw - 3) div runeLen(innocent) div 2: print(innocent,rndCol())
+        for x in 0..<(tw - 4) div runeLen(innocent) div 2: print(innocent,rndCol())
         print(innocent,truetomato)
         sleepy(0.15)
         curup(1)

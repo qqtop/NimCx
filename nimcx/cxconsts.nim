@@ -149,7 +149,13 @@ const
       bbrightmagenta*       = bbright(bgMagenta)
       bbrightblack*         = bbright(bgBlack)
       
-     
+      termClear*            = "\e[0m"
+      termBold*             = "\e[1m"
+      termItalic*           = "\e[3m"
+      termUnderline*        = "\e[4m"
+      termBlink*            = "\e[5m"
+      termNegative*         = "\e[7m"
+      termStrikethrough*    = "\e[9m"
 
       # Pastel color set
 
