@@ -12,7 +12,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2017-11-26
+##     Latest      : 2018-02-09
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -24,7 +24,9 @@
 ## 
 ##                   it is automatically imported and exported by cx.nim
 ## 
-## 
+##                   concerning unicode symbols , our testing system has gnu unicodefonts installed
+##                   
+##                   
 ## 
 
 import terminal,colors,sequtils, strutils
@@ -1083,15 +1085,20 @@ const
       southwestarrow*  = "\u2198"
       southeastarrow*  = "\u2199"
       
-      # other arrow set 
-      lrarrow*  = "⮀"
-      rlarrow*  = "⮂"
-      udarrow*  = "⮁"
-      daarrow*  = "⮃"
-      larrow*   = "⭠"
-      barrow*   = "⭤"
-      uarrow*   = "⭡"
-
+      # other arrow set # needs to be improved as fonts may not be installed/visible in all distros
+      lrarrow*  = "\u2B0C"   # leftrightarrow
+      #rlarrow*  = "⮂"
+      udarrow*  = "\u2B0D"   # updownaarrow
+      #daarrow*  = "⮃"
+      larrow*   = "\u2B05"   # leftarrow
+      darrow*   = "\u2B07"   # downarrow
+      uarrow*   = "\u2B06"   # uparrow
+      swarrow*  = "\u2B0B"   # southwestarrow
+      searrow*  = "\u2B0A"   # southeastarrow
+      nwarrow*  = "\u2B09"   # northwestarrow
+      nearrow*  = "\u2B08"   # northeastarrow
+      
+      
       # vars
       phone*           = "\u260E"
       fullflag*        = "\u2691"
@@ -1134,8 +1141,8 @@ const
     monkey*             =  "🐵"
     cow*                =  "🐮"
     # other
-    errorsymbol*        = "🔥"
-    errorsymbol2*       = "𝐄"
+    errorsymbol*        =  "🔥"
+    errorsymbol2*       =  "𝐄"
 
 
 const emojis* = @[check,xmark,heart,sun,star,darkstar,umbrella,flag,snowflake,music,scissors,
