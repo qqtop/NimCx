@@ -153,7 +153,8 @@ let cxstart* = epochTime()  # simple execution timing with one line see doFinish
 randomize()                 # seed rand number generator 
 
 type
-     NimCxError* = object of Exception         
+     NimCxError* = object of Exception  
+         cxerrormsg:string
      # to be used like so
      # raise newException(NimCxError, "didn't do stuff")
      #
@@ -206,24 +207,6 @@ type
 
 # used to store all cxtimer results 
 var cxtimerresults* =  newSeq[Cxtimerres]() 
-
-# #start timer experimental
-# # under consideration use different setup to get rid of globals like cxtimerresults    
-# 
-# type 
-#      CxRtes* = object
-#          cxRtimerres* : seq[Cxtimerres]
-#      
-# proc newCxtimerresults*(acxtimer:Cxtimer): CxRtes =
-#         
-#         result.cxRtimerres.add(acxtimer)    # hmm need to rethink this
-# 
-# # try to use it
-# # 
-# var globalTimer = newCxtimerresults()
-# globalTimer.start = epochTime()
-# # 
-# ## end timer experimental
 
 type
   Cxcounter* =  object
@@ -4247,6 +4230,19 @@ proc localTime*() : auto =
   ## quick access to local time for printing
   ## 
   result = now()
+  
+  
+proc getTimeStr*():string =
+    ## getTimeStr
+    ## 
+    ## returns current time parsed from stdlib now() function
+    ## 
+ 
+    let ctt = split($now(),"T")
+    if ctt[1].contains("-"):
+       result = split(ctt[1],"-")[0]
+    else:
+       result = split(ctt[1],"+")[0]
 
 
 proc toDateTime*(date:string = "2000-01-01"): DateTime =
@@ -4767,6 +4763,72 @@ proc showTerminalSize*() =
 
 # Info and handlers procs for quick information
 
+# formated info strings for time,date fulldatetime,pass,ok,fail,error and generic
+#    
+proc printErrorMsg*(errortext:string = "",xpos:int = 1):string {.discardable.} =
+     printBiCol("[Error] " & errortext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
+ 
+proc printLnErrorMsg*(errortext:string = "",xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[Error] " & errortext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
+   
+proc printFailMsg*(errortext:string = "",xpos:int = 1):string {.discardable.} =
+     printBiCol("[Fail ] " & errortext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
+     
+   
+proc printLnFailMsg*(errortext:string = "",xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[Fail ] " & errortext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
+      
+   
+proc printOKMsg*(errortext:string = "",xpos:int = 1):string {.discardable.} =
+     printBiCol("[OK   ]" & spaces(1) & errortext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
+     
+   
+proc printLnOkMsg*(errortext:string = "",xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[OK   ]" & spaces(1) & errortext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
+    
+  
+proc printPassMsg*(errortext:string = "",xpos:int = 1):string {.discardable.} =
+     printBiCol("[Pass ]" & spaces(1) & errortext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
+   
+
+proc printLnPassMsg*(errortext:string = "",xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[Pass ]" & spaces(1) & errortext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
+     
+
+proc printTimeMsg*(errortext:string = getTimeStr(),xpos:int = 1):string {.discardable.} =
+     printBiCol("[Time ]" & spaces(1) & errortext , colLeft = yellowgreen ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
+    
+
+proc printLnTimeMsg*(errortext:string = getTimeStr(),xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[Time ]" & spaces(1) & errortext , colLeft = yellowgreen ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
+
+
+proc printDTimeMsg*(errortext:string = $toTime(now()),xpos:int = 1):string {.discardable.} =
+     printBiCol("[DTime]" & spaces(1) & errortext , colLeft = yellowgreen ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
+    
+
+proc printLnDTimeMsg*(errortext:string = $toTime(now()),xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[DTime]" & spaces(1) & errortext , colLeft = yellowgreen ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
+     
+     
+proc printDateMsg*(errortext:string = getDateStr(),xpos:int = 1):string {.discardable.} =
+     printBiCol("[Date ]" & spaces(1) & errortext , colLeft = yellowgreen ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
+     
+
+proc printLnDateMsg*(errortext:string = getDateStr(),xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[Date ]" & spaces(1) & errortext , colLeft = yellowgreen ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
+
+      
+     
+ 
+proc printInfoMsg*(info,errortext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
+     printBiCol("[$1 ]" % info & spaces(1) & errortext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
+        
+
+proc printLnInfoMsg*(info,errortext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[$1 ]" % info & spaces(1) & errortext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
+     
+     
 template infoProc*(code: untyped) =
   ## infoProc
   ## 
@@ -4827,6 +4889,22 @@ proc qqTop*() =
   print("o",brightred)
   print("p",cyan)
 
+  
+    
+proc cxBinomialCoeff*(n, k:int): int =
+    # cxBinomialCoeff
+    # 
+    # function returns BinomialCoefficient
+    # 
+    result = 1
+    var kk = k
+    if kk < 0 or kk  >  n:  result = 0
+    if kk == 0 or kk == n:  result = 1
+    kk = min(kk, n - kk) 
+    for i in 0..<kk: result = result * (n - i) div (i + 1)
+   
+  
+  
   
 #experimental  font code here
 
@@ -5734,7 +5812,12 @@ proc doFinish*() =
             let rld4 = rld3[0] & spaces(2) & strip(rld3[1])
             printBiCol(rld4,yellowgreen,lightslategray,":",0,false,{})
             printLnBiCol(spaces(3) & rld[3],yellowgreen,lightslategray,":",0,false,{})
-        echo()
+            echo()
+        
+        else:
+           var un = execCmdEx("uname -v")
+           printLnInfoMsg("uname -v ",un.output)
+           
         GC_fullCollect()  # just in case anything hangs around
         quit(0)
 
@@ -5763,13 +5846,12 @@ proc handler*() {.noconv.} =
     printLnBiCol(fmtx(["<","<11",">9"],"Last compilation on        : " , CompileDate , CompileTime),brightcyan,termwhite,":",0,false,{})
     printLnBiCol(fmtx(["<","<11",">9"],"Exit handler invocation at : " , cxtoday() , getClockStr()),pastelorange,termwhite,":",0,false,{})
     hlineLn()
-    printBiCol("Nim Version   : " & NimVersion)
-    print(" | ",brightblack)
-    printLnBiCol("cx Version     : " & CXLIBVERSION)
-    print(fmtx(["<14"],"Elapsed       : "),yellow)
-    printLn(fmtx(["<",">5"],epochTime() - cxstart,"secs"),brightblack)
     echo()
-    printLn(" Have a Nice Day !",clRainbow)  ## change or add custom messages as required
+    printInfoMsg("Nim Version ",NimVersion)
+    print(" | ",brightblack)
+    printInfoMsg("NimCx Version", CXLIBVERSION,xpos = 25)
+    printInfoMsg("Elapsed secs ",fmtx(["<10.3"],epochTime() - cxstart),xpos = 49)
+    printLnInfoMsg("Info"," Have a Nice Day !",limegreen,xpos = 78)  ## change or add custom messages as required
     decho(2)
     system.addQuitProc(resetAttributes)
     quit(0)

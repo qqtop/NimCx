@@ -98,10 +98,10 @@ const
       cdel*     = "\x1b[3~"     # no effect
       cpgup*    = "\x1b[5~"     # no effect
       cpgdn*    = "\x1b[6~"     # no effect
-      csave*     = "\x1b[s"     # ok saves last xpos (but not ypos)
-      crestore*  = "\x1b[u"     # ok restores saved xpos
-      chide*     = "\x1b[?25l"  # ok hide cursor
-      cshow*     = "\x1b[?25h"  # ok show cursor
+      csave*    = "\x1b[s"      # ok saves last xpos (but not ypos)
+      crestore* = "\x1b[u"      # ok restores saved xpos
+      chide*    = "\x1b[?25l"   # ok hide cursor
+      cshow*    = "\x1b[?25h"   # ok show cursor
 
 
 const
