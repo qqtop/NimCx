@@ -51,7 +51,7 @@
 ##       
 ##                   Terminal set encoding to UTF-8  
 ##
-##                   with var. terminal font : hack,monospace size 9.0 - 15  tested
+##                   with var. terminal font : hack,monospace size 9.0 - 15  
 ##
 ##                   xterm,bash,st ,zsh  terminals support truecolor ok
 ##
