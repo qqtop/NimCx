@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-02-09
+##     Latest      : 2018-02-14
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -656,7 +656,7 @@ template colPaletteIndexer*(colx:seq[string]):auto =  toSeq(colx.low.. colx.high
 template colPaletteLen*(coltype:string): auto =
          ##  colPaletteLen
          ##  
-         ##  returns the len of a colPalette 
+         ##  returns the len of a colPalette of colors in colorNames
          ##  
          var ts = newseq[string]()         
          for x in 0..<colorNames.len:
@@ -839,10 +839,8 @@ macro styledEchoPrint*(m: varargs[untyped]): typed =
   ##
   let m = callsite()
   result = newNimNode(nnkStmtList)
-
   for i in countup(1, m.len - 1):
       result.add(newCall(bindSym"styledEchoProcessArg", m[i]))
-
   result.add(newCall(bindSym"write", bindSym"stdout", newStrLitNode("")))
   result.add(newCall(bindSym"resetAttributes"))
 
@@ -1359,7 +1357,13 @@ proc cxPrintLn*[T](ss       : T,
             
        
 
-proc print2*[T](astring:T,fgr:string = termwhite,xpos:int = 0,fitLine:bool = false ,centered:bool = false,styled : set[Style]= {},substr:string = "") =
+proc print2*[T](astring:T,
+               fgr:string = termwhite,
+               xpos:int = 0,
+               fitLine:bool = false,
+               centered:bool = false,
+               styled : set[Style]= {},
+               substr:string = "") =
  
     ## ::
     ##   print2
@@ -1546,7 +1550,14 @@ proc printLn2*[T](astring:T,
     print2($(astring) & "\L",fgr,xpos,fitLine,centered,styled,substr)
     
 
-proc printLn*[T](astring:T,fgr:string = termwhite , bgr:BackgroundColor,xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {},substr:string = "") =
+proc printLn*[T](astring:T,
+                fgr:string = termwhite,
+                bgr:BackgroundColor,
+                xpos:int = 0,
+                fitLine:bool = false,
+                centered:bool = false,
+                styled : set[Style]= {},
+                substr:string = "") =
     ## :: 
     ##   printLn
     ## 
@@ -1600,7 +1611,10 @@ proc printy*[T](astring:varargs[T,`$`]) =
     
   
  
-proc rainbow*[T](s : T,xpos:int = 1,fitLine:bool = false,centered:bool = false)  =
+proc rainbow*[T](s : T,
+                 xpos:int = 1,
+                 fitLine:bool = false,
+                 centered:bool = false)  =
     ## rainbow
     ##
     ## multicolored string
@@ -1634,7 +1648,10 @@ proc rainbow*[T](s : T,xpos:int = 1,fitLine:bool = false,centered:bool = false) 
 
 
 # output  horizontal lines
-proc hline*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-"):string {.discardable.} =
+proc hline*(n:int = tw,
+            col:string = white,
+            xpos:int = 1,
+            lt:string = "-"):string {.discardable.} =
      ## hline
      ##
      ## draw a full line in stated length and color no linefeed will be issued
@@ -1648,7 +1665,10 @@ proc hline*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-"):string {
      result = lt * n     # new we return the line string without color and pos formating in case needed
 
 
-proc hlineLn*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-"):string {.discardable.} =
+proc hlineLn*(n:int = tw,
+              col:string = white,
+              xpos:int = 1,
+              lt:string = "-"):string {.discardable.} =
      ## hlineLn
      ##
      ## draw a full line in stated length and color a linefeed will be issued
@@ -1663,7 +1683,9 @@ proc hlineLn*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-"):string
 
 
 
-proc dline*(n:int = tw,lt:string = "-",col:string = termwhite) =
+proc dline*(n:int = tw,
+            lt:string = "-",
+            col:string = termwhite) =
      ## dline
      ##
      ## draw a dashed line with given length in current terminal font color
@@ -1677,7 +1699,9 @@ proc dline*(n:int = tw,lt:string = "-",col:string = termwhite) =
      if lt.len <= n: print(lt * (n div lt.len))
 
 
-proc dlineLn*(n:int = tw,lt:string = "-",col:string = termwhite) =
+proc dlineLn*(n:int = tw,
+              lt:string = "-",
+              col:string = termwhite) =
      ## dlineLn
      ##
      ## draw a dashed line with given length in current terminal font color
@@ -1761,7 +1785,10 @@ template clearup*(x:int = 80) =
      curup(x)
 
 
-proc curMove*(up:int=0,dn:int=0,fw:int=0,bk:int=0) =
+proc curMove*(up:int=0,
+              dn:int=0,
+              fw:int=0,
+              bk:int=0) =
      ## curMove
      ##
      ## conveniently move the cursor to where you need it
@@ -1825,7 +1852,14 @@ proc printLnRainbow*[T](s : T,styled:set[Style] = {}) =
     printRainBow($(s) & "\L",styled)
 
 
-proc printBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) =
+proc printBiCol*[T](s:varargs[T,`$`],
+                    colLeft:string = yellowgreen,
+                    colRight:string = termwhite,
+                    sep:string = ":",
+                    xpos:int = 0,
+                    centered:bool = false,
+                    styled : set[Style]= {}) =
+                    
      ## printBiCol
      ##
      ## Notes see printLnBiCol
@@ -2028,7 +2062,7 @@ proc cechoLn*(col    : string,
 proc printCxLine*(aline:var Cxline) =
      ## printCxLine
      ## 
-     ## prints a horizontal or vertical line for frames with text as specified in an Cxline object
+     ## prints a horizontal  (or vertical line - not yet implemeted) for frames with text as specified in an Cxline object
      ## see cxlineobjectE1.nim for an example
      ## 
      
@@ -2097,7 +2131,11 @@ macro dotColors*(): untyped =
 
 
 
-proc doty*(d:int,fgr:string = white, bgr:BackgroundColor = bgBlack,xpos:int = 1) =
+proc doty*(d   :int,
+           fgr :string = white,
+           bgr :BackgroundColor = bgBlack,
+           xpos:int = 1) =
+           
      ## doty
      ##
      ## prints number d of widedot ⏺  style dots in given fore/background color
@@ -2121,7 +2159,11 @@ proc doty*(d:int,fgr:string = white, bgr:BackgroundColor = bgBlack,xpos:int = 1)
      else: print(astring = astr,fgr,bgr,xpos)
 
 
-proc dotyLn*(d:int,fgr:string = white, bgr:BackgroundColor = bgBlack,xpos:int = 1) =
+proc dotyLn*(d    :int,
+             fgr  :string = white,
+             bgr  :BackgroundColor = bgBlack,
+             xpos :int = 1) =
+             
      ## dotyLn
      ##
      ## prints number d of widedot ⏺  style dots in given fore/background color and issues new line
@@ -2153,7 +2195,15 @@ proc printDotPos*(xpos:int,dotCol:string,blink:bool) =
       else: print(wideDot,dotCol,styled = {},substr = wideDot)
 
 
-proc drawRect*(h:int = 0 ,w:int = 3, frhLine:string = "_", frVLine:string = "|",frCol:string = darkgreen,dotCol = truetomato,xpos:int = 1,blink:bool = false) =
+proc drawRect*(h      :int = 0,
+               w      :int = 3,
+               frhLine:string = "_",
+               frVLine:string = "|",
+               frCol  :string = darkgreen,
+               dotCol :string = truetomato,
+               xpos   :int = 1,
+               blink  :bool = false) =
+               
       ## drawRect
       ##
       ## a simple proc to draw a rectangle with corners marked with widedots.
@@ -2272,37 +2322,6 @@ proc month*(aDate:string) : string =
 proc year*(aDate:string) : string = aDate.split("-")[0]
      ## Format yyyy
 
-# 
-# proc intervalsecs*(startDate,endDate:string) : float =
-#       ## interval procs returns time elapsed between two dates in secs,hours etc.
-#       #  since all interval routines call intervalsecs error message display also here
-#       #
-#       if validdate(startDate) and validdate(endDate):
-#           var f     = "yyyy-MM-dd"
-#           result = toSeconds(toTime(endDate.parse(f)))  - toSeconds(toTime(startDate.parse(f)))
-#       else:
-#           printLn("Error: " &  startDate & "/" & endDate & " --> Format yyyy-MM-dd required",red)
-#           #result = -0.0
-#           
-# 
-# proc intervalmins*(startDate,endDate:string) : float =
-#            result = intervalsecs(startDate,endDate) / 60
-#           
-# 
-# proc intervalhours*(startDate,endDate:string) : float =
-#          result = intervalsecs(startDate,endDate) / 3600
-#         
-# proc intervaldays*(startDate,endDate:string) : float =
-#           result = intervalsecs(startDate,endDate) / 3600 / 24
-#           
-# proc intervalweeks*(startDate,endDate:string) : float =
-#           result = intervalsecs(startDate,endDate) / 3600 / 24 / 7
-#           
-# proc intervalmonths*(startDate,endDate:string) : float =
-#           result = intervalsecs(startDate,endDate) / 3600 / 24 / 365  * 12
-#           
-# proc intervalyears*(startDate,endDate:string) : float =
-#           result = intervalsecs(startDate,endDate) / 3600 / 24 / 365
           
 proc compareDates*(startDate,endDate:string) : int =
      # dates must be in form yyyy-MM-dd
@@ -2409,7 +2428,6 @@ proc cxTimeZone*(amode:string = "long"):string =
    var okmodes = @["long","short"]
    if mode in okmodes == false:
       mode = "long"
-   
    if mode == "long":
         var ltt = $now()
         result = "UTC" & $ltt[(($ltt).len - 6)..($ltt).len]     
@@ -4131,7 +4149,8 @@ proc dprint*[T](s:T) =
      echo repr(s) 
      printLn("** END REPR OUTPTUT ****",truetomato)
      echo()
-    
+   
+   
 template zipWith*[T1,T2](f: untyped; xs:openarray[T1], ys:openarray[T2]): untyped =
   ## zipWith
   ## 
@@ -4151,8 +4170,6 @@ template zipWith*[T1,T2](f: untyped; xs:openarray[T1], ys:openarray[T2]): untype
   res
 
 
-
-
 proc newDir*(dirname:string) =
      ## newDir
      ##
@@ -4168,31 +4185,7 @@ proc newDir*(dirname:string) =
         printLn("Directory " & dirname & " already exists !",red)
 
 
-# 
-# proc remDir*(dirname:string) =
-#      ## remDir
-#      ##
-#      ## deletes an existing directory , all subdirectories and files  and provides some feedback
-#      ##
-#      ## root and home directory removal is disallowed 
-#      ## 
-#      ## this obviously is a dangerous proc handle with care !!
-#      ##
-# 
-#      if dirname == "/home" or dirname == "/" :
-#         printLn("Directory " & dirname & " removal not allowed !",brightred)
-# 
-#      else:
-# 
-#         if existsDir(dirname):
-# 
-#             try:
-#                 removeDir(dirname)
-#                 printLn("Directory " & dirname & " deleted ok",yellowgreen)
-#             except OSError:
-#                 printLn("Directory " & dirname & " deletion failed",red)
-#         else:
-#             printLn("Directory " & dirname & " does not exists !",red)
+
 
 proc remDir*(dirname:string):bool {.discardable.} =
      ## remDir
@@ -4501,150 +4494,6 @@ proc boxChars*():seq[string] =
     result = boxy
     
 
-proc optimalbox*(w:int,s:int,tl:int):int =
-    ## optimalbox
-    ## 
-    ## WORK IN PROGRESS
-    ## 
-    ## attempts to calculates best overall box width to accomodate single cells with total desired width
-    ## and a minimum of s desired columns
-    ## this function can be used in drawbox to calculate the width parameter
-    ## 
-    ##.. code-block:: nim
-    ##   import nimcx
-    ## 
-    ##   var postop = 5
-    ##   var hy = 27
-    ##   var boxwidth = tw 
-    ##   var hsec = 9
-    ##   var boxsections = 20
-    ##   var xpos = 5
-    ##   var tl = 8
-    ##   cleanscreen()
-    ##   decho(postop)
-    ##   drawBox(hy=hy, wx = optimalbox(tw - 10 ,boxsections,tl) , hsec = hsec ,vsec = boxsections,frCol = randcol(),brCol = randcol() ,cornerCol = aquamarine,xpos = xpos,blink = true)
-    ##   decho(postop)
-    ##   showTerminalSize()
-    ##   doFinish()
-    ##
-    #
-    result = w
-    while result mod s > 0 : 
-      if  tl > result div s  and result mod s == 0:
-          break
-      else:
-          result = result - 1
-        
-
-proc drawBox*(hy:int = 1, wx:int = 1 , hsec:int = 1 ,vsec:int = 1,frCol:string = yellowgreen,brCol:string = black ,cornerCol:string = truetomato,xpos:int = 1,blink:bool = false) =
-     ## drawBox
-     ##
-     ## WORK IN PROGRESS FOR A BOX DRAWING PROC USING UNICODE BOX CHARS
-     ##
-     ## Note you must make sure that the terminal is large enough to display the
-     ##
-     ##      box or it will look messed up
-     ##
-     ##
-     ##.. code-block:: nim
-     ##    import nimcx,unicode
-     ##    cleanscreen()
-     ##    decho(5)
-     ##    drawBox(hy=10, wx= 60 , hsec = 5 ,vsec = 5,frCol = randcol(),brCol= black ,cornerCol = truetomato,xpos = 1,blink = false)
-     ##    curmove(up=2,bk=11)
-     ##    print(widedot & "NIM " & widedot,yellowgreen)
-     ##    decho(5)
-     ##    showTerminalSize()
-     ##    doFinish()
-     ##
-     ##
-     # http://unicode.org/charts/PDF/U2500.pdf
-     # almost ok we need to find a way to to make sure that grid size is fine
-     # if we use dynamic sizes like width = tw - 1 etc.
-     #
-     # 
-     # brcol does not have any sensible effect
-     # 
-     #
-
-     var h = hy
-     var w = wx
-     if h > th: h = th
-     if w > tw: w = tw
-     curSetx(xpos)
-     
-     # top
-     if blink == true:
-           print($Rune(parsehexint("250C")),cornerCol,styled = {styleBlink},substr = $Rune(parsehexint("250C")))
-     else:
-           print($Rune(parsehexint("250C")),cornerCol,styled = {},substr = $Rune(parsehexint("250C")))
-
-     print(repeat($Rune(parseHexInt("2500")),w - 1) ,fgr = frcol)
-
-     if blink == true:
-           printLn($Rune(parsehexint("2510")),cornerCol,styled = {styleBlink},substr = $Rune(parsehexint("2510")))
-     else:
-           printLn($Rune(parsehexint("2510")),cornerCol,styled = {} ,substr = $Rune(parsehexint("2510")))
-
-
-     #sides
-     for x in 0.. h - 2 :
-           print($Rune(parsehexint("2502")),fgr = frcol,xpos=xpos)
-           printLn($Rune(parsehexint("2502")),fgr = frcol,xpos=xpos + w )
-
-
-     # bottom left corner and bottom right
-     if blink == true:
-           print($Rune(parsehexint("2514")),cornerCol,xpos = xpos,styled = {styleBlink},substr = $Rune(parsehexint("2514")))
-     else:
-           print($Rune(parsehexint("2514")),fgr = cornercol,xpos=xpos)
-           
-     # bottom line      
-     print(repeat($Rune(parsehexint("2500")),w-1),fgr = frcol)
-     
-     if blink == true:
-           printLn($Rune(parsehexint("2518")),cornerCol,styled = {styleBlink},substr = $Rune(parsehexint("2518")))
-     else:
-           printLn($Rune(parsehexint("2518")),fgr=cornercol)
-
-     # try to build some dividers
-     var vsecwidth = w
-     if vsec > 1:
-       vsecwidth = w div vsec
-       curup(h + 1)
-       for x in 1..<vsec:
-           print($Rune(parsehexint("252C")),fgr = truetomato,xpos=xpos + vsecwidth * x)
-           curdn(1)
-           for y in 0.. h - 2 :
-               printLn($Rune(parsehexint("2502")),fgr = frcol,xpos=xpos + vsecwidth * x)
-           print($Rune(parsehexint("2534")),fgr = truetomato,xpos=xpos + vsecwidth * x)
-           curup(h)
-
-     var hsecheight = h
-     var hpos = xpos
-     var npos = hpos
-     if hsec > 1:
-       hsecheight = h div hsec
-       cursetx(hpos)
-       curdn(hsecheight)
-
-       for x in 1..<hsec:
-           print($Rune(parsehexint("251C")),fgr = truetomato,xpos=hpos)
-           #print a full line right thru the vlines
-           print(repeat($Rune(parsehexint("2500")),w - 1),fgr = frcol)
-           # now we add the cross points
-           for x in 1..<vsec:
-               npos = npos + vsecwidth
-               cursetx(npos)
-               print($Rune(parsehexint("253C")),fgr = truetomato)
-           # print the right edge
-           npos = npos + vsecwidth + 1
-           print($Rune(parsehexint("2524")),fgr = truetomato,xpos = npos - 1)
-           curdn(hsecheight)
-           npos = hpos
-
-
-
 
 proc randpos*():int =
     ## randpos
@@ -4729,7 +4578,10 @@ proc splitty*(txt:string,sep:string):seq[string] =
    result = rx
 
 
-proc doFlag*[T](flagcol:string = yellowgreen,flags:int = 1,text:T = "",textcol:string = termwhite) : string {.discardable.} =
+proc doFlag*[T](flagcol:string = yellowgreen,
+                flags  :int = 1,
+                text   :T = "",
+                textcol:string = termwhite) : string {.discardable.} =
   ## doFlag
   ## 
   ##.. code-block:: nim
@@ -4746,7 +4598,7 @@ proc doFlag*[T](flagcol:string = yellowgreen,flags:int = 1,text:T = "",textcol:s
   for x in 0..<flags: result = result & flagcol & fullflag 
   result = result & spaces(1) & textcol & $text & white
    
-  
+
   
 proc showTerminalSize*() =
       ## showTerminalSize
@@ -4758,13 +4610,13 @@ proc showTerminalSize*() =
       ## height is always available via th
       ##
       ##
-      cechoLn(yellowgreen,"[Terminal Size] " & lime & " W " & white & $tw & red & " x" & lime & " H " & white & $th)
+      echo(yellowgreen,"[Terminal Size] " & lime & " W " & white & $tw & red & " x" & lime & " H " & white & $th)
 
 
 # Info and handlers procs for quick information
 
 # formated info strings for time,date fulldatetime,pass,ok,fail,error and generic
-#    
+#    ##
 proc printErrorMsg*(errortext:string = "",xpos:int = 1):string {.discardable.} =
      printBiCol("[Error] " & errortext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
  
@@ -4818,8 +4670,6 @@ proc printDateMsg*(errortext:string = getDateStr(),xpos:int = 1):string {.discar
 proc printLnDateMsg*(errortext:string = getDateStr(),xpos:int = 1):string {.discardable.} =
      printLnBiCol("[Date ]" & spaces(1) & errortext , colLeft = yellowgreen ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
 
-      
-     
  
 proc printInfoMsg*(info,errortext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
      printBiCol("[$1 ]" % info & spaces(1) & errortext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
@@ -4828,7 +4678,37 @@ proc printInfoMsg*(info,errortext:string = "",colLeft:string = lightslategray ,c
 proc printLnInfoMsg*(info,errortext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
      printLnBiCol("[$1 ]" % info & spaces(1) & errortext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
      
+
+proc printAlertMsg*(xpos:int = 1) = 
+     ## printAlertMsg
+     ## 
+     ## issues an alert 
+     ## 
+     ##      
+     print(doflag(red,6,"ALERT ",truetomato) & doflag(red,6),xpos = xpos)
      
+
+proc printLnAlertMsg*(xpos:int = 1) = 
+     ## printLnAlertMsg
+     ## 
+     ## issues an alert line
+     ## 
+     ##.. code-block:: nim
+     ##   import nimcx 
+     ##   # try to change the width of the terminal  window
+     ##   while true:
+     ##      if tw < 100:
+     ##          infoproc(printLnAlertMsg(2))
+     ##          showTerminalSize()      
+     ##      else:
+     ##          infoproc(printLnOkMsg($(tw),2))
+     ##      sleepy(0.5)
+     ##      
+     ##      
+     printLn(doflag(red,6,"ALERT ",truetomato) & doflag(red,6),xpos = xpos)
+             
+     
+        
 template infoProc*(code: untyped) =
   ## infoProc
   ## 
@@ -4903,12 +4783,8 @@ proc cxBinomialCoeff*(n, k:int): int =
     kk = min(kk, n - kk) 
     for i in 0..<kk: result = result * (n - i) div (i + 1)
    
-  
-  
-  
-#experimental  font code here
 
-
+# experimental  font code here
 # experimental font building  
 
 
@@ -4923,14 +4799,14 @@ template cxZero*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
           
 template cx1*(npos:int = 0,col:string=rndCol(),coltop:string = rndCol()) =    
        
-          let xpos = npos+5
-          printLn2(spaces(4) & efb3 * 2 ,coltop,xpos=xpos)
-          printLn2(spaces(3) & efb1 & efb2 * 2 ,col,xpos=xpos)
-          printLn2(spaces(1) & efb1 & spaces(2) & efb2 * 2 ,col,xpos=xpos)
-          printLn2(spaces(4) & efb2 * 2 ,col,xpos=xpos)
-          printLn2(spaces(4) & efs2 * 2,col,xpos=xpos)
-          printLn2(spaces(4) & efb2 * 2 ,col,xpos=xpos)
-          curup(6) 
+         let xpos = npos+5
+         printLn2(spaces(4) & efb3 * 2 ,coltop,xpos=xpos)
+         printLn2(spaces(3) & efb1 & efb2 * 2 ,col,xpos=xpos)
+         printLn2(spaces(1) & efb1 & spaces(2) & efb2 * 2 ,col,xpos=xpos)
+         printLn2(spaces(4) & efb2 * 2 ,col,xpos=xpos)
+         printLn2(spaces(4) & efs2 * 2,col,xpos=xpos)
+         printLn2(spaces(4) & efb2 * 2 ,col,xpos=xpos)
+         curup(6) 
            
            
 template cx2*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
@@ -4949,28 +4825,27 @@ template cx2*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
             
 template cx3*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
 
-        let xpos = npos+5
-        printLn2(spaces(1) & efb3 * 6,coltop,xpos=xpos)
-        printLn2(spaces(1) & efb2 * 6,col,xpos=xpos)
-        printLn2(spaces(5) & efb2 * 2,col,xpos=xpos)
-        printLn2(spaces(3) & efs2 * 3 & spaces(1),col,xpos=xpos)
-        printLn2(spaces(5) & efb2 * 2,col,xpos=xpos)
-        printLn2(spaces(1) & efb2 * 6,col,xpos=xpos)
-        curup(6)      
+         let xpos = npos+5
+         printLn2(spaces(1) & efb3 * 6,coltop,xpos=xpos)
+         printLn2(spaces(1) & efb2 * 6,col,xpos=xpos)
+         printLn2(spaces(5) & efb2 * 2,col,xpos=xpos)
+         printLn2(spaces(3) & efs2 * 3 & spaces(1),col,xpos=xpos)
+         printLn2(spaces(5) & efb2 * 2,col,xpos=xpos)
+         printLn2(spaces(1) & efb2 * 6,col,xpos=xpos)
+         curup(6)      
 
 
 template cx4*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
-        let xpos = npos+5
-        printLn2(spaces(5) & efb3 * 1,coltop,xpos=xpos)
-        printLn2(spaces(5) & efb2 * 1,col,xpos=xpos)
-        printLn2(spaces(3) & efb1 * 1 & spaces(1) & efs2 & spaces(3),col,xpos=xpos)
-        printLn2(spaces(1) & efs2 * 1 & spaces(3) & efb2,col,xpos=xpos)
-        printLn2(spaces(0) & efs2 * 1 & spaces(1) & efs2 & spaces(1) & efs2 * 4,col,xpos=xpos)
-        printLn2(spaces(4) & efb2 * 2,col,xpos=xpos)
-        curup(6)               
-            
-           
+         let xpos = npos+5
+         printLn2(spaces(5) & efb3 * 1,coltop,xpos=xpos)
+         printLn2(spaces(5) & efb2 * 1,col,xpos=xpos)
+         printLn2(spaces(3) & efb1 * 1 & spaces(1) & efs2 & spaces(3),col,xpos=xpos)
+         printLn2(spaces(1) & efs2 * 1 & spaces(3) & efb2,col,xpos=xpos)
+         printLn2(spaces(0) & efs2 * 1 & spaces(1) & efs2 & spaces(1) & efs2 * 4,col,xpos=xpos)
+         printLn2(spaces(4) & efb2 * 2,col,xpos=xpos)
+         curup(6)               
+         
               
 template cx5*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
@@ -4983,7 +4858,6 @@ template cx5*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
          printLn2(spaces(1) & efb1 * 1 & efb2 * 3  & efb1 & spaces(3),col,xpos = xpos)
          curup(6)               
                             
-              
               
               
 template cx6*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
@@ -5036,20 +4910,20 @@ template cx9*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
  
  
 proc cx10*(npos:int = 0,col:string=rndCol(),coltop:string = rndCol()) =
-     cx1(npos,col,coltop)
-     cxzero(npos + 9,col,coltop)
+         cx1(npos,col,coltop)
+         cxzero(npos + 9,col,coltop)
  
  
  
 template cxa*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
-        let xpos = npos + 5
-        printLn2(spaces(4) & efb3 * 2 & spaces(3), coltop,xpos=xpos)
-        printLn2(spaces(4) & efb2 * 2,col,xpos=xpos)
-        printLn2(spaces(2) & efb2 * 2 & spaces(2) & efb2 * 2,col,xpos=xpos)
-        printLn2(spaces(2) & efs2 * 6 ,col,xpos=xpos)
-        printLn2(spaces(1) & efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
-        printLn2(spaces(1) & efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
-        curup(6)
+         let xpos = npos + 5
+         printLn2(spaces(4) & efb3 * 2 & spaces(3), coltop,xpos=xpos)
+         printLn2(spaces(4) & efb2 * 2,col,xpos=xpos)
+         printLn2(spaces(2) & efb2 * 2 & spaces(2) & efb2 * 2,col,xpos=xpos)
+         printLn2(spaces(2) & efs2 * 6 ,col,xpos=xpos)
+         printLn2(spaces(1) & efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
+         printLn2(spaces(1) & efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
+         curup(6)
         
             
 template cxb*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
@@ -5065,14 +4939,14 @@ template cxb*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
 
 template cxc*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
 
-        let xpos = npos+5
-        printLn2(spaces(1) & efb3 * 6,coltop,xpos=xpos)
-        printLn2(spaces(1) & efb2 * 6,col,xpos=xpos)
-        printLn2(efb2 * 2,col,xpos=xpos)
-        printLn2(efs2 * 2,col,xpos=xpos)
-        printLn2(efb2 * 2,col,xpos=xpos)
-        printLn2(spaces(1) & efb2 * 6,col,xpos=xpos)
-        curup(6)
+         let xpos = npos+5
+         printLn2(spaces(1) & efb3 * 6,coltop,xpos=xpos)
+         printLn2(spaces(1) & efb2 * 6,col,xpos=xpos)
+         printLn2(efb2 * 2,col,xpos=xpos)
+         printLn2(efs2 * 2,col,xpos=xpos)
+         printLn2(efb2 * 2,col,xpos=xpos)
+         printLn2(spaces(1) & efb2 * 6,col,xpos=xpos)
+         curup(6)
               
               
 template cxd*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
@@ -5155,14 +5029,14 @@ template cxj*(npos:int = 0,col:string=rndCol(),coltop:string = rndCol()) =
            
 template cxk*(npos:int = 0,col:string=rndCol(),coltop:string = rndCol()) =    
        
-           let xpos = npos+5
-           printLn2(efb3 * 2 & spaces(4) & efb3 * 2,coltop,xpos=xpos)
-           printLn2(efb2 * 2 & spaces(4) & efb1 * 2,col,xpos=xpos)
-           printLn2(efb2 * 2 & spaces(2) & efs2 * 2,col,xpos=xpos)
-           printLn2(efb2 * 2 & efs2 * 2,col,xpos=xpos)
-           printLn2(efb2 * 2 & spaces(2) & efs2 * 2,col,xpos=xpos)
-           printLn2(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
-           curup(6)          
+         let xpos = npos+5
+         printLn2(efb3 * 2 & spaces(4) & efb3 * 2,coltop,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(4) & efb1 * 2,col,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(2) & efs2 * 2,col,xpos=xpos)
+         printLn2(efb2 * 2 & efs2 * 2,col,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(2) & efs2 * 2,col,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
+         curup(6)          
          
 template cxl*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
@@ -5186,14 +5060,14 @@ template cxm*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
         curup(6) 
         
 template cxn*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
-        let xpos = npos + 5
-        printLn2(efb3 * 2 & spaces(4) & efb3 * 2, coltop,xpos=xpos)
-        printLn2(efb2 * 2 & efs2 & spaces(3) & efb2 * 2, col,xpos=xpos)
-        printLn2(efb2 * 2 & spaces(1) & efs2 & spaces(2) & efb2 * 2, col,xpos=xpos)
-        printLn2(efb2 * 2 & spaces(2) & efs2 & spaces(1) & efb2 * 2, col,xpos=xpos)
-        printLn2(efb2 * 2 & spaces(3) & efs2 & efb2 * 2, col,xpos=xpos)
-        printLn2(efb2 * 2 & spaces(4) & efb2 * 2, col,xpos=xpos)
-        curup(6)  
+         let xpos = npos + 5
+         printLn2(efb3 * 2 & spaces(4) & efb3 * 2, coltop,xpos=xpos)
+         printLn2(efb2 * 2 & efs2 & spaces(3) & efb2 * 2, col,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(1) & efs2 & spaces(2) & efb2 * 2, col,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(2) & efs2 & spaces(1) & efb2 * 2, col,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(3) & efs2 & efb2 * 2, col,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(4) & efb2 * 2, col,xpos=xpos)
+         curup(6)  
  
 template cxo*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
@@ -5289,40 +5163,37 @@ template cxv*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
          
          
 template cxw*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
-        let xpos = npos + 5
-        printLn2(efb3 * 2 & spaces(5) & efb3 * 2, coltop,xpos=xpos)
-        printLn2(efb2 * 2 & spaces(5) & efb2 * 2, col,xpos=xpos)
-        printLn2(efb2 * 2 & spaces(5) & efb2 * 2, col,xpos=xpos)
-        printLn2(efb2 * 2 & spaces(2) & efs2 & spaces(2) & efb2 * 2, col,xpos=xpos)
-        printLn2(spaces(1) & efb1 * 2 & spaces(0) & efs2 &  spaces(1) & efs2 & spaces(0) & efb1 * 2, col,xpos=xpos)
-        printLn2(spaces(2) & efb2 * 2 &  spaces(1) & efb2 * 2, col,xpos=xpos)
-        curup(6)          
+         let xpos = npos + 5
+         printLn2(efb3 * 2 & spaces(5) & efb3 * 2, coltop,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(5) & efb2 * 2, col,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(5) & efb2 * 2, col,xpos=xpos)
+         printLn2(efb2 * 2 & spaces(2) & efs2 & spaces(2) & efb2 * 2, col,xpos=xpos)
+         printLn2(spaces(1) & efb1 * 2 & spaces(0) & efs2 &  spaces(1) & efs2 & spaces(0) & efb1 * 2, col,xpos=xpos)
+         printLn2(spaces(2) & efb2 * 2 &  spaces(1) & efb2 * 2, col,xpos=xpos)
+         curup(6)          
  
               
 template cxx*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
-        let xpos = npos+5
-        printLn2(spaces(1) & efb3 * 2 & spaces(3) & efb3 * 2 & spaces(1) ,coltop,xpos=xpos)
-        printLn2(spaces(1) & efb2 * 2 & spaces(3) & efb2 * 2 & spaces(1) ,col,xpos=xpos)
-        printLn2(spaces(2) & efs2 * 2 & spaces(1) & efs2 * 2 & spaces(2) ,col,xpos=xpos)
-        printLn2(spaces(4) & efl1 * 2 & spaces(4),col,xpos=xpos)
-        printLn2(spaces(2) & efs2 * 2 & spaces(1) & efs2 * 2 & spaces(2) ,col,xpos=xpos)
-        printLn2(spaces(1) & efb2 * 2 & spaces(3) & efb2 * 2 & spaces(1) ,col,xpos=xpos)
-        curup(6)
+         let xpos = npos+5
+         printLn2(spaces(1) & efb3 * 2 & spaces(3) & efb3 * 2 & spaces(1) ,coltop,xpos=xpos)
+         printLn2(spaces(1) & efb2 * 2 & spaces(3) & efb2 * 2 & spaces(1) ,col,xpos=xpos)
+         printLn2(spaces(2) & efs2 * 2 & spaces(1) & efs2 * 2 & spaces(2) ,col,xpos=xpos)
+         printLn2(spaces(4) & efl1 * 2 & spaces(4),col,xpos=xpos)
+         printLn2(spaces(2) & efs2 * 2 & spaces(1) & efs2 * 2 & spaces(2) ,col,xpos=xpos)
+         printLn2(spaces(1) & efb2 * 2 & spaces(3) & efb2 * 2 & spaces(1) ,col,xpos=xpos)
+         curup(6)
 
-            
-            
                    
 template cxy*(npos:int=0,col: string=rndCol(),coltop:string = rndCol()) = 
-        let xpos = npos + 5
-        printLn2(spaces(1) & efb3 * 2 & spaces(3) & efb3 * 2, coltop,xpos=xpos)
-        printLn2(spaces(1) & efb2 * 2 & spaces(3) & efb2 * 2,col,xpos=xpos)
-        printLn2(spaces(2) & efs2 * 2 & spaces(1) & efs2 * 2,col,xpos=xpos)
-        printLn2(spaces(4) & efl1 * 2,col,xpos=xpos)
-        printLn2(spaces(4) & efl1 * 2,col,xpos=xpos)
-        printLn2(spaces(3) & efl1 * 4,col,xpos=xpos)
-        curup(6)
+         let xpos = npos + 5
+         printLn2(spaces(1) & efb3 * 2 & spaces(3) & efb3 * 2, coltop,xpos=xpos)
+         printLn2(spaces(1) & efb2 * 2 & spaces(3) & efb2 * 2,col,xpos=xpos)
+         printLn2(spaces(2) & efs2 * 2 & spaces(1) & efs2 * 2,col,xpos=xpos)
+         printLn2(spaces(4) & efl1 * 2,col,xpos=xpos)
+         printLn2(spaces(4) & efl1 * 2,col,xpos=xpos)
+         printLn2(spaces(3) & efl1 * 4,col,xpos=xpos)
+         curup(6)
              
-
  
 template cxz*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       
@@ -5339,40 +5210,40 @@ template cxz*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
  
 template cxpoint*(npos:int = 0,col:string=rndCol(),coltop:string = rndCol()) =    
        
-           let xpos = npos+5
-           printLn2(efb3 * 0 ,coltop,xpos=xpos)
-           printLn2(efb2 * 0 ,col,xpos=xpos)
-           printLn2(efb2 * 0 ,col,xpos=xpos)
-           printLn2(efb2 * 0 ,col,xpos=xpos)
-           printLn2(efb3 * 2 ,coltop,xpos=xpos)
-           printLn2(efb2 * 2 ,col,xpos=xpos)
-           curup(6)   
+         let xpos = npos+5
+         printLn2(efb3 * 0 ,coltop,xpos=xpos)
+         printLn2(efb2 * 0 ,col,xpos=xpos)
+         printLn2(efb2 * 0 ,col,xpos=xpos)
+         printLn2(efb2 * 0 ,col,xpos=xpos)
+         printLn2(efb3 * 2 ,coltop,xpos=xpos)
+         printLn2(efb2 * 2 ,col,xpos=xpos)
+         curup(6)   
  
  
  
 template cxhyphen*(npos:int = 0,col:string=rndCol(),coltop:string = rndCol()) =    
        
-           let xpos = npos+5
-           printLn2(efb3 * 0 ,coltop,xpos=xpos)
-           printLn2(efb2 * 0 ,col,xpos=xpos)
-           printLn2(efb3 * 5 ,coltop,xpos=xpos)
-           printLn2(efb2 * 5 ,col,xpos=xpos)
-           printLn2(efb2 * 0 ,coltop,xpos=xpos)
-           printLn2(efb2 * 0 ,col,xpos=xpos)
-           curup(6)    
+         let xpos = npos+5
+         printLn2(efb3 * 0 ,coltop,xpos=xpos)
+         printLn2(efb2 * 0 ,col,xpos=xpos)
+         printLn2(efb3 * 5 ,coltop,xpos=xpos)
+         printLn2(efb2 * 5 ,col,xpos=xpos)
+         printLn2(efb2 * 0 ,coltop,xpos=xpos)
+         printLn2(efb2 * 0 ,col,xpos=xpos)
+         curup(6)    
        
 template cxgrid*(npos:int = 0,col:string=rndCol(),coltop:string = lime) =    
-           # for testing purpose
-           let xpos = npos+5
-           let xwd  = 9
-           loopy2(0,xwd): 
+         # for testing purpose
+         let xpos = npos + 5
+         let xwd  = 9
+         loopy2(0,xwd): 
              print(efb3  ,coltop,xpos=xpos + xloopy)
-           echo()
-           loopy2(0,5):
+         echo()
+         loopy2(0,5):
                loopy2(0,xwd) :
                   cxprint(efb2 ,colgreen,xpos=xpos + xloopy)
                echo()  
-           curup(6)
+         curup(6)
  
 proc printFont*(s:string,col:string = rndCol() ,coltop:string = rndCol(), xpos:int = -10) = 
      ## printFont
