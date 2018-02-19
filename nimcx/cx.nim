@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-02-14
+##     Latest      : 2018-02-19
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -53,8 +53,18 @@
 ##
 ##                   with var. terminal font : hack,monospace size 9.0 - 15  
 ##
-##                   xterm,bash,st ,zsh  terminals support truecolor ok
+##                   xterm,konsole,gnome terminals support truecolor ok however for maximum color support use konsole
+##                   
+##     Important   : Konsole , which can be installed in gnome,mate etc.and comes standard in KDE environments.
 ##
+##                   If the color effects are not here ... change the terminal.
+##                   
+##                   Gnome terminals auto adjust colors not in colorNames see cxConsts.nim
+##
+##                   so a command like : printLn("Nice color 123",newColor(990,9483,88))
+##                   
+##                   may give you a deep red fontcolor in konsole , but will only show in bold white on a gnome terminal
+##                   
 ##
 ##     Related     :
 ##
@@ -87,8 +97,7 @@
 ##                   
 ##                   moving constants to cxconsts.nim
 ##                   
-##                   improving experimental cxtruecolor related procs .
-##                   
+##                                      
 ##     Latest      : changed time date related code to work with newest times.nim 
 ## 
 ##                   added more procs for truecolor support see cxPrint etc.
@@ -106,12 +115,15 @@
 ##                        
 
 import cxconsts
-import times,random,os,osproc,strutils,strformat,parseutils, parseopt, hashes, tables, sets, strmisc
+import os,osproc,times,random,strutils,strformat,parseutils, parseopt 
+import hashes, tables, sets, strmisc
 import macros,posix,terminal,math,stats,json,streams,options,memfiles
 import sequtils,httpclient,rawsockets,browsers,intsets, algorithm,stats
 import unicode ,typeinfo, typetraits ,cpuinfo,colors,encodings,distros
-export times,strutils,strformat,sequtils,unicode,streams,hashes,terminal,colors,cxconsts,random
-export options,json,httpclient,stats
+
+export cxconsts
+export os,osproc,times,strutils,strformat,sequtils,unicode,streams,hashes
+export terminal,colors,random, options,json,httpclient,stats
 
 
 # Profiling       
@@ -198,7 +210,7 @@ type
       lap*  : seq[float]
       
      
-# type used in for cxtimer
+# type used for cxtimer results
 type
     Cxtimerres* = tuple[tname:string,
                         start:float,
@@ -484,8 +496,8 @@ proc cxTrueColorSet(min:int = 0 ,max:int = 888 , step: int = 12,flag48:bool = fa
    ## 
    result = @[]
    for r in countup(min,max,step):
-     for b in countdown(max,min,step):
-       for g in countup(min,max,step):
+     for g in countdown(max,min,step):
+       for b in countup(min,max,step):
           let rbx = "$1;$2;$3m" % [$r,$b,$g]
           result.add("\x1b[38;2;" & rbx)
           if flag48 == true: result.add("\x1b[48;2;" & rbx) 
@@ -495,9 +507,8 @@ proc getCxTrueColorSet*(min:int = 0,max:int = 888,step:int = 12,flag48:bool = fa
      ## getcxTrueColorSet
      ## 
      ## this function fills the global cxTrueCol seq with truecolor values
-     ## and needs to be run once if truecolor functionality exceeding stdlib support 
-     ## needs to be used 
-     ## this function is not called within cx.nim to keep size and memory needs low.
+     ## and needs to be run once if truecolor functionality exceeding stdlib support required
+     ## 
      ##  
      result = false
      if checktruecolorsupport() == true:
@@ -536,7 +547,16 @@ proc rndTrueCol*() : auto =
      ## 
      colornumber38 = color38(cxTrueCol)
      result = cxTrueCol[colornumber38]
-   
+
+proc rndTrueColFull*() : auto = 
+     ## rndTrueCol
+     ## 
+     ## returns a random color from the cxtruecolorset for use as 
+     ## foreground color in var. print functions
+     ## 
+     colornumber38 = color3848(cxTrueCol)
+     result = cxTrueCol[colornumber38]     
+     
     
 #  end experimental truecolors     
 #################################################################################################################### 
@@ -1122,6 +1142,34 @@ proc centerPos*(astring:string) =
      setCursorXPos(stdout,centerX() - astring.len div 2 - 1)
 
 
+     
+
+proc newColor*(r,g,b:int):string = "\x1b[38;2;$1;$2;$3m" % [$r,$g,$b]
+##   newColor
+##   
+##   creates a new color string from r,g,b values passed in
+##   colors can be used as foregroundcolor in print,printLn routines
+##   and as bgr in cxPrint,cxPrintLn 
+##.. code-block:: nim
+##   import nimcx
+##   printLn("Test for rgb color 12345  " & efb2 * 10,newColor(27354,4763,1089))
+##   decho(2)
+##   printLn("Test for rgb color 12345  " & efb2 * 10,newColor(73547,4873,4888))
+##   decho(2)
+##   printLn("Test for rgb color 12345  " & efb2 * 10,newColor(990,483,38),bgblue)
+##   decho(2)
+##   cxPrintLn("Test cxprintln test 12345 " &  efb2 * 10,fontcolor = colBlue,bgr=newcolor(990,5483,38))
+##   cxPrintLn("Test cxprintln test 12345 " &  efb2 * 10,fontcolor = colBlue,bgr=newcolor(9390,5483,38))
+##   cxPrintLn("Test cxprintln test 12345 " &  efb2 * 10,fontcolor = colBlue,bgr=newcolor(93900,54830,3800))
+##   decho(2)
+##   doFinish()
+##
+proc newColor2*(r,g,b:int):string = "\x1b[48;2;$1;$2;$3m" % [$r,$g,$b]     
+##   newColor2
+##   
+##   creates a new color string from r,g,b values passed in with styleReverse effect for text
+##   best used as foregroundcolor in print, printLn routines
+##     
 
 proc checkColor*(colname: string): bool =
      ## checkColor
@@ -1280,7 +1328,7 @@ proc cxPrint*[T](ss    :T,
       ## 
       ## Backgroundcolors can be drawn from cxTrueColor palette which can be enabled with a call
       ## to getcxTrueColorSet() which generates 421,875 colors
-      ## larger color palettes can be generated with getcxTrueColorSet() 
+      ## larger color palettes can also be generated with getcxTrueColorSet() 
       ## all palette colors in cxTrueColorSet can be shown with showCxTrueColorPalette()  
       ## Backgroundcolors can also be drawn from the colorNames seq  specified in cxconsts.nim
       ## 
@@ -2806,6 +2854,17 @@ proc getIpInfo*(ip:string):JsonNode =
         except OSError:
             discard
 
+proc getWanIp*() :string =
+    ## getWanIP
+    ## 
+    ## a way to get your wanip
+    ## 
+    var cxip = newhttpclient()
+    try:
+       var eresult =  parseJson(cxip.getcontent("https://api.ipify.org?format=json"))
+       result = eresult["ip"].getStr
+    except:
+       result = "Ip could not be retrieved . Check firewall or permissions."
 
 proc showIpInfo*(ip:string) =
       ## showIpInfo
@@ -3731,7 +3790,6 @@ proc clearTimerResults*(aname:string = "",quiet:bool = true,xpos:int = 3) =
                   printLn(cxtimerresults[xloopy].tname ,tomato)
                   echo()
                cxtimerresults.delete(xloopy)  
-               
         else:
                discard
        
@@ -4245,7 +4303,7 @@ proc toDateTime*(date:string = "2000-01-01"): DateTime =
    ## 
    
    var adate = date.split("-")
-   let zyear = parseint(adate[0])
+   var zyear = parseint(adate[0])
    var enzmonth = parseint(adate[1])
    var zmonth : Month
    case enzmonth 
@@ -4617,70 +4675,62 @@ proc showTerminalSize*() =
 
 # formated info strings for time,date fulldatetime,pass,ok,fail,error and generic
 #    ##
-proc printErrorMsg*(errortext:string = "",xpos:int = 1):string {.discardable.} =
-     printBiCol("[Error] " & errortext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
+proc printErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
+     printBiCol("[Error ] " & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
  
-proc printLnErrorMsg*(errortext:string = "",xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[Error] " & errortext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
+proc printLnErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[Error ] " & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
    
-proc printFailMsg*(errortext:string = "",xpos:int = 1):string {.discardable.} =
-     printBiCol("[Fail ] " & errortext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
+proc printFailMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
+     printBiCol("[Fail  ] " & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
      
+proc printLnFailMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[Fail  ] " & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})     
    
-proc printLnFailMsg*(errortext:string = "",xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[Fail ] " & errortext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
-      
-   
-proc printOKMsg*(errortext:string = "",xpos:int = 1):string {.discardable.} =
-     printBiCol("[OK   ]" & spaces(1) & errortext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
+proc printOKMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
+     printBiCol("[OK    ]" & spaces(1) & atext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
      
-   
-proc printLnOkMsg*(errortext:string = "",xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[OK   ]" & spaces(1) & errortext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
+proc printLnOkMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[OK    ]" & spaces(1) & atext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})    
     
-  
-proc printPassMsg*(errortext:string = "",xpos:int = 1):string {.discardable.} =
-     printBiCol("[Pass ]" & spaces(1) & errortext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
+proc printStatusMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
+     printBiCol("[Status]" & spaces(1) & atext , colLeft = lightseagreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
+     
+proc printLnStatusMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[Status]" & spaces(1) & atext , colLeft = lightseagreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})    
+
+proc printPassMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
+     printBiCol("[Pass  ]" & spaces(1) & atext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
    
-
-proc printLnPassMsg*(errortext:string = "",xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[Pass ]" & spaces(1) & errortext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
+proc printLnPassMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[Pass  ]" & spaces(1) & atext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
      
+proc printTimeMsg*(atext:string = getTimeStr(),xpos:int = 1):string {.discardable.} =
+     printBiCol("[Time  ]" & spaces(1) & atext , colLeft = lightblue ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
 
-proc printTimeMsg*(errortext:string = getTimeStr(),xpos:int = 1):string {.discardable.} =
-     printBiCol("[Time ]" & spaces(1) & errortext , colLeft = yellowgreen ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
-    
+proc printLnTimeMsg*(atext:string = getTimeStr(),xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[Time  ]" & spaces(1) & atext , colLeft = lightblue ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
 
-proc printLnTimeMsg*(errortext:string = getTimeStr(),xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[Time ]" & spaces(1) & errortext , colLeft = yellowgreen ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
+proc printDTimeMsg*(atext:string = $toTime(now()),xpos:int = 1):string {.discardable.} =
+     printBiCol("[DTime ]" & spaces(1) & atext , colLeft = lightblue ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
 
-
-proc printDTimeMsg*(errortext:string = $toTime(now()),xpos:int = 1):string {.discardable.} =
-     printBiCol("[DTime]" & spaces(1) & errortext , colLeft = yellowgreen ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
-    
-
-proc printLnDTimeMsg*(errortext:string = $toTime(now()),xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[DTime]" & spaces(1) & errortext , colLeft = yellowgreen ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
+proc printLnDTimeMsg*(atext:string = $toTime(now()),xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[DTime ]" & spaces(1) & atext , colLeft = lightblue ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})     
      
-     
-proc printDateMsg*(errortext:string = getDateStr(),xpos:int = 1):string {.discardable.} =
-     printBiCol("[Date ]" & spaces(1) & errortext , colLeft = yellowgreen ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
-     
+proc printDateMsg*(atext:string = getDateStr(),xpos:int = 1):string {.discardable.} =
+     printBiCol("[Date  ]" & spaces(1) & atext , colLeft = lightblue ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})     
 
-proc printLnDateMsg*(errortext:string = getDateStr(),xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[Date ]" & spaces(1) & errortext , colLeft = yellowgreen ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
-
+proc printLnDateMsg*(atext:string = getDateStr(),xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[Date  ]" & spaces(1) & atext , colLeft = lightblue ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
  
-proc printInfoMsg*(info,errortext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
-     printBiCol("[$1 ]" % info & spaces(1) & errortext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
-        
+proc printInfoMsg*(info,atext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
+     printBiCol("[$1 ]" % info & spaces(1) & atext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
 
-proc printLnInfoMsg*(info,errortext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[$1 ]" % info & spaces(1) & errortext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
-     
+proc printLnInfoMsg*(info,atext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[$1 ]" % info & spaces(1) & atext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
 
-proc printAlertMsg*(xpos:int = 1) = 
-     ## printAlertMsg
+proc cxAlert*(xpos:int = 1) = 
+     ## cxAlert
      ## 
      ## issues an alert 
      ## 
@@ -4688,8 +4738,8 @@ proc printAlertMsg*(xpos:int = 1) =
      print(doflag(red,6,"ALERT ",truetomato) & doflag(red,6),xpos = xpos)
      
 
-proc printLnAlertMsg*(xpos:int = 1) = 
-     ## printLnAlertMsg
+proc cxAlertLn*(xpos:int = 1) = 
+     ## cxAlertLn
      ## 
      ## issues an alert line
      ## 
@@ -4698,7 +4748,7 @@ proc printLnAlertMsg*(xpos:int = 1) =
      ##   # try to change the width of the terminal  window
      ##   while true:
      ##      if tw < 100:
-     ##          infoproc(printLnAlertMsg(2))
+     ##          infoproc(cxAlertLn(2))
      ##          showTerminalSize()      
      ##      else:
      ##          infoproc(printLnOkMsg($(tw),2))
@@ -4741,7 +4791,7 @@ template infoProc*(code: untyped) =
       code
       printLnBiCol("[infoproc    -->] $1 Line: $2 with: '$3'" % [pos.filename,$pos.line, astToStr(code)],colLeft=gold,colRight=bblack,"]",0,false,{})
   except:
-      printLnBiCol("Error: Checking instantiationInfo ",colLeft=red)
+      printLnErrorMsg("Checking instantiationInfo ")
       discard
 
 proc `$`(T: typedesc): string = name(T)

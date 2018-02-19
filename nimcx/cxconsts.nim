@@ -66,7 +66,7 @@ const
 const
       cfb2* = "△"
       # circles
-      cfb4* = "⭕"    # shadowed circle
+      cfb4* = "⭕"   # shadowed circle
       cfb5* = "⬤"    # black circle
 
 const
