@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-02-19
+##     Latest      : 2018-02-20
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -116,18 +116,23 @@
 
 import cxconsts
 import os,osproc,times,random,strutils,strformat,parseutils, parseopt 
-import hashes, tables, sets, strmisc
+import hashes, tables, sets, strmisc,rdstdin
 import macros,posix,terminal,math,stats,json,streams,options,memfiles
 import sequtils,httpclient,rawsockets,browsers,intsets, algorithm,stats
 import unicode ,typeinfo, typetraits ,cpuinfo,colors,encodings,distros
 
 export cxconsts
 export os,osproc,times,strutils,strformat,sequtils,unicode,streams,hashes
-export terminal,colors,random, options,json,httpclient,stats
+export terminal,colors,random, options,json,httpclient,stats,rdstdin
 
 
 # Profiling       
 #import nimprof  # nim c -r --profiler:on --stackTrace:on cx
+
+# Profiling with valgrind
+#nim c -d:release <source file>
+#valgrind --tool=callgrind -v ./<program file> <arguments>
+#kcachegrind callgrind.out.<some number>    # or maybe qcachegrind
 
 # Memory usage
 # --profiler:off, --stackTrace:on -d:memProfiler  
