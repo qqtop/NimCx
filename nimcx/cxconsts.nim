@@ -12,7 +12,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-02-20
+##     Latest      : 2018-02-21
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -30,6 +30,9 @@
 ## 
 
 import terminal,colors,sequtils, strutils
+ 
+const cxcodestart* = "cxcodestart"
+const cxcodeend*   = "cxcodeend"
  
 proc getfg(fg:ForegroundColor):string =
     var gFG = ord(fg)

@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-02-20
+##     Latest      : 2018-02-21
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -123,7 +123,7 @@ import unicode ,typeinfo, typetraits ,cpuinfo,colors,encodings,distros
 
 export cxconsts
 export os,osproc,times,strutils,strformat,sequtils,unicode,streams,hashes
-export terminal,colors,random, options,json,httpclient,stats,rdstdin
+export terminal,colors,random, options,json,httpclient,stats,rdstdin,parseopt
 
 
 # Profiling       
@@ -470,8 +470,8 @@ proc cxtoLower*(c: char): char =
      if c in {'A'..'Z'}: result = chr(ord(c) + (ord('a') - ord('A')))
   
 
-###########################################################################
-# experimental 
+# 
+# experimental  section
 # truecolors support exceeding colors available from stdlib   
 # the generated cxtruecolor numbers are only valid within the context of
 # the parameters set in cxTrueColorSet , a call with different params
@@ -4704,6 +4704,25 @@ proc printStatusMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
 proc printLnStatusMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printLnBiCol("[Status]" & spaces(1) & atext , colLeft = lightseagreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})    
 
+proc printHelpMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
+     printBiCol("[Help  ]" & spaces(1) & atext , colLeft = thistle ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
+     
+proc printLnHelpMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[Help  ]" & spaces(1) & atext , colLeft = thistle ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})    
+     
+#printLnBelpMsg used for inserting more help lines without Help word
+proc printBelpMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
+     printBiCol("[      ]" & spaces(1) & atext , colLeft = thistle ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
+     
+proc printLnBelpMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[      ]" & spaces(1) & atext , colLeft = thistle ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})    
+ 
+proc printCodeMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
+     printBiCol("[Code  ]" & spaces(1) & atext , colLeft = lavender ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})    
+
+proc printLnCodeMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[Code  ]" & spaces(1) & atext , colLeft = lavender ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})    
+                
 proc printPassMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printBiCol("[Pass  ]" & spaces(1) & atext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
    
@@ -4742,7 +4761,7 @@ proc cxAlert*(xpos:int = 1) =
      ##      
      print(doflag(red,6,"ALERT ",truetomato) & doflag(red,6),xpos = xpos)
      
-
+  
 proc cxAlertLn*(xpos:int = 1) = 
      ## cxAlertLn
      ## 
@@ -4762,7 +4781,80 @@ proc cxAlertLn*(xpos:int = 1) =
      ##      
      printLn(doflag(red,6,"ALERT ",truetomato) & doflag(red,6),xpos = xpos)
              
-     
+
+proc cxHelp*[T](s:varargs[T,`$`]) =
+  ## cxHelp
+  ## 
+  ## a help generator which can easily be called from within or on app start 
+  ## maybe via myapp -h
+  ## 
+  ## 
+  ##
+  ##.. code-block:: nim
+  ##   cxHelp("Help system for my application",
+  ##       "Read the book","use more data",
+  ##       cxcodestart,
+  ##       "Example 1",
+  ##       "abc = @[1,2,3]",
+  ##       "    ",
+  ##       "xfg = mysupergenerator(abc,3)",
+  ##       cxcodeend,
+  ##       "this should be help style again",
+  ##       cxcodestart,
+  ##       "Example 2  ",
+  ##       "for x in 0..<n:",
+  ##       """   printLn("Something Nice",blue)"""",
+  ##       cxcodeend,   
+  ##       "Have a nice day")
+  ##
+  ##
+  
+  var maxlen = 0
+  
+  for ss in 0..<s.len:
+    # scan for max len which will be the max width of the help
+    # but need to limit it to within tw
+    if maxlen < s[ss].len: 
+           maxlen = s[ss].len
+   
+  if maxlen > tw - 10 :
+        cxAlertLn(2)
+        showTerminalSize()      
+        printLn("Terminal Size to small for help line width")
+        cxAlertLn(2)
+        echo()
+  var cxcodeflag = false 
+  var cxcodeendflag = false
+  for ss in 0..<s.len:
+      var sss = s[ss]
+    
+      if sss.len < maxlen :  sss = sss & spaces(max(0, maxlen - sss.len)) 
+      
+      # we can embed a code which is set off from the help msg style
+      if sss.contains(cxcodestart) == true: cxcodeflag = true
+      if sss.contains(cxcodeend) == true : cxcodeendflag = true
+      
+      if ss == 0:
+        printLnHelpMsg(sss)
+      
+      var bhelptemp = spaces(max(0, maxlen)) # set up a blank line of correct length
+      if cxcodeflag == true:
+           if sss.contains(cxcodestart) == true :
+              printLnBelpMsg(bhelptemp)
+           elif sss.contains(cxcodeend) == true :
+              printLnBelpMsg(bhelptemp)
+              # reset the flags
+              cxcodeflag = false
+              cxcodeendflag = false
+           else: 
+              if cxcodeflag == true:
+                 printLnCodeMsg(sss)
+      
+      else:
+        if cxcodeendflag == false and ss > 0:
+           printLnBelpMsg(sss)
+  echo()      
+       
         
 template infoProc*(code: untyped) =
   ## infoProc
