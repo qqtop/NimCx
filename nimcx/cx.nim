@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-02-21
+##     Latest      : 2018-02-22
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -448,18 +448,27 @@ proc sampleSeq*[T](x: seq[T], a:int, b: int) : seq[T] =
      result =  x[a..b]
      
      
-proc checkTrueColorSupport*(): bool  {.discardable.} =
-     # checkTrueColorSupport
+proc checkTrueColorSupport*(): bool  {.discardable.} = 
+     # checkTrueColorSupport 
+     try:
+        enableTrueColors()
+     except:
+        discard
+     result = true
+ 
+     # below code seems to fail on Ubuntu based systems like Mint , 
+     # but works on Debian Testing, openSuse ...
+     # so currently not in use
      # 
-     # checks for truecolor support in a linux terminal 
-     # if supported the nim truecolors will be enabled
      # 
-     if $(getEnv("COLORTERM").toLowerAscii in ["truecolor", "24bit"]) == "true":
-          enableTrueColors()
-          result = true 
-     else:
-         printLnBiCol("[Note] : No trueColor support on this terminal/konsole")
-         result = false
+     # if $(getEnv("COLORTERM").toLowerAscii in ["truecolor", "24bit"]) == "true":
+     #           enableTrueColors()
+     #           result = true 
+     #      else:
+     #          printLnBiCol("[Note] : No trueColor support on this terminal/konsole")
+     #          result = false   
+     
+     
      
 proc cxtoLower*(c: char): char = 
      ## cxtoLower
@@ -526,7 +535,7 @@ proc getCxTrueColorSet*(min:int = 0,max:int = 888,step:int = 12,flag48:bool = fa
      else:
            result = false
            printLnBicol("Error : cxTrueCol truecolor scheme can not be used on this terminal/konsole",colLeft=red,styled = {stylereverse})
-           doFinish() 
+           #doFinish() 
    
 proc color38*(cxTrueCol:seq[string]) : int =
      # random truecolor ex 38 set
@@ -4708,7 +4717,7 @@ proc printHelpMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printBiCol("[Help  ]" & spaces(1) & atext , colLeft = thistle ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
      
 proc printLnHelpMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[Help  ]" & spaces(1) & atext , colLeft = thistle ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})    
+     printLnBiCol("[Help  ]" & spaces(1) & atext , colLeft = palegreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})    
      
 #printLnBelpMsg used for inserting more help lines without Help word
 proc printBelpMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
@@ -4746,7 +4755,8 @@ proc printDateMsg*(atext:string = getDateStr(),xpos:int = 1):string {.discardabl
 
 proc printLnDateMsg*(atext:string = getDateStr(),xpos:int = 1):string {.discardable.} =
      printLnBiCol("[Date  ]" & spaces(1) & atext , colLeft = lightblue ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
- 
+
+# printInfoMsg and printLnInfoMsg can take two strings for more generic use     
 proc printInfoMsg*(info,atext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
      printBiCol("[$1 ]" % info & spaces(1) & atext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
 

@@ -989,10 +989,9 @@ const
            "fifteen", "sixteen", "seventeen", "eighteen", "nineteen"]
   huge* =  ["", "", "million", "billion", "trillion", "quadrillion",
            "quintillion", "sextillion", "septillion", "octillion", "nonillion","decillion"]
- 
- 
+  
   pastelSet* = [pastelgreen,pastelbeige,pastelpink,pastelblue,pastelwhite,pastelorange,pastelyellow]
-
+  
 # slim numbers can be used with printSlimNumber
 
 const snumber0* =
