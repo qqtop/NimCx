@@ -984,7 +984,7 @@ proc newKatakana*(minwl:int=3,maxwl:int = 10 ):string =
          result = ""
 
 
-proc getWanIp*():string =
+proc getWanIp2*():string =
             ## getWanIp
             ## 
             ## .. code-block:: nim
@@ -1006,7 +1006,7 @@ proc showWanIp*() =
      ##
      ## show your current wan ip  , this service currently slow
      ##
-     printBiCol("Current Wan Ip  : " & getWanIp(),colLeft=yellowgreen,colRight=gray)
+     printBiCol("Current Wan Ip  : " & getWanIp2(),colLeft=yellowgreen,colRight=gray)
 
 
 
