@@ -372,6 +372,16 @@ proc getTimeStr*():string ## forward declaration
 proc doFinish*()
 
 
+  
+proc cxpad*(s:string,padlen:int):string =
+  ## cxpad
+  ## 
+  ## pads a string on the right side with spaces to specified width 
+  ## 
+  result = s
+  if s.len < padlen : 
+     result = s & spaces(max(0, padlen - s.len)) 
+
 proc waitOn*(alen:int = 1) = 
      ## waiton
      ## 
