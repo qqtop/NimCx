@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-02-22
+##     Latest      : 2018-02-25
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -84,6 +84,10 @@
 ##                   terminal x-axis position start with 1
 ##
 ##                   proc fmtx a simple formatting utility has been added and works with strformat too
+##
+##                   for printing of multiple columns in the terminal the print2,printLn2,printBiCol2,printLnBiCol2
+##                   
+##                   routines should be used.  
 ##
 ##
 ##     Installation: nimble install nimcx
@@ -1512,7 +1516,7 @@ proc print2*[T](astring:T,
     ## ::
     ##   print2
     ## 
-    ##   the old print routine with backgroundcolor set to black only  , required by printfont proc
+    ##   the old print routine with backgroundcolor set to black only  , required by printfont proc and printLnBiCol2
     ##
     ##   basically similar to terminal.nim styledWriteLine with more functionality
     ##   
@@ -2110,6 +2114,138 @@ proc printLnBiCol*[T](s:varargs[T,`$`],
                         printLn(z[1],fgr = colRight,bgr = bgBlack,styled = styled)
 
 
+proc printBiCol2*[T](s:varargs[T,`$`],
+                    colLeft:string = yellowgreen,
+                    colRight:string = termwhite,
+                    sep:string = ":",
+                    xpos:int = 0,
+                    centered:bool = false,
+                    styled : set[Style]= {}) =
+                    
+     ## printBiCol
+     ##
+     ## Notes see printLnBiCol
+     ##
+     
+     {.gcsafe.}:
+        var nosepflag:bool = false
+        var zz = ""
+        for ss in 0..<s.len:
+            zz = zz & s[ss] & spaces(1)
+            
+        var z = zz.splitty(sep)  # using splitty we retain the sep on the left side
+        # in case sep occures multiple time we only consider the first one
+        if z.len > 1:
+           for x in 2..<z.len:
+              # this now should contain the right part to be colored differently
+              z[1] = z[1] & z[x]
+
+        else:
+            # when the separator is not found
+            nosepflag = true
+            # no separator so we just execute print with left color
+            print2(zz,fgr=colLeft,xpos=xpos,centered=centered,styled = styled)
+
+        if nosepflag == false:
+
+                if centered == false:
+                    print2(z[0],fgr = colLeft,xpos = xpos,styled = styled)
+                    print2(z[1],fgr = colRight,styled = styled)
+                else:  # centered == true
+                    let npos = centerX() - (zz).len div 2 - 1
+                    print2(z[0],fgr = colLeft,xpos = npos,styled = styled)
+                    print2(z[1],fgr = colRight,styled = styled)
+
+
+
+
+proc printLnBiCol2*[T](s:varargs[T,`$`],
+                   colLeft : string = yellowgreen,
+                   colRight: string = termwhite,
+                   sep     : string = ":",
+                   xpos    : int = 0,
+                   centered: bool = false,
+                   styled  : set[Style]= {}) =
+                   
+                        
+     ## printLnBiCol2
+     ##
+     ## this version call print2 and  printLn2  which is suitable when used in multiple columns printing 
+     ##
+     ## changes to prev. versions :
+     ## sep moved to behind colors in parameter ordering
+     ## and input can be varargs which gives much better flexibility
+     ## if varargs are to be printed all parameters need to be specified.
+     ##
+     ## default seperator = ":"  if not found we execute printLn with available params
+     ##
+     ##.. code-block:: nim
+     ##    import nimcx
+     ##
+     ##    for x  in 0..<3:
+     ##       # here our input is varargs so weneed to specify all params
+     ##        printLnBiCol("Test $1  : Ok " % $1,"this was $1 : what" % $2,23456.789,red,lime,":",0,false,{})
+     
+     ##    for x  in 4..<6:
+     ##        # here we change the default colors
+     ##        printLnBiCol("nice",123,":","check",@[1,2,3],cyan,lime,":",0,false,{})
+     ##
+     ##    # usage with fmtx 
+     ##    printLnBiCol2(fmtx(["","",">4"],"Good Idea : "," Number",50),yellow,randcol(),":",0,false,{})
+     ##    printLnBiCol2(fmtx(["","",">4"],"Good Idea : "," Number",50),colLeft = cyan)
+     ##    printLnBiCol2(fmtx(["","",">4"],"Good Idea : "," Number",50),colLeft=yellow,colRight=randcol())
+     ##    printLnBiCol2(fmtx(["","",">4"],"Good Idea : "," Number",50),123,colLeft = cyan,colRight=gold,sep=":",xpos=0,centered=false,styled={})
+     ##    
+     {.gcsafe.}:
+        var nosepflag:bool = false
+        var zz =""
+        for ss in 0..<s.len:
+            zz = zz & s[ss] & spaces(1)
+           
+        var z = zz.splitty(sep)  # using splitty we retain the sep on the left side
+        # in case sep occures multiple time we only consider the first one
+        if z.len > 1:
+          for x in 2..<z.len:
+             z[1] = z[1] & z[x]
+        else:
+            # when the separator is not found
+            nosepflag = true
+            # no separator so we just execute printLn with left color
+            printLn2(zz,fgr=colLeft,xpos=xpos,centered=centered,styled = styled)
+
+        if nosepflag == false:
+
+            if centered == false:
+                print2(z[0],fgr = colLeft,xpos = xpos,styled = styled)
+                if colRight == clrainbow:   # we currently do this as rainbow implementation has changed
+                        printLn2(z[1],fgr = randcol(),styled = styled)
+                else:
+                        printLn2(z[1],fgr = colRight,styled = styled)
+
+            else:  # centered == true
+                let npos = centerX() - zz.len div 2 - 1
+                print2(z[0],fgr = colLeft,xpos = npos)
+                if colRight == clrainbow:   
+                        printLn2(z[1],fgr = randcol(),styled = styled)
+                else:
+                        printLn2(z[1],fgr = colRight,styled = styled)
+
+
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
 proc printHL*(s     : string,
               substr: string,
               col   : string = termwhite) =
@@ -4146,6 +4282,7 @@ proc spellInteger2*(n: string): string =
         result = result & "zero" & spaces(1)
      else:   
         result = result & spellInteger(parseInt($x)) & spaces(1)
+        
   
 proc spellFloat*(n:float64,currency:bool = false,sep:string = ".",sepname:string = " dot "):string = 
   ## spellFloat
@@ -4187,7 +4324,7 @@ proc spellFloat*(n:float64,currency:bool = false,sep:string = ".",sepname:string
   
 proc returnStat(x:Runningstat,stat : seq[string]):float =
      ## returnStat
-     ## 
+     ## WIP
      ## returns any of following from a runningstat instance
      ## 
      discard
@@ -4225,19 +4362,19 @@ proc showStats*(x:Runningstat,n:int = 3,xpos:int = 1) =
      ##     doFinish()
      ##
      var sep = ":"
-     printLnBiCol("Sum     : " & ff(x.sum,n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printLnBiCol("Mean    : " & ff(x.mean,n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printLnBiCol("Var     : " & ff(x.variance,n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printLnBiCol("Var  S  : " & ff(x.varianceS,n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printLnBiCol("Kurt    : " & ff(x.kurtosis,n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printLnBiCol("Kurt S  : " & ff(x.kurtosisS,n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printLnBiCol("Skew    : " & ff(x.skewness,n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printLnBiCol("Skew S  : " & ff(x.skewnessS,n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printLnBiCol("Std     : " & ff(x.standardDeviation,n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printLnBiCol("Std  S  : " & ff(x.standardDeviationS,n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printLnBiCol("Min     : " & ff(x.min,n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printLnBiCol("Max     : " & ff(x.max,n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printLn("S --> sample\n",peru,xpos = xpos)
+     printLnBiCol2("Sum     : " & ff(x.sum,n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol2("Mean    : " & ff(x.mean,n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol2("Var     : " & ff(x.variance,n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol2("Var  S  : " & ff(x.varianceS,n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol2("Kurt    : " & ff(x.kurtosis,n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol2("Kurt S  : " & ff(x.kurtosisS,n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol2("Skew    : " & ff(x.skewness,n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol2("Skew S  : " & ff(x.skewnessS,n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol2("Std     : " & ff(x.standardDeviation,n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol2("Std  S  : " & ff(x.standardDeviationS,n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol2("Min     : " & ff(x.min,n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol2("Max     : " & ff(x.max,n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLn2("S --> sample\n",peru,xpos = xpos)
 
 proc showRegression*(x,y: seq[float | int],n:int = 5,xpos:int = 1) =
      ## showRegression
@@ -4254,9 +4391,9 @@ proc showRegression*(x,y: seq[float | int],n:int = 5,xpos:int = 1) =
      var sep = ":"
      var rr :RunningRegress
      rr.push(x,y)
-     printLnBiCol("Intercept     : " & ff(rr.intercept(),n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printLnBiCol("Slope         : " & ff(rr.slope(),n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printLnBiCol("Correlation   : " & ff(rr.correlation(),n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol2("Intercept     : " & ff(rr.intercept(),n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol2("Slope         : " & ff(rr.slope(),n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol2("Correlation   : " & ff(rr.correlation(),n),yellowgreen,white,sep,xpos = xpos,false,{})
     
 
 proc showRegression*(rr: RunningRegress,n:int = 5,xpos:int = 1) =
@@ -4266,9 +4403,9 @@ proc showRegression*(rr: RunningRegress,n:int = 5,xpos:int = 1) =
      ## 
   
      let sep = ":"
-     printLnBiCol("Intercept     : " & ff(rr.intercept(),n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printLnBiCol("Slope         : " & ff(rr.slope(),n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printLnBiCol("Correlation   : " & ff(rr.correlation(),n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol2("Intercept     : " & ff(rr.intercept(),n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol2("Slope         : " & ff(rr.slope(),n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol2("Correlation   : " & ff(rr.correlation(),n),yellowgreen,white,sep,xpos = xpos,false,{})
 
 template currentFile*: string =
   ## currentFile
