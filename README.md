@@ -13,12 +13,33 @@
 |----------------|------------------|------------------|
 | cx.nim         | cxDemo.nim       | cxTest.nim       |
 | cxconsts.nim   |                  |                  |
+| cxglobal.nim   |                  |                  |
+| cxprint.nim    |                  |                  |
+| cxfont.nim     |                  |                  |
+| cxnetwork.nim  |                  |                  |
+| cxtruecolor.nim|                  |                  |
+| cxhash.nim     |                  |                  |
+| cxtime.nim     |                  |                  |
 | cxutils.nim    |                  |                  |
 
 
 [Documentation for nimcx.nim](https://qqtop.github.io/nimcxindex.html)
 
 [Documentation for cx.nim](https://qqtop.github.io/cx.html)
+
+[Documentation for cxglobal.nim](https://qqtop.github.io/cxglobal.html)
+
+[Documentation for cxprint.nim](https://qqtop.github.io/cxprint.html)
+
+[Documentation for cxtruecolor.nim](https://qqtop.github.io/cxtruecolor.html)
+
+[Documentation for cxtime.nim](https://qqtop.github.io/cxtime.html)
+
+[Documentation for cxnetwork.nim](https://qqtop.github.io/cxnetwork.html)
+
+[Documentation for cxfont.nim](https://qqtop.github.io/cxfont.html)
+
+[Documentation for cxhash.nim](https://qqtop.github.io/cxhash.html)
 
 [Documentation for cxutils.nim](https://qqtop.github.io/cxutils.html)
 
@@ -79,5 +100,5 @@ dofinish()
   
    ![Image](http://qqtop.github.io/gnu2.png?raw=true)  ![Image](http://qqtop.github.io/gnu.png?raw=true)
 
-   
+  
 
