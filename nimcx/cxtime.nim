@@ -1,0 +1,340 @@
+import cxglobal,cxprint,cxconsts
+import os,terminal,times,parseutils,strutils
+
+# cxtime.nim
+# 
+# time/date related procs including printDTimeMsg etc.
+# 
+# Last : 2018-02-27
+# 
+# 
+
+proc localTime*() : auto =
+  ## localTime
+  ## 
+  ## quick access to local time for printing
+  ## 
+  result = now()
+  
+template cxtoday*:string = getDateStr() 
+     ## today
+     ## 
+     ## returns date string
+     ##   
+  
+proc getTimeStr*():string =
+    ## getTimeStr
+    ## 
+    ## returns current time parsed from stdlib now() function
+    ## 
+ 
+    let ctt = split($now(),"T")
+    if ctt[1].contains("-"):
+       result = split(ctt[1],"-")[0]
+    else:
+       result = split(ctt[1],"+")[0]
+
+
+proc toDateTime*(date:string = "2000-01-01"): DateTime =
+   ## toDateTime
+   ## 
+   ## converts a date of format yyyy-mm-dd to DateTime
+   ## 
+   
+   var adate = date.split("-")
+   var zyear = parseint(adate[0])
+   var enzmonth = parseint(adate[1])
+   var zmonth : Month
+   case enzmonth 
+      of   1: zmonth = mJan
+      of   2: zmonth = mFeb
+      of   3: zmonth = mMar
+      of   4: zmonth = mApr
+      of   5: zmonth = mMay
+      of   6: zmonth = mJun
+      of   7: zmonth = mJul 
+      of   8: zmonth = mAug 
+      of   9: zmonth = mSep 
+      of  10: zmonth = mOct 
+      of  11: zmonth = mNov 
+      of  12: zmonth = mDec 
+      else:
+         
+         #printLnErrorMsg("Month = " & adate[1] & " ?? ")
+         printLnErrorMsg("Exiting now ")
+         echo "Wrong Month in " &  adate[1]
+         quit(0)
+   
+   var zday = parseint(adate[2])
+   result.year = zyear
+   result.month = zmonth
+   result.monthday = zday
+   result
+   
+   
+proc epochSecs*(date:string="2000-01-01"):auto =
+   ## epochSecs
+   ##
+   ## converts a date into secs since unix time 0
+   ##
+   result  =  toUnix(toTime(toDateTime(date)))
+   
+proc sleepy*[T:float|int](secs:T) =
+  ## sleepy
+  ##
+  ## imitates sleep but in seconds
+  ## suitable for shorter sleeps
+  ##
+  var milsecs = (secs * 1000).int
+  sleep(milsecs)
+
+  
+  
+  
+# Var. date and time handling procs mainly to provide convenience for
+# date format yyyy-MM-dd handling
+
+proc validdate*(adate:string):bool =
+      ## validdate
+      ##
+      ## try to ensure correct dates of form yyyy-MM-dd
+      ##
+      ## correct : 2015-08-15
+      ##
+      ## wrong   : 2015-08-32 , 201508-15, 2015-13-10 etc.
+      ##
+      let m30 = @["04","06","09","11"]
+      let m31 = @["01","03","05","07","08","10","12"]
+      let xdate = parseInt(aDate.multiReplace(("-","")))
+      # check 1 is our date between 1900 - 3000
+      if xdate >= 19000101 and xdate < 30010101:
+          let spdate = aDate.split("-")
+          if parseInt(spdate[0]) >= 1900 and parseInt(spdate[0]) <= 3001:
+              if spdate[1] in m30:
+                  #  day max 30
+                  if parseInt(spdate[2]) > 0 and parseInt(spdate[2]) < 31:
+                    result = true
+                  else:
+                    result = false
+
+              elif spdate[1] in m31:
+                  # day max 31
+                  if parseInt(spdate[2]) > 0 and parseInt(spdate[2]) < 32:
+                    result = true
+                  else:
+                    result = false
+
+              else:
+                    # so its february
+                    if spdate[1] == "02" :
+                        # check leapyear
+                        if isleapyear(parseInt(spdate[0])) == true:
+                            if parseInt(spdate[2]) > 0 and parseInt(spdate[2]) < 30:
+                              result = true
+                            else:
+                              result = false
+                        else:
+                            if parseInt(spdate[2]) > 0 and parseInt(spdate[2]) < 29:
+                              result = true
+                            else:
+                              result = false
+
+
+proc day*(aDate:string) : string =
+   ## day,month year extracts the relevant part from
+   ##
+   ## a date string of format yyyy-MM-dd
+   ##
+   aDate.split("-")[2]
+
+proc month*(aDate:string) : string =
+    var asdm = $(parseInt(aDate.split("-")[1]))
+    if len(asdm) < 2: asdm = "0" & asdm
+    result = asdm
+
+
+proc year*(aDate:string) : string = aDate.split("-")[0]
+     ## Format yyyy
+
+          
+proc compareDates*(startDate,endDate:string) : int =
+     # dates must be in form yyyy-MM-dd
+     # we want this to answer
+     # s == e   ==> 0
+     # s >= e   ==> 1
+     # s <= e   ==> 2
+     # -1 undefined , invalid s date
+     # -2 undefined . invalid e and or s date
+     if validdate(startDate) and validdate(enddate):
+        let std = startDate.multiReplace(("-",""))
+        let edd = endDate.multiReplace(("-",""))
+        if std == edd: 
+          result = 0
+        elif std >= edd:
+          result = 1
+        elif std <= edd:
+          result = 2
+        else:
+          result = -1
+     else:
+          result = -2
+
+
+
+
+proc fx(nx:DateTime):string =
+        result = nx.format("yyyy-MM-dd")
+
+
+proc plusDays*(aDate:string,days:int):string =
+   ## plusDays
+   ##
+   ## adds days to date string of format yyyy-MM-dd  or result of getDateStr()  or today()
+   ##
+   ## and returns a string of format yyyy-MM-dd
+   ##
+   ## the passed in date string must be a valid date or an error message will be returned
+   ##
+   if validdate(aDate) == true:
+      var rxs = ""
+      let tifo = parse(aDate,"yyyy-MM-dd") # this returns a DateTime type
+      var myinterval = initInterval()
+      myinterval.days = days
+      rxs = fx(tifo + myinterval)
+      result = rxs
+   else:
+      printLnErrorMsg("Plusdays  : " & aDate)
+      result = "Error"
+
+
+proc minusDays*(aDate:string,days:int):string =
+   ## minusDays
+   ##
+   ## subtracts days from a date string of format yyyy-MM-dd  or result of getDateStr() or today()
+   ##
+   ## and returns a string of format yyyy-MM-dd
+   ##
+   ## the passed in date string must be a valid date or an error message will be returned
+   ##
+
+   if validdate(aDate) == true:
+      var rxs = ""
+      let tifo = parse(aDate,"yyyy-MM-dd") # this returns a DateTime type
+      var myinterval = initInterval()
+      myinterval.days = days
+      rxs = fx(tifo - myinterval)
+      result = rxs
+   else:
+      printLnErrorMsg("minusDays : " & aDate)
+      result = "Error"
+
+
+
+proc createSeqDate*(fromDate:string,toDate:string):seq[string] = 
+     ## createSeqDate
+     ## 
+     ## creates a seq of dates in format yyyy-MM-dd 
+     ## 
+     ## from fromDate to toDate
+     ##  
+
+     var aresult = newSeq[string]()
+     var aDate = fromDate
+     while compareDates(aDate,toDate) == 2 : 
+         if validDate(aDate) == true: 
+            aresult.add(aDate)
+         aDate = plusDays(aDate,1)  
+     result = aresult    
+         
+     
+
+  
+proc cxTimeZone*(amode:string = "long"):string = 
+   ## cxTimeZone
+   ##
+   ## returns a string with the actual timezone offset in hours as seen from UTC 
+   ## 
+   ## default long gives results parsed from getLocalTime 
+   ## like : UTC +08:00
+   ##
+  
+   var mode = amode
+   var okmodes = @["long","short"]
+   if mode in okmodes == false:
+      mode = "long"
+   if mode == "long":
+        var ltt = $now()
+        result = "UTC" & $ltt[(($ltt).len - 6)..($ltt).len]     
+            
+
+proc createSeqDate*(fromDate:string,days:int = 1):seq[string] = 
+     ## createSeqDate
+     ## 
+     ## creates a seq of dates in format yyyy-MM-dd 
+     ## 
+     ## from fromDate to fromDate + days
+     ## 
+     var aresult = newSeq[string]()
+     var aDate = fromDate
+     var toDate = plusDays(adate,days)
+     while compareDates(aDate,toDate) == 2 : 
+         if validDate(aDate) == true: 
+            aresult.add(aDate)
+         aDate = plusDays(aDate,1)  
+     result = aresult    
+         
+
+proc getRndDate*(minyear:int = parseint(year(cxtoday)) - 50,maxyear:int = parseint(year(cxtoday)) + 50):string =  
+         ## getRndDate
+         ## 
+         ## returns a valid rand date between 1900 and 3001 in format 2017-12-31
+         ## 
+         ## default currently set to  between  +/- 50 years of today
+         ## 
+         ##.. code-block:: nim
+         ##    import nimcx
+         ##    loopy2(0,100): echo getRndDate(2016,2025)
+         ##    
+         ##    
+         var okflag = false
+         var mminyear = minyear 
+         var mmaxyear = maxyear + 1
+         if mminyear < 1900: mminyear = 1900
+         if mmaxyear > 3001: mmaxyear = 3001
+                 
+         while okflag == false:
+            
+             var mmd = $getRndInt(1,13)
+             if mmd.len == 1:
+                mmd = "0" & $mmd
+            
+             var ddd = $getRndInt(1,32)
+             if ddd.len == 1:
+                ddd = "0" & $ddd
+            
+             var nd = $getRndInt(mminyear,mmaxyear) & "-" & mmd & "-" & ddd
+             if validDate(nd) == false:
+                 okflag = false
+             else : 
+                 okflag = true
+                 result = nd
+  
+
+proc printTimeMsg*(atext:string = getTimeStr(),xpos:int = 1):string {.discardable.} =
+     printBiCol("[Time  ]" & spaces(1) & atext , colLeft = lightblue ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
+
+proc printLnTimeMsg*(atext:string = getTimeStr(),xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[Time  ]" & spaces(1) & atext , colLeft = lightblue ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
+
+proc printDTimeMsg*(atext:string = $toTime(now()),xpos:int = 1):string {.discardable.} =
+     printBiCol("[DTime ]" & spaces(1) & atext , colLeft = lightblue ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
+
+proc printLnDTimeMsg*(atext:string = $toTime(now()),xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[DTime ]" & spaces(1) & atext , colLeft = lightblue ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
+
+proc printDateMsg*(atext:string = getDateStr(),xpos:int = 1):string {.discardable.} =
+     printBiCol("[Date  ]" & spaces(1) & atext , colLeft = lightblue ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})     
+
+proc printLnDateMsg*(atext:string = getDateStr(),xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[Date  ]" & spaces(1) & atext , colLeft = lightblue ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
+   

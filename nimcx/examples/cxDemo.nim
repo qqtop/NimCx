@@ -4,7 +4,7 @@ import nimcx
 ## this file is imported by cxTest.nim to actually run the demos
 ## may and will change anytime and errors may happen anytime
 
-## 2018-02-01  - WIP 
+## 2018-02-25  - WIP 
 
 
 proc flyNimDemo*(astring:string = "  Fly Nim",col:string = red,tx:float = 0.04) =

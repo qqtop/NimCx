@@ -3,14 +3,14 @@
 ## 
 ## VERY rough testing for nimcx.nim  errors may occur 
 ## 
-## Status : 2018-02-01  WIP
+## Status : 2018-02-27  WIP
 ## 
 ## best run in a large console window
 ## 
 
 
-#import cx,cxDemo,cxutils   # local debug tests
-import nimcx,cxDemo         # if nimble installed
+
+import nimcx,cxDemo       # if installed via nimble
 
 superHeader("nimCx Testing ")
 
@@ -117,9 +117,10 @@ nextTest()
 printSlimNumber($getClockStr() & "  ",pastelpink,bgblack,xpos=25)
 decho(5)
 
-nexttest() 
-printBigNumber($getClockStr(),fgr=darkgoldenrod,xpos=10)
-decho(5)
+# old block font tests will not be executed
+#nexttest() 
+#printBigNumber($getClockStr(),fgr=darkgoldenrod,xpos=10)
+#decho(5)
 
 nextTest()
 var mycol = "green"  
@@ -139,8 +140,15 @@ nextTest()
 for x in 0..<colPaletteLen(mycol):   
    print(rightarrow & "what 12345678909 ",randCol2(mycol))
    println(spaces(5) & rightarrow & "  what 12345678909 ",randCol())
-   
-   
+ 
+nextTest()
+# show use of colPalette and colPaletteLen
+let z = "The big money waits in the bank" 
+for _ in 0..10:
+  printLn2(z,colPalette("pastel",getRndInt(0,colPaletteLen("pastel") - 1)),styled={styleReverse})
+  print(cleareol)
+
+ 
 nexttest() 
 for x in 0.. 10:
      centerMark()

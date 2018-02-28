@@ -524,7 +524,7 @@ const colorNames* = @[
       
 # cxColorNames can after recent change in terminal nim be used for backgroundcolors      
 # note still need a fall back if terminal does not support truecolors , currently a
-# error message maybe displayed , colors commented out are currently not inthe named colors set in Nim
+# error message maybe displayed , colors commented out are currently not int he named colors set in Nim
 const cxColorNames* = @[
       ("colaliceblue"   , colaliceblue),
       ("colantiquewhite", colantiquewhite),
@@ -1180,10 +1180,9 @@ const kotakk* =  "🂿"
 const rxCards* = toSeq(cards.low.. cards.high) # index into cards
 const rxCol* = toSeq(colorNames.low.. colorNames.high) ## index into colorNames
 const rxPastelCol* = toSeq(pastelset.low.. pastelset.high) ## index into colorNames 
-const txCol* = toSeq(cxcolornames.low..cxcolornames.high)  ## index into cxcolorNames
+const txCol* = toSeq(cxColorNames.low..cxColorNames.high)  ## index into cxcolorNames
 # may or may not be available on all systems
 const wideDot* = "\xE2\x9A\xAB" & " "
-
 
 # amazon style date strings
 const iso_8601_aws* = "yyyyMMdd'T'HHmmss'Z'"

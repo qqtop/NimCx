@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-02-01
+##     Latest      : 2018-02-27
 ##
 ##     Compiler    : Nim >= 0.17.x dev branch
 ##
@@ -23,8 +23,7 @@
 ##
 ##                   cxutils.nim is a collection of lesser used simple utility procs and templates
 ##
-##                   moved here to avoid code bloat in cx.nim  it is imported with nimcx
-##
+##                   
 ##
 ##     Usage       : import nimcx
 ##
@@ -35,402 +34,14 @@
 ##     Tested      : OpenSuse Tumbleweed ,Debian Testing
 ##  
 
-import os,osproc,cx,math,stats,cpuinfo,httpclient,browsers
- 
-# some handmade font...
-let a1 = "  ██   "
-let a2 = " ██ █  "
-let a3 = "██   █ "
-let a4 = "██ █ █ "
-let a5 = "██   █ "
-
-
-let b1 = "███ █  "
-let b2 = "██   █ "
-let b3 = "███ █  "
-let b4 = "██   █ "
-let b5 = "███ █  "
-
-
-let c1 = " █████ "
-let c2 = "██     "
-let c3 = "██     "
-let c4 = "██     "
-let c5 = " █████ "
-
-
-let d1 = "███ █  "
-let d2 = "██   █ "
-let d3 = "██   █ "
-let d4 = "██   █ "
-let d5 = "███ █  "
-
-
-let e1 = "█████  "
-let e2 = "██     "
-let e3 = "████   "
-let e4 = "██     "
-let e5 = "█████  "
-
-
-let f1 = "█████  "
-let f2 = "██     "
-let f3 = "████   "
-let f4 = "██     "
-let f5 = "██     "
-
-
-let g1 = " ████  "
-let g2 = "██     "
-let g3 = "██  ██ "
-let g4 = "██   █ "
-let g5 = " ████  "
-
-
-let h1 = "██   █ "
-let h2 = "██   █ "
-let h3 = "██████ "
-let h4 = "██   █ "
-let h5 = "██   █ "
-
-
-let i1 = "  ██   "
-let i2 = "  ██   "
-let i3 = "  ██   "
-let i4 = "  ██   "
-let i5 = "  ██   "
-
-
-let j1 = "    ██ "
-let j2 = "    ██ "
-let j3 = "    ██ "
-let j4 = " █  ██ "
-let j5 = "  ██   "
-
-
-let k1 = "██   █ "
-let k2 = "██  █  "
-let k3 = "██ █   "
-let k4 = "██  █  "
-let k5 = "██   █ "
-
-
-let l1 = "██     "
-let l2 = "██     "
-let l3 = "██     "
-let l4 = "██     "
-let l5 = "██████ "
-
-
-let m1 = "███ ██ "
-let m2 = "██ █ █ "
-let m3 = "██ █ █ "
-let m4 = "██   █ "
-let m5 = "██   █ "
-
-
-let n1 = "██   █ "
-let n2 = "███  █ "
-let n3 = "██ █ █ "
-let n4 = "██  ██ "
-let n5 = "██   █ "
-
-
-let o1 = " ████  "
-let o2 = "██   █ "
-let o3 = "██   █ "
-let o4 = "██   █ "
-let o5 = " ████  "
-
-
-let p1 = "██ ██  "
-let p2 = "██   █ "
-let p3 = "██ ██  "
-let p4 = "██     "
-let p5 = "██     "
-
-
-let q1 = " ████  "
-let q2 = "██   █ "
-let q3 = "██   █ "
-let q4 = "██ █ █ "
-let q5 = " ██ █  "
-
-
-let r1 = "███ █  "
-let r2 = "██   █ "
-let r3 = "███ █  "
-let r4 = "██   █ "
-let r5 = "██   █ "
-
-
-let s1 = "  █ ██ "
-let s2 = " █     "
-let s3 = "   █   "
-let s4 = "     █ "
-let s5 = " ██ █  "
-
-
-let t1 = "██████ "
-let t2 = "  ██   "
-let t3 = "  ██   "
-let t4 = "  ██   "
-let t5 = "  ██   "
-
-
-let u1 = "██   █ "
-let u2 = "██   █ "
-let u3 = "██   █ "
-let u4 = "██   █ "
-let u5 = "██████ "
-
-
-let v1 = "██   █ "
-let v2 = "██   █ "
-let v3 = "██   █ "
-let v4 = " █  █  "
-let v5 = "  ██   "
-
-
-let w1 = "██   █ "
-let w2 = "██   █ "
-let w3 = "██ █ █ "
-let w4 = " █ █ █ "
-let w5 = "  █ █  "
-
-
-let x1 = "██   █ "
-let x2 = "  █ █  "
-let x3 = "   █   "
-let x4 = "  █ █  "
-let x5 = "██   █ "
-
-
-let y1 = "██   █ "
-let y2 = "  █ █  "
-let y3 = "   █   "
-let y4 = "   █   "
-let y5 = "   █   "
-
-
-
-let z1 = "██████ "
-let z2 = "    █  "
-let z3 = "   █   "
-let z4 = " █     "
-let z5 = "██████ "
-
-
-let hy1= "       "
-let hy2= "       "
-let hy3= " █████ "
-let hy4= "       "
-let hy5= "       "
-
-
-let pl1= "       "
-let pl2= "   █   "
-let pl3= " █████ "
-let pl4= "   █   "
-let pl5= "       "
-
-
-let ul1 = "      "
-let ul2 = "      "
-let ul3 = "      "
-let ul4 = "      "
-let ul5 = "██████"
-
-
-let el1 = "      "
-let el2 = "██████"
-let el3 = "      "
-
-let el4 = "██████"
-let el5 = "      "
-
-
-let clb1 = spaces(6)
-let clb2 = spaces(6)
-let clb3 = spaces(6)
-let clb4 = spaces(6)
-let clb5 = spaces(6)
-
-
-let abx* = @[a1,a2,a3,a4,a5]
-let bbx* = @[b1,b2,b3,b4,b5]
-let cbx* = @[c1,c2,c3,c4,c5]
-let dbx* = @[d1,d2,d3,d4,d5]
-let ebx* = @[e1,e2,e3,e4,e5]
-let fbx* = @[f1,f2,f3,f4,f5]
-let gbx* = @[g1,g2,g3,g4,g5]
-let hbx* = @[h1,h2,h3,h4,h5]
-let ibx* = @[i1,i2,i3,i4,i5]
-let jbx* = @[j1,j2,j3,j4,j5]
-let kbx* = @[k1,k2,k3,k4,k5]
-let lbx* = @[l1,l2,l3,l4,l5]
-let mbx* = @[m1,m2,m3,m4,m5]
-let nbx* = @[n1,n2,n3,n4,n5]
-let obx* = @[o1,o2,o3,o4,o5]
-let pbx* = @[p1,p2,p3,p4,p5]
-let qbx* = @[q1,q2,q3,q4,q5]
-let rbx* = @[r1,r2,r3,r4,r5]
-let sbx* = @[s1,s2,s3,s4,s5]
-let tbx* = @[t1,t2,t3,t4,t5]
-let ubx* = @[u1,u2,u3,u4,u5]
-let vbx* = @[v1,v2,v3,v4,v5]
-let wbx* = @[w1,w2,w3,w4,w5]
-let xbx* = @[x1,x2,x3,x4,x5]
-let ybx* = @[y1,y2,y3,y4,y5]
-let zbx* = @[z1,z2,z3,z4,z5]
-
-let hybx* = @[hy1,hy2,hy3,hy4,hy5]
-let plbx* = @[pl1,pl2,pl3,pl4,pl5]
-let ulbx* = @[ul1,ul2,ul3,ul4,ul5]
-let elbx* = @[el1,el2,el3,el4,el5]
-
-let clbx* = @[clb1,clb2,clb3,clb4,clb5]
-
-let bigLetters* = @[abx,bbx,cbx,dbx,ebx,fbx,gbx,hbx,ibx,jbx,kbx,lbx,mbx,nbx,obx,pbx,qbx,rbx,sbx,tbx,ubx,vbx,wbx,xbx,ybx,zbx,hybx,plbx,ulbx,elbx,clbx]
-
-# a big block number set which can be used with printBigNumber
-# for the newer experimental block font see printfont() in cx.nim
-
-const number0 =
- @["██████"
-  ,"██  ██"
-  ,"██  ██"
-  ,"██  ██"
-  ,"██████"]
-
-const number1 =
- @["    ██"
-  ,"    ██"
-  ,"    ██"
-  ,"    ██"
-  ,"    ██"]
-
-const number2 =
- @["██████"
-  ,"    ██"
-  ,"██████"
-  ,"██    "
-  ,"██████"]
-
-const number3 =
- @["██████"
-  ,"    ██"
-  ,"██████"
-  ,"    ██"
-  ,"██████"]
-
-const number4 =
- @["██  ██"
-  ,"██  ██"
-  ,"██████"
-  ,"    ██"
-  ,"    ██"]
-
-const number5 =
- @["██████"
-  ,"██    "
-  ,"██████"
-  ,"    ██"
-  ,"██████"]
-
-const number6 =
- @["██████"
-  ,"██    "
-  ,"██████"
-  ,"██  ██"
-  ,"██████"]
-
-const number7 =
- @["██████"
-  ,"    ██"
-  ,"    ██"
-  ,"    ██"
-  ,"    ██"]
-
-const number8 =
- @["██████"
-  ,"██  ██"
-  ,"██████"
-  ,"██  ██"
-  ,"██████"]
-
-const number9 =
- @["██████"
-  ,"██  ██"
-  ,"██████"
-  ,"    ██"
-  ,"██████"]
-
-const colon =
- @["      "
-  ,"  ██  "
-  ,"      "
-  ,"  ██  "
-  ,"      "]
-
-const plussign =
- @["      "
-  ,"  ██  "
-  ,"██████"
-  ,"  ██  "
-  ,"      "]
-
-const equalsign =
- @["      "
-  ,"██████"
-  ,"      "
-  ,"██████"
-  ,"      "]
- 
-const minussign =
- @["      "
-  ,"      "
-  ,"██████"
-  ,"      "
-  ,"      "] 
- 
-const clrb =
- @["      "
-  ,"      "
-  ,"      "
-  ,"      "
-  ,"      "]
-  
-  
-const bigdot =
- @["      "
-  ,"      "
-  ,"      "
-  ,"      "
-  ,"  ██  "]
-
-
-const numberlen = 4
-
-# big NIM in block letters
-# see printNimSxR for how to print this sets and similar one you make up
-
-let NIMX1 = "██     █    ██    ███   ██"
-let NIMX2 = "██ █   █    ██    ██ █ █ █"
-let NIMX3 = "██  █  █    ██    ██  █  █"
-let NIMX4 = "██   █ █    ██    ██  █  █"
-let NIMX5 = "██     █    ██    ██     █"
-
-let nimsx* = @[NIMX1,NIMX2,NIMX3,NIMX4,NIMX5]
-
-
-let NIMX6  = "███   ██  ██  ██     █  ██"
-let NIMX7  = "██ █ █ █  ██  ██ █   █  ██"
-let NIMX8  = "██  █  █  ██  ██  █  █  ██"
-let NIMX9  = "██  █  █  ██  ██   █ █  ██"
-let NIMX10 = "██     █  ██  ██     █  ██"
-
-let nimsx2* = @[NIMX6,NIMX7,NIMX8,NIMX9,NIMX10]
+import os,osproc,math,stats,cpuinfo,httpclient,browsers
+import terminal,strutils,times,random,sequtils,unicode
+import cxconsts,cxglobal,cxprint,cxtime
+
+# type used in getRandomPoint
+type
+    RpointInt*   = tuple[x, y : int]
+    RpointFloat* = tuple[x, y : float]
 
 
 proc fibonacci*(n: int):float =  
@@ -522,7 +133,6 @@ proc getFirstMondayYearMonth*(aym:string):string =
     ##    echo  getFirstMondayYearMonth("2015-2")
     ##
     ## in case of invalid dates nil will be returned
-    
 
     #var n:WeekDay
     var amx = aym
@@ -637,9 +247,8 @@ proc getRandomPoint*(minx:float = -500.0,maxx:float = 500.0,miny:float = -500.0,
     ## 
 
     var point : RpointFloat
-    var rx:    float
-    var ry:    float
-      
+    var rx    : float
+    var ry    : float
       
     if minx < 0.0:   rx = minx - 1.0 
     else        :    rx = minx + 1.0  
@@ -697,6 +306,7 @@ template getCard* :auto =
     ##    doFinish()
     ##
     cards[rand(rxCards)]
+    
 
 proc showRandomCard*(xpos:int = centerX()) = 
     ## showRandomCard
@@ -787,6 +397,130 @@ proc centerMark*(showpos :bool = false) =
      centerPos(".")
      print(".",truetomato)
      if showpos == true:  print "x" & $(tw/2)
+
+
+# Framed headers with var. colorising options
+
+proc superHeader*(bstring:string) =
+      ## superheader
+      ##
+      ## a framed header display routine
+      ##
+      ## suitable for one line headers , overlong lines will
+      ##
+      ## be cut to terminal window width without ceremony
+      ##
+      ## for box with or without intersections see drawBox
+      ##
+      var astring = bstring
+      # minimum default size that is string max len = 43 and
+      # frame = 46
+      let mmax = 43
+      var mddl = 46
+      ## max length = tw-2
+      let okl = tw - 6
+      let astrl = astring.len
+      if astrl > okl :
+        astring = astring[0.. okl]
+        mddl = okl + 5
+      elif astrl > mmax :
+          mddl = astrl + 4
+      else :
+          # default or smaller
+          let n = mmax - astrl
+          for x in 0..<n:
+              astring = astring & " "
+          mddl = mddl + 1
+
+      # some framechars choose depending on what the system has installed
+      #let framechar = "▒"
+      let framechar = "⌘"
+      #let framechar = "⏺"
+      #let framechar = "~"
+      let pdl = framechar.repeat(mddl)
+      # now show it with the framing in yellow and text in white
+      # really want a terminal color checker to avoid invisible lines
+      echo()
+      printLn(pdl,yellowgreen)
+      print(spaces(1))
+      printLn(astring,dodgerblue)
+      printLn(pdl,yellowgreen)
+      echo()
+
+
+
+proc superHeader*(bstring:string,strcol:string,frmcol:string) =
+        ## superheader
+        ##
+        ## a framed header display routine
+        ##
+        ## suitable for one line headers , overlong lines will
+        ##
+        ## be cut to terminal window size without ceremony
+        ##
+        ## the color of the string can be selected, available colors
+        ##
+        ## green,red,cyan,white,yellow and for going completely bonkers the frame
+        ##
+        ## can be set to clrainbow too .
+        ##
+        ##.. code-block:: nim
+        ##    import nimcx
+        ##
+        ##    superheader("Ok That's it for Now !",clrainbow,white)
+        ##    echo()
+        ##
+        var astring = bstring
+        # minimum default size that is string max len = 43 and
+        # frame = 46
+        let mmax = 43
+        var mddl = 46
+        let okl = tw - 6
+        let astrl = astring.len
+        if astrl > okl :
+          astring = astring[0.. okl]
+          mddl = okl + 5
+        elif astrl > mmax :
+            mddl = astrl + 4
+        else :
+            # default or smaller
+            let n = mmax - astrl
+            for x in 0..<n:
+                astring = astring & spaces(1)
+            mddl = mddl + 1
+
+        let framechar = "⌘"
+        #let framechar = "~"
+        let pdl = framechar.repeat(mddl)
+        # now show it with the framing in yellow and text in white
+        # really want to have a terminal color checker to avoid invisible lines
+        echo()
+
+        # frame line
+        proc frameline(pdl:string) =
+            print(pdl,frmcol)
+            echo()
+
+        proc framemarker(am:string) =
+            print(am,frmcol)
+
+        proc headermessage(astring:string)  =
+            print(astring,strcol)
+
+
+        # draw everything
+        frameline(pdl)
+        #left marker
+        framemarker(framechar & spaces(1))
+        # header message sring
+        headermessage(astring)
+        # right marker
+        framemarker(spaces(1) & framechar)
+        # we need a new line
+        echo()
+        # bottom frame line
+        frameline(pdl)
+        # finished drawing
 
 
 proc superHeaderA*(bb:string = "",strcol:string = white,frmcol:string = green,anim:bool = true,animcount:int = 1) =
@@ -1010,212 +744,16 @@ proc showWanIp*() =
 
 
 
-# large font printing, numbers are implemented
-
-proc printBigNumber*(xnumber:string|int|int64,fgr:string = yellowgreen ,bgr:BackgroundColor = bgBlack,xpos:int = 1,fun:bool = false) =
-    ## printBigNumber
-    ##
-    ## prints a string in big block font
-    ##
-    ## available 1234567890:
-    ##
-    ##
-    ## if fun parameter = true then foregrouncolor will be ignored and every block
-    ##
-    ## element colored individually
-    ##
-    ##
-    ## xnumber can be given as int or string
-    ##
-    ## usufull for big counter etc , a clock can also be build easily but
-    ## running in a tight while loop just uses up cpu cycles needlessly.
-    ##
-    ## .. code-block:: nim
-    ##    for x in 990..1105:
-    ##         cleanScreen()
-    ##         printBigNumber(x)
-    ##         sleepy(3)
-    ##
-    ##    cleanScreen()
-    ##
-    ##    printBigNumber($23456345,steelblue)
-    ##
-    ## .. code-block:: nim
-    ##    import nimcx
-    ##    for x in countdown(9,0):
-    ##         cleanScreen()
-    ##         if x == 5:
-    ##             for y in countup(10,25):
-    ##                 cleanScreen()
-    ##                 printBigNumber($y,tomato)
-    ##                 sleepy(0.5)
-    ##         cleanScreen()
-    ##         printBigNumber($x)
-    ##         sleepy(0.5)
-    ##    doFinish()
-
-    let anumber = $xnumber
-    var asn = newSeq[string]()
-    var printseq = newSeq[seq[string]]()
-    for x in anumber: asn.add($x)
-    for x in asn:
-      case  x
-        of "0": printseq.add(number0)
-        of "1": printseq.add(number1)
-        of "2": printseq.add(number2)
-        of "3": printseq.add(number3)
-        of "4": printseq.add(number4)
-        of "5": printseq.add(number5)
-        of "6": printseq.add(number6)
-        of "7": printseq.add(number7)
-        of "8": printseq.add(number8)
-        of "9": printseq.add(number9)
-        of ":": printseq.add(colon)
-        of " ": printseq.add(clrb)
-        of "+": printseq.add(plussign)
-        of "-": printseq.add(minussign)
-        of "=": printseq.add(equalsign)
-        of ".": printseq.add(bigdot)
-        else: discard
-
-    for x in 0..numberlen:
-        curSetx(xpos)
-        for y in 0..<printseq.len:
-            if fun == false:
-               print(" " & printseq[y][x],fgr,bgr)
-            else:
-                # we want to avoid black
-                var funny = randcol()
-                while funny == black: funny = randcol()
-                print(" " & printseq[y][x],funny,bgr)
-        echo()
-    curup(5)
-
-
-
-
-proc printBigLetters*(aword:string,fgr:string = yellowgreen ,bgr:BackgroundColor = bgBlack,xpos:int = 1,k:int = 7,fun:bool = false) =
-  ## printBigLetters
-  ##
-  ## prints big block letters in desired color at desired position
-  ##
-  ## note position must be specified as global in format :   var xpos = 5
-  ##
-  ## if fun parameter = true then foregrouncolor will be ignored and every block
-  ##
-  ## element colored individually
-  ##
-  ## k parameter specifies character distance reasonable values are 7,8,9,10 . Default = 7
-  ##
-  ## also note that depending on terminal width only a limited number of chars can be displayed
-  ##
-  ##
-  ##
-  ## .. code-block:: nim
-  ##       printBigLetters("ABA###RR#3",xpos = 1)
-  ##       printBigLetters("#",xpos = 1)   # the '#' char is used to denote a blank space or to overwrite
-  ##       printBigLetters("Nim#DOES#IT#AGAIN",xpos = 1,fun=true)
-
-  var xpos = xpos
-  template abc(s:typed,xpos:int) =
-      # abc
-      #
-      # template to support printBigLetters
-      #
-
-      for x in 0..4:
-        if fun == false:
-           printLn(s[x],fgr = fgr,bgr = bgr ,xpos = xpos)
-        else:
-           # we want to avoid black
-           var funny = randcol()
-           while funny == black:
-               funny = randcol()
-           printLn(s[x],fgr = funny,bgr = bgr ,xpos = xpos)
-      curup(5)
-      xpos = xpos + k
-
-  for aw in aword:
-      let aws = $aw
-      var ak = aws.toLowerAscii()
-      case ak
-      of "a" : abc(abx,xpos)
-      of "b" : abc(bbx,xpos)
-      of "c" : abc(cbx,xpos)
-      of "d" : abc(dbx,xpos)
-      of "e" : abc(ebx,xpos)
-      of "f" : abc(fbx,xpos)
-      of "g" : abc(gbx,xpos)
-      of "h" : abc(hbx,xpos)
-      of "i" : abc(ibx,xpos)
-      of "j" : abc(jbx,xpos)
-      of "k" : abc(kbx,xpos)
-      of "l" : abc(lbx,xpos)
-      of "m" : abc(mbx,xpos)
-      of "n" : abc(nbx,xpos)
-      of "o" : abc(obx,xpos)
-      of "p" : abc(pbx,xpos)
-      of "q" : abc(qbx,xpos)
-      of "r" : abc(rbx,xpos)
-      of "s" : abc(sbx,xpos)
-      of "t" : abc(tbx,xpos)
-      of "u" : abc(ubx,xpos)
-      of "v" : abc(vbx,xpos)
-      of "w" : abc(wbx,xpos)
-      of "x" : abc(xbx,xpos)
-      of "y" : abc(ybx,xpos)
-      of "z" : abc(zbx,xpos)
-      of "-" : abc(hybx,xpos)
-      of "+" : abc(plbx,xpos)
-      of "_" : abc(ulbx,xpos)
-      of "=" : abc(elbx,xpos)
-      of "#" : abc(clbx,xpos)
-      of "1","2","3","4","5","6","7","8","9","0",":":
-               printBigNumber($aw,fgr = fgr , bgr = bgr,xpos = xpos,fun = fun)
-               curup(5)
-               xpos = xpos + k
-      of " " : xpos = xpos + 2
-      else: discard
-
-
-
-
-proc printNimSxR*(nimsx:seq[string],col:string = yellowgreen, xpos: int = 1) =
-    ## printNimSxR
-    ##
-    ## prints large Letters or a word which have been predefined
-    ##
-    ## see values of nimsx1 and nimsx2 above
-    ##
-    ##
-    ## .. code-block:: nim
-    ##    printNimSxR(nimsx,xpos = 10)
-    ##
-    ## allows x positioning
-    ##
-    ## in your calling code arrange that most right one is printed first
-    ##
-
-    var sxpos = xpos
-    var maxl = 0
-
-    for x in nimsx:
-      if maxl < x.len:
-          maxl = x.len
-
-    var maxpos = cx.tw - maxl div 2
-
-    if xpos > maxpos:
-          sxpos = maxpos
-
-    for x in nimsx :
-          printLn(" ".repeat(xpos) & x,randcol())
-
+          
 proc clearScreen*():int {.discardable.} =
      ## clearScreen
      ## 
      ## slow clear screen proc using call to Os
      ## 
      execShellCmd("clear")
+   
+   
+   
+   
    
 # END OF CXUTILS.NIM #
