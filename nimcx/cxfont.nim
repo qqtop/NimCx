@@ -4,7 +4,9 @@ import strutils,terminal
 
 # cxfont.nim
 #
-# expermental font, slim numbers and old block font related procs
+# experimental font, slim numbers and 
+# 
+# old block font related procs (not in use ) 
 # 
 # 
 # 
@@ -16,7 +18,10 @@ type
     T7 = object  
       zx : seq[string]
       
-# experimental 
+# experimental your results may depend on terminal in use
+# 
+# suggested : konsole for best effect
+# 
 # experimental font building  
 
 

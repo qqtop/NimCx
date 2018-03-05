@@ -18,9 +18,9 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-02-26 re-adjust version
+##     Latest      : 2018-03-04
 ##
-##     Compiler    : Nim >= 0.17.x dev branch
+##     Compiler    : Nim >= 0.18.x dev branch
 ##
 ##     OS          : Linux
 ##
@@ -101,19 +101,13 @@
 ##
 ##     Optional    : xclip  (linux clipboard utility)
 ##                 
-##                   unicode font libraries as needed 
-##
-##     In progress : moving some of the non core procs to module cxutils.nim 
-##                   
-##                   moving constants to cxconsts.nim
-##                   
+##                   unicode font libraries as needed            
 ##                                      
-##     Latest      : changed time date related code to work with newest times.nim 
-## 
-##                   added more procs for truecolor support see cxPrint etc.
+##                                      
+##     Latest      : Restructuring and cleanup to adjust to the newest nim release.
 ##                  
 ##
-##     Funding     : Here are the options :
+##     Funding     : Here are three excellent reasons :
 ##     
 ##                   You are happy              ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
 ##                   
@@ -126,7 +120,7 @@
 
 import cxconsts,cxglobal,cxtime,cxprint,cxhash,cxfont,cxtruecolor,cxutils,cxnetwork
 
-import os,osproc,times,random,strutils,strformat,parseutils, parseopt 
+import os,osproc,times,random,strutils,strformat,parseutils,parseopt 
 import tables,sets,rdstdin,macros
 import posix,terminal,math,stats,json,streams,options,memfiles
 import sequtils,httpclient,rawsockets,browsers,intsets,algorithm
@@ -134,8 +128,12 @@ import unicode,typeinfo,typetraits,cpuinfo,colors,encodings,distros
 
 export cxconsts,cxglobal,cxtime,cxprint,cxhash,cxfont,cxtruecolor,cxutils,cxnetwork
 
-export os,osproc,times,random,strutils,strformat,sequtils,unicode,streams
-export terminal,colors,options,json,httpclient,stats,rdstdin,parseopt
+export os,osproc,times,random,strutils,strformat,parseutils,parseopt 
+export tables,sets,rdstdin,macros
+export posix,terminal,math,stats,json,streams,options,memfiles
+export sequtils,httpclient,rawsockets,browsers,intsets,algorithm
+export unicode,typeinfo,typetraits,cpuinfo,colors,encodings,distros
+
 
 
 # Profiling       
@@ -327,67 +325,6 @@ proc showColors*() =
   decho(2)
 
 
-proc drawRect*(h      :int = 0,
-               w      :int = 3,
-               frhLine:string = "_",
-               frVLine:string = "|",
-               frCol  :string = darkgreen,
-               dotCol :string = truetomato,
-               xpos   :int = 1,
-               blink  :bool = false) =
-               
-      ## drawRect
-      ##
-      ## a simple proc to draw a rectangle with corners marked with widedots.
-      ## widedots are of len 4.
-      ##
-      ##
-      ## h  height
-      ## w  width
-      ## frhLine framechar horizontal
-      ## frVLine framechar vertical
-      ## frCol   color of line
-      ## dotCol  color of corner dotCol
-      ## xpos    topleft start position
-      ## blink   true or false to blink the dots
-      ##
-      ##
-      ##.. code-block:: nim
-      ##    import nimcx
-      ##    clearUp(18)
-      ##    curSet()
-      ##    drawRect(15,24,frhLine = "+",frvLine = wideDot , frCol = randCol(),xpos = 8)
-      ##    curup(12)
-      ##    drawRect(9,20,frhLine = "=",frvLine = wideDot , frCol = randCol(),xpos = 10,blink = true)
-      ##    curup(12)
-      ##    drawRect(9,20,frhLine = "=",frvLine = wideDot , frCol = randCol(),xpos = 35,blink = true)
-      ##    curup(10)
-      ##    drawRect(6,14,frhLine = "~",frvLine = "$" , frCol = randCol(),xpos = 70,blink = true)
-      ##    decho(5)
-      ##    doFinish()
-      ##
-      ##
-
-      # topline
-      printDotPos(xpos,dotCol,blink)
-      print(frhLine.repeat(w - 3),frcol)
-      if frhLine == widedot: printDotPos(xpos + w * 2 - 1 ,dotCol,blink)
-      else: printDotPos(xpos + w,dotCol,blink)
-      writeLine(stdout,"")
-      # sidelines
-      for x in 2.. h:
-         print(frVLine,frcol,xpos = xpos)
-         if frhLine == widedot: print(frVLine,frcol,xpos = xpos + w * 2 - 1)
-         else: print(frVLine,frcol,xpos = xpos + w)
-         writeLine(stdout,"")
-      # bottom line
-      printDotPos(xpos,dotCol,blink)
-      print(frhLine.repeat(w - 3),frcol)
-      if frhLine == widedot:printDotPos(xpos + w * 2 - 1 ,dotCol,blink)
-      else: printDotPos(xpos + w,dotCol,blink)
-      writeLine(stdout,"")
-
-
 proc tupleToStr*(xs: tuple): string =
      ## tupleToStr
      ##
@@ -408,23 +345,7 @@ proc tupleToStr*(xs: tuple): string =
      result.add(")")
      
 
-template quickList*[T](c:int,d:T,cw:int = 7 ,dw:int = 15) =
-      ## quickList
-      ## 
-      ## a simple template which allows listing of 2 columns in format count data
-      ## 
-      ## cw and dw are column width adjuster 
-      ## 
-      ##.. code-block:: nim
-      ##    import nimcx      
-      ##    var z = createSeqFloat(1000000,4)
-      ##    for x in 0..<z.len:
-      ##        quicklist(x,ff2(z[x] * 100000,4),dw = 22)
-
-      let fms1 = ">" & $cw
-      let fms2 = ">" & $dw
-      echo fmtx([fms1,"",fms2],c,spaces(1),d)
-
+ 
         
 proc seqHighLite*[T](b:seq[T],b1:seq[T],col:string=gold) =
    ## seqHighLite
@@ -442,13 +363,7 @@ proc seqHighLite*[T](b:seq[T],b1:seq[T],col:string=gold) =
    bs.removesuffix(']')
    printLn(b,col,styled = {styleReverse},substr = bs)       
        
-       
-template bitCheck*(a, b: untyped): bool =
-    ## bitCheck
-    ## 
-    ## check bitsets 
-    ##  
-    (a and (1 shl b)) != 0       
+         
        
 # Misc. routines
      
@@ -482,7 +397,6 @@ proc nimcat*(curFile:string,countphrase : varargs[string,`$`] = "")=
             decho(2)
             dlineLn()
             echo()
-        
             
             var phraseinline = newSeqWith(countphrase.len, newSeq[int](0))  # holds the line numbers where a phrase to be counted was found
             var line = ""
@@ -821,13 +735,12 @@ proc clearAllTimerResults*(quiet:bool = true,xpos:int = 3) =
      cxtimerresults = @[] 
      echo()
      if quiet == false:
-        printLnInfoMsg("Info   ","All timers deleted",xpos = xpos)
-        
+        printLnInfoMsg("Info   ","All timers deleted",xpos = xpos)   
              
     
 proc `$`*[T](some:typedesc[T]): string = name(T)
 proc typeTest*[T](x:T):  T {.discardable.} =
-     # used to determine the field types in the temp sqllite table used for sorting
+     # used to determine the field types 
      printLnBiCol("Type     : " & $type(x))
      printLnBiCol("Value    : " & $x)
      
@@ -836,20 +749,7 @@ proc typeTest2*[T](x:T): T {.discardable.}  =
      printLnBiCol("Type       : " & $type(x),xpos = 3)   
      
 proc typeTest3*[T](x:T): string =   $type(x)
-     
-macro echoType*(x: typed): untyped = 
-  ## echoType
-  ## by @yardanico
-  ## 
-  let impl = x.symbol.getImpl()
-  # we're called on some type
-  if impl.kind == nnkTypeDef:
-    echo "type ", toStrLit(impl)
-  # we're called on a variable
-  else:
-    echo "type ", impl.getTypeInst(), " = ", toStrLit(impl.getTypeImpl())
-
- 
+  
      
 template withFile*(f,fn, mode, actions: untyped): untyped =
   ## withFile
@@ -1181,6 +1081,7 @@ proc showRegression*(rr: RunningRegress,n:int = 5,xpos:int = 1) =
      printLnBiCol2("Slope         : " & ff(rr.slope(),n),yellowgreen,white,sep,xpos = xpos,false,{})
      printLnBiCol2("Correlation   : " & ff(rr.correlation(),n),yellowgreen,white,sep,xpos = xpos,false,{})
 
+     
 template currentFile*: string =
   ## currentFile
   ## 
@@ -1190,45 +1091,6 @@ template currentFile*: string =
   pos.filename 
   
   
-macro debug*(n: varargs[typed]): untyped =
-  ## debug
-  ## 
-  ## ex https://stackoverflow.com/questions/47443206/how-to-debug-print-a-variable-name-and-its-value-in-nim
-  ## 
-  result = newNimNode(nnkStmtList, n)
-  for i in 0..n.len-1:
-    if n[i].kind == nnkStrLit:
-      # pure string literals are written diretly
-      result.add(newCall("write", newIdentNode("stdout"), n[i]))
-    else:
-      # other expressions are written in <expression>: <value> syntax
-      result.add(newCall("write", newIdentNode("stdout"), toStrLit(n[i])))
-      result.add(newCall("write", newIdentNode("stdout"), newStrLitNode(": ")))
-      result.add(newCall("write", newIdentNode("stdout"), n[i]))
-    if i != n.len-1:
-      # separate by ", "
-      result.add(newCall("write", newIdentNode("stdout"), newStrLitNode(", ")))
-    else:
-      # add newline
-      result.add(newCall("writeLine", newIdentNode("stdout"), newStrLitNode("")))  
-  
-  
-     
-proc dprint*[T](s:T) = 
-     ## dprint
-     ## 
-     ## debug print shows contents of s in repr mode
-     ## 
-     ## usefull for debugging  (for some reason the  line number maybe off sometimes)
-     ##
-     echo()
-     print("** REPR OUTPTUT START ***",truetomato)
-     currentLine()
-     echo repr(s) 
-     printLn("** REPR OUTPTUT END   ***",truetomato)
-     echo()
-   
-   
 template zipWith*[T1,T2](f: untyped; xs:openarray[T1], ys:openarray[T2]): untyped =
   ## zipWith
   ## 
@@ -1303,7 +1165,6 @@ proc checkClip*(sel:string = "primary"):string  =
      ##.. code-block:: nim
      ##     printLnBiCol("Last Clipboard Entry : " & checkClip())
      ##
-          
      let (outp, errC) = execCmdEx("xclip -selection $1 -quiet -silent -o" % $sel)
      var rx = ""
      if errC == 0:
@@ -1318,9 +1179,11 @@ proc toClip*[T](s:T ) =
      # toClip
      #
      # send a string to the Clipboard using xclip
+     # only error messages will shown if any.
      #
-     discard execCmd("echo $1 | xclip " % $s)
-     
+     let res = execCmd("echo $1 | xclip " % $s)
+     if res <> 0 :
+            printLnErrorMsg("xclip output : " & $res & " but expected 0")
 
 
 proc tableRune*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5) = 
@@ -1364,24 +1227,25 @@ proc showSeq*[T](aseq:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5
       ## 
       tableRune(aseq)    
 
-proc uniall*(showOrd:bool=true):seq[string] =
-     # for testing purpose only
+proc createSeqAll*(showOrd:bool=false):seq[string] =
+     # for testing purpose only in the future the unicodedb by nitely should be used
      var gs = newSeq[string]()
-     for j in 1..55203: 
+     for j in 0..40878 :        # depending on whats installed  
      
             # there are more chars up to maybe 120150 some
             # maybe for indian langs,iching, some special arab and koran symbols if installed on the system
+            # if not installed on your system you will see the omnious rectangle char  0xFFFD
             # https://www.w3schools.com/charsets/ref_html_utf8.asp
             # 
             # 
-            # tablerune(uniall(),cols=6,maxitemwidth=12)  
+            # tablerune(createSeqAll(),cols=6,maxitemwidth=12)  
             # 
             if showOrd==true: gs.add($j & " : " & $Rune(j))
-            else:  gs.add($Rune(j)) 
+            else: gs.add($Rune(j)) 
      result = gs    
     
-proc geoshapes*():seq[string] =
-     ## geoshapes
+proc createSeqGeoshapes*():seq[string] =
+     ## createSeqGeoshapes
      ## 
      ## returns a seq containing geoshapes unicode chars
      ## 
@@ -1389,7 +1253,7 @@ proc geoshapes*():seq[string] =
      for j in 9632..9727: gs.add($Rune(j))
      result = gs
      
-proc hiragana*():seq[string] =
+proc createSeqHiragana*():seq[string] =
     ## hiragana
     ##
     ## returns a seq containing hiragana unicode chars
@@ -1399,7 +1263,7 @@ proc hiragana*():seq[string] =
     result = hir
     
    
-proc katakana*():seq[string] =
+proc createSeqKatakana*():seq[string] =
     ## full width katakana
     ##
     ## returns a seq containing full width katakana unicode chars
@@ -1412,7 +1276,7 @@ proc katakana*():seq[string] =
 
 
 
-proc cjk*():seq[string] =
+proc createSeqCJK*():seq[string] =
     ## full cjk unicode range returned in a seq
     ##
     var chzh = newSeq[string]()
@@ -1432,8 +1296,8 @@ proc cjk*():seq[string] =
 
 
 
-proc iching*():seq[string] =
-    ## iching
+proc createSeqIching*():seq[string] =
+    ## createSeqIching
     ##
     ## returns a seq containing iching unicode chars
     var ich = newSeq[string]()
@@ -1442,8 +1306,8 @@ proc iching*():seq[string] =
 
 
 
-proc apl*():seq[string] =
-    ## apl
+proc createSeqApl*():seq[string] =
+    ## createSeqApl
     ##
     ## returns a seq containing apl language symbols
     ##
@@ -1452,6 +1316,22 @@ proc apl*():seq[string] =
     for j in parsehexint("2300").. parsehexint("23FF"): adx.add($Rune(j))
     result = adx
 
+    
+          
+proc createSeqBoxChars*():seq[string] =
+
+    ## chars to draw a box
+    ##
+    ## returns a seq containing unicode box drawing chars
+    ##
+    var boxy = newSeq[string]()
+    # s U+2500–U+257F.
+    for j in parsehexint("2500").. parsehexint("257F"):
+        boxy.add($RUne(j))
+    result = boxy
+        
+    
+    
 proc getColorName*[T](sc:T):string = 
    ## getColorName
    ## 
@@ -1492,42 +1372,8 @@ proc getColorConst*[T](sc:T):string =
        if x[0] == sc:
           result = x[1]
           
-          
-proc boxChars*():seq[string] =
 
-    ## chars to draw a box
-    ##
-    ## returns a seq containing unicode box drawing chars
-    ##
-    var boxy = newSeq[string]()
-    # s U+2500–U+257F.
-    for j in parsehexint("2500").. parsehexint("257F"):
-        boxy.add($RUne(j))
-    result = boxy
-    
-
-
-proc randpos*():int =
-    ## randpos
-    ##
-    ## sets cursor to a rand position in the visible terminal window
-    ##
-    ## returns x position
-    ##
-    ##.. code-block:: nim
-    ##
-    ##    while 1 == 1:
-    ##       for z in 1.. 50:
-    ##          print($z,randcol(),xpos = randpos())
-    ##       sleepy(0.0015)
-    ##
-    curset()
-    let x = getRndInt(0, tw - 1)
-    let y = getRndInt(0, th - 1)
-    curdn(y)
-    #print($x & "/" & $y,xpos = x)
-    result = x
-  
+ 
 proc showTerminalSize*() =
       ## showTerminalSize
       ##
@@ -1571,7 +1417,6 @@ proc cxAlertLn*(xpos:int = 1) =
      printLn(doflag(red,6,"ALERT ",truetomato) & doflag(red,6),xpos = xpos)
              
 
-#proc cxHelp*[T](s:varargs[T,`$`]) =
 proc cxhelp*(s:openarray[string],xpos :int = 2)=
   ## cxHelp
   ## 
@@ -1644,8 +1489,10 @@ proc cxhelp*(s:openarray[string],xpos :int = 2)=
         if cxcodeendflag == false and ss > 0:
            printLnBelpMsg(sss,xpos=xpos)
   echo()      
-       
-        
+ 
+
+ 
+ 
 template infoProc*(code: untyped) =
   ## infoProc
   ## 
@@ -1681,6 +1528,7 @@ template infoProc*(code: untyped) =
       printLnErrorMsg("Checking instantiationInfo ")
       discard
 
+      
 proc `$`(T: typedesc): string = name(T)
 template checkLocals*() =
   ## checkLocals
@@ -1695,81 +1543,7 @@ template checkLocals*() =
       print("[checkLocals -->] ",gold) 
       printLnBiCol(fmtx(["","<20","","","","","<25","","","","",""],"Variable : ",$name,spaces(3),peru,"Type : ",termwhite,$type(value),spaces(1),aqua,"Value : ",termwhite,$value))
   
-            
-proc cxPortCheck*(cmd:string = "lsof -i") =
-     ## cxPortCheck
-     ## 
-     ## runs a linux system command to see what the ports are listening to
-     ##
-     ## may need sudo  ?
-     ## 
-     printLnStatusMsg("cxPortCheck")
-     if not cmd.startsWith("lsof") :  # do not allow any old command here
-        printLnBiCol("cxPortCheck Error: Wrong command --> $1" % cmd,colLeft=red)
-        doByeBye()
-     let pc = execCmdEx(cmd)  
-     let pcl = pc[0].splitLines()
-     printLn(pcl[0],yellowgreen,styled={styleUnderscore})
-     for x in 1..pcl.len - 1:
-        if pcl[x].contains("UDP "):
-           var pclt = pcl[x].split(" ")
-           echo()
-           print(pclt[0] & spaces(1),sandybrown)
-           for xx in 1..<pclt.len:
-             try:
-               if pclt[xx].contains("IPv4") :
-                  print(pclt[xx],dodgerblue,styled={styleReverse})
-                  print(spaces(1))
-               elif pclt[xx].contains("IPv6") :
-                  print(pclt[xx],truetomato,styled={styleReverse})
-                  print(spaces(1))   
-               elif pclt[xx].contains("UDP") :
-                  print(pclt[xx],sandybrown,styled={styleReverse})
-                  print(spaces(1))
-               elif pclt[xx].contains("root") :
-                  print(pclt[xx],darkred,styled={styleReverse})
-                  print(spaces(1))   
-               else:
-                  print(pclt[xx],skyblue)
-                  print(spaces(1))
-               if xx == pclt.len: echo() 
-             except:
-                 discard
-                 
-        elif pcl[x].contains("TCP "):
-           var pclt = pcl[x].split(" ")
-           echo()
-           print(pclt[0] & spaces(1),lime)
-           for xx in 1..<pclt.len:
-             try:
-               if pclt[xx].contains("IPv4") :
-                  print(pclt[xx],dodgerblue,styled={styleReverse})
-                  print(spaces(1))
-               elif pclt[xx].contains("IPv6") :
-                  print(pclt[xx],truetomato,styled={styleReverse})
-                  print(spaces(1))   
-               elif pclt[xx].contains("TCP") :
-                  print(pclt[xx],pastelblue,styled={styleReverse})
-                  print(spaces(1))
-               elif pclt[xx].contains("root") :
-                  print(pclt[xx],darkred,styled={styleReverse})
-                  print(spaces(1))   
-                  
-               else:
-                  print(pclt[xx],pastelpink)
-                  print(spaces(1))
-                  
-               if xx == pclt.len: echo()   
-               
-             except:
-                 echo()
-                 discard
-                 
-               
-        else:
-           echo()
-           discard
-     printLnStatusMsg("cxPortCheck Finished.")     
+
      
 proc qqTop*() =
   ## qqTop
@@ -1782,19 +1556,7 @@ proc qqTop*() =
   print("p",cyan)
 
   
-    
-proc cxBinomialCoeff*(n, k:int): int =
-    # cxBinomialCoeff
-    # 
-    # function returns BinomialCoefficient
-    # 
-    result = 1
-    var kk = k
-    if kk < 0 or kk  >  n:  result = 0
-    if kk == 0 or kk == n:  result = 1
-    kk = min(kk, n - kk) 
-    for i in 0..<kk: result = result * (n - i) div (i + 1)
-   
+
 
 proc doInfo*() =
   ## doInfo
