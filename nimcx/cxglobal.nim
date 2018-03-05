@@ -120,6 +120,7 @@ proc getTerminalHeight*() : int =
 
 template th* : int = getTerminalheight() ## th , a global where latest terminal height is always available 
 
+
 proc cxpad*(s:string,padlen:int):string =
   ## cxpad
   ## 
@@ -1055,7 +1056,16 @@ template loopy2*(mi:int = 0,ma:int = 5,st:untyped) =
      ##      printLn("Some integer : " , getRndInt())
      ##
      for xloopy {.inject.} in mi..<ma: st  
-     
+         
+    
+proc fromCString*(p: pointer, len: int): string =
+  ## fromCString
+  ## 
+  ## convert C pointer to Nim string
+  ## (code ex nim forum https://forum.nim-lang.org/t/3045 by jangko)
+  ## 
+  result = newString(len)
+  copyMem(result.cstring, p, len)          
 
 proc streamFile*(filename:string,mode:FileMode): FileStream = newFileStream(filename, mode)    
      ## streamFile
@@ -1097,6 +1107,44 @@ proc uniform*(a,b: float) : float {.inline.} =
       ##   
       ##    
       result = a + (b - a) * float(rand(b))
+      
+      
+proc sampleSeq*[T](x: seq[T], a:int, b: int) : seq[T] = 
+     ## sampleSeq
+     ##
+     ## returns a continuous subseq a..b from an array or seq if a >= b
+     ## 
+     ## 
+     ##.. code-block:: nim
+     ##    import nimcx
+     ##    let x = createSeqInt(20)
+     ##    echo x
+     ##    echo x.sampleseq(4,8)
+     ##    echo x.sampleSeq(4,8).rndSample()    # get one randly selected value from the subsequence
+     ##    
+     result =  x[a..b]
+
+
+proc tupleToStr*(xs: tuple): string =
+     ## tupleToStr
+     ##
+     ## tuple to string unpacker , returns a string
+     ##
+     ## code ex nim forum
+     ##
+     ##.. code-block:: nim
+     ##    echo tupleToStr((1,2))         # prints (1, 2)
+     ##    echo tupleToStr((3,4))         # prints (3, 4)
+     ##    echo tupleToStr(("A","B","C")) # prints (A, B, C)
+     
+     result = "("
+     for x in xs.fields:
+       if result.len > 1:
+           result.add(", ")
+       result.add($x)
+     result.add(")")
+                
+      
     
 template colPaletteIndexer*(colx:seq[string]):auto =  toSeq(colx.low.. colx.high) 
 

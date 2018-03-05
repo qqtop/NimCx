@@ -21,9 +21,10 @@
 | cxhash.nim     |                  |                  |
 | cxtime.nim     |                  |                  |
 | cxutils.nim    |                  |                  |
+| cxstats.nim    |                  |                  |
 
 
-[Documentation for nimcx.nim](https://qqtop.github.io/nimcxindex.html)
+[Documentation for nimcx.nim](https://qqtop.github.io/theindex.html)
 
 [Documentation for cx.nim](https://qqtop.github.io/cx.html)
 
@@ -45,6 +46,8 @@
 
 [Documentation for cxconsts.nim](https://qqtop.github.io/cxconsts.html)
                            
+[Documentation for cxstats.nim](https://qqtop.github.io/cxstats.html)
+
 
 Requires     : Latest Nim dev version
 
@@ -100,5 +103,7 @@ dofinish()
   
    ![Image](http://qqtop.github.io/gnu2.png?raw=true)  ![Image](http://qqtop.github.io/gnu.png?raw=true)
 
+  
+![Image](http://qqtop.github.io/qqtop-small.png?raw=true)  
   
 

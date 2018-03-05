@@ -33,7 +33,7 @@
 ##     Tested      : OpenSuse Tumbleweed ,Debian Testing
 ##  
 
-import os,osproc,math,stats,cpuinfo,httpclient,browsers
+import os,osproc,math,stats,cpuinfo,httpclient,browsers,typeinfo,typetraits
 import terminal,strutils,times,random,sequtils,unicode
 import cxconsts,cxglobal,cxprint,cxtime
 
@@ -42,7 +42,18 @@ type
     RpointInt*   = tuple[x, y : int]
     RpointFloat* = tuple[x, y : float]
 
-
+ 
+proc `$`*[T](some:typedesc[T]): string = name(T)
+proc typeTest*[T](x:T):  T {.discardable.} =
+     # used to determine the field types 
+     printLnBiCol("Type     : " & $type(x))
+     printLnBiCol("Value    : " & $x)
+     
+proc typeTest2*[T](x:T): T {.discardable.}  =
+     # same as typetest but without showing values (which may be huge in case of seqs)
+     printLnBiCol("Type       : " & $type(x),xpos = 3)   
+     
+proc typeTest3*[T](x:T): string =   $type(x)
 proc fibonacci*(n: int):float =  
     ## fibonacci
     ## 
@@ -56,6 +67,19 @@ proc fibonacci*(n: int):float =
        result = float(n)
     else: 
        result = fibonacci(n-1) + fibonacci(n-2)
+       
+proc pswwaux*() =
+   # pswwaux
+   # 
+   # utility bash command :  ps -ww aux | sort -nk3 | tail
+   # displays output in console
+   # 
+   let pswwaux = execCmdEx("ps -ww aux | sort -nk3 | tail ")
+   printLn("ps -ww aux | sort -nk3 | tail ",yellowgreen)
+   echo  pswwaux.output
+   decho(2)
+                
+       
 
 proc memCheck*(stats:bool = false) =
   ## memCheck
@@ -741,13 +765,13 @@ proc newKatakana*(minwl:int=3,maxwl:int = 10 ):string =
 
 
 proc drawRect*(h      :int = 0,
-               w      :int = 3,
-               frhLine:string = "_",
-               frVLine:string = "|",
-               frCol  :string = darkgreen,
-               dotCol :string = truetomato,
-               xpos   :int = 1,
-               blink  :bool = false) =
+              w      :int = 3,
+              frhLine:string = "_",
+              frVLine:string = "|",
+              frCol  :string = darkgreen,
+              dotCol :string = truetomato,
+              xpos   :int = 1,
+              blink  :bool = false) =
                
       ## drawRect
       ##
@@ -829,6 +853,242 @@ proc clearScreen*():int {.discardable.} =
      ## 
      execShellCmd("clear")
    
-  
+
+proc createSeqAll*(showOrd:bool=false):seq[string] =
+     # for testing purpose only in the future the unicodedb by nitely should be used
+     var gs = newSeq[string]()
+     for j in 0..40878 :        # depending on whats installed  
+     
+            # there are more chars up to maybe 120150 some
+            # maybe for indian langs,iching, some special arab and koran symbols if installed on the system
+            # if not installed on your system you will see the omnious rectangle char  0xFFFD
+            # https://www.w3schools.com/charsets/ref_html_utf8.asp
+            # 
+            # 
+            # tablerune(createSeqAll(),cols=6,maxitemwidth=12)  
+            # 
+            if showOrd==true: gs.add($j & " : " & $Rune(j))
+            else: gs.add($Rune(j)) 
+     result = gs    
+    
+proc createSeqGeoshapes*():seq[string] =
+     ## createSeqGeoshapes
+     ## 
+     ## returns a seq containing geoshapes unicode chars
+     ## 
+     var gs = newSeq[string]()
+     for j in 9632..9727: gs.add($Rune(j))
+     result = gs
+     
+proc createSeqHiragana*():seq[string] =
+    ## hiragana
+    ##
+    ## returns a seq containing hiragana unicode chars
+    var hir = newSeq[string]()
+    # 12353..12436 hiragana
+    for j in 12353..12436: hir.add($Rune(j)) 
+    result = hir
+    
    
+proc createSeqKatakana*():seq[string] =
+    ## full width katakana
+    ##
+    ## returns a seq containing full width katakana unicode chars
+    ##
+    var kat = newSeq[string]()
+    # s U+30A0–U+30FF.
+    for j in parsehexint("30A0").. parsehexint("30FF"): kat.add($Rune(j))
+    for j in parsehexint("31F0").. parsehexint("31FF"): kat.add($Rune(j))  # Katakana Phonetic Extensions
+    result = kat
+
+
+
+proc createSeqCJK*():seq[string] =
+    ## full cjk unicode range returned in a seq
+    ##
+    var chzh = newSeq[string]()
+    #for j in parsehexint("3400").. parsehexint("4DB5"): chzh.add($Rune(j))   # chars
+    for j in parsehexint("2E80").. parsehexint("2EFF"): chzh.add($Rune(j))   # CJK Radicals Supplement
+    for j in parsehexint("2F00").. parsehexint("2FDF"): chzh.add($Rune(j))   # Kangxi Radicals
+    for j in parsehexint("2FF0").. parsehexint("2FFF"): chzh.add($Rune(j))   # Ideographic Description Characters
+    for j in parsehexint("3000").. parsehexint("303F"): chzh.add($Rune(j))   # CJK Symbols and Punctuation
+    for j in parsehexint("31C0").. parsehexint("31EF"): chzh.add($Rune(j))   # CJK Strokes
+    for j in parsehexint("3200").. parsehexint("32FF"): chzh.add($Rune(j))   # Enclosed CJK Letters and Months
+    for j in parsehexint("3300").. parsehexint("33FF"): chzh.add($Rune(j))   # CJK Compatibility
+    for j in parsehexint("3400").. parsehexint("4DBF"): chzh.add($Rune(j))   # CJK Unified Ideographs Extension A
+    for j in parsehexint("4E00").. parsehexint("9FBF"): chzh.add($Rune(j))   # CJK Unified Ideographs
+    #for j in parsehexint("F900").. parsehexint("FAFF"): chzh.add($Rune(j))   # CJK Compatibility Ideographs
+    for j in parsehexint("FF00").. parsehexint("FF60"): chzh.add($Rune(j))   # Fullwidth Forms of Roman Letters
+    result = chzh    
+
+
+
+proc createSeqIching*():seq[string] =
+    ## createSeqIching
+    ##
+    ## returns a seq containing iching unicode chars
+    var ich = newSeq[string]()
+    for j in 119552..119638: ich.add($Rune(j))
+    result = ich
+
+
+
+proc createSeqApl*():seq[string] =
+    ## createSeqApl
+    ##
+    ## returns a seq containing apl language symbols
+    ##
+    var adx = newSeq[string]()
+    # s U+30A0–U+30FF.
+    for j in parsehexint("2300").. parsehexint("23FF"): adx.add($Rune(j))
+    result = adx
+
+    
+          
+proc createSeqBoxChars*():seq[string] =
+
+    ## chars to draw a box
+    ##
+    ## returns a seq containing unicode box drawing chars
+    ##
+    var boxy = newSeq[string]()
+    # s U+2500–U+257F.
+    for j in parsehexint("2500").. parsehexint("257F"):
+        boxy.add($RUne(j))
+    result = boxy
+
+   
+proc tableRune*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5) = 
+    ## tableRune
+    ##
+    ## simple table routine with default 6 cols for displaying various unicode sets
+    ## fgr allows color display and fgr = "rand" displays in rand color and maxwidth for displayable items
+    ## this can also be used to show items of a sequence
+    ##
+    ##.. code-block:: nim
+    ##      tableRune(cjk(),"rand")
+    ##      tableRune(katakana(),yellowgreen)
+    ##      tableRune(hiragana())
+    ##      tableRune(geoshapes(),randcol())
+    ##      tableRune(createSeqint(1000,10000,100000))
+    ##      
+    ##      
+    var c = 0
+    for x in 0..<z.len:
+      inc c
+      if c < cols + 1 : 
+          if fgr == "rand":
+                printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$x , " : ",  $z[x] , spaces(1)) ,colLeft=gold,colRight=randcol(),0,false,{}) 
+          else:
+                printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$x , " : ",  $z[x] , spaces(1)) ,colLeft=fgr,colRight=gold,0,false,{})     
+      else:
+           c = 0
+           if  c mod 10 == 0: echo() 
+     
+    decho(2)      
+    printLnBiCol("Seq Items  : 0 - " & $(z.len - 1) , colLeft=greenyellow,colRight=gold,3,false,{})  
+    printLnBiCol("Item Count : " & $z.len, colLeft=greenyellow,colRight=gold,3,false,{}) 
+    discard typeTest2(z)
+    decho(2)          
+
+    
+
+proc showSeq*[T](aseq:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5) =
+      ## showSeq
+      ## 
+      ## display contents of a seq, in case of seq of seq the first item of the sub seqs will be shown
+      ## 
+      tableRune(aseq)    
+        
+        
+proc seqHighLite*[T](b:seq[T],b1:seq[T],col:string=gold) =
+   ## seqHighLite
+   ## 
+   ## displays the passed in seq with highlighting of subsequence
+   ## 
+   ##.. code-block:: nim
+   ##   import nimcx
+   ##   var b = createSeqInt(30,1,10)
+   ##   seqHighLite(b,@[5,6])   # subseq will be highlighted if found
+   ## 
+   ## 
+   var bs:string = $b1
+   bs = bs.replace("@[","")
+   bs.removesuffix(']')
+   printLn(b,col,styled = {styleReverse},substr = bs)       
+       
+
+proc shift*[T](x: var seq[T], zz: Natural = 0): T =
+     ## shift takes a seq and returns the first item, and deletes it from the seq
+     ##
+     ## build in pop does the same from the other side
+     ##
+     ##.. code-block:: nim
+     ##    var a: seq[float] = @[1.5, 23.3, 3.4]
+     ##    echo shift(a)
+     ##    echo a
+     ##
+     ##
+     result = x[zz]
+     x.delete(zz) 
+ 
+
+     
+template withFile*(f,fn, mode, actions: untyped): untyped =
+  ## withFile
+  ## 
+  ## easy file handling template , which is using fileStreams
+  ## 
+  ## f is a file handle
+  ## fn is the filename
+  ## mode is fmWrite,fmRead,fmReadWrite,fmAppend or fmReadWriteExisiting
+  ## 
+  ## 
+  ## Example 1
+  ## 
+  ##.. code-block:: nim
+  ##   let curFile="/data5/notes.txt"    # some file
+  ##   withFile(fs, curFile, fmRead):
+  ##       var line = ""
+  ##       while fs.readLine(line):
+  ##           printLn(line,yellowgreen)
+  ##           
+  ##  Example 2   
+  ##    
+  ##.. code-block:: nim
+  ##   import nimcx
+  ##
+  ##   let curFile="/data5/notes.txt"    # some file
+  ##
+  ##   withFile(txt2, curFile, fmRead):
+  ##           var aline = ""
+  ##           var lc = 0
+  ##           var oc = 0
+  ##           while txt2.readline(aline):
+  ##               try:
+  ##                   inc lc
+  ##                   var sw = "the"   # find all lines containing : the
+  ##                   if aline.contains(sw) == true:
+  ##                       inc oc
+  ##                       printBiCol(fmtx(["<8",">6","","<7","<6"],"Line :",lc,rightarrow,"Count : ",oc))
+  ##                       printHl(aline,sw,yellowgreen)
+  ##                       echo()
+  ##               except:
+  ##                   break 
+  block:
+        var f = streamFile(fn,mode)    # streamfile is in cxglobal.nim
+        if not f.isNil:
+            try:
+                actions
+            finally:
+                close(f)
+        else:
+                echo()
+                printLnErrorMsg("Cannot open file " & fn)
+                quit()
+         
+
+ 
+ 
+ 
 # END OF CXUTILS.NIM #
