@@ -1,4 +1,11 @@
-import cxconsts,cxglobal,terminal,strutils,sequtils,colors
+
+# cxprint.nim
+# 
+# holds most functions required for echoing , printing
+# 
+
+
+import cxconsts,cxglobal,terminal,strutils,sequtils,colors,macros
 
 proc rainbow*[T](s : T,xpos:int = 1,fitLine:bool = false ,centered:bool = false)  ## forward declaration
 proc print*[T](astring:T,fgr:string = termwhite ,bgr:BackgroundColor = bgBlack,xpos:int = 0,fitLine:bool = false ,centered:bool = false,styled : set[Style]= {},substr:string = "")
@@ -723,10 +730,9 @@ proc printLnBiCol*[T](s:varargs[T,`$`],
                    
      ## printLnBiCol
      ##
-     ## changes to prev. versions:
-     ## sep moved to behind colors in parameter ordering
      ## and input can be varargs which gives much better flexibility
-     ## if varargs are to be printed all parameters need to be specified.
+     ## however all parameters need to be specified
+     ## also see printLnBiCol3 
      ##
      ## default seperator = ":"  if not found we execute printLn with available params
      ##
@@ -838,13 +844,8 @@ proc printLnBiCol2*[T](s:varargs[T,`$`],
                         
      ## printLnBiCol2
      ##
-     ## this version call print2 and  printLn2  which is suitable when used in multiple columns printing 
-     ##
-     ## changes to prev. versions :
-     ## sep moved to behind colors in parameter ordering
-     ## and input can be varargs which gives much better flexibility
-     ## if varargs are to be printed all parameters need to be specified.
-     ##
+     ## this version call print2 and  printLn2 which is suitable when printing multiple columns side by side printing 
+     ## 
      ## default seperator = ":"  if not found we execute printLn with available params
      ##
      ##.. code-block:: nim
@@ -952,10 +953,12 @@ proc printLnBiCol3*[T](s:openarray[T],
                    
      ## printLnBiCol3
      ##
+     ## WIP still in testing
+     ##
      ## changes to prev. versions:
-     ## using an openarray to pass in the data rather than a varargs has the effect 
+     ## using an openarray to pass in the data rather than a varargs in first position has the effect 
      ## of not needing to write all the other params if not needed , the cost is writing
-     ## 2 more brackets for the array ...
+     ## 2 more brackets for the array ... so most likely the sane version
      ## sep moved to behind colors in parameter ordering
      ## and input can be varargs which gives much better flexibility
      ## if varargs are to be printed all parameters need to be specified.
@@ -965,20 +968,13 @@ proc printLnBiCol3*[T](s:openarray[T],
      ##.. code-block:: nim
      ##    import nimcx
      ##
-     ##    for x  in 0..<3:
-     ##       # here our input is varargs so weneed to specify all params
-     ##        printLnBiCol("Test $1  : Ok " % $1,"this was $1 : what" % $2,23456.789,red,lime,":",0,false,{})
-     
-     ##    for x  in 4..<6:
-     ##        # here we change the default colors
-     ##        printLnBiCol("nice",123,":","check",@[1,2,3],cyan,lime,":",0,false,{})
-     ##
-     ##    # usage with fmtx 
-     ##    printLnBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),yellow,randcol(),":",0,false,{})
-     ##    printLnBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),colLeft = cyan)
-     ##    printLnBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),colLeft=yellow,colRight=randcol())
-     ##    printLnBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),123,colLeft = cyan,colRight=gold,sep=":",xpos=0,centered=false,styled={})
+     ##    for x  in 1..30:
+     ##       # here our input is an array so we do not need to specify all params unless required
+     ##       # and we can make nice tables quickly
+     ##        printLnBiCol(["TestA  ", fmtx([">3"],ff2(x)) , ":", fmtx([">10"],ff2(1000.001)),"  ",
+     ##                      "TestB  ", ":", fmtx([">13"],ff2(1000.001 * float(x * x),4))],red,lime)
      ##    
+      
      {.gcsafe.}:
         
         var nosepflag:bool = false
@@ -1013,8 +1009,7 @@ proc printLnBiCol3*[T](s:openarray[T],
                         printLn(z[1],fgr = randcol(),bgr = bgBlack,styled = styled)
                 else:
                         printLn(z[1],fgr = colRight,bgr = bgBlack,styled = styled)
-                        
-                        
+                                     
                         
                         
 proc printHL*(s     : string,
@@ -1111,7 +1106,9 @@ proc cechoLn*(col    : string,
 proc printCxLine*(aline:var Cxline) =
      ## printCxLine
      ## 
-     ## prints a horizontal  (or vertical line - not yet implemeted) for frames with text as specified in an Cxline object
+     ## prints a horizontal for frames or other use with or without text ,
+     ## with or without brackets around the text as specified in an Cxline object
+     ## the underlaying CxLine object is still further developed.
      ## see cxlineobjectE1.nim for an example
      ## 
      
@@ -1142,11 +1139,15 @@ proc printCxLine*(aline:var Cxline) =
             rdotpos = rdotpos + 1
             hline(aline.endpos - aline.startpos - 1,aline.linecolor,xpos = xpos + 1,lt = aline.linechar)  
             rdotpos = rdotpos + aline.endpos - aline.startpos
-            print(aline.textbracketopen,aline.textbracketcolor,xpos = xpos + aline.textpos)  
-            rdotpos = rdotpos + 1
-            print(aline.text,aline.textcolor,styled=aline.textstyle)
-            print(aline.textbracketclose,aline.textbracketcolor)
-            rdotpos = rdotpos + 1
+            if aline.showbrackets == true:
+               print(aline.textbracketopen,aline.textbracketcolor,xpos = xpos + aline.textpos)  
+               rdotpos = rdotpos + 1
+               print(aline.text,aline.textcolor,styled=aline.textstyle)
+            else:   
+               print(aline.text,aline.textcolor,xpos = xpos + aline.textpos,styled=aline.textstyle)
+            if aline.showbrackets == true:
+               print(aline.textbracketclose,aline.textbracketcolor)
+               rdotpos = rdotpos + 1
             print("." & aline.newline,aline.dotrightcolor,xpos = rdotpos - 3)
 
        else:
@@ -1237,12 +1238,8 @@ proc printBErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
 proc printLnErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printLnBiCol("[Error ] " & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
      
- 
 proc printLnBErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printLnBiCol("[      ] " & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
-          
-     
-     
      
 proc printFailMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printBiCol("[Fail  ] " & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
@@ -1295,3 +1292,40 @@ proc printLnInfoMsg*(info,atext:string = "",colLeft:string = lightslategray ,col
      printLnBiCol("[$1 ]" % info & spaces(1) & atext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
                                
       
+proc dprint*[T](s:T) = 
+     ## dprint
+     ## 
+     ## debug print shows contents of s in repr mode
+     ## 
+     ## usefull for debugging  (for some reason the  line number maybe off sometimes)
+     ##
+     echo()
+     print("** REPR OUTPTUT START ***",truetomato)
+     currentLine()
+     echo repr(s) 
+     printLn("** REPR OUTPTUT END   ***",truetomato)
+     echo()
+   
+macro pdebug*(n: varargs[typed]): untyped =
+  ## pdebug
+  ## 
+  ## prints variable name and value in debug view mode
+  ## 
+  ## ex https://stackoverflow.com/questions/47443206/how-to-debug-print-a-variable-name-and-its-value-in-nim
+  ## 
+  result = newNimNode(nnkStmtList, n)
+  for i in 0..n.len-1:
+    if n[i].kind == nnkStrLit:
+      # pure string literals are written diretly
+      result.add(newCall("write", newIdentNode("stdout"), n[i]))
+    else:
+      # other expressions are written in <expression>: <value> syntax
+      result.add(newCall("write", newIdentNode("stdout"), toStrLit(n[i])))
+      result.add(newCall("write", newIdentNode("stdout"), newStrLitNode(": ")))
+      result.add(newCall("write", newIdentNode("stdout"), n[i]))
+    if i != n.len-1:
+      # separate by ", "
+      result.add(newCall("write", newIdentNode("stdout"), newStrLitNode(", ")))
+    else:
+      # add newline
+      result.add(newCall("writeLine", newIdentNode("stdout"), newStrLitNode("")))     

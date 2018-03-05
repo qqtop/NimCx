@@ -1,4 +1,26 @@
 {.deadCodeElim: on , optimization: speed.}
+
+## ::
+## 
+##     Library     : nimcx.nim
+##     
+##     Module      : cxglobal.nim
+##
+##     Status      : stable
+##
+##     License     : MIT opensource
+##   
+##     Latest      : 2018-03-04 
+##
+##     Compiler    : Nim >= 0.18.x dev branch
+##
+##     OS          : Linux
+##
+##     Description : provides many utility functions required by other modules
+## 
+
+
+
 import 
           cxconsts,
           terminal,
@@ -11,21 +33,19 @@ import
           unicode,
           macros,
           colors,
-          streams
-
-# cxglobal.nim
-# 
-# holds many utility functions required by other modules
-# 
-# other than in templates no print functions are executed here.
-# 
-          
-proc ff*(zz:float,n:int = 5):string
-proc ff2*(zz:float,n:int = 3):string
-proc ff2*(zz:int64,n:int = 0):string
+          streams,
+          typeinfo,
+          typetraits
 
 
-# procs lifted from an early version of terminal.nim as they are currently not exported from there
+ 
+# forward declarations 
+proc ff*(zz:float,n :int = 5):string
+proc ff2*(zz:SomeNumber,n:int = 3):string
+#proc ff22*(zz:int64,n:int = 3):string
+
+
+# procs lifted from an early version of terminal.nim 
 proc styledEchoProcessArg(s: string) = write stdout, s
 proc styledEchoProcessArg(style: Style) = setStyle({style})
 proc styledEchoProcessArg(style: set[Style]) = setStyle style
@@ -305,41 +325,8 @@ proc ff*(zz:float,n:int = 5):string =
      result = $formatFloat(zz,ffDecimal,precision = n)
 
 
-
-proc ff2*(zz:float , n:int = 3):string =
-  ## ff2
-  ## 
-  ## formats a float into form 12,345,678.234 that is thousands separators are shown
-  ## 
-  ## 
-  ## precision is after comma given by n with default set to 3
-  ## 
-  ##.. code-block:: nim
-  ##    import nimcx
-  ##    
-  ##    # floats example
-  ##    for x in 1.. 2000:
-  ##       # generate some positve and negative rand float
-  ##       var z = getrandfloat() * 2345243.132310 * getRandomSignF()
-  ##       printLnBiCol(fmtx(["",">6","",">20"],"NZ ",$x," : ",ff2(z)))
-  ##  
-  ##       
-     
-  if abs(zz) < 1000 == true:   #  number less than 1000 so no 1000 seps needed
-    result = ff(zz,n)
-    
-  else: 
-        let c = rpartition($zz,".")
-        var cnew = ""
-        for d in c[2]:
-              if cnew.len < n:
-                  cnew = cnew & d
-        result = ff2(parseInt(c[0])) & c[1] & cnew
-
-
-
-proc ff2*(zz:int64 , n:int = 0):string =
-  ## ff2
+proc ff22*(zz:int , n:int = 0):string =
+  ## ff22
   ## 
   ## formats a integer into form 12,345,678 that is thousands separators are shown
   ## 
@@ -347,9 +334,9 @@ proc ff2*(zz:int64 , n:int = 0):string =
   ## in context of integer this means display format could even show 
   ## a 0 after comma part if needed
   ## 
-  ## ff2(12345,0)  ==> 12,345     # display an integer with thousands seperator as we know it
-  ## ff2(12345,1)  ==> 12,345.0   # display an integer but like a float with 1 after comma pos
-  ## ff2(12345,2)  ==> 12,345.00  # display an integer but like a float with 2 after comma pos
+  ## ff2i(12345,0)  ==> 12,345     # display an integer with thousands seperator as we know it
+  ## ff2i(12345,1)  ==> 12,345.0   # display an integer but like a float with 1 after comma pos
+  ## ff2i(12345,2)  ==> 12,345.00  # display an integer but like a float with 2 after comma pos
   ## 
   ## 
   ##.. code-block:: nim
@@ -386,6 +373,48 @@ proc ff2*(zz:int64 , n:int = 0):string =
      nz = nz.multiReplace(("-,","-"))
      
   result = nz
+
+proc typeTest3*[T](x:T): string =   $type(x)
+proc ff2*(zz:SomeNumber, n:int = 3):string =
+  ## ff2
+  ## 
+  ## formats a float into form 12,345,678.234 that is thousands separators are shown
+  ## 
+  ## 
+  ## precision is after comma given by n with default set to 3
+  ## 
+  ##.. code-block:: nim
+  ##    import nimcx
+  ##    
+  ##    # floats example
+  ##    for x in 1.. 2000:
+  ##       # generate some positve and negative rand float
+  ##       var z = getrandfloat() * 2345243.132310 * getRandomSignF()
+  ##       printLnBiCol(fmtx(["",">6","",">20"],"NZ ",$x," : ",ff2(z)))
+  ##  
+  ##       
+  
+  if typetest3(zz).startswith("int") == true: 
+             result = ff22(parseInt($zz),n)
+  elif typetest3(zz).startswith("float") == true:
+            if abs(zz) < 1000 == true:   #  number less than 1000 so no 1000 seps needed
+                result = ff(float(zz),n)
+                
+            else: 
+                    let c = rpartition($zz,".")
+                    var cnew = ""
+                    for d in c[2]:
+                        if cnew.len < n:
+                            cnew = cnew & d
+                    # if still not enough
+                    while cnew.len < n:
+                        cnew = cnew & "0"
+                    
+                    result = ff22(parseInt(c[0])) & c[1] & cnew
+  else:
+        result = $zz
+         
+
 
 
 proc getRandomFloat*(mi:float = -1.0 ,ma:float = 1.0):float =
@@ -755,7 +784,7 @@ template rndCol*(r:int = getRndInt(0,254) ,g:int = getRndInt(0,254), b:int = get
     
  
  
-# cxLine is a line creation object with several properties
+# cxLine is a line creation object with several properties more properties will be introduced later
 # also see printCxLine in cxprint.nim for usage
 type 
 
@@ -775,6 +804,7 @@ type
         textbracketopen*  : string          # open bracket surounding the text    default [
         textbracketclose* : string          # close bracket surrounding the text  default ]
         textbracketcolor* : string          # color of the open,close bracket     default dodgerblue
+        showbrackets* : bool                # showbrackets trye or false          default true
         linecolor* : string                 # color of the line char              default aqua
         linechar*  : string                 # line char                           default efs2    # see cxconsts.nim
         dotleftcolor* : string              # color of left dot                   default yellow
@@ -799,6 +829,7 @@ proc newCxLine*():Cxline =
      result.textbracketopen  = "["
      result.textbracketclose = "]"
      result.textbracketcolor = dodgerblue
+     result.showbrackets = true
      result.linecolor     = aqua
      result.linechar      = efs2
      result.dotleftcolor  = yellow

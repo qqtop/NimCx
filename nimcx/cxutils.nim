@@ -13,16 +13,15 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-02-27
+##     Latest      : 2018-03-05
 ##
-##     Compiler    : Nim >= 0.17.x dev branch
+##     Compiler    : Nim >= 0.18.x dev branch
 ##
 ##     OS          : Linux
 ##
 ##     Description :
 ##
-##                   cxutils.nim is a collection of lesser used simple utility procs and templates
-##
+##                   cxutils.nim is a collection utility procs and templates
 ##                   
 ##
 ##     Usage       : import nimcx
@@ -91,9 +90,9 @@ proc getAmzDateString*():string =
     ## 
     ## get current GMT date time in amazon format  
     ## 
-    return format(getGMTime(getTime()), iso_8601_aws) 
+    return format(utc(getTime()), iso_8601_aws) 
     
-proc dayofweek*(datestr:string):string = 
+proc cxdayofweek*(datestr:string):string = 
     ## dayofweek
     ## 
     ## returns day of week from a date in format yyyy-MM-dd
@@ -105,7 +104,7 @@ proc dayofweek*(datestr:string):string =
     
     result =  $(getdayofweek(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr))))      
 
-proc getFirstMondayYear*(ayear:string):string =
+proc getFirstMondayYear*[T](ayear:T):string =
     ## getFirstMondayYear
     ##
     ## returns date of first monday of any given year
@@ -114,15 +113,16 @@ proc getFirstMondayYear*(ayear:string):string =
     ##    echo  getFirstMondayYear("2015")
     ##
     ##
- 
+    
     for x in 0.. 7:
-       var datestr = ayear & "-01-0" & $x
+       var datestr = $ayear & "-01-0" & $x
        if validdate(datestr) == true:
-          if $(getdayofweek(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr)))) == "Monday":
+          #if $(getdayofweek(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr)))) == "Monday":
+          if cxdayofweek(datestr) == "Monday":   
              result = datestr
 
 
-proc getFirstMondayYearMonth*(aym:string):string =
+proc getFirstMondayYearMonth*[T](aym:T):string =
     ## getFirstMondayYearMonth
     ##
     ## returns date of first monday in given year and month
@@ -135,15 +135,15 @@ proc getFirstMondayYearMonth*(aym:string):string =
     ## in case of invalid dates nil will be returned
 
     #var n:WeekDay
-    var amx = aym
-    for x in 0.. 7:
-       if aym.len < 7:
+    var amx = $aym
+    for x in 0 .. 7:
+       if amx.len < 7:
           let yr = year(amx)
-          let mo = month(aym)  # this also fixes wrong months
+          let mo = month(amx)  # this also fixes wrong months
           amx = yr & "-" & mo
        var datestr = amx & "-0" & $x
        if validdate(datestr) == true:
-          if $(getdayofweek(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr)))) == "Monday":
+          if cxdayofweek(datestr) == "Monday":
             result = datestr
 
 
@@ -175,7 +175,7 @@ proc getNextMonday*(adate:string):string =
 
         if validdate(adate) == true:
            
-            var z = $(getdayofweek(parseInt(day(adate)),parseInt(month(adate)),parseInt(year(adate))))
+            var z = cxdayofweek(adate)
             
             if z == "Monday":
                 # so the datestr points to a monday we need to add a
@@ -187,7 +187,7 @@ proc getNextMonday*(adate:string):string =
 
             for x in 0..<7:
                 if validdate(ndatestr) == true:
-                    z =  $(getDayOfWeek(parseInt(day(ndatestr)),parseInt(month(ndatestr)),parseInt(year(ndatestr))))
+                    z =  cxDayOfWeek(ndatestr)
                 if z.strip() != "Monday":
                     ndatestr = plusDays(ndatestr,1)
                 else:
@@ -294,6 +294,27 @@ proc getRandomPoint*(minx:int = -500 ,maxx:int = 500 ,miny:int = -500 ,maxy:int 
     point.y =  getRandomSignI() * getRndInt(miny,maxy)  
     result =  point
 
+    
+proc randpos*():int =
+    ## randpos
+    ##
+    ## sets cursor to a rand position in the visible terminal window
+    ##
+    ## returns x position
+    ##
+    ##.. code-block:: nim
+    ##
+    ##    while 1 == 1:
+    ##       for z in 1.. 50:
+    ##          print($z,randcol(),xpos = randpos())
+    ##       sleepy(0.0015)
+    ##
+    curset()
+    let x = getRndInt(0, tw - 1)
+    let y = getRndInt(0, th - 1)
+    curdn(y)
+    #print($x & "/" & $y,xpos = x)
+    result = x
 
 template getCard* :auto =
     ## getCard
@@ -718,33 +739,89 @@ proc newKatakana*(minwl:int=3,maxwl:int = 10 ):string =
          result = ""
 
 
-proc getWanIp2*():string =
-            ## getWanIp
-            ## 
-            ## .. code-block:: nim
-            ##    printLnBiCol(getwanip2())
-            ## 
-            ## Note : very slow  needs curl and awk
-            ## 
-            ## 
-            let (outp, errC) = execCMDEx("""curl -s http://checkip.dyndns.org/ | awk -F'[a-zA-Z<>/ :]+' '{printf "External IP: %s\n", $2}'""")
-            if errC == 0:
-                result =  $outp
-            else:
-                result = "External IP errorcode : " & $errC & ". IP not established"
 
+proc drawRect*(h      :int = 0,
+               w      :int = 3,
+               frhLine:string = "_",
+               frVLine:string = "|",
+               frCol  :string = darkgreen,
+               dotCol :string = truetomato,
+               xpos   :int = 1,
+               blink  :bool = false) =
+               
+      ## drawRect
+      ##
+      ## a simple proc to draw a rectangle with corners marked with widedots.
+      ## widedots are of len 4.
+      ##
+      ##
+      ## h  height
+      ## w  width
+      ## frhLine framechar horizontal
+      ## frVLine framechar vertical
+      ## frCol   color of line
+      ## dotCol  color of corner dotCol
+      ## xpos    topleft start position
+      ## blink   true or false to blink the dots
+      ##
+      ##
+      ##.. code-block:: nim
+      ##    import nimcx
+      ##    clearUp(18)
+      ##    curSet()
+      ##    drawRect(15,24,frhLine = "+",frvLine = wideDot , frCol = randCol(),xpos = 8)
+      ##    curup(12)
+      ##    drawRect(9,20,frhLine = "=",frvLine = wideDot , frCol = randCol(),xpos = 10,blink = true)
+      ##    curup(12)
+      ##    drawRect(9,20,frhLine = "=",frvLine = wideDot , frCol = randCol(),xpos = 35,blink = true)
+      ##    curup(10)
+      ##    drawRect(6,14,frhLine = "~",frvLine = "$" , frCol = randCol(),xpos = 70,blink = true)
+      ##    decho(5)
+      ##    doFinish()
+      ##
+      ##
 
+      # topline
+      printDotPos(xpos,dotCol,blink)
+      print(frhLine.repeat(w - 3),frcol)
+      if frhLine == widedot: printDotPos(xpos + w * 2 - 1 ,dotCol,blink)
+      else: printDotPos(xpos + w,dotCol,blink)
+      writeLine(stdout,"")
+      # sidelines
+      for x in 2.. h:
+         print(frVLine,frcol,xpos = xpos)
+         if frhLine == widedot: print(frVLine,frcol,xpos = xpos + w * 2 - 1)
+         else: print(frVLine,frcol,xpos = xpos + w)
+         writeLine(stdout,"")
+      # bottom line
+      printDotPos(xpos,dotCol,blink)
+      print(frhLine.repeat(w - 3),frcol)
+      if frhLine == widedot:printDotPos(xpos + w * 2 - 1 ,dotCol,blink)
+      else: printDotPos(xpos + w,dotCol,blink)
+      writeLine(stdout,"")
 
-proc showWanIp*() =
-     ## showWanIp
-     ##
-     ## show your current wan ip  , this service currently slow
-     ##
-     printBiCol("Current Wan Ip  : " & getWanIp2(),colLeft=yellowgreen,colRight=gray)
-
-
-
-          
+         
+    
+proc cxBinomialCoeff*(n, k:int): int =
+    # cxBinomialCoeff
+    # 
+    # function returns BinomialCoefficient
+    # 
+    result = 1
+    var kk = k
+    if kk < 0 or kk  >  n:  result = 0
+    if kk == 0 or kk == n:  result = 1
+    kk = min(kk, n - kk) 
+    for i in 0..<kk: result = result * (n - i) div (i + 1)
+ 
+template bitCheck*(a, b: untyped): bool =
+    ## bitCheck
+    ## 
+    ## check bitsets 
+    ##  
+    (a and (1 shl b)) != 0   
+         
+         
 proc clearScreen*():int {.discardable.} =
      ## clearScreen
      ## 
@@ -752,8 +829,6 @@ proc clearScreen*():int {.discardable.} =
      ## 
      execShellCmd("clear")
    
-   
-   
-   
+  
    
 # END OF CXUTILS.NIM #
