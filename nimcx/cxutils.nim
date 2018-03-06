@@ -15,22 +15,10 @@
 ##   
 ##     Latest      : 2018-03-06
 ##
-##     Compiler    : Nim >= 0.18.x dev branch
-##
 ##     OS          : Linux
 ##
-##     Description :
-##
-##                   cxutils.nim is a collection of utility procs and templates
+##     Description : cxutils.nim is a collection of utility procs and templates
 ##                   
-##
-##     Usage       : import nimcx
-##
-##     Project     : https://github.com/qqtop/NimCx
-##
-##     Docs        : https://qqtop.github.io/cxutils.html   
-##
-##     Tested      : OpenSuse Tumbleweed , Debian Testing
 ##  
 
 import os,osproc,math,stats,cpuinfo,httpclient,browsers,typeinfo,typetraits

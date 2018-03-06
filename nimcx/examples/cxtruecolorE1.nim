@@ -1,5 +1,4 @@
 import nimcx
-
 #
 # cxtruecolorE1.nim
 #
@@ -8,7 +7,7 @@ import nimcx
 # this demos also show how to exceed the named colors in Nim stdlib and run millions of colors
 # provided there is enough memory in the system
 # 
-# 2018-01-25
+# 2018-03-06
 
 proc cxSpectrum(colval:int = 255,dval:int = 76 ,adj:int = 1) =
   ## cxspectrum
