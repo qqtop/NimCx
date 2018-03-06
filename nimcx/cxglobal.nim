@@ -16,7 +16,7 @@
 ##
 ##     OS          : Linux
 ##
-##     Description : provides many utility functions required by other modules
+##     Description : provides many basic utility functions required by other modules
 ## 
 
 

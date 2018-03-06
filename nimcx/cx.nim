@@ -1287,10 +1287,8 @@ proc infoLine*() =
     qqTop()
 
 
-
-  
    
-proc showCxTrueColorPalette*(min:int=0,max:int = 888,step: int = 12,flag48:bool = false) {.inline.} = 
+proc showCxTrueColorPalette*(min:int = 0,max:int = 888,step: int = 12,flag48:bool = false) {.inline.} = 
    ## showCxTrueColorPalette
    ## 
    ## 
@@ -1298,7 +1296,8 @@ proc showCxTrueColorPalette*(min:int=0,max:int = 888,step: int = 12,flag48:bool 
    ## 
    ## play with truecolors
    ## 
-   ## shows truecolors ,in order not run out of memory adjust max and sep carefully 
+   ## shows truecolors , in order not run out of memory adjust max and step carefully 
+   ## note - less steps more colors
    ## e.g max 888 step 4 needs abt 4.3 GB free and has  22,179,134 color shades to select from
    ## default has 421,750 palette entries in cxTruecCol 
    ## 

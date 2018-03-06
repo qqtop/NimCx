@@ -1,8 +1,22 @@
 
-# cxprint.nim
-# 
-# holds most functions required for echoing , printing
-# 
+## ::
+## 
+##     Library     : nimcx.nim
+##     
+##     Module      : cxprint.nim
+##
+##     Status      : stable
+##
+##     License     : MIT opensource
+##   
+##     Latest      : 2018-03-06 
+##
+##     Compiler    : Nim >= 0.18.x dev branch
+##
+##     OS          : Linux
+##
+##     Description : provides most printing functions for the library
+## 
 
 
 import cxconsts,cxglobal,terminal,strutils,sequtils,colors,macros
@@ -174,7 +188,7 @@ proc cxPrint*[T](ss    :T,
       ## 
       ## truecolor print function
       ## 
-      ## see cxtruecolE1.nim  for example usage
+      ## see cxtruecolorE1.nim  for example usage
       ## 
       ## Fontcolors can be drawn from cxColorNames , a seq specified in cxconsts.nim
       ## Example to specify a fontcolor:
@@ -213,7 +227,7 @@ proc cxPrintLn*[T](ss       : T,
       ## 
       ## truecolor printLn function
       ##           
-      ## see cxtruecolE1.nim  for example usage
+      ## see cxtruecolorE1.nim  for example usage
       ## 
       
       let s = $ss
@@ -234,7 +248,7 @@ proc cxPrint*[T](ss       : T,
       ## 
       ## truecolor print function
       ##             
-      ## see cxtruecolE1.nim  for example usage
+      ## see cxtruecolorE1.nim  for example usage
       ## 
       
       let s = $ss
@@ -254,14 +268,94 @@ proc cxPrintLn*[T](ss       : T,
       ## 
       ## truecolor printLn function
       ##     
-      ## see cxtruecolE1.nim  for example usage
+      ## see cxtruecolorE1.nim  for example usage
       ## 
       
       let s = $ss
       setBackgroundColor fontcolor
       printLn(s,fgr = bgr,xpos = xpos,styled=styled)  
             
-       
+
+
+proc print*[T](ss:varargs[T,`$`],
+           fgr : string = termwhite ,
+           bgr : BackgroundColor = bgBlack,
+           xpos: int = 0,
+           sep : string = spaces(1)) =
+           
+   ## print
+   ## 
+   ## a print routine which allows printing of varargs in desired color , position and separator
+   ## 
+   ## no newline is added
+   ## 
+   ## sep must not be wider than 1 , if it is wider the comma will be used as default otherwise default will be 1 space
+   ## 
+   ##.. code-block:: nim
+   ##    import nimcx
+   ##    
+   ##    print("TEST VARARGS : ",createSeqint(20).sampleSeq(8,13),getRndInt(10000,12000),createSeqint(3),newword(6,10),ff2(getRndfloat(),4),$(hiragana().sampleSeq(8,13)),randcol(),bblack,0,"") 
+   ##    echo()
+   ##    
+   ##    
+   var ssep = sep
+   if ssep.len > 1:
+      ssep = ","
+   var oldxlen = 0
+   for x in 0..<ss.len:
+      if x == ss.len - 1:
+         print(ss[x],fgr,bgr,xpos = xpos + oldxlen)
+      else:
+         print(ss[x] & ssep,fgr,bgr,xpos = xpos + oldxlen)
+      oldxlen =  oldxlen + ss[x].len + 1
+                
+
+proc printLn*[T](astring:T,
+                fgr:string = termwhite,
+                bgr:BackgroundColor,
+                xpos:int = 0,
+                fitLine:bool = false,
+                centered:bool = false,
+                styled : set[Style]= {},
+                substr:string = "") =
+    ## :: 
+    ##   printLn
+    ## 
+    ##   with bgr:setBackGroundColor
+    ##
+    ##
+    ##   foregroundcolor
+    ##   backgroundcolor
+    ##   position
+    ##   fitLine
+    ##   centered
+    ##   styled
+    ##
+    ##   Colornames supported for font colors     : 
+    ##     
+    ##    -  all
+    ##  
+    ##   Colornames supported for background color: BackGroundColors
+    ##   
+    ##   - use styleBright and styleReverse for variouse effects
+    ##   
+    ##   - if using truecolors from the cxTrueCol pool note the difference between odd and even numbers
+    ##
+    ## Examples
+    ## 
+    ##.. code-block:: nim
+    ##    printLn("Yes ,  we made it.",clrainbow,brightyellow) # background has no effect with font in  clrainbow
+    ##    printLn("Yes ,  we made it.",green,brightyellow)
+    ##    # or use it as a replacement of echo
+    ##    printLn(red & "What's up ? " & green & "Grub's up ! "
+    ##    printLn("No need to reset the original color")
+    ##    printLn("Nim does it again",peru,centered = true ,styled = {styleDim,styleUnderscore},substr = "i")
+    ##
+
+    print($(astring) & "\L",fgr,bgr,xpos,fitLine,centered,styled,substr)
+    print cleareol
+
+    
 
 proc print2*[T](astring:T,
                fgr:string = termwhite,
@@ -289,7 +383,7 @@ proc print2*[T](astring:T,
     ##   centered = true will try to center and disregard xpos
     ##   
     ##   styled allows style parameters to be set 
-    ##  
+    ##         
     ##   available styles :
     ##  
     ##   styleBright = 1,            # bright text
@@ -372,43 +466,10 @@ proc print2*[T](astring:T,
         #if fgr != $fgWhite or bgr != bgBlack:
         setForeGroundColor(fgWhite)
         setBackGroundColor(bgBlack)
-           
-           
-
-
-proc print*[T](ss:varargs[T,`$`],
-           fgr : string = termwhite ,
-           bgr : BackgroundColor = bgBlack,
-           xpos: int = 0,
-           sep : string = spaces(1)) =
-           
-   ## print
-   ## 
-   ## a print routine which allows printing of varargs in desired color , position and separator
-   ## 
-   ## no newline is added
-   ## 
-   ## sep must not be wider than 1 , if it is wider the comma will be used as default otherwise default will be 1 space
-   ## 
-   ##.. code-block:: nim
-   ##    import nimcx
-   ##    
-   ##    print("TEST VARARGS : ",createSeqint(20).sampleSeq(8,13),getRndInt(10000,12000),createSeqint(3),newword(6,10),ff2(getRndfloat(),4),$(hiragana().sampleSeq(8,13)),randcol(),bblack,0,"") 
-   ##    echo()
-   ##    
-   ##    
-   var ssep = sep
-   if ssep.len > 1:
-      ssep = ","
-   var oldxlen = 0
-   for x in 0..<ss.len:
-      if x == ss.len - 1:
-         print(ss[x],fgr,bgr,xpos = xpos + oldxlen)
-      else:
-         print(ss[x] & ssep,fgr,bgr,xpos = xpos + oldxlen)
-      oldxlen =  oldxlen + ss[x].len + 1
-                
-
+               
+    
+    
+    
 proc printLn2*[T](astring:T,
               fgr     : string = termwhite,
               xpos    : int = 0,
@@ -420,88 +481,31 @@ proc printLn2*[T](astring:T,
     ## ::
     ##   printLn2
     ## 
-    ##   original with bgr:string
-    ##   
     ##  
     ##   foregroundcolor
-    ##   backgroundcolor
+    ##   best on black backgroundcolor
     ##   position
     ##   fitLine
     ##   centered
     ##   styled
     ##  
-    ##   Colornames supported for font colors     : 
-    ##     
-    ##    -  all
-    ##  
-    ##   Colornames supported for background color:
-    ##  
-    ##     - white,red,green,blue,yellow,cyan,magenta,black 
-    ##     - brightwhite,brightred,brightgreen,brightblue,brightyellow,
-    ##     - brightcyan,brightmagenta,brightblack
-    ##
     ## Examples
     ##
     ##.. code-block:: nim
-    ##    import nimcx
-    ##    printLn("Yes ,  we made it.",clrainbow,brightyellow) # background has no effect with font in  clrainbow
-    ##    printLn("Yes ,  we made it.",green,brightyellow)
+    ##    printLn2("Yes ,  we made it.",clrainbow) 
+    ##    printLn2("Yes ,  we made it.",green)
     ##    # or use it as a replacement of echo
-    ##    printLn(red & "What's up ? " & green & "Grub's up ! "
-    ##    printLn("No need to reset the original color")
-    ##    printLn("Nim does it again",peru,centered = true ,styled = {styleDim,styleUnderscore},substr = "i")
+    ##    printLn2(red & "What's up ? " & green & "Grub's up ! ")
+    ##    printLn2("No need to reset the original color")
+    ##    printLn2("Nim does it again",peru,centered = true ,styled = {styleDim,styleUnderscore},substr = "i")
     ##    # To achieve colored text with styleReverse try:
     ##    loopy2(0,30):
-    ##        printLn("The end never comes on time ! ",randcol(),bRed,styled = {styleReverse})
-    ##        sleepy(0.5)
+    ##        printLn2("The end never comes on time ! ",randcol(),styled = {styleReverse})
+    ##        print cleareol
+    ##        sleepy(0.1)
     ##
     print2($(astring) & "\L",fgr,xpos,fitLine,centered,styled,substr)
     
-
-proc printLn*[T](astring:T,
-                fgr:string = termwhite,
-                bgr:BackgroundColor,
-                xpos:int = 0,
-                fitLine:bool = false,
-                centered:bool = false,
-                styled : set[Style]= {},
-                substr:string = "") =
-    ## :: 
-    ##   printLn
-    ## 
-    ##   with bgr:setBackGroundColor
-    ##
-    ##
-    ##   foregroundcolor
-    ##   backgroundcolor
-    ##   position
-    ##   fitLine
-    ##   centered
-    ##   styled
-    ##
-    ##   Colornames supported for font colors     : 
-    ##     
-    ##    -  all
-    ##  
-    ##   Colornames supported for background color: BackGroundColors
-    ##   
-    ##   - use styleBright and styleReverse for variouse effects
-    ##   
-    ##   - if using truecolors from the cxTrueCol pool note the difference between odd and even numbers
-    ##
-    ## Examples
-    ## 
-    ##.. code-block:: nim
-    ##    printLn("Yes ,  we made it.",clrainbow,brightyellow) # background has no effect with font in  clrainbow
-    ##    printLn("Yes ,  we made it.",green,brightyellow)
-    ##    # or use it as a replacement of echo
-    ##    printLn(red & "What's up ? " & green & "Grub's up ! "
-    ##    printLn("No need to reset the original color")
-    ##    printLn("Nim does it again",peru,centered = true ,styled = {styleDim,styleUnderscore},substr = "i")
-    ##
-
-    print($(astring) & "\L",fgr,bgr,xpos,fitLine,centered,styled,substr)
-    print cleareol
 
 
 proc printy*[T](astring:varargs[T,`$`]) =  
