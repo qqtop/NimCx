@@ -193,7 +193,8 @@ proc cxPortCheck*(cmd:string = "lsof -i") =
      printLnStatusMsg("cxPortCheck")
      if not cmd.startsWith("lsof") :  # do not allow any old command here
         printLnBiCol("cxPortCheck Error: Wrong command --> $1" % cmd,colLeft=red)
-        doByeBye()
+        printLnStatusMsg("Exiting now ...")
+        quit 0
      let pc = execCmdEx(cmd)  
      let pcl = pc[0].splitLines()
      printLn(pcl[0],yellowgreen,styled={styleUnderscore})

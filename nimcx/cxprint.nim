@@ -1247,6 +1247,19 @@ proc printFailMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
 proc printLnFailMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printLnBiCol("[Fail  ] " & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})     
    
+proc printAlertMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
+     printBiCol("[Alert   ] " & atext , colLeft = truetomato ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})
+     
+proc printLnAlertMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[Alert ] " & atext , colLeft = truetomato ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})        
+
+proc printBAlertMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
+     printBiCol("[        ] " & atext , colLeft = truetomato ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})
+     
+proc printLnBAlertMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[      ] " & atext , colLeft = truetomato ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})        
+     
+     
 proc printOKMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printBiCol("[OK    ]" & spaces(1) & atext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
      

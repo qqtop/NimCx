@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-03-04 
+##     Latest      : 2018-03-06 
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -1282,13 +1282,4 @@ template hdx*(code:typed,frm:string = "+",width:int = tw,nxpos:int = 0):typed =
    echo()
     
 
-template doByeBye*() =
-  ## doByeBye
-  ##
-  ## a simple end program routine do give some feedback when exiting
-  ##  
-  decho(2)  
-  print("Exiting now !  ",lime)
-  printLn("Bye-Bye from " & extractFileName(getAppFilename()),red)
-  printLn(yellowgreen & "Mem -> " &  lightsteelblue & "Used : " & white & ff2(getOccupiedMem()) & lightsteelblue & "  Free : " & white & ff2(getFreeMem()) & lightsteelblue & "  Total : " & white & ff2(getTotalMem() ))
-  #doFinish()
+

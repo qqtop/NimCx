@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-03-04
+##     Latest      : 2018-03-06
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -211,10 +211,10 @@ var benchmarkresults* =  newSeq[Benchmarkres]()
 
 type
     CxTimer* =  object {.packed.}
-      name* : string
-      start*: float
-      stop  : float
-      lap*  : seq[float]
+            name* : string
+            start*: float
+            stop  : float
+            lap*  : seq[float]
       
      
 # type used for cxtimer results
@@ -225,11 +225,13 @@ type
                         lap  :seq[float]]
 
     Cxcounter* =  object
-             value*: int                        
+            value*: int                        
 
-# used to store all cxtimer results 
-var cxtimerresults* =  newSeq[Cxtimerres]() 
-
+            
+# global used to store all cxtimer results 
+var cxtimerresults* =  newSeq[Cxtimerres]()
+# global used to store tmpfilenames , all tmpfilenames will if progs exit
+var cxtmpfilenames* =  newSeq[string]()
 
 proc newCxCounter*():ref(Cxcounter) =
     ## newCxcounter
@@ -914,7 +916,7 @@ proc checkClip*(sel:string = "primary"):string  =
      ## checkClip
      ## 
      ## returns the newest entry from the Clipboard
-     ## needs linux utility xclip installed
+     ## requires xclip to be installed
      ## 
      ##.. code-block:: nim
      ##     printLnBiCol("Last Clipboard Entry : " & checkClip())
@@ -928,13 +930,16 @@ proc checkClip*(sel:string = "primary"):string  =
      else:
          rx = "xclip returned errorcode : " & $errC & ". Clipboard not accessed correctly"
      result = rx
-       
+
+     
 proc toClip*[T](s:T ) = 
-     # toClip
-     #
-     # send a string to the Clipboard using xclip
-     # only error messages will shown if any.
-     #
+     ## toClip
+     ##
+     ## send a string to the Clipboard using xclip
+     ## only error messages will shown if any.
+     ## required xclip to be installed
+     ## 
+     ##
      let res = execCmd("echo $1 | xclip " % $s)
      if res <> 0 :
             printLnErrorMsg("xclip output : " & $res & " but expected 0")
@@ -1001,6 +1006,8 @@ proc cxAlert*(xpos:int = 1) =
      ## 
      ## issues an alert 
      ## 
+     ## also available printAlertMsg see cxprint.nim
+     ## 
      ##      
      print(doflag(red,6,"ALERT ",truetomato) & doflag(red,6),xpos = xpos)
      
@@ -1009,6 +1016,8 @@ proc cxAlertLn*(xpos:int = 1) =
      ## cxAlertLn
      ## 
      ## issues an alert line
+     ## 
+     ## ## also available printLnAlertMsg see cxprint.nim
      ## 
      ##.. code-block:: nim
      ##   import nimcx 
@@ -1163,7 +1172,33 @@ proc qqTop*() =
   print("o",brightred)
   print("p",cyan)
 
+        
+proc tmpFilename*(): string = 
+  # tmpFilename
+  # 
+  # creates a new tmpfilename
+  # a file eventually created with this name will be automatically 
+  # erased upon exit if doFinish() , doByeBye() are called or upon exit via Ctrl-C  .
+  # a filename will look like so: /tmp/1520316200.579602-qcvcglawvo.tmp  
+  # 
+  let tfn = getTempDir() & $epochTime() & "-" & newword(5) & ".tmp"
+  cxTmpFileNames.add(tfn)  # add filename to seq 
+  result = tfn
   
+
+proc rmTmpFilenames*() = 
+    # rmTmpFilenames
+    # 
+    # this will remove all temporary files created with the tmpFilename function
+    # and is automatically called by exit handlers doFinish(),doByeBye() and if Ctrl-C
+    # is pressed . 
+    # 
+    for fn in cxTmpFileNames:
+       try:
+         removeFile(fn)
+       except:
+         printLnAlertMsg(fn & "could not be deleted.")
+        
 
 
 proc doInfo*() =
@@ -1302,8 +1337,13 @@ proc showCxTrueColorPalette*(min:int=0,max:int = 888,step: int = 12,flag48:bool 
             testLine.newline = "\L"                  # need a new line character here or we overwrite 
             printCxLine(testLine)
       
-      printLnBicol("\n    Note            : cxTrueColor Value can be used like so : cxTrueCol[value] ",colLeft = truetomato)
-      printLnBiCol("\n    Palette Entries : " & ff2(cxTruecol.len),colLeft = truetomato,colRight = lime)   
+      decho(2)
+      let msgxpos = 5
+      printLnInfoMsg("Note            " , cxpad("cxTrueColor Value can be used like so ",96),xpos = msgxpos)
+      printLnInfoMsg("                " , cxpad("""as backgroundcolor : cxprintLn("say something  ",fontcolor = colWhite,bgr = cxTruecol[421873])""",96),xpos=msgxpos)
+      printLnInfoMsg("                " , cxpad("""as foregroundcolor : printLn2("say something  ",fgr = cxTruecol[421874])""",96),xpos = msgxpos)
+      echo()
+      printLnInfoMsg("Palette Entries " , ff2(cxTruecol.len),xpos = msgxpos)   
       
 
 # code below borrowed from distros.nim and made exportable 
@@ -1319,7 +1359,7 @@ template release*(): untyped = unameRelease("lsb_release -a", releaseRes)
 # end of borrow  
 
 proc theEnd*() =
-  # moving the end
+  # animated the end
   loopy2(0,2):
      loopy2(-10,30):
        printfontfancy("THE END",xpos = xloopy)
@@ -1328,7 +1368,17 @@ proc theEnd*() =
   printfontfancy("qqtop",coltop1 = red,xpos = tw div 3 - 20)     
   decho(10)
 
-
+template doByeBye*() =
+  ## doByeBye
+  ##
+  ## a simple end program routine do give some feedback when exiting
+  ##  
+  decho(2)
+  rmTmpFilenames()
+  print("Exiting now !  ",lime)
+  printLn("Bye-Bye from " & extractFileName(getAppFilename()),red)
+  printLn(yellowgreen & "Mem -> " &  lightsteelblue & "Used : " & white & ff2(getOccupiedMem()) & lightsteelblue & "  Free : " & white & ff2(getFreeMem()) & lightsteelblue & "  Total : " & white & ff2(getTotalMem() ))
+  #doFinish()
 
 proc doFinish*() =
     ## doFinish
@@ -1359,9 +1409,11 @@ proc doFinish*() =
         else:
            var un = execCmdEx("uname -v")
            printLnInfoMsg("uname -v ",un.output)
-           
+        
+        rmTmpFilenames()
         GC_fullCollect()  # just in case anything hangs around
         quit(0)
+
 
         
 proc handler*() {.noconv.} =
@@ -1381,6 +1433,7 @@ proc handler*() {.noconv.} =
     ##
     ##
     eraseScreen()
+    rmTmpFilenames()  # clean up if possible
     echo()
     hlineLn()
     cechoLn(yellowgreen,"Thank you for using        : " & getAppFilename())

@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-03-05
+##     Latest      : 2018-03-06
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -21,7 +21,7 @@
 ##
 ##     Description :
 ##
-##                   cxutils.nim is a collection utility procs and templates
+##                   cxutils.nim is a collection of utility procs and templates
 ##                   
 ##
 ##     Usage       : import nimcx
@@ -30,7 +30,7 @@
 ##
 ##     Docs        : https://qqtop.github.io/cxutils.html   
 ##
-##     Tested      : OpenSuse Tumbleweed ,Debian Testing
+##     Tested      : OpenSuse Tumbleweed , Debian Testing
 ##  
 
 import os,osproc,math,stats,cpuinfo,httpclient,browsers,typeinfo,typetraits
@@ -126,7 +126,7 @@ proc cxdayofweek*(datestr:string):string =
     ##    echo getFirstMondayYear("2018"),"  ",dayofweek(getFirstMondayYear("2018"))
     ##    echo getFirstMondayYearMonth("2018-2"),"  ",dayofweek(getFirstMondayYearMonth("2018-2"))
     
-    result =  $(getdayofweek(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr))))      
+    result =  $(getDayOfWeek(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr))))      
 
 proc getFirstMondayYear*[T](ayear:T):string =
     ## getFirstMondayYear
@@ -366,8 +366,9 @@ proc showRuler* (xpos:int=0,xposE:int=0,ypos:int = 0,fgr:string = white,bgr:Back
      ##
      ## simple terminal ruler indicating dot x positions to give a feedback
      ##
-     ## available for horizontal --> vert = false
-     ##           for vertical   --> vert = true
+     ## horizontal --> vert = false
+     ## 
+     ## for vertical   --> vert = true
      ##
      ## see cxDemo and cxTest for more usage examples
      ##
