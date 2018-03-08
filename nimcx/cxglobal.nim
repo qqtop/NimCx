@@ -920,7 +920,7 @@ proc doFlag*[T](flagcol:string = yellowgreen,
   result = result & spaces(1) & textcol & $text & white
    
 
-proc getAscii(s:string) : seq[int] =
+proc getAscii*(s:string):seq[int] =
    ## getAsciicode
    ## 
    ## returns ascii integer codes of every character in a string 

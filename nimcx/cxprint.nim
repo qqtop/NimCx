@@ -548,7 +548,7 @@ proc rainbow*[T](s : T,
     let aseq = toSeq(0..<colorNames.len)
 
     for x in 0..<astr.len:
-       c = aseq[getRndInt(ma=aseq.len)]
+       c = aseq[getRndInt(ma=aseq.len - 1)]
        if centered == false:
           print(astr[x],colorNames[c][1],bgblack,xpos = nxpos,fitLine)
        else:

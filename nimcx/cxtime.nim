@@ -39,8 +39,9 @@ proc toDateTime*(date:string = "2000-01-01"): DateTime =
    ## toDateTime
    ## 
    ## converts a date of format yyyy-mm-dd to DateTime
+   ## time part still to be implemented
    ## 
-   
+   result = now() # needs to be initialized or we get a warning during compile
    var adate = date.split("-")
    var zyear = parseint(adate[0])
    var enzmonth = parseint(adate[1])
@@ -61,15 +62,15 @@ proc toDateTime*(date:string = "2000-01-01"): DateTime =
       else:
          
          #printLnErrorMsg("Month = " & adate[1] & " ?? ")
-         printLnErrorMsg("Exiting now ")
-         echo "Wrong Month in " &  adate[1]
+         printLnErrorMsg("")
+         printLnBErrorMsg("Wrong Month in " &  adate[1])
          quit(0)
    
    var zday = parseint(adate[2])
    result.year = zyear
    result.month = zmonth
    result.monthday = zday
-   result
+  
    
    
 proc epochSecs*(date:string="2000-01-01"):auto =

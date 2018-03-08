@@ -12,9 +12,9 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-02-21
+##     Latest      : 2018-03-06
 ##
-##     Compiler    : Nim >= 0.17.x dev branch
+##     Compiler    : Nim >= 0.18.x dev branch
 ##
 ##     OS          : Linux
 ##
@@ -368,7 +368,7 @@ const colorNames* = @[
       ("blue", blue),
       ("blueviolet", blueviolet),
       ("bluey",bluey),
-      ("blueybg",blueybg),
+      #("blueybg",blueybg),
       ("brown", brown),
       ("burlywood", burlywood),
       ("cadetblue", cadetblue),
@@ -411,7 +411,7 @@ const colorNames* = @[
       ("gray", gray),
       ("green", green),
       ("greenery",greenery),
-      ("greenerybg",greenerybg),
+      #("greenerybg",greenerybg),
       ("greenyellow", greenyellow),
       ("honeydew", honeydew),
       ("hotpink", hotpink),
@@ -501,23 +501,23 @@ const colorNames* = @[
       ("yellow", yellow),
       ("yellowgreen", yellowgreen),
       ("pastelbeige",pastelbeige),
-      ("pastelbeigebg",pastelbeigebg),
+      #("pastelbeigebg",pastelbeigebg),
       ("pastelblue",pastelblue),
-      ("pastelbluebg",pastelbluebg),
+      #("pastelbluebg",pastelbluebg),
       ("pastelgreen",pastelgreen),
-      ("pastelgreenbg",pastelgreenbg),
+      #("pastelgreenbg",pastelgreenbg),
       ("pastelorange",pastelorange),
-      ("pastelorangebg",pastelorangebg),
+      #("pastelorangebg",pastelorangebg),
       ("pastelpink",pastelpink),
-      ("pastelpinkbg",pastelpinkbg),
+      #("pastelpinkbg",pastelpinkbg),
       ("pastelwhite",pastelwhite),
-      ("pastelwhitebg",pastelwhitebg),
+      #("pastelwhitebg",pastelwhitebg),
       ("pastelyellow",pastelyellow),
-      ("pastelyellowbg",pastelyellowbg),
+      #("pastelyellowbg",pastelyellowbg),
       ("pastelyellowgreen",pastelyellowgreen),
-      ("pastelyellowgreenbg",pastelyellowgreenbg),
+      #("pastelyellowgreenbg",pastelyellowgreenbg),
       ("truetomato",truetomato),
-      ("truetomatobg",truetomatobg),
+      #("truetomatobg",truetomatobg),
       ("zcolor",zcolor),
       ("zippi",zippi)]
 

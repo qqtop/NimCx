@@ -128,11 +128,6 @@ proc sierpCarpetDemo2*(n:int=2,xpos:int = 1,sa:string = "* ",sb:string = spaces(
     echo()
 
     
-proc allRuneTest() =
-    # shows 58000 unicode chars in color with their ord numbers
-     tableRune(uniall(true),fgr="rand",cols = 8)
-     decho(2)
-
 
 proc drawRectDemo*() =
   ## drawRectDemo

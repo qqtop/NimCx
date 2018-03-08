@@ -23,11 +23,11 @@ proc cxpad(s:string,padlen:int):string =
   result = s
   if s.len < padlen : 
      result = s & spaces(max(0, padlen - s.len)) 
-
      
     
 proc iproute():string =
  result = execCmdEx("ip route show all").output
+
  
 proc iproutedev():string =
   # just get the device name
@@ -40,7 +40,6 @@ proc iproutedev():string =
 proc neighbours():string =   
    result = execCmdEx("ip n show dev " & iproutedev()).output
   
-     
 
 let wanip = getwanip()
 var jj = getIpInfo(wanip)
@@ -54,12 +53,11 @@ for x,y in mpairs(jj):
 for x,y in mpairs(jj):
     ypadlen = getmaxpadlen(jj[x].getstr)    
 
-
 decho(2)
 printLnInfoMsg("Provider   " , cxpad("Internet Data",ypadlen),palegreen) 
 for x,y in mpairs(jj):
     printLnInfoMsg(cxpad(x,xpadlen),cxpad(jj[x].getstr,ypadlen))
-    
+ 
 
 let lp = localIp()
 let lr = localRouterIp().strip()

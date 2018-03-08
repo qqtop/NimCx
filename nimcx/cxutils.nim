@@ -843,21 +843,18 @@ proc clearScreen*():int {.discardable.} =
      execShellCmd("clear")
    
 
-proc createSeqAll*(showOrd:bool=false):seq[string] =
-     # for testing purpose only in the future the unicodedb by nitely should be used
+proc createSeqAll*(min:int = 0,max:int = 40878):seq[string] =
+     # for testing purpose only in the future the unicodedb by nitely is the way to go
      var gs = newSeq[string]()
-     for j in 0..40878 :        # depending on whats installed  
+     for j in min ..< max :        # depending on whats installed  
      
             # there are more chars up to maybe 120150 some
             # maybe for indian langs,iching, some special arab and koran symbols if installed on the system
             # if not installed on your system you will see the omnious rectangle char  0xFFFD
             # https://www.w3schools.com/charsets/ref_html_utf8.asp
-            # 
-            # 
             # tablerune(createSeqAll(),cols=6,maxitemwidth=12)  
             # 
-            if showOrd==true: gs.add($j & " : " & $Rune(j))
-            else: gs.add($Rune(j)) 
+            gs.add($Rune(j)) 
      result = gs    
     
 proc createSeqGeoshapes*():seq[string] =
@@ -975,9 +972,10 @@ proc tableRune*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5)
            if  c mod 10 == 0: echo() 
      
     decho(2)      
-    printLnBiCol("Seq Items  : 0 - " & $(z.len - 1) , colLeft=greenyellow,colRight=gold,3,false,{})  
-    printLnBiCol("Item Count : " & $z.len, colLeft=greenyellow,colRight=gold,3,false,{}) 
-    discard typeTest2(z)
+    let msg1 = "0 - " & $(z.len - 1) & spaces(3)
+    #printLnInfoMsg("Seq Items  ",msg1 , xpos = 3)  
+    printLnInfoMsg("Item Count ",cxpad($z.len,msg1.len),xpos = 3) 
+    #discard typeTest2(z)
     decho(2)          
 
     
