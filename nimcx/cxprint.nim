@@ -9,13 +9,17 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-03-06 
+##     Latest      : 2018-03-15 
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
 ##     OS          : Linux
 ##
 ##     Description : provides most printing functions for the library
+##     
+##     Note        : some parts are experimental, the aim in the future will be 
+##           
+##                   one smart print function which handles any kind of demand for colors.
 ## 
 
 
@@ -185,6 +189,8 @@ proc cxPrint*[T](ss    :T,
       ## cxPrint     
       ## 
       ## Experimental
+      ## 
+      ## note the module base name and function name is the same
       ## 
       ## truecolor print function
       ## 
@@ -574,7 +580,7 @@ proc hline*(n:int = tw,
      ##    hline(30,green,xpos=xpos)
      ##
      print(lt * n,col,xpos = xpos)
-     result = lt * n     # new we return the line string without color and pos formating in case needed
+     result = lt * n     # we return the line string without color and pos formating in case needed
 
 
 proc hlineLn*(n:int = tw,
@@ -608,7 +614,7 @@ proc dline*(n:int = tw,
      ##    dline(30,"/+")
      ##    dline(30,col= yellow)
      ##
-     if lt.len <= n: print(lt * (n div lt.len))
+     if lt.len <= n: print(lt * (n div lt.len),col)
 
 
 proc dlineLn*(n:int = tw,
@@ -627,7 +633,7 @@ proc dlineLn*(n:int = tw,
      ##    dlineLn(30,"/+/")
      ##    dlineLn(60,col = salmon)
      ##
-     if lt.len <= n: print(lt * (n div lt.len))
+     if lt.len <= n: print(lt * (n div lt.len),col)
      writeLine(stdout,"")
 
 
@@ -650,10 +656,7 @@ proc printRainbow*(s : string,styled:set[Style] = {}) =
     ##
     ## may not work with certain Rune
     ##
-    ##.. code-block:: nim
-    ##    printRainBow("WoW So Nice",{styleUnderScore})
-    ##    printRainBow("  --> No Style",{})
-    ##
+   
 
     var astr = s
     var c = 0
@@ -673,8 +676,13 @@ proc printLnRainbow*[T](s : T,styled:set[Style] = {}) =
     ## may not work with certain Rune
     ##
     ##.. code-block:: nim
-    ##    printLnRainBow("WoW So Nice",{styleUnderScore})
-    ##    printLnRainBow("Aha --> No Style",{})
+    ##  import nimcx  
+    ##  loopy(0..100,
+    ##      block:
+    ##          printLnRainBow(cxpad(" ",tw),{styleReverse})
+    ##          printLnRainBow(cxpad(" NimCx " * 21 ,tw),{styleBright})
+    ##          sleepy(0.01))
+    ##
     ##
     printRainBow($(s) & "\L",styled)
 
@@ -744,14 +752,16 @@ proc printLnBiCol*[T](s:varargs[T,`$`],
      ##    import nimcx
      ##
      ##    for x  in 0..<3:
-     ##       # here our input is varargs so weneed to specify all params
-     ##        printLnBiCol("Test $1  : Ok " % $1,"this was $1 : what" % $2,23456.789,red,lime,":",0,false,{})
-     
-     ##    for x  in 4..<6:
+     ##       # here our input is varargs so we need to specify all params
+     ##        printLnBiCol("Test $1  : Ok " % $1,"this was $1 : what" % $x,23456.789,red,lime,":",0,false,{})
+     ##    decho(2)
+     ##    
+     ##    for x  in 6..18:
      ##        # here we change the default colors
-     ##        printLnBiCol("nice",123,":","check",@[1,2,3],cyan,lime,":",0,false,{})
-     ##
-     ##    # usage with fmtx 
+     ##        printLnBiCol("nice",123,":","check",@[x,x * 2,x * 3],cyan,lime,":",0,false,{})
+     ##        
+     ##    decho(2)
+     ##    # usage with fmtx the build in format engine
      ##    printLnBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),yellow,randcol(),":",0,false,{})
      ##    printLnBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),colLeft = cyan)
      ##    printLnBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),colLeft=yellow,colRight=randcol())
@@ -848,7 +858,7 @@ proc printLnBiCol2*[T](s:varargs[T,`$`],
                         
      ## printLnBiCol2
      ##
-     ## this version call print2 and  printLn2 which is suitable when printing multiple columns side by side printing 
+     ## this version calls print2 and printLn2 which is suitable when printing multiple columns side by side  
      ## 
      ## default seperator = ":"  if not found we execute printLn with available params
      ##
@@ -920,7 +930,7 @@ proc printBiCol3*[T](s:openarray[T],
         var nosepflag:bool = false
         var zz = ""
         for ss in 0..<s.len:
-            zz = zz & $s[ss] & spaces(1)   #  <---- convertingt to strings here
+            zz = zz & $s[ss] & spaces(1)   #  <---- converting to strings here
             
         var z = zz.splitty(sep)  # using splitty we retain the sep on the left side
         # in case sep occures multiple time we only consider the first one

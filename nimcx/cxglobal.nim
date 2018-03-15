@@ -81,7 +81,8 @@ proc cxtoLower*(c: char): char =
    
 converter toTwInt*(x: cushort): int = result = int(x)  
   
-
+proc isNumeric(s: string): bool = s.allCharsInSet({'0'..'9'})
+  
 proc getTerminalWidth*() : int =
         ## getTerminalWidth
         ##
@@ -130,6 +131,19 @@ proc cxpad*(s:string,padlen:int):string =
   if s.len < padlen : 
      result = s & spaces(max(0, padlen - s.len)) 
 
+
+proc cxlpad*(s:string,padlen:int):string =
+  ## cxlpad
+  ## 
+  ## pads a string on the left side with spaces to specified width 
+  ## 
+  result = s
+  if s.len < padlen : 
+     result = spaces(max(0, padlen - s.len)) & s
+     
+     
+     
+     
 proc waitOn*(alen:int = 1) = 
      ## waiton
      ## 
@@ -279,7 +293,7 @@ proc reverseString*(text:string):string =
   ##    # check if back to original is correct
   ##    assert s == reverseString(reverseString(s))
   ##    
-   
+  result = "" 
   for x in reverseMe(text): result = result & x
 
 
@@ -820,7 +834,7 @@ proc newCxLine*():Cxline =
      ## creates a new cxLine object with some defaults , ready to be changed according to needs
      ## 
      result.startpos  = 1         
-     result.endpos    = 2
+     result.endpos    = 10
      result.toppos    = 1
      result.botpos    = 1
      result.text      = ""

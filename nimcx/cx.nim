@@ -209,27 +209,6 @@ type
 var benchmarkresults* =  newSeq[Benchmarkres]()
 
 
-type
-    CxTimer* =  object {.packed.}
-            name* : string
-            start*: float
-            stop  : float
-            lap*  : seq[float]
-      
-     
-# type used for cxtimer results
-type
-    Cxtimerres* = tuple[tname:string,
-                        start:float,
-                        stop :float,
-                        lap  :seq[float]]
-
-    Cxcounter* =  object
-            value*: int                        
-
-            
-# global used to store all cxtimer results 
-var cxtimerresults* =  newSeq[Cxtimerres]()
 # global used to store tmpfilenames , all tmpfilenames will if progs exit
 var cxtmpfilenames* =  newSeq[string]()
 
@@ -387,7 +366,7 @@ template benchmark*(benchmarkName: string, repeatcount:int = 1,code: typed) =
   ## benchmark
   ## 
   ## a quick benchmark template showing cpu and epoch times with repeat looping param
-  ## suitable for in program ttiming of procs 
+  ## suitable for quick in-program timing of procs 
   ## for in depth benchmarking use the nimbench module available via nimble
   ## 
   ## 
@@ -542,148 +521,6 @@ proc showBench*() =
     printLn("Benchmark results emtpy. Nothing to show",red)   
 
 
-proc newCxtimer*(aname:string = "cxtimer"):ref(CxTimer) =
-     ## newCxtimer
-     ## 
-     ## set up a new cxtimer
-     ## 
-     ## simple timer with starttimer,stoptimer,laptimer,resettimer functionality
-     ## 
-     ##.. code-block:: nim
-     ##   
-     ## # Example for newcxtimer usage
-     ## var ct  = newCxtimer("TestTimer1")   # create a cxtimer with name TestTimer1
-     ## var ct2 = newCxtimer()               # create a cxtimer which will have default name cxtimer
-     ## ct.startTimer                        # start a timer
-     ## ct2.startTimer
-     ## loopy2(0,2):
-     ##    sleepy(1)
-     ##    ct2.laptimer                      # take a laptime for a timer
-     ## ct.stopTimer                         # stop a timer
-     ## ct2.stopTimer
-     ## saveTimerResults(ct)                 # save current state of a timer
-     ## saveTimerResults(ct2)
-     ## echo()
-     ## showTimerResults()                   # display status of all timers
-     ## ct2.resetTimer                       # reset a particular timer 
-     ## clearTimerResults()                  # clear timer result of default timer
-     ## clearTimerResults("TestTimer1")      # clear timer results of a particular timer
-     ## clearAllTimerResults()               # clear all timer results
-     ## showTimerResults()
-     ## dprint cxtimerresults                # dprint is a simple repr utility
-     ## 
-     ## 
-     
-     var aresult = (ref(CxTimer))(name:aname)
-     aresult.start = 0
-     aresult.stop = 0
-     aresult.lap = @[]
-     result = aresult
-   
-proc  startTimer*(co:ref(CxTimer)) = co.start = epochTime()
-proc  lapTimer*(co:ref(CxTimer)):auto {.discardable.}  =
-               var tdf = epochTime() - co.start
-               co.lap.add(tdf)
-               result = tdf
-proc  stopTimer*(co: ref(CxTimer))  = co.stop = epochTime()
-proc  resetTimer*(co: ref(CxTimer)) = 
-      co.start = 0.0
-      co.stop = 0.0
-      co.lap = @[]
-proc  duration*(co:ref(CxTimer)):float {.discardable.} = co.stop - co.start       
-
-proc saveTimerResults*(b:ref(CxTimer)) =
-     ## saveTimerResults
-     ## 
-     ## saves the current state of a cxtimer
-     ## 
-     var bb:Cxtimerres
-     var c = b
-     if  b.name == "": c.name = "cxtimer"   # give it a default name
-     bb.tname = c.name
-     bb.start = c.start
-     bb.stop = c.stop
-     bb.lap = c.lap
-     cxtimerresults.add(bb)
-
-proc showTimerResults*(aname:string) =  
-     ## showTimerResults  
-     ## 
-     ## shows results for a particular timer name
-     ## 
-     var bname = aname
-     if bname == "": bname = "cxtimer"    # if no name given we assume defaultname cxtimer 
-     echo()
-     loopy2(0,cxtimerresults.len):
-       var b = cxtimerresults[xloopy]
-       if b.tname == bname:
-          printLnBiCol("Timer    : " & $(b.tname))
-          printLnBiCol("Start    : " & $fromUnix(int(b.start)))
-          printLnBiCol("Stop     : " & $fromUnix(int(b.stop)))
-          printLnBiCol("Laptimes : ")
-          if b.lap.len > 0:
-             printLnBiCol("Laptimes : ")
-             loopy2(0,b.lap.len):
-                printLnBiCol(fmtx([">7","",""],$(xloopy + 1), " : " , $b.lap[xloopy]),xpos = 8)
-             echo()
-          else:
-             printLnBiCol("Laptimes : none recorded")
-          printLnBiCol("Duration : " & $(b.stop - b.start) & " secs.")   
-               
-             
-               
-proc showTimerResults*() =  
-     ## showTimerResults  
-     ## 
-     ## shows results for all timers
-     ## 
-     echo()
-     loopy2(0,cxtimerresults.len):
-       var b = cxtimerresults[xloopy]
-       echo()
-       printLnBiCol("Timer    : " & $(b.tname))
-       printLnBiCol("Start    : " & $fromUnix(int(b.start)))
-       printLnBiCol("Stop     : " & $fromUnix(int(b.stop)))
-       if b.lap.len > 0:
-          printLnBiCol("Laptimes : ")
-          loopy2(0,b.lap.len):
-             printLnBiCol(fmtx([">7","",""],$(xloopy + 1), " : " , $b.lap[xloopy]),xpos = 8)
-          echo()
-       else:
-          printLnBiCol("Laptimes : none recorded")
-       printLnBiCol("Duration : " & $(b.stop - b.start) & " secs.")
-       
-       
-proc clearTimerResults*(aname:string = "",quiet:bool = true,xpos:int = 3) =
-     ## clearTimerResults
-     ## 
-     ## clears cxtimerresults of one named timer or if aname == "" of timer cxtimer
-     ## 
-     ##  
-     var bname = aname
-     if bname == "": bname = "cxtimer"    # if no name given we assume defaultname cxtimer 
-     loopy2(0,cxtimerresults.len):
-        if cxtimerresults[xloopy].tname == bname:
-               if quiet == false:
-                  echo()
-                  print("Timer deleted : " ,goldenrod,xpos = xpos)
-                  printLn(cxtimerresults[xloopy].tname ,tomato)
-                  echo()
-               cxtimerresults.delete(xloopy)  
-        else:
-               discard
-       
-proc clearAllTimerResults*(quiet:bool = true,xpos:int = 3) =
-     ## clearAllTimerResults
-     ## 
-     ## clears cxtimerresults for all timers , set quiet to false to show feedback
-     ## 
-     ##  
-     cxtimerresults = @[] 
-     echo()
-     if quiet == false:
-        printLnInfoMsg("Info   ","All timers deleted",xpos = xpos)   
-    
 
          
          
