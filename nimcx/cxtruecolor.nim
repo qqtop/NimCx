@@ -2,11 +2,14 @@ import cxglobal,cxconsts,cxprint,terminal,strutils,random
 
 # cxtruecolor.nim
 # 
-# support variables for experimental cxTrueColor related routines
+# support variables and functions for experimental cxTrueColor related routines
 # cxTrueColor allows unlimited , subject to system memory , generation of truecolors in nim 
-# see examples cxtruecolorE1.nim  for usage
+# 
+# Experimental -- you might be ported to Orion for free by using this module.
+# 
+# see examples cxtruecolorE1.nim for usage
 #
-# Last : 2018-02-27
+# Last : 2018-03-17
 # 
 
 var cxTrueCol* = newSeq[string]()  # a global for conveniently holding truecolor codes if used

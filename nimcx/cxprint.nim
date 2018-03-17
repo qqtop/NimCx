@@ -785,7 +785,20 @@ proc printLnBiCol*[T](s:varargs[T,`$`],
      ##    printLnBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),colLeft = cyan)
      ##    printLnBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),colLeft=yellow,colRight=randcol())
      ##    printLnBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),123,colLeft = cyan,colRight=gold,sep=":",xpos=0,centered=false,styled={})
-     ##    
+     ##  
+     ##    decho(2)  
+     ##    printLnBicol(["TEST VARARGS : ","\n",lime,
+     ##      $(createSeqint(20).sampleSeq(8,13)),newLine(2),hotpink,
+     ##      $getRndInt(10000,12000),"\n",skyblue,
+     ##      showSeq(createSeqint(3),displayflag=false),newLine(2),truetomato,
+     ##      $newword(6,getRndInt(7,20)),newLine(2),yellowgreen,
+     ##      showSeq(createSeqKatakana(),yellowgreen,displayflag=false),newLine(2),lime,
+     ##      "My random float ===> ",ff2(getRndfloat(),5),newLine(2)],
+     ##      colLeft=randcol(),randCol())
+     ##      
+     ##      
+     
+     
      {.gcsafe.}:
         var nosepflag:bool = false
         var zz =""
@@ -875,7 +888,7 @@ proc printLnBiCol2*[T](s:varargs[T,`$`],
                    styled  : set[Style]= {}) =
                    
                         
-     ## printLnBiCol2
+     ## printLnBiCol2    
      ##
      ## this version calls print2 and printLn2 which is suitable when printing multiple columns side by side  
      ## 

@@ -12,7 +12,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-03-06
+##     Latest      : 2018-03-17
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -53,11 +53,12 @@ proc bbright(bg:BackgroundColor): string =
     result = "\e[" & $gBG & 'm' 
  
 const   
-      # the empty block rune  , display it like so:  echo showRune($RuneEmpty)
+      # the empty block rune , display it like so:  echo showRune($RuneEmpty)
+      # cannot get enough of them try this       :  loopy2(0,tw * 8,print(showRune($RuneEmpty),randcol()))
       RuneEmpty* = 0xFFFD
 
 const
-      # block chars for font building 
+      # block chars for font building with some easy to remember names
       efb1* = "▀"
       efb2* = "▒"
       efb3* = "▃"

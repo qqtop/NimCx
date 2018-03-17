@@ -956,49 +956,48 @@ proc createSeqBoxChars*():seq[string] =
     result = boxy
 
    
-proc tableRune*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5) = 
-    ## tableRune
+proc showSeq*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5,displayflag : bool = true):string {.discardable.} = 
+    ## showSeq
     ##
     ## simple table routine with default 6 cols for displaying various unicode sets
     ## fgr allows color display and fgr = "rand" displays in rand color and maxwidth for displayable items
     ## this can also be used to show items of a sequence
+    ## displayflag == true means to show the output
+    ## displayflag == false means do not show output , but return it as a string
     ##
     ##.. code-block:: nim
-    ##      tableRune(cjk(),"rand")
-    ##      tableRune(katakana(),yellowgreen)
-    ##      tableRune(hiragana())
-    ##      tableRune(geoshapes(),randcol())
-    ##      tableRune(createSeqint(1000,10000,100000))
+    ##      showSeq(createSeqCJK(),"rand")
+    ##      showSeq(createSeqKatakana(),yellowgreen)
+    ##      showSeq(createSeqCJK(),"rand")
+    ##      showSeq(createSeqGeoshapes(),randcol())
+    ##      showSeq(createSeqint(1000,10000,100000))
     ##      
     ##      
+    result = ""
     var c = 0
     for x in 0..<z.len:
-      inc c
-      if c < cols + 1 : 
-          if fgr == "rand":
-                printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$x , " : ",  $z[x] , spaces(1)) ,colLeft=gold,colRight=randcol(),0,false,{}) 
-          else:
-                printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$x , " : ",  $z[x] , spaces(1)) ,colLeft=fgr,colRight=gold,0,false,{})     
-      else:
-           c = 0
-           if  c mod 10 == 0: echo() 
-     
-    decho(2)      
-    let msg1 = "0 - " & $(z.len - 1) & spaces(3)
-    printLnInfoMsg("Item Count ",cxpad($z.len,msg1.len),xpos = 3) 
-    #discard typeTest2(z)
-    decho(2)          
+      result = result & $z[x] & spaces(1)
+      if displayflag == true:
+        inc c
+        if c < cols + 1 : 
+            if fgr == "rand":
+                  printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$x , " : ",  $z[x] , spaces(1)) ,colLeft=gold,colRight=randcol(),0,false,{}) 
+            else:
+                  printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$x , " : ",  $z[x] , spaces(1)) ,colLeft=fgr,colRight=gold,0,false,{})     
+        else:
+             c = 0
+             if  c mod 10 == 0: echo() 
+    
+    if displayflag == true:
+      decho(2)      
+      let msg1 = "0 - " & $(z.len - 1) & spaces(3)
+      printLnInfoMsg("Item Count ",cxpad($z.len,msg1.len),xpos = 3) 
+      #discard typeTest2(z)
+      decho(2)          
 
     
 
-proc showSeq*[T](aseq:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5) =
-      ## showSeq
-      ## 
-      ## display contents of a seq, in case of seq of seq the first item of the sub seqs will be shown
-      ## 
-      tableRune(aseq)    
-        
-        
+       
 proc seqHighLite*[T](b:seq[T],b1:seq[T],col:string=gold) =
    ## seqHighLite
    ## 

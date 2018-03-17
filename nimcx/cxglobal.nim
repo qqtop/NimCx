@@ -67,8 +67,12 @@ macro styledEchoPrint*(m: varargs[untyped]): typed =
   result.add(newCall(bindSym"resetAttributes"))
 
 template `*`*(s:string,n:int):string =
-    # returns input string  n times mimicking python
+    ## returns input string  n times mimicking python
     s.repeat(n)    
+
+proc newLine*(n:int = 1):string = 
+     ## issues n newLines , default = 1
+     result = "\n" * n    
     
 proc cxtoLower*(c: char): char = 
      ## cxtoLower
