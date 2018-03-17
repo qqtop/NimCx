@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-03-15 
+##     Latest      : 2018-03-16 
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -172,7 +172,7 @@ template rndCxBgrCol*():untyped =
     ## rndCxBgrCol
     ## 
     ## returns a random background color for cxPrint or cxPrintLn procs
-    ## from the cxTrueColor seq . defaults to a pool of 843750 colors 
+    ## from the cxTrueCol seq . defaults to a pool of 421875 colors 
     ## which can be changed , See  getcxTrueColorSet()
     ## 
     colornumber48 = color48(cxTrueCol)
@@ -329,6 +329,7 @@ proc printLn*[T](astring:T,
     ## 
     ##   with bgr:setBackGroundColor
     ##
+    ##   bgr has no effect if styleReverse is used
     ##
     ##   foregroundcolor
     ##   backgroundcolor
@@ -350,15 +351,33 @@ proc printLn*[T](astring:T,
     ## Examples
     ## 
     ##.. code-block:: nim
+    ##    import nimcx
+    ##    
     ##    printLn("Yes ,  we made it.",clrainbow,brightyellow) # background has no effect with font in  clrainbow
     ##    printLn("Yes ,  we made it.",green,brightyellow)
     ##    # or use it as a replacement of echo
     ##    printLn(red & "What's up ? " & green & "Grub's up ! "
     ##    printLn("No need to reset the original color")
     ##    printLn("Nim does it again",peru,centered = true ,styled = {styleDim,styleUnderscore},substr = "i")
+    ##    decho(2)
     ##
+    ##    rainbow("what's up ?",centered = true)
+    ##    echo()
+    ##    loopy(0..10,printLn(newword(80,80),clrainbow,centered = true,styled={styleReverse}))
+    ##    rainbow("Just asked!",centered = true)
+    ##    decho(2)
+    ##
+    ##    loopy2(0,100,
+    ##      block:
+    ##        var r = getRndint(0,cxtruecol.len - 1)
+    ##        var g = getRndint(0,cxtruecol.len - 1)
+    ##        var b = getRndInt(0,cxtruecol.len - 1)
+    ##        printLn("Color Test rgb " & fmtx([">6","",">6","",">6"],r,",",g,",",b) & spaces(2) & efb2 * 30 & spaces(2) & cxpad($xloopy,6) ,
+    ##                newColor(r,g,b),bgblue,styled = {styleReverse}))
+    ##    decho(2) 
+    ##    
 
-    print($(astring) & "\L",fgr,bgr,xpos,fitLine,centered,styled,substr)
+    print($(astring) & "\n",fgr,bgr,xpos,fitLine,centered,styled,substr)
     print cleareol
 
     
@@ -1224,15 +1243,15 @@ proc dotyLn*(d    :int,
 
 
 
-proc printDotPos*(xpos:int,dotCol:string,blink:bool) =
+proc printDotPos*(xpos:int,dotCol:string,blink:bool,dottype:string = widedot) =
       ## printDotPos
       ##
       ## prints a widedot at xpos in col dotCol and may blink...
       ##
 
       curSetx(xpos)
-      if blink == true: print(wideDot,dotCol,styled = {styleBlink},substr = wideDot)
-      else: print(wideDot,dotCol,styled = {},substr = wideDot)
+      if blink == true: print(dottype,dotCol,styled = {styleBlink},substr = dottype)
+      else: print(dottype,dotCol,styled = {},substr = dottype)
 
            
            

@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-03-06
+##     Latest      : 2018-03-16
 ##
 ##     OS          : Linux
 ##
@@ -572,7 +572,7 @@ proc superHeaderA*(bb:string = "",strcol:string = white,frmcol:string = green,an
       ##    import nimcx
       ##    cleanScreen()
       ##    let bb = "NIM the system language for the future, which extends to as far as you need !!"
-      ##    superHeaderA(bb,white,red,true,1)
+      ##    superHeaderA(bb,white,red,true,3)
       ##    clearup(3)
       ##    superheader("Ok That's it for Now !",salmon,yellowgreen)
       ##    doFinish()
@@ -583,16 +583,16 @@ proc superHeaderA*(bb:string = "",strcol:string = white,frmcol:string = green,an
             for zz in 0..bb.len:
                   cleanScreen()
                   superheader($bb[0..zz],strcol,frmcol)
-                  sleep(500)
+                  sleepy(0.05)
                   curup(80)
             if anim == true:
                 for zz in countdown(bb.len,-1,1):
                       superheader($bb[0..zz],strcol,frmcol)
-                      sleep(100)
+                      sleepy(0.05)
                       cleanScreen()
             else:
                 cleanScreen()
-            sleep(500)
+            
 
       echo()
 
@@ -610,10 +610,9 @@ proc newWordCJK*(minwl:int = 3 ,maxwl:int = 10):string =
       ## requires unicode
       ##
       ## .. code-block:: nim
-      ##    # create a string of chinese or CJK chars
-      ##    # with max length 20 and show it in green
-      ##    msgg() do : echo newWordCJK(20,20)
-      # set the char set
+      ##    # create a string of chinese or CJK chars with length 20 
+      ##    echo newWordCJK(20,20)
+      
       result = ""
       let c5 = toSeq(minwl..maxwl)
       let chc = toSeq(parsehexint("3400")..parsehexint("4DB5"))
@@ -646,7 +645,7 @@ proc newWord*(minwl:int=3,maxwl:int = 10):string =
         result = normalize(nw)   # return in lower case , cleaned up
 
     else:
-         cechoLn(red,"Error : minimum word length larger than maximum word length")
+         printLnErrorMsg("minimum word length larger than maximum word length")
          result = ""
 
 
@@ -674,7 +673,7 @@ proc newWord2*(minwl:int=3,maxwl:int = 10 ):string =
         result = normalize(nw)   # return in lower case , cleaned up
 
     else:
-         cechoLn(red,"Error : minimum word length larger than maximum word length")
+         printLnErrorMsg("minimum word length larger than maximum word length")
          result = ""
 
 
@@ -706,7 +705,7 @@ proc newWord3*(minwl:int=3,maxwl:int = 10 ,nflag:bool = true):string =
            result = nw
 
     else:
-         cechoLn(red,"Error : minimum word length larger than maximum word length")
+         printLnErrorMsg("minimum word length larger than maximum word length")
          result = ""
 
 
@@ -728,7 +727,7 @@ proc newHiragana*(minwl:int=3,maxwl:int = 10 ):string =
               result = result & $Rune(hig)
        
     else:
-         cechoLn(red,"Error : minimum word length larger than maximum word length")
+         printLnErrorMsg("minimum word length larger than maximum word length")
          result = ""
 
     
@@ -748,19 +747,20 @@ proc newKatakana*(minwl:int=3,maxwl:int = 10 ):string =
               result = result & $Rune(rand(toSeq(parsehexint("30A0")..parsehexint("30FF"))))
        
     else:
-         cechoLn(red,"Error : minimum word length larger than maximum word length")
+         printLnErrorMsg("minimum word length larger than maximum word length")
          result = ""
 
 
 
-proc drawRect*(h      :int = 0,
+proc drawRect*(h     :int = 0,
               w      :int = 3,
               frhLine:string = "_",
               frVLine:string = "|",
               frCol  :string = darkgreen,
               dotCol :string = truetomato,
               xpos   :int = 1,
-              blink  :bool = false) =
+              blink  :bool = false,
+              dottype:string = ".") =
                
       ## drawRect
       ##
@@ -793,24 +793,35 @@ proc drawRect*(h      :int = 0,
       ##    doFinish()
       ##
       ##
-
+      runnableExamples:
+         import nimcx
+         clearUp(18)
+         curSet()
+         cxutils.drawRect(15,24,frhLine = "+",frvLine = "." , frCol = randCol(),xpos = 8)
+         curup(12)
+         cxutils.drawRect(7,19,frhLine = "=",frvLine = "|" , frCol = randCol(),xpos = 10,blink = true,dottype = smiley)
+         curup(12)
+         cxutils.drawRect(9,20,frhLine = "=",frvLine = "." , frCol = randCol(),xpos = 35,blink = true,dottype = "&")
+         curup(10)
+         cxutils.drawRect(6,14,frhLine = "~",frvLine = "$" , frCol = randCol(),xpos = 70,blink = true,dottype = ".")
+         decho(8)
+         doFinish()
+      
+      
       # topline
-      printDotPos(xpos,dotCol,blink)
-      print(frhLine.repeat(w - 3),frcol)
-      if frhLine == widedot: printDotPos(xpos + w * 2 - 1 ,dotCol,blink)
-      else: printDotPos(xpos + w,dotCol,blink)
+      printDotPos(xpos,dotCol,blink,dottype)
+      print2(frhLine.repeat(w - dottype.len),frcol)
+      printDotPos(xpos + w - dottype.len,dotCol,blink,dottype)
       writeLine(stdout,"")
       # sidelines
       for x in 2.. h:
-         print(frVLine,frcol,xpos = xpos)
-         if frhLine == widedot: print(frVLine,frcol,xpos = xpos + w * 2 - 1)
-         else: print(frVLine,frcol,xpos = xpos + w)
+         print2(frVLine,frcol,xpos = xpos) # left
+         print2(frVLine,frcol,xpos = xpos + w - (dottype.len div 2) - 1)  # right
          writeLine(stdout,"")
       # bottom line
-      printDotPos(xpos,dotCol,blink)
-      print(frhLine.repeat(w - 3),frcol)
-      if frhLine == widedot:printDotPos(xpos + w * 2 - 1 ,dotCol,blink)
-      else: printDotPos(xpos + w,dotCol,blink)
+      printDotPos(xpos,dotCol,blink,dottype)
+      print2(frhLine.repeat(w - dottype.len),frcol)
+      printDotPos(xpos + w - dottype.len,dotCol,blink,dottype)
       writeLine(stdout,"")
 
          
@@ -892,6 +903,22 @@ proc createSeqKatakana*():seq[string] =
 proc createSeqCJK*():seq[string] =
     ## full cjk unicode range returned in a seq
     ##
+    # testing of new Nim 0.18 feature code below creates an executable
+    # with name cxutils_examples if module compiled with nim doc cxutils.nim
+    # otherwise it will be skipped
+    runnableExamples:
+       import nimcx    
+       var b = cxutils.createSeqCJK()   # need to specify module here other wise ambiguouse call
+       var col = 0
+       for x in 0 ..< b.len:
+          printbicol(fmtx(["<6","",""],$x," : ", b[x]))
+          inc col 
+          if col > 10:
+             col = 0
+             echo()
+       echo()
+    
+    
     var chzh = newSeq[string]()
     #for j in parsehexint("3400").. parsehexint("4DB5"): chzh.add($Rune(j))   # chars
     for j in parsehexint("2E80").. parsehexint("2EFF"): chzh.add($Rune(j))   # CJK Radicals Supplement
@@ -973,7 +1000,6 @@ proc tableRune*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5)
      
     decho(2)      
     let msg1 = "0 - " & $(z.len - 1) & spaces(3)
-    #printLnInfoMsg("Seq Items  ",msg1 , xpos = 3)  
     printLnInfoMsg("Item Count ",cxpad($z.len,msg1.len),xpos = 3) 
     #discard typeTest2(z)
     decho(2)          

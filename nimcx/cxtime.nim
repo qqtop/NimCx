@@ -374,29 +374,31 @@ proc newCxtimer*(aname:string = "cxtimer"):ref(CxTimer) =
      ## set up a new cxtimer
      ## 
      ## simple timer with starttimer,stoptimer,laptimer,resettimer functionality
-     ## 
+     ##
+     ## Example 
+     ##
      ##.. code-block:: nim
      ##   
-     ## # Example for newcxtimer usage
-     ## var ct  = newCxtimer("TestTimer1")   # create a cxtimer with name TestTimer1
-     ## var ct2 = newCxtimer()               # create a cxtimer which will have default name cxtimer
-     ## ct.startTimer                        # start a timer
-     ## ct2.startTimer
-     ## loopy2(0,2):
-     ##    sleepy(1)
-     ##    ct2.laptimer                      # take a laptime for a timer
-     ## ct.stopTimer                         # stop a timer
-     ## ct2.stopTimer
-     ## saveTimerResults(ct)                 # save current state of a timer
-     ## saveTimerResults(ct2)
-     ## echo()
-     ## showTimerResults()                   # display status of all timers
-     ## ct2.resetTimer                       # reset a particular timer 
-     ## clearTimerResults()                  # clear timer result of default timer
-     ## clearTimerResults("TestTimer1")      # clear timer results of a particular timer
-     ## clearAllTimerResults()               # clear all timer results
-     ## showTimerResults()
-     ## dprint cxtimerresults                # dprint is a simple repr utility
+     ##  
+     ##  var ct  = newCxtimer("TestTimer1")   # create a cxtimer with name TestTimer1
+     ##  var ct2 = newCxtimer()               # create a cxtimer which will have default name cxtimer
+     ##  ct.startTimer                        # start a timer
+     ##  ct2.startTimer
+     ##  loopy2(0,2):
+     ##     sleepy(1)
+     ##     ct2.laptimer                      # take a laptime for a timer
+     ##  ct.stopTimer                         # stop a timer
+     ##  ct2.stopTimer
+     ##  saveTimerResults(ct)                 # save current state of a timer
+     ##  saveTimerResults(ct2)
+     ##  echo()
+     ##  showTimerResults()                   # display status of all timers
+     ##  ct2.resetTimer                       # reset a particular timer 
+     ##  clearTimerResults()                  # clear timer result of default timer
+     ##  clearTimerResults("TestTimer1")      # clear timer results of a particular timer
+     ##  clearAllTimerResults()               # clear all timer results
+     ##  showTimerResults()
+     ##  dprint cxtimerresults                # dprint is a simple repr utility
      ## 
      ## 
      

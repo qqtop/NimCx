@@ -158,7 +158,7 @@ proc colorCJKDemo*() =
        echo()
     echo()   
     printFont("--NIM",randcol(),xpos = 0)  
-    printFont("0.17.3--",randcol(),xpos = 47)
+    printFont(NimVersion & "--",randcol(),xpos = 47)
     sleepy(1) 
     decho(3)
     
