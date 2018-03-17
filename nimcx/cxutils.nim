@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-03-16
+##     Latest      : 2018-03-17
 ##
 ##     OS          : Linux
 ##
@@ -793,20 +793,7 @@ proc drawRect*(h     :int = 0,
       ##    doFinish()
       ##
       ##
-      runnableExamples:
-         import nimcx
-         clearUp(18)
-         curSet()
-         cxutils.drawRect(15,24,frhLine = "+",frvLine = "." , frCol = randCol(),xpos = 8)
-         curup(12)
-         cxutils.drawRect(7,19,frhLine = "=",frvLine = "|" , frCol = randCol(),xpos = 10,blink = true,dottype = smiley)
-         curup(12)
-         cxutils.drawRect(9,20,frhLine = "=",frvLine = "." , frCol = randCol(),xpos = 35,blink = true,dottype = "&")
-         curup(10)
-         cxutils.drawRect(6,14,frhLine = "~",frvLine = "$" , frCol = randCol(),xpos = 70,blink = true,dottype = ".")
-         decho(8)
-         doFinish()
-      
+          
       
       # topline
       printDotPos(xpos,dotCol,blink,dottype)
@@ -903,20 +890,18 @@ proc createSeqKatakana*():seq[string] =
 proc createSeqCJK*():seq[string] =
     ## full cjk unicode range returned in a seq
     ##
-    # testing of new Nim 0.18 feature code below creates an executable
-    # with name cxutils_examples if module compiled with nim doc cxutils.nim
-    # otherwise it will be skipped
-    runnableExamples:
-       import nimcx    
-       var b = cxutils.createSeqCJK()   # need to specify module here other wise ambiguouse call
-       var col = 0
-       for x in 0 ..< b.len:
-          printbicol(fmtx(["<6","",""],$x," : ", b[x]))
-          inc col 
-          if col > 10:
-             col = 0
-             echo()
-       echo()
+    ##.. code-block:: nim
+    ##   import nimcx    
+    ##   var b = createSeqCJK()   
+    ##   var col = 0
+    ##   for x in 0 ..< b.len:
+    ##      printbicol(fmtx(["<6","",""],$x," : ", b[x]))
+    ##      inc col 
+    ##      if col > 10:
+    ##         col = 0
+    ##         echo()
+    ##   echo()
+    ##   
     
     
     var chzh = newSeq[string]()
