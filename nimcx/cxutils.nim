@@ -67,8 +67,25 @@ proc pswwaux*() =
    echo  pswwaux.output
    decho(2)
                 
-       
+proc cxCpuInfo*():string = 
+   ## cxCpuInfo
+   ## 
+   ## executes a system command to get cpu information
+   ## 
+   var (output,error) = execCmdEx("cat /proc/cpuinfo | grep name |cut -f2 -d:")
+   result = output       
 
+proc cxVideoInfo*():string = 
+   ## cxVideoInfo
+   ## 
+   ## executes a system command to get video setup information
+   ## may show warning on certain systems to run as super user
+   ## 
+   var (output,error) = execCmdEx("lshw -c video")
+   result = output   
+   
+   
+   
 proc memCheck*(stats:bool = false) =
   ## memCheck
   ## 

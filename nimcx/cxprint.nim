@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-03-16 
+##     Latest      : 2018-03-31 
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -1221,7 +1221,7 @@ proc doty*(d   :int,
      ##      import nimcx
      ##      printLnBiCol("Test for  :  doty\n",truetomato,lime,":",0,false,{})
      ##      dotyLn(22 ,lime)
-     ##      dotyLn(18 ,salmon,blue)
+     ##      dotyLn(18 ,salmon,bgBlue)
      ##      dotyLn(centerX(),red)  # full widedotted line
      ##
      ## color clrainbow is not supported and will be in white

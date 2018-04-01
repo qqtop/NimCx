@@ -39,9 +39,7 @@
 ##                   cxtime , cxtruecolor , cxstats and cxutils.nim , 
 ##                   
 ##                   all files are automatically imported with : import nimcx
-##
-##                    
-##                          
+## 
 ##
 ##     Usage       : import nimcx
 ##
@@ -476,7 +474,7 @@ proc showBench*() =
  var epochsize = 0
  var cpusize = 0 
  var repeatsize = 0
- for x in  benchmarkresults:
+ for x in benchmarkresults:
    var aa11 =  spaces(1) & dodgerblue & "[" & salmon & x.bname & dodgerblue & "]"  
    if len(aa11) > bnamesize: bnamesize = len(aa11)
    if bnamesize < 13 : bnamesize = 13
@@ -548,12 +546,10 @@ proc colorio*() =
 
     printLn(fmtx(["<20","","<20","",">5","",">5","",">5"],"ColorName in cx", spaces(2) , "HEX Code",spaces(2),"R",spaces(1),"G",spaces(1),"B") ,zippi)
     echo()
-
     for x in 0..<colorNames.len:
         try:
            let zr = extractRgb(parsecolor(colorNames[x][0]))
            printLn(fmtx(["<20","","<20","",">5","",">5","",">5"],colorNames[x][0], spaces(2) , $(parsecolor(colorNames[x][0])),spaces(2),zr[0],spaces(1),zr[1],spaces(1),zr[2]) ,fgr = colorNames[x][1])
-        
         except ValueError:
            printLn(fmtx(["<20","","<20"],colorNames[x][0], spaces(2) , "NIMCX CUSTOM COLOR " ),fgr = colorNames[x][1])
             
@@ -597,7 +593,7 @@ iterator base1000Rev(n:int64): int64 =
 proc spellInteger*(n: int64): string =
   ## spellInteger
   ## 
-  ## code adapted from rosettacode and slightly updated to make it actually compile
+  ## code adapted from rosettacode and updated to make it actually compile
   ## 
 
   if n < 0:
@@ -628,7 +624,7 @@ proc spellInteger2*(n: string): string =
   ## 
   ## used in after comma part of a float , we just put out the numbers one by one
   ## 
-  ## code adapted from rosettacode and slightly updated to make it actually compile
+  ## code adapted from rosettacode and updated 
   ## 
   result = ""
   
@@ -834,8 +830,7 @@ proc showTerminalSize*() =
       ## height is always available via th
       ##
       ##
-      echo(yellowgreen,"[Terminal Size] " & lime & " W " & white & $tw & red & " x" & lime & " H " & white & $th)
-
+      printLnInfoMsg("Terminal Size","W" & spaces(1) & $tw & " x" & " H" & spaces(1) & $th)
 
 
 proc cxAlert*(xpos:int = 1) = 
@@ -912,20 +907,17 @@ proc cxhelp*(s:openarray[string],xpos :int = 2)=
         printLnErrorMsg("Terminal Size to small for help line width",xpos=xpos)
         cxAlertLn(2)
         echo()
+        
   var cxcodeflag = false 
   var cxcodeendflag = false
   for ss in 0..<s.len:
-      var sss = s[ss]
-    
+      var sss = s[ss]    
       if sss.len < maxlen :  sss = sss & spaces(max(0, maxlen - sss.len)) 
-      
       # we can embed a code which is set off from the help msg style
       if sss.contains(cxcodestart) == true: cxcodeflag = true
       if sss.contains(cxcodeend) == true : cxcodeendflag = true
-      
       if ss == 0:
-        printLnHelpMsg(sss,xpos = xpos)
-      
+           printLnHelpMsg(sss,xpos = xpos)
       var bhelptemp = spaces(max(0, maxlen)) # set up a blank line of correct length
       if cxcodeflag == true:
            if sss.contains(cxcodestart) == true :
@@ -938,7 +930,6 @@ proc cxhelp*(s:openarray[string],xpos :int = 2)=
            else: 
               if cxcodeflag == true:
                  printLnCodeMsg(sss,xpos=xpos)
-      
       else:
         if cxcodeendflag == false and ss > 0:
            printLnBelpMsg(sss,xpos=xpos)
@@ -1032,19 +1023,16 @@ proc rmTmpFilenames*() =
     # 
     for fn in cxTmpFileNames:
        try:
-         removeFile(fn)
+           removeFile(fn)
        except:
-         printLnAlertMsg(fn & "could not be deleted.")
+           printLnAlertMsg(fn & "could not be deleted.")
         
-
-
 proc doInfo*() =
   ## doInfo
   ##
   ## A more than you want to know information proc
   ##
-  ##
-  
+  ##  
   let filename= extractFileName(getAppFilename())
   let modTime = getLastModificationTime(filename)
   let sep = ":"
@@ -1123,7 +1111,6 @@ proc infoLine*() =
     print(" | ",brightblack)
     qqTop()
 
-
    
 proc showCxTrueColorPalette*(min:int = 0,max:int = 888,step: int = 12,flag48:bool = false) {.inline.} = 
    ## showCxTrueColorPalette
@@ -1143,8 +1130,6 @@ proc showCxTrueColorPalette*(min:int = 0,max:int = 888,step: int = 12,flag48:boo
    ## 
    ## press ctrl-c if showTrueColorPalette runs too long ....
    ## 
-
-
    var astep = step
    while max mod astep <> 0: astep = astep + 1
    if getcxTrueColorSet(min = min,max = max,step = astep,flag48 = flag48) == true:
@@ -1152,7 +1137,6 @@ proc showCxTrueColorPalette*(min:int = 0,max:int = 888,step: int = 12,flag48:boo
       # default max 888, increase by too much we may have memory issues
       # defaul step 12 , decrease by too much we may have memory issues  tested with steps 4 - 16 ,
       # smaller steps need longer compile time 
-      
       let cxtlen = $(cxTruecol.len)
       var testLine = newcxline()
       for lcol in countup(0,cxTruecol.len - 1,2): # note step size 2 so we only select 38 type colors

@@ -78,8 +78,6 @@ proc localIp*():string =
 
    result =  execCmdEx("ip route | grep src").output.split("src")[1].strip()
   
-
-
 proc localRouterIp*():string = 
    # localRouterIp
    # 

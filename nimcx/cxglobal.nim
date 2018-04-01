@@ -310,7 +310,20 @@ proc createSeqBool*(n:int = 10): seq[bool] {.inline.} =
      # 
      result = newSeq[bool]()
      for x in 0..<n: result.add(getRndBool())
-            
+
+proc createSeqBinary*(n:int = 10):seq[int] {.inline.} =
+     ## createSeqBinary
+     ## 
+     ## returns a seq of integers between 0 and 1
+     result = newSeq[int]()
+     let b = createSeqBool(n)
+     for x in b:
+       if $x == "false" : result.add(0)
+       if $x ==  "true"  : result.add(1)
+       
+       
+        
+     
 
 proc createSeqInt*(n:int = 10,mi:int = 0,ma:int = 1000) : seq[int] {.inline.} =
     ## createSeqInt

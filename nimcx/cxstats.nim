@@ -88,12 +88,12 @@ proc showRegression*(x,y: seq[float | int],n:int = 5,xpos:int = 1) =
      ##    showRegression(a,b)
      ##
      ##
-     var sep = ":"
      var rr :RunningRegress
      rr.push(x,y)
-     printLnBiCol2("Intercept     : " & ff(rr.intercept(),n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printLnBiCol2("Slope         : " & ff(rr.slope(),n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printLnBiCol2("Correlation   : " & ff(rr.correlation(),n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLn("Regression Results",skyblue)
+     printLnBiCol2("Intercept     : " & ff(rr.intercept(),n),yellowgreen,white,":",xpos = xpos,false,{})
+     printLnBiCol2("Slope         : " & ff(rr.slope(),n),yellowgreen,white,":",xpos = xpos,false,{})
+     printLnBiCol2("Correlation   : " & ff(rr.correlation(),n),yellowgreen,white,":",xpos = xpos,false,{})
     
 
 proc showRegression*(rr: RunningRegress,n:int = 5,xpos:int = 1) =
@@ -101,10 +101,8 @@ proc showRegression*(rr: RunningRegress,n:int = 5,xpos:int = 1) =
      ##
      ## Displays RunningRegress data from an already formed RunningRegress
      ## 
-  
-     let sep = ":"
-     printLnBiCol2("Intercept     : " & ff(rr.intercept(),n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printLnBiCol2("Slope         : " & ff(rr.slope(),n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printLnBiCol2("Correlation   : " & ff(rr.correlation(),n),yellowgreen,white,sep,xpos = xpos,false,{})
+     printLnBiCol2("Intercept     : " & ff(rr.intercept(),n),yellowgreen,white,":",xpos = xpos,false,{})
+     printLnBiCol2("Slope         : " & ff(rr.slope(),n),yellowgreen,white,":",xpos = xpos,false,{})
+     printLnBiCol2("Correlation   : " & ff(rr.correlation(),n),yellowgreen,white,":",xpos = xpos,false,{})
 
      
