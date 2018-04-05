@@ -1147,13 +1147,13 @@ proc showCxTrueColorPalette*(min:int = 0,max:int = 888,step: int = 12,flag48:boo
             testLine.startpos = 5  
             testLine.endpos = 100
             testLine.linecolor        = cxTrueCol[lcol]
-            testLine.textbracketcolor = cxTrueCol[bcol]
+            testLine.cxlinetext.textbracketcolor = cxTrueCol[bcol]
             testLine.dotleftcolor     = cxTrueCol[dlcol]
             testLine.dotrightcolor    = cxTrueCol[drcol]
-            testLine.textpos = 8
-            testLine.text = fmtx(["<20","<14",">8",""], "Testing" ,"cxTruecolor : " ,$lcol," of " & cxtlen & spaces(1))
-            testLine.textcolor = cxTrueCol[lcol]  # change this to tcol to have text in a random truecolor
-            testLine.textstyle = {styleReverse}
+            testLine.cxlinetext.textpos = 8
+            testLine.cxlinetext.text = fmtx(["<20","<14",">8",""], "Testing" ,"cxTruecolor : " ,$lcol," of " & cxtlen & spaces(1))
+            testLine.cxlinetext.textcolor = cxTrueCol[lcol]  # change this to tcol to have text in a random truecolor
+            testLine.cxlinetext.textstyle = {styleReverse}
             testLine.newline = "\L"                  # need a new line character here or we overwrite 
             printCxLine(testLine)
       

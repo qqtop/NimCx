@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-03-06 
+##     Latest      : 2018-04-05 
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -816,19 +816,18 @@ template rndCol*(r:int = getRndInt(0,254) ,g:int = getRndInt(0,254), b:int = get
     
  
  
-# cxLine is a line creation object with several properties more properties will be introduced later
-# also see printCxLine in cxprint.nim for usage
+# cxLine is a line creation object with several properties 
+# up to 12 CxlineText objects can be placed into a cxline
+# also see printCxLine in cxprint.nim for possible usage
+
 type 
 
      CxLineType*  = enum
         cxHorizontal = "horizontal"        # works ok
         cxVertical   = "vertical"          # not yet implemented
-  
-     Cxline* {.inheritable.} = object       # a line type object startpos= = leftdot, endpos == rightdor
-        startpos*: int                      # xpos of the leftdot                 default 1
-        endpos*  : int                      # xpos of the rightdot                default 2
-        toppos*  : int                      # ypos of top dot                     default 1
-        botpos*  : int                      # ypos of bottom dot                  default 1
+        
+        
+     CxlineText* = object
         text*    : string                   # text                                default none
         textcolor* : string                 # text color                          default termwhite
         textstyle* : set[Style]             # text styled
@@ -836,6 +835,25 @@ type
         textbracketopen*  : string          # open bracket surounding the text    default [
         textbracketclose* : string          # close bracket surrounding the text  default ]
         textbracketcolor* : string          # color of the open,close bracket     default dodgerblue
+      
+  
+     Cxline* {.inheritable.} = object       # a line type object startpos= = leftdot, endpos == rightdor
+        startpos*: int                      # xpos leftdot                        default 1
+        endpos*  : int                      # xpos rightdot == width of cxline    default 2
+        toppos*  : int                      # ypos of top dot                     default 1
+        botpos*  : int                      # ypos of bottom dot                  default 1
+        cxlinetext*: CxLinetext             # cxlinetext object
+        cxlinetext2*:CxlineText             # cxlinetext object
+        cxLinetext3*:CxlineText             # cxlinetext object
+        cxlinetext4*:CxlineText             # cxlinetext object
+        cxlinetext5*: CxLinetext             # cxlinetext object
+        cxlinetext6*:CxlineText             # cxlinetext object
+        cxLinetext7*:CxlineText             # cxlinetext object
+        cxlinetext8*:CxlineText             # cxlinetext object
+        cxlinetext9*: CxLinetext             # cxlinetext object
+        cxlinetext10*:CxlineText             # cxlinetext object
+        cxLinetext11*:CxlineText             # cxlinetext object
+        cxlinetext12*:CxlineText             # cxlinetext object
         showbrackets* : bool                # showbrackets trye or false          default true
         linecolor* : string                 # color of the line char              default aqua
         linechar*  : string                 # line char                           default efs2    # see cxconsts.nim
@@ -844,16 +862,7 @@ type
         linetype*  : CxLineType             # cxHorizontal,cxVertical,cxS         default cxHorizontal  
         newline*   : string                 # new line char                       default \L
 
-        
-proc newCxLine*():Cxline =
-     ## newCxLine 
-     ## 
-     ## creates a new cxLine object with some defaults , ready to be changed according to needs
-     ## 
-     result.startpos  = 1         
-     result.endpos    = 10
-     result.toppos    = 1
-     result.botpos    = 1
+proc newCxlineText*():CxlineText =
      result.text      = ""
      result.textcolor = termwhite
      result.textstyle = {}
@@ -861,6 +870,28 @@ proc newCxLine*():Cxline =
      result.textbracketopen  = "["
      result.textbracketclose = "]"
      result.textbracketcolor = dodgerblue
+     
+proc newCxLine*():Cxline =
+     ## newCxLine 
+     ## 
+     ## creates a new cxLine object with some defaults , ready to be changed according to needs
+     ## 
+     result.startpos  = 1         
+     result.endpos    = 1
+     result.toppos    = 1
+     result.botpos    = 1
+     result.cxlinetext = newCxlineText()
+     result.cxlinetext2 = newCxlineText()
+     result.cxlinetext3 = newCxlineText()
+     result.cxlinetext4 = newCxlineText()
+     result.cxlinetext5 = newCxlineText()
+     result.cxlinetext6 = newCxlineText()
+     result.cxlinetext7 = newCxlineText()
+     result.cxlinetext8 = newCxlineText()
+     result.cxlinetext9 = newCxlineText()
+     result.cxlinetext10 = newCxlineText()
+     result.cxlinetext11 = newCxlineText()
+     result.cxlinetext12 = newCxlineText()
      result.showbrackets = true
      result.linecolor     = aqua
      result.linechar      = efs2
@@ -868,8 +899,6 @@ proc newCxLine*():Cxline =
      result.dotrightcolor = magenta
      result.newline       = "\L"
         
-
-
 # string splitters with additional capabilities to original split()
 
 proc fastsplit*(s: string, sep: char): seq[string] =
