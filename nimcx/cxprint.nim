@@ -135,12 +135,10 @@ proc print*[T](astring :T,
                     if x != rx.high:
                         case fgr
                         of clrainbow   : printRainbow(substr,styled)
-                        #else: styledEchoPrint(fgr,styled,substr,termwhite) # orig
                         else: styledEchoPrint(fgr,styled,substr,bgr)
             else:
                 case fgr
                         of clrainbow   : printRainbow($s,styled)
-                        #else: styledEchoPrint(fgr,styled,s,termwhite)
                         else: styledEchoPrint(fgr,styled,s,bgr)
         else:
         
@@ -191,6 +189,9 @@ proc cxPrint*[T](ss    :T,
       ## Experimental
       ## 
       ## note the module base name and function name is the same
+    
+    
+ 
       ## 
       ## truecolor print function
       ## 
@@ -468,12 +469,10 @@ proc print2*[T](astring:T,
                     if x != rx.high:
                         case fgr
                         of clrainbow   : printRainbow(substr,styled)
-                        #else: styledEchoPrint(fgr,styled,substr,termwhite) # orig
                         else: styledEchoPrint(fgr,styled,substr,bgBlack)
             else:
                 case fgr
                         of clrainbow   : printRainbow($s,styled)
-                        #else: styledEchoPrint(fgr,styled,s,termwhite)
                         else: styledEchoPrint(fgr,styled,s,bgBlack)
         else:
         
@@ -1499,7 +1498,7 @@ proc printLnInfoMsg*(info,atext:string = "",colLeft:string = lightslategray ,col
      printLnBiCol("[$1 ]" % info & spaces(1) & atext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
                                
       
-proc dprint*[T](s:T) = 
+func dprint*[T](s:T) = 
      ## dprint
      ## 
      ## debug print shows contents of s in repr mode

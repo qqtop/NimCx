@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-03-17
+##     Latest      : 2018-04-14
 ##
 ##     OS          : Linux
 ##
@@ -918,8 +918,16 @@ proc createSeqCJK*():seq[string] =
     ##         col = 0
     ##         echo()
     ##   echo()
-    ##   
+    ##  
     
+    # just iter of the chars if no seq required
+    #var col = 0
+    #for num in 0x2E80..0xFF60:
+    #  printbicol(fmtx(["<6","","<4"],$num," : ", fmt"{toUTF8(Rune(num))}"),colRight=pink)
+    #  inc col 
+    #  if col > 10:
+    #    col = 0
+    #    echo()
     
     var chzh = newSeq[string]()
     #for j in parsehexint("3400").. parsehexint("4DB5"): chzh.add($Rune(j))   # chars

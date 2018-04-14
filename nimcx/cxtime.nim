@@ -199,7 +199,7 @@ proc plusDays*(aDate:string,days:int):string =
    if validdate(aDate) == true:
       var rxs = ""
       let tifo = parse(aDate,"yyyy-MM-dd") # this returns a DateTime type
-      var myinterval = initInterval()
+      var myinterval = initTimeInterval()
       myinterval.days = days
       rxs = fx(tifo + myinterval)
       result = rxs
@@ -221,7 +221,7 @@ proc minusDays*(aDate:string,days:int):string =
    if validdate(aDate) == true:
       var rxs = ""
       let tifo = parse(aDate,"yyyy-MM-dd") # this returns a DateTime type
-      var myinterval = initInterval()
+      var myinterval = initTimeInterval()
       myinterval.days = days
       rxs = fx(tifo - myinterval)
       result = rxs

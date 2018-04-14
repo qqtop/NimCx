@@ -51,7 +51,7 @@ Example screenshot of cxlineobjectE1.nim
 [Documentation for cxstats.nim](https://qqtop.github.io/cxstats.html)
 
 
-Requires     : Latest Nim dev version
+Requires     : Latest Nim dev version and best used in a konsole for full color effects
 
 Installation : 
 

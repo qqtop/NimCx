@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-03-06
+##     Latest      : 2018-04-14
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -1040,7 +1040,7 @@ proc doInfo*() =
   printLnBiCol("Last compilation on           : " & CompileDate &  " at " & CompileTime,yellowgreen,lightgrey,sep,0,false,{})
   # this only makes sense for non executable files
   #printLnBiCol("Last access time to file      : " & filename & " " & $(fromSeconds(int(getLastAccessTime(filename)))),yellowgreen,lightgrey,sep,0,false,{})
-  printLnBiCol("Last modificaton time of file : " & filename & " " & $(fromUnix(int(modTime))),yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("Last modificaton time of file : " & filename & " " & $modTime,yellowgreen,lightgrey,sep,0,false,{})
   printLnBiCol("Offset from UTC in hours      : " & cxTimeZone(),yellowgreen,lightgrey,sep,0,false,{})
   printLnBiCol("UTC Time                      : " & $now().utc,yellowgreen,lightgrey,sep,0,false,{})
   printLnBiCol("Local Time                    : " & $now().local,yellowgreen,lightgrey,sep,0,false,{})
@@ -1111,60 +1111,6 @@ proc infoLine*() =
     print(" | ",brightblack)
     qqTop()
 
-   
-proc showCxTrueColorPalette*(min:int = 0,max:int = 888,step: int = 12,flag48:bool = false) {.inline.} = 
-   ## showCxTrueColorPalette
-   ## 
-   ## 
-   ## Experimental
-   ## 
-   ## play with truecolors
-   ## 
-   ## shows truecolors , in order not run out of memory adjust max and step carefully 
-   ## note - less steps more colors
-   ## e.g max 888 step 4 needs abt 4.3 GB free and has  22,179,134 color shades to select from
-   ## default has 421,750 palette entries in cxTruecCol 
-   ## 
-   ## cxTrueCol is a initial empty global defined in cx.nim which will only be filled
-   ## with a call to getCxTrueColorSet() ,also see there how the Palette is build up
-   ## 
-   ## press ctrl-c if showTrueColorPalette runs too long ....
-   ## 
-   var astep = step
-   while max mod astep <> 0: astep = astep + 1
-   if getcxTrueColorSet(min = min,max = max,step = astep,flag48 = flag48) == true:
-      # controll the size of our truecolor cache 
-      # default max 888, increase by too much we may have memory issues
-      # defaul step 12 , decrease by too much we may have memory issues  tested with steps 4 - 16 ,
-      # smaller steps need longer compile time 
-      let cxtlen = $(cxTruecol.len)
-      var testLine = newcxline()
-      for lcol in countup(0,cxTruecol.len - 1,2): # note step size 2 so we only select 38 type colors
-            var tcol  = color38(cxTrueCol)
-            var bcol  = color38(cxTrueCol)
-            var dlcol = color38(cxTrueCol)
-            var drcol = color38(cxTrueCol)
-            testLine.startpos = 5  
-            testLine.endpos = 100
-            testLine.linecolor        = cxTrueCol[lcol]
-            testLine.cxlinetext.textbracketcolor = cxTrueCol[bcol]
-            testLine.dotleftcolor     = cxTrueCol[dlcol]
-            testLine.dotrightcolor    = cxTrueCol[drcol]
-            testLine.cxlinetext.textpos = 8
-            testLine.cxlinetext.text = fmtx(["<20","<14",">8",""], "Testing" ,"cxTruecolor : " ,$lcol," of " & cxtlen & spaces(1))
-            testLine.cxlinetext.textcolor = cxTrueCol[lcol]  # change this to tcol to have text in a random truecolor
-            testLine.cxlinetext.textstyle = {styleReverse}
-            testLine.newline = "\L"                  # need a new line character here or we overwrite 
-            printCxLine(testLine)
-      
-      decho(2)
-      let msgxpos = 5
-      printLnInfoMsg("Note            " , cxpad("cxTrueColor Value can be used like so ",96),xpos = msgxpos)
-      printLnInfoMsg("                " , cxpad("""as backgroundcolor : cxprintLn("say something  ",fontcolor = colWhite,bgr = cxTruecol[421873])""",96),xpos=msgxpos)
-      printLnInfoMsg("                " , cxpad("""as foregroundcolor : printLn2("say something  ",fgr = cxTruecol[421874])""",96),xpos = msgxpos)
-      echo()
-      printLnInfoMsg("Palette Entries " , ff2(cxTruecol.len),xpos = msgxpos)   
-      
 
 # code below borrowed from distros.nim and made exportable 
 var unameRes, releaseRes: string                      

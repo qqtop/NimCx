@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-04-05 
+##     Latest      : 2018-04-14 
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -59,7 +59,7 @@ macro styledEchoPrint*(m: varargs[untyped]): typed =
   ## partially lifted from an earler macro in terminal.nim and removed new line
   ## currently used in print
   ##
-  let m = callsite()
+  let m = callsite()   # deprecated but what to use instead
   result = newNimNode(nnkStmtList)
   for i in countup(1, m.len - 1):
       result.add(newCall(bindSym"styledEchoProcessArg", m[i]))
@@ -85,9 +85,9 @@ proc cxtoLower*(c: char): char =
    
 converter toTwInt*(x: cushort): int = result = int(x)  
   
-proc isNumeric(s: string): bool = s.allCharsInSet({'0'..'9'})
+proc isNumeric*(s: string): bool = s.allCharsInSet({'0'..'9'})
   
-proc getTerminalWidth*() : int =
+func getTerminalWidth*() : int =
         ## getTerminalWidth
         ##
         ## get linux terminal width in columns
@@ -107,7 +107,7 @@ proc getTerminalWidth*() : int =
 
 template tw* : int = getTerminalwidth() ## tw , a global where latest terminal width is always available 
 
-proc getTerminalHeight*() : int =
+func getTerminalHeight*() : int =
         ## getTerminalHeight
         ##
         ## get linux terminal height in rows
@@ -126,25 +126,26 @@ proc getTerminalHeight*() : int =
 template th* : int = getTerminalheight() ## th , a global where latest terminal height is always available 
 
 
-proc cxpad*(s:string,padlen:int):string =
+func cxpad*(s:string,padlen:int,paddy:string = spaces(1)):string =
   ## cxpad
   ## 
   ## pads a string on the right side with spaces to specified width 
   ## 
   result = s
   if s.len < padlen : 
-     result = s & spaces(max(0, padlen - s.len)) 
+     #result = s & spaces(max(0, padlen - s.len)) 
+     result = s & (paddy * (max(0,padlen - s.len)))
 
 
-proc cxlpad*(s:string,padlen:int):string =
+func cxlpad*(s:string,padlen:int,paddy:string = spaces(1)):string =
   ## cxlpad
   ## 
   ## pads a string on the left side with spaces to specified width 
   ## 
   result = s
   if s.len < padlen : 
-     result = spaces(max(0, padlen - s.len)) & s
-     
+     #result = spaces(max(0, padlen - s.len)) & s
+     result =  (paddy * (max(0,padlen - s.len))) & s
      
      
      
@@ -155,7 +156,7 @@ proc waitOn*(alen:int = 1) =
      ## 
      discard readBuffer(stdin,cast[pointer](newString(1)),alen)
     
-proc rndSample*[T](asq:seq[T]):T =
+func rndSample*[T](asq:seq[T]):T =
      ## rndSample  
      ## returns one rand sample from a sequence
      randomize()
