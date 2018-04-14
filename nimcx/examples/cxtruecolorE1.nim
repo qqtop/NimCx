@@ -3,11 +3,13 @@ import nimcx
 # cxtruecolorE1.nim
 #
 # Examples for usage of truecolors with nimcx library
+# use konsole as terminal as not all terminal are ready fro truecolor support
+# 
 # this assumes your terminal is set to white font and black background to start with
 # this demos also show how to exceed the named colors in Nim stdlib and run millions of colors
 # provided there is enough memory in the system
 # 
-# 2018-03-06
+# 2018-04-14
 
 proc cxSpectrum(colval:int = 255,dval:int = 76 ,adj:int = 1) =
   ## cxspectrum

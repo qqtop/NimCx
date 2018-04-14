@@ -1,6 +1,5 @@
 import nimcx
 
-
 # this works best in a konsole terminal due to use
 # of truecolors which are beyond of the usual gnome based terminals
 
@@ -22,6 +21,7 @@ import nimcx
 
 # Horizontal line test
 var theline = newcxline()
+
 loopy2(1,th - 5):
     theLine.linetype = cxHorizontal
     theline.startpos = 5 

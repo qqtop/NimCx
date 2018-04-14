@@ -87,7 +87,7 @@ converter toTwInt*(x: cushort): int = result = int(x)
   
 proc isNumeric*(s: string): bool = s.allCharsInSet({'0'..'9'})
   
-func getTerminalWidth*() : int =
+proc getTerminalWidth*() : int =
         ## getTerminalWidth
         ##
         ## get linux terminal width in columns
@@ -107,7 +107,7 @@ func getTerminalWidth*() : int =
 
 template tw* : int = getTerminalwidth() ## tw , a global where latest terminal width is always available 
 
-func getTerminalHeight*() : int =
+proc getTerminalHeight*() : int =
         ## getTerminalHeight
         ##
         ## get linux terminal height in rows
@@ -144,9 +144,7 @@ func cxlpad*(s:string,padlen:int,paddy:string = spaces(1)):string =
   ## 
   result = s
   if s.len < padlen : 
-     #result = spaces(max(0, padlen - s.len)) & s
-     result =  (paddy * (max(0,padlen - s.len))) & s
-     
+      result =  (paddy * (max(0,padlen - s.len))) & s
      
      
 proc waitOn*(alen:int = 1) = 
@@ -156,7 +154,7 @@ proc waitOn*(alen:int = 1) =
      ## 
      discard readBuffer(stdin,cast[pointer](newString(1)),alen)
     
-func rndSample*[T](asq:seq[T]):T =
+proc rndSample*[T](asq:seq[T]):T =
      ## rndSample  
      ## returns one rand sample from a sequence
      randomize()
@@ -1309,17 +1307,14 @@ template lowerCase*(s:string):string = toLowerAscii(s)
   ## lower cases a string
   ## 
 
-template currentLine* = 
+template currentLine*() = 
    ## currentLine
    ## 
    ## simple template to return line number , maybe usefull for debugging 
-   print("[",truetomato)
-   print(rightarrow,dodgerblue)
-   var pos:tuple[filename: string, line: int] = ( "",  -1)
+   print(rightarrow,lime)
+   var pos:tuple[filename: string, line: int,column:int] = ( "", -1,-1)
    pos = instantiationInfo()
-   printBiCol(pos.filename & "  ln:" & $(pos.line),yellow,white,":",0,false,{})
-   curBk(1)
-   print("]",truetomato)
+   printLnInfoMsg("File: " & pos.filename,"Line:" & $(pos.line)  & " Column:" & $(pos.column),truetomato,xpos = 3)
    echo()
 
 

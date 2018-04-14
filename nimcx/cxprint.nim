@@ -1498,7 +1498,7 @@ proc printLnInfoMsg*(info,atext:string = "",colLeft:string = lightslategray ,col
      printLnBiCol("[$1 ]" % info & spaces(1) & atext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
                                
       
-func dprint*[T](s:T) = 
+proc dprint*[T](s:T) = 
      ## dprint
      ## 
      ## debug print shows contents of s in repr mode
