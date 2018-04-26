@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-04-05 
+##     Latest      : 2018-04-26 
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -20,6 +20,7 @@
 ##     Note        : some parts are experimental, the aim in the future will be 
 ##           
 ##                   one smart print function which handles any kind of demand for colors.
+##                   
 ## 
 
 
@@ -760,7 +761,7 @@ proc printLnBiCol*[T](s:varargs[T,`$`],
                    
      ## printLnBiCol
      ##
-     ## and input can be varargs which gives much better flexibility
+     ## input can be varargs which gives much better flexibility
      ## however all parameters need to be specified
      ## also see printLnBiCol3 
      ##
@@ -897,7 +898,7 @@ proc printLnBiCol2*[T](s:varargs[T,`$`],
      ##    import nimcx
      ##
      ##    for x  in 0..<3:
-     ##       # here our input is varargs so weneed to specify all params
+     ##       # here our input is varargs so we need to specify all params
      ##        printLnBiCol("Test $1  : Ok " % $1,"this was $1 : what" % $2,23456.789,red,lime,":",0,false,{})
      ##    for x  in 4..<6:
      ##        # here we change the default colors
@@ -1496,7 +1497,11 @@ proc printInfoMsg*(info,atext:string = "",colLeft:string = lightslategray ,colRi
 
 proc printLnInfoMsg*(info,atext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
      printLnBiCol("[$1 ]" % info & spaces(1) & atext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
-                               
+
+# experimental - use printLn2 so that we do not overwrite msg next to each other in case of blocks of printLnmsg2 statements
+proc printLnInfoMsg2*(info,atext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
+     printLnBiCol2("[$1 ]" % info & spaces(1) & atext , colLeft = colLeft ,colRight = colRight,sep= "]",xpos = xpos,false,{stylereverse})
+     
       
 proc dprint*[T](s:T) = 
      ## dprint

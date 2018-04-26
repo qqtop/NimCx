@@ -183,7 +183,8 @@ randomize()                 # seed rand number generator
 type
      NimCxError* = object of Exception  
          cxerrormsg:string
-     # to be used like so , but not6 in use yet
+     # experimental    
+     # to be used like so , but not in use yet
      # raise newException(NimCxError, "didn't do stuff")
      #
      # or something like this
@@ -201,13 +202,11 @@ type
 
 # type used in Benchmark
 type
-    Benchmarkres* = tuple[bname,cpu,epoch,repeats:string,fastest : float]
+    Benchmarkres* = tuple[bname,cpu,epoch,repeats:string]
     
 # used to store all benchmarkresults   
 var benchmarkresults* =  newSeq[Benchmarkres]()
-
-
-# global used to store tmpfilenames , all tmpfilenames will if progs exit
+# global used to store tmpfilenames , all tmpfilenames will be deleted if progs exit
 var cxtmpfilenames* =  newSeq[string]()
 
 proc newCxCounter*():ref(Cxcounter) =
@@ -235,8 +234,8 @@ proc spellInteger*(n: int64): string    # forward declaration
 proc doFinish*()                        # forward declaration
   
 # char converters
-converter toInt(x: char): int = result = ord(x)
-converter toChar(x: int): char = result = chr(x)  
+converter toInt*(x: char): int = result = ord(x)
+converter toChar*(x: int): char = result = chr(x)  
 
 
 proc newColor*(r,g,b:int):string = "\x1b[38;2;$1;$2;$3m" % [$r,$g,$b]
@@ -257,6 +256,9 @@ proc newColor*(r,g,b:int):string = "\x1b[38;2;$1;$2;$3m" % [$r,$g,$b]
 ##   cxPrintLn("Test cxprintln test 12345 " &  efb2 * 10,fontcolor = colBlue,bgr=newcolor(9390,5483,38))
 ##   cxPrintLn("Test cxprintln test 12345 " &  efb2 * 10,fontcolor = colBlue,bgr=newcolor(93900,54830,3800))
 ##   decho(2)
+##   # or save it
+##   let mymystiquecolor = newColor2(93547,84873,77888)
+##   printLn("Here we go",mymystiquecolor)
 ##   doFinish()
 ##
 proc newColor2*(r,g,b:int):string = "\x1b[48;2;$1;$2;$3m" % [$r,$g,$b]     
@@ -269,7 +271,7 @@ proc newColor2*(r,g,b:int):string = "\x1b[48;2;$1;$2;$3m" % [$r,$g,$b]
 proc checkColor*(colname: string): bool =
      ## checkColor
      ##
-     ## returns true if colname is a known color name in colorNames
+     ## returns true if colname is a known color name in colorNames constants.nim 
      ## string and 
      ##
      result = false
@@ -356,10 +358,7 @@ template repeats(count: int, statements: untyped) =
   for i in 0..<count:
       statements
 
-proc checkspeed(ztb:float):float =
-         result = epochTime() - ztb
-         
-    
+   
 template benchmark*(benchmarkName: string, repeatcount:int = 1,code: typed) =
   ## benchmark
   ## 
@@ -403,12 +402,8 @@ template benchmark*(benchmarkName: string, repeatcount:int = 1,code: typed) =
   var zbres:Benchmarkres
   let t0 = epochTime()
   let t1 = cpuTime()
-  zbres.fastest = 100000000.0  # some large int to init
   repeats(repeatcount):
-      #var t2 = epochTime()
-      code
-      #var fstt = checkspeed(t2)
-      #if fstt < zbres.fastest : zbres.fastest = fstt
+        code
   let elapsed  = epochTime() - t0
   let elapsed1 = cpuTime()   - t1
   zbres.epoch  = ff(elapsed,4)  

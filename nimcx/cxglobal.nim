@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-04-14 
+##     Latest      : 2018-04-15 
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -66,6 +66,17 @@ macro styledEchoPrint*(m: varargs[untyped]): typed =
   result.add(newCall(bindSym"write", bindSym"stdout", newStrLitNode("")))
   result.add(newCall(bindSym"resetAttributes"))
 
+proc tupleTypes*(atuple: tuple):seq[string] =
+  ## tupletypes
+  ## 
+  ## returns the field types of a tuple in a seq[string]
+  ## 
+  result = newSeq[string]()
+  for field in fields(atuple):
+      result.add($type(field))  
+  
+  
+  
 template `*`*(s:string,n:int):string =
     ## returns input string  n times mimicking python
     s.repeat(n)    
@@ -94,7 +105,7 @@ proc getTerminalWidth*() : int =
         ## a terminalwidth function is now incorporated in Nim dev after 2016-09-02
         ## which maybe is slightly slower than the one presented here
         ## 
-       
+        result = 0
         type WinSize = object
             row, col, xpixel, ypixel: cushort
         const TIOCGWINSZ = 0x5413
@@ -105,7 +116,7 @@ proc getTerminalWidth*() : int =
         result = toTwInt(size.col)
 
 
-template tw* : int = getTerminalwidth() ## tw , a global where latest terminal width is always available 
+template tw* : int = getTerminalWidth() ## tw , a global where latest terminal width is always available 
 
 proc getTerminalHeight*() : int =
         ## getTerminalHeight
@@ -133,9 +144,13 @@ func cxpad*(s:string,padlen:int,paddy:string = spaces(1)):string =
   ## 
   result = s
   if s.len < padlen : 
-     #result = s & spaces(max(0, padlen - s.len)) 
-     result = s & (paddy * (max(0,padlen - s.len)))
-
+       result = s & (paddy * (max(0,padlen - s.len)))
+     
+func cxpdx*(padLen:int,s:string,paddy:string = spaces(1)):string =
+    ## pdx 
+    ## 
+    ## same as cxpad but with padding char count in front 
+    cxpad(s,padLen,paddy)
 
 func cxlpad*(s:string,padlen:int,paddy:string = spaces(1)):string =
   ## cxlpad
@@ -145,7 +160,12 @@ func cxlpad*(s:string,padlen:int,paddy:string = spaces(1)):string =
   result = s
   if s.len < padlen : 
       result =  (paddy * (max(0,padlen - s.len))) & s
-     
+
+func cxlpdx*(padLen:int,s:string,paddy:string = spaces(1)):string =
+    ## cxlpdx 
+    ## 
+    ## same as cxpad but with padding char count in front 
+    cxlpad(s,padLen,paddy)      
      
 proc waitOn*(alen:int = 1) = 
      ## waiton
@@ -186,7 +206,6 @@ proc product*[T](aseq: seq[T]):T = foldl(aseq, a * b)
      ##
      ## if a seq contains a 0 element than result will be 0
      ## 
-
      
      
 template doSomething*(secs:int,body:untyped) =
@@ -201,7 +220,7 @@ template doSomething*(secs:int,body:untyped) =
   while toTime(now()) < toTime(mytime) + secs.seconds : 
       body  
 
-      
+ 
 
 proc isBlank*(val:string):bool {.inline.} =
    ## isBlank
@@ -246,7 +265,6 @@ proc getRandomSignI*(): int =
     result = 1
     if 0 == getRndInt(0,1):  result = -1
    
-
     
 proc getRandomSignF*():float = 
     ## getRandomSignF
@@ -268,7 +286,6 @@ proc reverseMe*[T](xs: openarray[T]): seq[T] =
   ##    printLn(z,lime)
   ##    printLn(z.reverseMe,red)
   ##
-
   result = newSeq[T](xs.len)
   for i, x in xs:
      result[xs.high - i] = x
@@ -320,9 +337,6 @@ proc createSeqBinary*(n:int = 10):seq[int] {.inline.} =
        if $x == "false" : result.add(0)
        if $x ==  "true"  : result.add(1)
        
-       
-        
-     
 
 proc createSeqInt*(n:int = 10,mi:int = 0,ma:int = 1000) : seq[int] {.inline.} =
     ## createSeqInt
@@ -343,7 +357,6 @@ proc createSeqInt*(n:int = 10,mi:int = 0,ma:int = 1000) : seq[int] {.inline.} =
     # as we do not want any print commands in this module we change
     case  mi <= ma
         of true : result.add(newSeqWith(n,getRndInt(mi,ma)))
-        #of false: printErrorMsg("Wrong parameters for min , max ")
         else: 
              result.add(newSeqWith(n,getRndInt(mi,mi)))
          
@@ -359,7 +372,7 @@ proc ff*(zz:float,n:int = 5):string =
 proc ff22*(zz:int , n:int = 0):string =
   ## ff22
   ## 
-  ## formats a integer into form 12,345,678 that is thousands separators are shown
+  ## formats a integer into form 12,345,678 with thousands separators shown
   ## 
   ## precision is after comma given by n with default set to 0
   ## in context of integer this means display format could even show 
@@ -489,7 +502,7 @@ proc createSeqFloat*(n:int = 10,prec:int = 3) : seq[float] =
      ##
      ##
      ##.. code-block:: nim
-     ##    # create a seq with 50 rand floats formated
+     ##    # create a seq with 50 rand floats formatted
      ##    echo createSeqFloat(50,3)
      ##
      var ffnz = prec
@@ -982,9 +995,7 @@ proc doFlag*[T](flagcol:string = yellowgreen,
 proc getAscii*(s:string):seq[int] =
    ## getAsciicode
    ## 
-   ## returns ascii integer codes of every character in a string 
-   ## 
-   ## in an seq[int] 
+   ## returns a seq[int]  with ascii integer codes of every character in a string 
    ## 
    result = @[]
    for c in s: 
@@ -1311,12 +1322,27 @@ template currentLine*() =
    ## currentLine
    ## 
    ## simple template to return line number , maybe usefull for debugging 
-   print(rightarrow,lime)
    var pos:tuple[filename: string, line: int,column:int] = ( "", -1,-1)
    pos = instantiationInfo()
-   printLnInfoMsg("File: " & pos.filename,"Line:" & $(pos.line)  & " Column:" & $(pos.column),truetomato,xpos = 3)
+   printLnInfoMsg("File: " & pos.filename,"Line:" & $(pos.line)  & " Column:" & $(pos.column),truetomato, xpos = 3)
    echo()
-
+   
+template currentLine*(xpos:int) = 
+   ## currentLine
+   ## 
+   ## simple template to return line number , maybe usefull for debugging 
+   
+   var pos:tuple[filename: string, line: int,column:int] = ( "", -1,-1)
+   pos = instantiationInfo()
+   var xpos = tw
+   # calc the total width of this msg so we aline it rightside of terminal if needed
+   var msgl = 6 + (pos.filename).len + 5 + ($(pos.line)).len + 8 + ($(pos.column)).len + 3
+   var tww = tw
+   #if tww - xpos < msgl: xpos = msgl - 1 
+   xpos = tww - msgl - 5
+   printLnInfoMsg("File: " & pos.filename,"Line:" & $(pos.line)  & " Column:" & $(pos.column),truetomato,pastelWhite,xpos)
+   echo()
+   
 
 
 template hdx*(code:typed,frm:string = "+",width:int = tw,nxpos:int = 0):typed =
