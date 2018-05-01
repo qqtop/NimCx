@@ -401,7 +401,7 @@ proc print2*[T](astring:T,
     ##
     ##   basically similar to terminal.nim styledWriteLine with more functionality
     ##   
-    ##   fgr / bgr  fore and background colors can be set
+    ##   fgr foreground colors can be set
     ##  
     ##   xpos allows positioning on x-axis
     ##  
@@ -459,10 +459,8 @@ proc print2*[T](astring:T,
             npos = centerX() - ($astring).len div 2 - 1
             setCursorXPos(npos)
 
-
         if styled != {}:
-            var s = $astring
-                        
+            var s = $astring            
             if substr.len > 0:
                 var rx = s.split(substr)
                 for x in rx.low.. rx.high:
@@ -476,19 +474,16 @@ proc print2*[T](astring:T,
                         of clrainbow   : printRainbow($s,styled)
                         else: styledEchoPrint(fgr,styled,s,bgBlack)
         else:
-        
             case fgr
             of clrainbow: rainbow(spaces(1) & $astring,npos)
             else: 
                 setBackGroundColor(bgBlack)
                 try:
-                    #write(stdout,fgr & $astring)
-                    styledEchoPrint(fgr,{},$astring,bgBlack)
+                   styledEchoPrint(fgr,{},$astring,bgBlack)
                 except:
-                    echo astring
+                   echo astring
 
-        # reset to white/black only if any changes
-        #if fgr != $fgWhite or bgr != bgBlack:
+        # reset to white/black 
         setForeGroundColor(fgWhite)
         setBackGroundColor(bgBlack)
                
@@ -529,7 +524,7 @@ proc printLn2*[T](astring:T,
     ##        print cleareol
     ##        sleepy(0.1)
     ##
-    print2($(astring) & "\L",fgr,xpos,fitLine,centered,styled,substr)
+    print2($(astring) & "\n",fgr,xpos,fitLine,centered,styled,substr)
     
 
 
@@ -541,7 +536,6 @@ proc printy*[T](astring:varargs[T,`$`]) =
     ##..code-block:: nim
     ##    printy "this is : " ,yellowgreen,1,bgreen,5,bblue," ʈəɽɭάɧɨɽ ʂəɱρʊɽɲά(άɲάʂʈάʂɣά)"
     ##
-    
     for x in astring: write(stdout,x & spaces(1))
     setForeGroundColor(fgWhite)
     setBackGroundColor(bgBlack)
@@ -797,8 +791,7 @@ proc printLnBiCol*[T](s:varargs[T,`$`],
      ##      colLeft=randcol(),randCol())
      ##      
      ##      
-     
-     
+
      {.gcsafe.}:
         var nosepflag:bool = false
         var zz =""

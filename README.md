@@ -77,6 +77,10 @@ Example usage of print procs
 ![Image](http://qqtop.github.io/nimblues.png?raw=true)
 
 
+![Image](http://qqtop.github.io/nimcxmatrix.png?raw=true)
+Screenshot from cxmatrixfontE1.nim
+
+
 ```nimrod         
 
 import nimcx

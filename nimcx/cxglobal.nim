@@ -55,16 +55,27 @@ proc styledEchoProcessArg(color: BackgroundColor) = setBackgroundColor color
 
 # macros
 
+# macro styledEchoPrint*(m: varargs[untyped]): typed =
+#   ## partially lifted from an earler macro in terminal.nim and removed new line
+#   ## currently used in print
+#   ##
+#   let m = callsite()   # deprecated but what to use instead
+#   result = newNimNode(nnkStmtList)
+#   for i in countup(1, m.len - 1):
+#       result.add(newCall(bindSym"styledEchoProcessArg", m[i]))
+#   result.add(newCall(bindSym"write", bindSym"stdout", newStrLitNode("")))
+#   result.add(newCall(bindSym"resetAttributes"))
+#   
+  
 macro styledEchoPrint*(m: varargs[untyped]): typed =
   ## partially lifted from an earler macro in terminal.nim and removed new line
-  ## currently used in print
-  ##
-  let m = callsite()   # deprecated but what to use instead
+  #  improvements by araq
   result = newNimNode(nnkStmtList)
-  for i in countup(1, m.len - 1):
+  for i in countup(0, m.len - 1):
       result.add(newCall(bindSym"styledEchoProcessArg", m[i]))
   result.add(newCall(bindSym"write", bindSym"stdout", newStrLitNode("")))
-  result.add(newCall(bindSym"resetAttributes"))
+  result.add(newCall(bindSym"resetAttributes"))  
+  
 
 proc tupleTypes*(atuple: tuple):seq[string] =
   ## tupletypes
@@ -814,7 +825,7 @@ template randCol*(): string = rand(colorNames)[1]
    
 
 
-template rndCol*(r:int = getRndInt(0,254) ,g:int = getRndInt(0,254), b:int = getRndInt(0,254)) :string = "\x1b[38;2;" & $r & ";" & $b & ";" & $g & "m"
+template rndCol*(r:int = getRndInt(0,254) ,g:int = getRndInt(0,254), b:int = getRndInt(0,254)) : string = "\x1b[38;2;" & $r & ";" & $b & ";" & $g & "m"
     ## rndCol
     ## 
     ## return a randcolor from the whole rgb spectrum in the ranges of RGB [0..254]

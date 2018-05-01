@@ -1,6 +1,6 @@
 {.deadCodeElim: on , optimization: speed.}
 import cxglobal,cxconsts,cxprint,cxtruecolor
-import strutils,terminal
+import strutils,terminal,sets
 
 # cxfont.nim
 #
@@ -868,6 +868,215 @@ proc printSlim* (ss:string = "", frg:string = termwhite,xpos:int = 0,align:strin
         prsn(mn ,frg, xpos = npos - sswidth)
         npos = npos + 3
         curup(3)
+        
+# routines for dotmatrix font
+# see dotmatrixraw in cxconsts
+        
+let cxfonts = toSet(["dotmatrix","bracketmatrix","sideways"])
+
+proc printCxFontLetter*(n:int,xpos:int,cxfont:seq[seq[string]],color:string) =
+  for y in 0 ..< cxfont[n].len:
+        printLn2(cxfont[n][y].replace("@","").replace("$",""),color,xpos = xpos,styled={styleBright}) 
+  curup(9)
+
+
+proc printCxFontText*(textseq:seq[int],xpos:int = 2,cxfont:seq[seq[string]],color:string = randcol()) = 
+  var nxpos = xpos
+  for achar in textseq:
+      printCxFontLetter(achar,nxpos,cxfont,color)
+      nxpos = nxpos + 19
+  decho(5)
+
+  
+proc createCxFont*(name:string):seq[seq[string]] =
+   if name in cxfonts:
+     case name 
+     
+       of "dotmatrix":
+                var c = dotmatrixraw.replace("_",".").replace("(","|").replace(")","|")
+                var cs = c.splitlines()
+                #echo "cs len : ",cs.len
+                var cdotmatrixfont = newSeq[seq[string]]()
+                var caseq = newseq[string]()
+                for x in 0 .. cs.len - 1:
+                  if cs[x].contains("@@") == true:
+                      cdotmatrixfont.add(caseq)
+                      caseq = @[]
+                  else:    
+                      caseq.add(cs[x])
+                result = cdotmatrixfont  
+                
+       of "bracketmatrix":    # the original font in dotmatrixraw
+                #echo dotmatrixraw   # prints ok
+                var bs = dotmatrixraw.splitlines()
+                #for x in 0 .. bs.len - 1: printLn(bs[x],rndcol())   # ok
+                #echo "bs len : ",bs.len
+                var dotmatrixfont = newSeq[seq[string]]()
+                var aseq = newseq[string]()
+                for x in 0 .. bs.len - 1:
+                    if bs[x].contains("@@") == true:
+                       dotmatrixfont.add(aseq)
+                       aseq = @[]
+                    else:    
+                       aseq.add(bs[x])
+                result = dotmatrixfont    
+                
+       of "sideways":    # the original font in sidewaysraw
+                #echo dotmatrixraw   # prints ok
+                var ss = sidewaysraw.splitlines()
+                #for x in 0 .. ss.len - 1: printLn(ss[x],rndcol())   # ok
+                #echo "ss len : ",ss.len
+                var sidewaysfont = newSeq[seq[string]]()
+                var sseq = newseq[string]()
+                for x in 0 .. ss.len - 1:
+                    if ss[x].contains("##") == true:
+                       sidewaysfont.add(sseq)
+                       sseq = @[]
+                    else:    
+                       sseq.add(ss[x].replace("#",""))
+                result = sidewaysfont    
+                        
+                
+                
+                
+                
+                
+proc showCxFont*(name:string) =
+     if name in cxfonts:
+       case name 
+          of "dotmatrix":
+             decho(5)
+             var cdotmatrixfont = createCxFont(name)
+             #echo "dotmatrixfont len : ", cdotmatrixfont.len   
+             var xpos = 2
+             for x in 0 ..< cdotmatrixfont.len:
+                for y in 0 ..< cdotmatrixfont[x].len:
+                   printLnBiCol2(cdotmatrixfont[x][y].replace("@","").replace("$","") & cxlpad(":" & $x,3),colLeft=clRainbow,colRight = lightgrey,xpos = xpos)                                         
+                curup(9)
+                xpos = xpos + 27
+                if xpos > 110: 
+                    xpos = 2
+                    decho(12)
+             decho(5)
+             
+          of "bracketmatrix":
+             var dotmatrixfont = createCxFont(name)
+             #echo "bracketmatrix len : ", dotmatrixfont.len   
+             #echo dotmatrixfont[5]
+             var xpos = 2
+             for x in 0 ..< dotmatrixfont.len:
+                for y in 0 ..< dotmatrixfont[x].len:
+                   printLnBiCol2(dotmatrixfont[x][y].replace("@","").replace("$","") & cxlpad(":" & $x,3),colLeft=clRainbow,colRight = lightgrey,xpos = xpos)                                                                                 
+                curup(9)
+                xpos = xpos + 27
+                if xpos > 110: 
+                  xpos = 2
+                  decho(12)
+             decho(5)
+             
+          of "sideways":   
+             var sidewaysfont = createCxFont(name)
+             #echo "bracketmatrix len : ", dotmatrixfont.len   
+             #echo dotmatrixfont[5]
+             var xpos = 2
+             for x in 0 ..< sidewaysfont.len:
+                for y in 0 ..< sidewaysfont[x].len:
+                   printLnBiCol2(sidewaysfont[x][y] & cxlpad(":" & $x,3),colLeft=clRainbow,colRight = lightgrey,xpos = xpos)                                                                                 
+                curup(5)
+                xpos = xpos + 27
+                if xpos > 110: 
+                  xpos = 2
+                  decho(9)
+             decho(5)
+       
+# example usage for dotmatrix fonts
+# currently 2 are available dotmatrix and bracketmatrix        
+        
+proc dotMatrixFontTest*() =
+    ## dotMatrixFontTest
+    ## 
+    ## The current way to use fonts bracketmatrix and dotmatrix
+    ## 
+    ## is to run 
+    ##
+    ##.. code-block:: nim 
+    ##  import nimcx 
+    ##  showCxFont("dotmatrix")   # or "bracketmatrix"
+    ## 
+    ## note the numbers next to the required characters
+    ## 
+    ## and then 
+    ## 
+    ##.. code-block:: nim
+    ##    let myfont = createCxFont("dotmatrix")
+    ##    # lets print <NIM>123
+    ##    printCxFontText(@[12,30,25,29,14,1,2,3],xpos = 2,myfont) 
+    ## 
+    ##    
+    ## Alternatively compile cxmatrixfontE1.nim which calls this function
+    ##             
+    showCxFont("bracketmatrix")  
+    decho(10)
+    showCxFont("dotmatrix") 
+    decho(10)
+    showCxFont("sideways") 
+    decho(10)
+    
+    let myfont = createCxFont("dotmatrix")
+    printCxFontText(@[51,62,67,60,48,67,65,56,71],xpos = 1,myfont)  # dotmatrix
+    decho(5)
+    printCxFontText(@[12,30,25,29,14,0,1,2,3,4],xpos = 2,myfont)    # <NIM>01234
+    decho(12)
+    
+    let myotherfont = createCxFont("bracketmatrix")
+    printCxFontText(@[49,65,48,50,58,52,67],xpos = 1, myotherfont) # bracket
+    decho(4)
+    printCxFontText(@[60,48,67,65,56,71],xpos = 60,myotherfont)    # matrix
+    decho(5)
+    printCxFontText(@[12,30,25,29,14,5,6,7,8,9],xpos = 2,myotherfont)  # <NIM>56789
+    decho(10)
+    
+    
+    let mysidewaysfont = createCxFont("sideways")
+    printCxFontText(@[41],xpos = 3,mysidewaysfont)  # N
+    decho(3)
+    printCxFontText(@[36],xpos = 3,mysidewaysfont)  # I
+    decho(3)
+    printCxFontText(@[40],xpos = 3,mysidewaysfont)  # M
+    decho(3)
+    printCxFontText(@[16],xpos = 3,mysidewaysfont)  # 2
+    decho(3)
+    printCxFontText(@[14],xpos = 3,mysidewaysfont)  # 2
+    decho(3)
+    printCxFontText(@[15],xpos = 3,mysidewaysfont)  # 2
+    decho(3)
+    printCxFontText(@[22],xpos = 3,mysidewaysfont)  # 2
+    decho(3)
+    curup(25)
+    printCxFontText(@[30,25,29,19,40],xpos = 50,myfont)
+    decho(5)
+    printCxFontText(@[60,48,67,65,56,71],xpos = 40,myotherfont)
+    curup(18)
+    let dl = tw - 12
+    printCxFontText(@[41],xpos = dl,mysidewaysfont)  # N
+    decho(3)
+    printCxFontText(@[36],xpos = dl,mysidewaysfont)  # I
+    decho(3)
+    printCxFontText(@[40],xpos = dl,mysidewaysfont)  # M
+    decho(3)
+    printCxFontText(@[16],xpos = dl,mysidewaysfont)  # 2
+    decho(3)
+    printCxFontText(@[14],xpos = dl,mysidewaysfont)  # 2
+    decho(3)
+    printCxFontText(@[15],xpos = dl,mysidewaysfont)  # 2
+    decho(3)
+    printCxFontText(@[22],xpos = dl,mysidewaysfont)  # 2
+    decho(3)
+    
+    decho(5)
+# end of dotmatrixfont related functions        
+
+       
 # 
 # ###### old block font  currently commented out as not in use
 # # some handmade font...
