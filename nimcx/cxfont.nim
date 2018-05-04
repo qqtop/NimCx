@@ -872,19 +872,28 @@ proc printSlim* (ss:string = "", frg:string = termwhite,xpos:int = 0,align:strin
 # routines for dotmatrix font
 # see dotmatrixraw in cxconsts
         
-let cxfonts = toSet(["dotmatrix","bracketmatrix","sideways"])
+let cxfonts = toSet(["dotmatrix","bracketmatrix","sideways","swamp"])
 
-proc printCxFontLetter*(n:int,xpos:int,cxfont:seq[seq[string]],color:string) =
+proc printCxFontLetter*(n:int,xpos:int,cxfont:seq[seq[string]],color:string,vertstepping:int) =
   for y in 0 ..< cxfont[n].len:
         printLn2(cxfont[n][y].replace("@","").replace("$",""),color,xpos = xpos,styled={styleBright}) 
-  curup(9)
+  curup(vertstepping)
+  
+  
+# Note swap needs curup(7) so need to pass in the fontname to enable a sitch ..  
 
 
-proc printCxFontText*(textseq:seq[int],xpos:int = 2,cxfont:seq[seq[string]],color:string = randcol()) = 
+proc printCxFontText*(textseq:seq[int],xpos:int = 2,cxfont:seq[seq[string]],color:string = randcol(),vertstepping:int=9,kerning:int = 19) = 
+  ## printCxFontText
+  ## 
+  ## printtext in fonts dotmatrix,bracketmatrix,sideways,swamp
+  ## 
+  ## swamp needs vertstepping = 7 and kerning >= 15 
+  ## 
   var nxpos = xpos
   for achar in textseq:
-      printCxFontLetter(achar,nxpos,cxfont,color)
-      nxpos = nxpos + 19
+      printCxFontLetter(achar,nxpos,cxfont,color,vertstepping)
+      nxpos = nxpos +  kerning
   decho(5)
 
   
@@ -935,7 +944,21 @@ proc createCxFont*(name:string):seq[seq[string]] =
                     else:    
                        sseq.add(ss[x].replace("#",""))
                 result = sidewaysfont    
-                        
+      
+       of "swamp":    # the original font in swampraw
+                #echo dotmatrixraw   # prints ok
+                var sw = swampraw.splitlines()
+                #for x in 0 .. ss.len - 1: printLn(ss[x],rndcol())   # ok
+                #echo "ss len : ",ss.len
+                var swampfont = newSeq[seq[string]]()
+                var swseq = newseq[string]()
+                for x in 0 .. sw.len - 1:
+                    if sw[x].contains("##") == true:
+                       swampfont.add(swseq)
+                       swseq = @[]
+                    else:    
+                       swseq.add(sw[x].replace("#",""))
+                result = swampfont                     
                 
                 
                 
@@ -988,9 +1011,25 @@ proc showCxFont*(name:string) =
                   xpos = 2
                   decho(9)
              decho(5)
+             
+          of "swamp":   
+             var swampfont = createCxFont(name)
+             #echo "bracketmatrix len : ", dotmatrixfont.len   
+             #echo dotmatrixfont[5]
+             var xpos = 2
+             for x in 0 ..< swampfont.len:
+                for y in 0 ..< swampfont[x].len:
+                   printLnBiCol2(swampfont[x][y] & cxlpad(":" & $x,5),colLeft=clRainbow,colRight = lightgrey,xpos = xpos)                                                                                 
+                curup(7)
+                xpos = xpos + 27
+                if xpos > 110: 
+                  xpos = 2
+                  decho(9)
+             decho(5)   
+             
        
 # example usage for dotmatrix fonts
-# currently 2 are available dotmatrix and bracketmatrix        
+      
         
 proc dotMatrixFontTest*() =
     ## dotMatrixFontTest
@@ -1011,7 +1050,8 @@ proc dotMatrixFontTest*() =
     ##    let myfont = createCxFont("dotmatrix")
     ##    # lets print <NIM>123
     ##    printCxFontText(@[12,30,25,29,14,1,2,3],xpos = 2,myfont) 
-    ## 
+    ## import "/data5/NimStuff/NimCxDevel/cx.nim"
+
     ##    
     ## Alternatively compile cxmatrixfontE1.nim which calls this function
     ##             
@@ -1020,6 +1060,8 @@ proc dotMatrixFontTest*() =
     showCxFont("dotmatrix") 
     decho(10)
     showCxFont("sideways") 
+    decho(10)
+    showCxFont("swamp") 
     decho(10)
     
     let myfont = createCxFont("dotmatrix")
@@ -1074,6 +1116,11 @@ proc dotMatrixFontTest*() =
     decho(3)
     
     decho(5)
+    let myswampfont = createCxFont("swamp")
+    printCxFontText(@[59,47,66,64,55,70],xpos = 30,myswampfont,vertstepping=7,kerning = 15)  # swamp needs vertstepping 7 to avoid steps...
+    decho(12)
+    
+    
 # end of dotmatrixfont related functions        
 
        

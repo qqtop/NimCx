@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-04-14
+##     Latest      : 2018-05-04
 ##
 ##     OS          : Linux
 ##
@@ -22,7 +22,7 @@
 ##  
 
 import os,osproc,math,stats,cpuinfo,httpclient,browsers,typeinfo,typetraits
-import terminal,strutils,times,random,sequtils,unicode
+import terminal,strutils,times,random,sequtils,unicode,streams
 import cxconsts,cxglobal,cxprint,cxtime
 
 # type used in getRandomPoint
@@ -85,27 +85,6 @@ proc cxVideoInfo*():string =
    result = output   
    
    
-   
-proc memCheck*(stats:bool = false) =
-  ## memCheck
-  ## 
-  ## memCheck shows memory before and after a GC_FullCollect run
-  ## 
-  ## set stats to true for full GC_getStatistics
-  ## 
-  echo()
-  printLn("MemCheck            ",yellowgreen,styled = {styleUnderscore},substr = "MemCheck            ")
-  echo()
-  printLnBiCol("Status    : Current ",colLeft=salmon)
-  printLn(yellowgreen & "Mem " &  lightsteelblue & "Used  : " & white & ff2(getOccupiedMem()) & lightsteelblue & "  Free : " & white & ff2(getFreeMem()) & lightsteelblue & "  Total : " & white & ff2(getTotalMem() ))
-  if stats == true:
-    echo GC_getStatistics()
-  GC_fullCollect()
-  sleepy(0.5)
-  printLnBiCol("Status    : GC_FullCollect executed",colLeft=salmon,colRight=pink)
-  printLn(yellowgreen & "Mem " &  lightsteelblue & "Used  : " & white & ff2(getOccupiedMem()) & lightsteelblue & "  Free : " & white & ff2(getFreeMem()) & lightsteelblue & "  Total : " & white & ff2(getTotalMem() ))
-  if stats == true:
-     echo GC_getStatistics()
 
 
 proc showCpuCores*() =
@@ -1110,7 +1089,82 @@ template withFile*(f,fn, mode, actions: untyped): untyped =
                 quit()
          
 
+
+proc checkMemFull*(xpos:int = 2) =
+   ## checkMemFull
+   ## 
+   ## full 45 lines output of system memory status
+   ## 
+   var seqline = newSeq[string]()
+   let n = "HardwareCorrupted ".len
+   withFile(f,"/proc/meminfo",fmRead):
+          seqline = f.readAll().splitLines()
+   for aline in seqline:
+           let zline = aline.split(":")
+           try:
+              printLnInfoMsg(cxpad(zline[0],n),fmtx([">15"],zline[1].strip()),yellowgreen,xpos = xpos)
+           except IndexError:
+              discard
  
- 
- 
+
+proc checkMem*(xpos:int=2) = 
+   ## checkMem
+   ## 
+   ## reads meminfo to give memory status for memtotal,memfree and memavailable
+   ## maybe usefull during debugging of a function to see how memory is consumed 
+   ## 
+   
+   var seqline = newSeq[string]()
+   let n = "MemAvailable ".len
+   withFile(f,"/proc/meminfo",fmRead):
+        seqline = f.readAll().splitLines()
+   for aline in seqline:
+      if aline.startswith("Mem"):
+           let zline = aline.split(":")
+           printLnInfoMsg2(cxpad(zline[0],n),fmtx([">15"],zline[1].strip()),yellowgreen,xpos = xpos)
+          
+
+proc fullgcstats*(xpos:int = 2):int {.discardable.} =
+     let gcs = GC_getStatistics()
+     let gcsl = gcs.splitlines()
+     for agcl in gcsl:
+         let agcls = agcl.split("] ")
+         if agcls.len > 1:
+           let agcls1 = agcls[1].split(":")
+           printLnInfomsg2(agcls[0],cxpad(agcls1[0],20) & cxlpad(agcls1[1],15),xpos = xpos)
+     result = gcsl.len  
+     
+proc memCheck*(stats:bool = false) =
+  ## memCheck
+  ## 
+  ## memCheck shows memory before and after a GC_FullCollect run
+  ## 
+  ## set stats to true for full GC_getStatistics
+  ## 
+  echo()
+  if stats == true:
+     printLnInfoMsg("MemCheck",cxpad("GC and System",30),skyblue,xpos = 2)
+  else:
+     printLnInfoMsg("MemCheck",cxpad("System",30),skyblue,xpos = 2)
+  printLnBiCol("Status : Current ",colLeft=salmon,xpos = 2)
+  
+  var b = 0
+  if stats == true:
+     b = fullgcstats(2)
+  checkmem()
+  GC_fullCollect()
+  sleepy(0.5)
+  if stats == true:
+    curup(b + 3)
+  else:
+    curup(b + 4)
+  printLnBiCol2("Status : GC_FullCollect executed",colLeft=salmon,colRight=pink,xpos=55)
+  #printLn(yellowgreen & "Mem " &  lightsteelblue & "Used  : " & white & ff2(getOccupiedMem()) & lightsteelblue & "  Free : " & white & ff2(getFreeMem()) & lightsteelblue & "  Total : " & white & ff2(getTotalMem() ))
+  if stats == true:
+     fullgcstats(xpos=55)
+  checkmem(xpos=55)
+  echo()
+          
+          
+          
 # END OF CXUTILS.NIM #

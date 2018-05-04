@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-04-15 
+##     Latest      : 2018-05-04 
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -254,7 +254,7 @@ proc isEmpty*(val:string):bool {.inline.} =
 proc getRndInt*(mi:int = 0 , ma: int = int.high):int  {.noInit,inline.} =
      ## getRndInt
      ##
-     ## returns a rand int between mi and < ma
+     ## returns a random int between mi and < ma
      ## so for 0 or 1 we need rand(0..2)
      var maa = ma
      if ma == 1: maa = 2

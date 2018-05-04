@@ -674,7 +674,7 @@ proc printRainbow*(s : string,styled:set[Style] = {}) =
     var astr = s
     var c = 0
     for x in 0..<astr.len:
-        c = rxcol[getRndInt(ma=rxcol.len)]
+        c = rxcol[getRndInt(ma=rxcol.len - 1)]
         print($astr[x],colorNames[c][1],styled = styled)
 
 
@@ -1454,10 +1454,10 @@ proc printLnOkMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printLnBiCol("[OK    ]" & spaces(1) & atext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})    
     
 proc printStatusMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printBiCol("[Status]" & spaces(1) & atext , colLeft = lightseagreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
+     printBiCol2("[Status]" & spaces(1) & atext , colLeft = lightseagreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
      
 proc printLnStatusMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[Status]" & spaces(1) & atext , colLeft = lightseagreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})    
+     printLnBiCol2("[Status]" & spaces(1) & atext , colLeft = lightseagreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})    
 
 proc printHelpMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printBiCol("[Help  ]" & spaces(1) & atext , colLeft = thistle ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
@@ -1486,7 +1486,7 @@ proc printLnPassMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
 
 # printInfoMsg and printLnInfoMsg can take two strings for more generic use     
 proc printInfoMsg*(info,atext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
-     printBiCol("[$1 ]" % info & spaces(1) & atext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
+     printBiCol2("[$1 ]" % info & spaces(1) & atext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
 
 proc printLnInfoMsg*(info,atext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
      printLnBiCol("[$1 ]" % info & spaces(1) & atext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
