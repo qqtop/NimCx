@@ -170,8 +170,8 @@ when defined(windows):
   {.hint    : "CX does not support Windows at this stage , you are on your own !".}
 
 when defined(posix):
-  {.hint    : "\x1b[38;2;154;205;50m \u2691  NimCx      :" &  "\x1b[38;2;255;215;0m Officially works on Linux only." & spaces(13) & "\x1b[38;2;154;205;50m \u2691".}
-  {.hint    : "\x1b[38;2;154;205;50m \u2691  Compiling  :" &  "\x1b[38;2;255;100;0m Please wait , Nim will be right back ! \xE2\x9A\xAB" &  " " &  "\xE2\x9A\xAB" & spaces(2)  & "\x1b[38;2;154;205;50m \u2691".} 
+  {.hint    : "\x1b[38;2;154;205;50m \u2691  NimCx      :" & "\x1b[38;2;255;215;0m Officially works on Linux only." & spaces(13) & "\x1b[38;2;154;205;50m \u2691".}
+  {.hint    : "\x1b[38;2;154;205;50m \u2691  Compiling  :" & "\x1b[38;2;255;100;0m Please wait , Nim will be right back ! \xE2\x9A\xAB" & " " & "\xE2\x9A\xAB" & spaces(2) & "\x1b[38;2;154;205;50m \u2691".} 
   {.hints: off.}   # turn on off as per requirement
   
   
@@ -404,9 +404,9 @@ template benchmark*(benchmarkName: string, repeatcount:int = 1,code: typed) =
   let t1 = cpuTime()
   repeats(repeatcount):
         code
-  let elapsed  = epochTime() - t0
-  let elapsed1 = cpuTime()   - t1
-  zbres.epoch  = ff(elapsed,4)  
+  let elapsed = epochTime() - t0
+  let elapsed1 = cpuTime() - t1
+  zbres.epoch = ff(elapsed,4)  
   zbres.cpu = ff(elapsed1,4) 
   zbres.bname = benchmarkName
   zbres.repeats = $repeatcount
@@ -451,8 +451,8 @@ template benchmark*(benchmarkName: string,code: typed) =
   let repeatcount = 1
   repeats(repeatcount):
       code
-  let elapsed  = epochTime() - t0
-  let elapsed1 = cpuTime()   - t1
+  let elapsed = epochTime() - t0
+  let elapsed1 = cpuTime() - t1
   zbres.epoch  = ff(elapsed,4)  
   zbres.cpu = ff(elapsed1,4) 
   zbres.bname = benchmarkName
@@ -513,10 +513,7 @@ proc showBench*() =
  else:
     printLn("Benchmark results emtpy. Nothing to show",red)   
 
-
-
-         
-         
+    
 proc showPalette*(coltype:string = "white") = 
     ## ::
     ##   showPalette
@@ -664,10 +661,10 @@ proc spellFloat*(n:float64,currency:bool = false,sep:string = ".",sepname:string
       # but we may also want 
       # two hundred fifty dollars and thirty four cents
       if currency == false:
-          result = spellInteger(parseInt(nss[0])) & sepname &  spellInteger2(nss[1])
+          result = spellInteger(parseInt(nss[0])) & sepname & spellInteger2(nss[1])
       else:
           # we assume its a currency float value
-          result = spellInteger(parseInt(nss[0])) & sepname &  spellInteger(parseInt(nss[1]))
+          result = spellInteger(parseInt(nss[0])) & sepname & spellInteger(parseInt(nss[1]))
 
 template currentFile*: string =
   ## currentFile
@@ -1032,7 +1029,7 @@ proc doInfo*() =
   let modTime = getLastModificationTime(filename)
   let sep = ":"
   superHeader("Information for file " & filename & " and System " & spaces(22))
-  printLnBiCol("Last compilation on           : " & CompileDate &  " at " & CompileTime,yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("Last compilation on           : " & CompileDate & " at " & CompileTime,yellowgreen,lightgrey,sep,0,false,{})
   # this only makes sense for non executable files
   #printLnBiCol("Last access time to file      : " & filename & " " & $(fromSeconds(int(getLastAccessTime(filename)))),yellowgreen,lightgrey,sep,0,false,{})
   printLnBiCol("Last modificaton time of file : " & filename & " " & $modTime,yellowgreen,lightgrey,sep,0,false,{})
@@ -1052,7 +1049,7 @@ proc doInfo*() =
   printLnBiCol("File Id                       : " & $(fi.id.device) ,yellowgreen,lightgrey,sep,0,false,{})
   printLnBiCol("File No.                      : " & $(fi.id.file),yellowgreen,lightgrey,sep,0,false,{})
   printLnBiCol("Kind                          : " & $(fi.kind),yellowgreen,lightgrey,sep,0,false,{})
-  printLnBiCol("Size                          : " & $(float(fi.size)/ float(1000)) & " kb",yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol("Size                          : " & $(float(fi.size) / float(1000)) & " kb",yellowgreen,lightgrey,sep,0,false,{})
   printLnBiCol("File Permissions              : ",yellowgreen,lightgrey,sep,0,false,{})
   for pp in fi.permissions:
       printLnBiCol("                              : " & $pp,yellowgreen,lightgrey,sep,0,false,{})
@@ -1079,9 +1076,9 @@ proc doInfo*() =
 
   printLnBiCol("Nim Version                   : " & $NimMajor & "." & $NimMinor & "." & $NimPatch,yellowgreen,lightgrey,sep,0,false,{})
   printLnBiCol("Processor count               : " & $cpuInfo.countProcessors(),yellowgreen,lightgrey,sep,0,false,{})
-  printBiCol("OS                            : "& hostOS,yellowgreen,lightgrey,sep,0,false,{})
-  printBiCol(" | CPU: "& hostCPU,yellowgreen,lightgrey,sep,0,false,{})
-  printLnBiCol(" | cpuEndian: "& $cpuEndian,yellowgreen,lightgrey,sep,0,false,{})
+  printBiCol("OS                            : " & hostOS,yellowgreen,lightgrey,sep,0,false,{})
+  printBiCol(" | CPU: " & hostCPU,yellowgreen,lightgrey,sep,0,false,{})
+  printLnBiCol(" | cpuEndian: " & $cpuEndian,yellowgreen,lightgrey,sep,0,false,{})
   printLnBiCol("CPU Cores                     : " & $cpuInfo.countProcessors())
   printLnBiCol("Current pid                   : " & $getpid(),yellowgreen,lightgrey,sep,0,false,{})
   printLnBiCol("Terminal encoding             : " & $getCurrentEncoding())
@@ -1138,7 +1135,7 @@ template doByeBye*() =
   rmTmpFilenames()
   print("Exiting now !  ",lime)
   printLn("Bye-Bye from " & extractFileName(getAppFilename()),red)
-  printLn(yellowgreen & "Mem -> " &  lightsteelblue & "Used : " & white & ff2(getOccupiedMem()) & lightsteelblue & "  Free : " & white & ff2(getFreeMem()) & lightsteelblue & "  Total : " & white & ff2(getTotalMem() ))
+  printLn(yellowgreen & "Mem -> " & lightsteelblue & "Used : " & white & ff2(getOccupiedMem()) & lightsteelblue & "  Free : " & white & ff2(getFreeMem()) & lightsteelblue & "  Total : " & white & ff2(getTotalMem() ))
   #doFinish()
 
 proc doFinish*() =
@@ -1159,7 +1156,7 @@ proc doFinish*() =
         printLnBiCol("  Compiled on: " & $CompileDate & " at " & $CompileTime)
         if detectOs(OpenSUSE):  # some additional data if on openSuse systems
             let ux1 = uname().split("#")[0].split(" ")
-            printLnBiCol("Kernel     :  " &  ux1[2] & "  Computer : " & ux1[1] & "  System : " & ux1[0],yellowgreen,lightslategray,":",0,false,{})
+            printLnBiCol("Kernel     :  " & ux1[2] & "  Computer : " & ux1[1] & "  System : " & ux1[0],yellowgreen,lightslategray,":",0,false,{})
             let rld = release().splitLines()
             let rld3 = rld[2].splitty(":")
             let rld4 = rld3[0] & spaces(2) & strip(rld3[1])

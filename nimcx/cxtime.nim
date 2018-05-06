@@ -63,7 +63,7 @@ proc toDateTime*(date:string = "2000-01-01"): DateTime =
          
          #printLnErrorMsg("Month = " & adate[1] & " ?? ")
          printLnErrorMsg("")
-         printLnBErrorMsg("Wrong Month in " &  adate[1])
+         printLnBErrorMsg("Wrong Month in " & adate[1])
          quit(0)
    
    var zday = parseint(adate[2])

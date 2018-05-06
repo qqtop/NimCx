@@ -97,7 +97,7 @@ proc getCxTrueColorSet*(min:int = 0,max:int = 888,step:int = 12,flag48:bool = fa
      result = false
      if checktruecolorsupport() == true:
            {.hints: on.}
-           {.hint    : "\x1b[38;2;154;205;50m \u2691 NimCx working on :" & "\x1b[38;2;255;100;0m getCxTrueColorset ! \xE2\x9A\xAB" &  " " &  "\xE2\x9A\xAB" & spaces(2)  & "\x1b[38;2;154;205;50m \u2691" & spaces(1) .} 
+           {.hint    : "\x1b[38;2;154;205;50m \u2691 NimCx working on :" & "\x1b[38;2;255;100;0m getCxTrueColorset ! \xE2\x9A\xAB" & " " & "\xE2\x9A\xAB" & spaces(2) & "\x1b[38;2;154;205;50m \u2691" & spaces(1) .} 
            {.hints: off.}
            cxTrueCol = @[]
            cxTrueCol = cxTrueColorSet(min,max,step,flag48) 

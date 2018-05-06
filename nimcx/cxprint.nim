@@ -572,7 +572,7 @@ proc rainbow*[T](s : T,
           print(astr[x],colorNames[c][1],bgblack,xpos = nxpos,fitLine)
        else:
           # need to calc the center here and increment by x
-          nxpos = centerX() - ($astr).len div 2  + x - 1
+          nxpos = centerX() - ($astr).len div 2 + x - 1
           print(astr[x],colorNames[c][1],bgblack,xpos=nxpos,fitLine)
        inc nxpos
 

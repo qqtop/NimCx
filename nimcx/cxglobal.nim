@@ -346,7 +346,7 @@ proc createSeqBinary*(n:int = 10):seq[int] {.inline.} =
      let b = createSeqBool(n)
      for x in b:
        if $x == "false" : result.add(0)
-       if $x ==  "true"  : result.add(1)
+       if $x == "true"  : result.add(1)
        
 
 proc createSeqInt*(n:int = 10,mi:int = 0,ma:int = 1000) : seq[int] {.inline.} =
@@ -1335,7 +1335,7 @@ template currentLine*() =
    ## simple template to return line number , maybe usefull for debugging 
    var pos:tuple[filename: string, line: int,column:int] = ( "", -1,-1)
    pos = instantiationInfo()
-   printLnInfoMsg("File: " & pos.filename,"Line:" & $(pos.line)  & " Column:" & $(pos.column),truetomato, xpos = 3)
+   printLnInfoMsg("File: " & pos.filename,"Line:" & $(pos.line) & " Column:" & $(pos.column),truetomato, xpos = 3)
    echo()
    
 template currentLine*(xpos:int) = 
@@ -1351,7 +1351,7 @@ template currentLine*(xpos:int) =
    var tww = tw
    #if tww - xpos < msgl: xpos = msgl - 1 
    xpos = tww - msgl - 5
-   printLnInfoMsg("File: " & pos.filename,"Line:" & $(pos.line)  & " Column:" & $(pos.column),truetomato,pastelWhite,xpos)
+   printLnInfoMsg("File: " & pos.filename,"Line:" & $(pos.line) & " Column:" & $(pos.column),truetomato,pastelWhite,xpos)
    echo()
    
 

@@ -4,13 +4,13 @@ import strutils,terminal,sets
 
 # cxfont.nim
 #
-# experimental font, slim numbers and 
+# experimental font, slim numbers , swap , dotmatric , bracketmatrix font and 
 # 
 # old block font related procs (not in use ) 
 # 
 # 
 # 
-# Last : 2018-02-27 
+# Last : 2018-05-06 
 # 
 
 # type used in slim number printing
@@ -52,9 +52,9 @@ template cx2*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
          printLn2(spaces(2) & efb3 * 4 & spaces(4),coltop,xpos = xpos)
          printLn2(spaces(1) & efs2 & efb1 * 4 & efs2 & spaces(2),col,xpos = xpos)
          printLn2(spaces(6) & efs2 * 1 & spaces(1),col,xpos = xpos)
-         printLn2(spaces(2) & efs2 * 3  & efb1 & spaces(3),col,xpos = xpos)
-         printLn2(spaces(1) & efs2 * 1  & spaces(4)  & spaces(2),col,xpos = xpos)
-         printLn2(spaces(1) & efb1 * 1 & efb2 * 4  & efb1 * 1 & spaces(2),col,xpos = xpos)
+         printLn2(spaces(2) & efs2 * 3 & efb1 & spaces(3),col,xpos = xpos)
+         printLn2(spaces(1) & efs2 * 1 & spaces(4) & spaces(2),col,xpos = xpos)
+         printLn2(spaces(1) & efb1 * 1 & efb2 * 4 & efb1 * 1 & spaces(2),col,xpos = xpos)
          curup(6) 
  
         
@@ -92,7 +92,7 @@ template cx5*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
          printLn2(spaces(1) & efs2 * 1 & spaces(7),col,xpos = xpos)
          printLn2(spaces(1) & efb1 & spaces(0) & efs2 * 2 & spaces(1) & efs2 & spaces(3),col,xpos = xpos)
          printLn2(spaces(6) & efb1 * 1 & spaces(1),col,xpos = xpos)
-         printLn2(spaces(1) & efb1 * 1 & efb2 * 3  & efb1 & spaces(3),col,xpos = xpos)
+         printLn2(spaces(1) & efb1 * 1 & efb2 * 3 & efb1 & spaces(3),col,xpos = xpos)
          curup(6)               
                             
               
@@ -105,7 +105,7 @@ template cx6*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
          printLn2(spaces(1) & efs2 * 1 & spaces(7),col,xpos = xpos)
          printLn2(spaces(1) & efb2 & spaces(1) & efs2 * 1 & spaces(1) & efs2 & spaces(3),col,xpos = xpos)
          printLn2(spaces(1) & efs2 * 1 & spaces(4) & efb1 * 1 & spaces(1),col,xpos = xpos)
-         printLn2(spaces(2) & efb1 & efb2 * 2  & efb1 & spaces(3),col,xpos = xpos)
+         printLn2(spaces(2) & efb1 & efb2 * 2 & efb1 & spaces(3),col,xpos = xpos)
          curup(6)               
               
      
@@ -115,7 +115,7 @@ template cx7*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
          let xpos = npos + 5
          printLn2(efb3 * 7,coltop,xpos = xpos)
          printLn2(efb2 * 7,col,xpos = xpos)
-         printLn2(spaces(5) & efs2 * 1  & efb1 ,col,xpos = xpos)
+         printLn2(spaces(5) & efs2 * 1 & efb1 ,col,xpos = xpos)
          loopy(0..2,printLn2(spaces(4) & efb2 * 2 ,col,xpos = xpos))
          curup(6)  
  
@@ -124,11 +124,11 @@ template cx8*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
       
          let xpos = npos + 5
          printLn2(spaces(2) & efb3 * 4 & spaces(4),coltop,xpos = xpos)
-         printLn2(spaces(1) & efs2 & efb1 & efb1 * 2  & efb1 & efs2 & spaces(2),col,xpos = xpos)
-         printLn2(spaces(1) & efs2 * 1  & spaces(4) & efs2 * 1 & spaces(1),col,xpos = xpos)
-         printLn2(spaces(2) & efb1 &  efs2 * 2  & efb1 * 1 & spaces(1),col,xpos = xpos)
-         printLn2(spaces(1) & efs2 * 1  & spaces(4) & efs2 * 1 & spaces(1),col,xpos = xpos)
-         printLn2(spaces(2) & efb1 & efb2 * 2  & efb1 & spaces(3),col,xpos = xpos)
+         printLn2(spaces(1) & efs2 & efb1 & efb1 * 2 & efb1 & efs2 & spaces(2),col,xpos = xpos)
+         printLn2(spaces(1) & efs2 * 1 & spaces(4) & efs2 * 1 & spaces(1),col,xpos = xpos)
+         printLn2(spaces(2) & efb1 & efs2 * 2 & efb1 * 1 & spaces(1),col,xpos = xpos)
+         printLn2(spaces(1) & efs2 * 1 & spaces(4) & efs2 * 1 & spaces(1),col,xpos = xpos)
+         printLn2(spaces(2) & efb1 & efb2 * 2 & efb1 & spaces(3),col,xpos = xpos)
          curup(6) 
  
  
@@ -139,8 +139,8 @@ template cx9*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
          let xpos = npos + 5
          printLn2(spaces(1) & efb3 * 6,coltop,xpos = xpos)
          printLn2(efs2 & efb1 * 3 & efb2 * 3,col,xpos = xpos)
-         printLn2(spaces(0) & efs2 * 1  & spaces(4) & efb2 * 2,col,xpos = xpos)
-         printLn2(spaces(1) & efb1 &  efs2 * 3 & efb1 * 2,col,xpos = xpos)
+         printLn2(spaces(0) & efs2 * 1 & spaces(4) & efb2 * 2,col,xpos = xpos)
+         printLn2(spaces(1) & efb1 & efs2 * 3 & efb1 * 2,col,xpos = xpos)
          loopy(0..1,printLn2(spaces(5) & efb2 * 2 ,col,xpos = xpos))
          curup(6)  
  
@@ -169,7 +169,7 @@ template cxb*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
          printLn2(efb3 * 5, coltop,xpos=xpos)
          printLn2(efb2 * 4 & spaces(1) & efb2,col,xpos=xpos)
          printLn2(efb2 * 2 & spaces(4) & efb2,col,xpos=xpos)
-         printLn2(efb2 * 3 & efs2 &  spaces(0) & efs2 * 2,col,xpos=xpos)
+         printLn2(efb2 * 3 & efs2 & spaces(0) & efs2 * 2,col,xpos=xpos)
          printLn2(efb2 * 2 & spaces(4) & efb2,col,xpos=xpos)
          printLn2(efb2 * 4 & spaces(1) & efb2,col,xpos=xpos)
          curup(6)
@@ -323,7 +323,7 @@ template cxp*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
          printLn2(efb3 * 5, coltop,xpos=xpos)
          printLn2(efb2 * 4 & spaces(1) & efb2,col,xpos=xpos)
          printLn2(efb2 * 2 & spaces(4) & efb2,col,xpos=xpos)
-         printLn2(efb2 * 3 & efs2 &  spaces(0) & efs2 * 2,col,xpos=xpos)
+         printLn2(efb2 * 3 & efs2 & spaces(0) & efs2 * 2,col,xpos=xpos)
          printLn2(efb2 * 2 ,col,xpos=xpos)
          printLn2(efb2 * 2,col,xpos=xpos)
          curup(6)
@@ -347,7 +347,7 @@ template cxr*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
          printLn2(efb3 * 5, coltop,xpos=xpos)
          printLn2(efb2 * 4 & spaces(1) & efb2,col,xpos=xpos)
          printLn2(efb2 * 2 & spaces(3) & efb3 & efb2,col,xpos=xpos)
-         printLn2(efb2 * 2 & efs2 * 2 &  spaces(0) & efs2 * 1,col,xpos=xpos)
+         printLn2(efb2 * 2 & efs2 * 2 & spaces(0) & efs2 * 1,col,xpos=xpos)
          printLn2(efb2 * 2 & spaces(1) & efs2,col,xpos=xpos)
          printLn2(efb2 * 2 & spaces(3) & efb2 * 2,col,xpos=xpos)
          curup(6)
@@ -360,7 +360,7 @@ template cxs*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
          printLn2(efb1 * 1 & spaces(1) & efs2 * 1 ,col,xpos=xpos)
          printLn2(spaces(4) & efb1 & efs2 * 1 ,col,xpos=xpos)
          printLn2(spaces(5) & efs2 * 2,col,xpos=xpos)
-         printLn2(efb2 * 5 &  efs2  * 1 & efb1  * 1 ,col,xpos=xpos)
+         printLn2(efb2 * 5 &  efs2 * 1 & efb1 * 1 ,col,xpos=xpos)
          curup(6)  
   
  
@@ -405,8 +405,8 @@ template cxw*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
          printLn2(efb2 * 2 & spaces(5) & efb2 * 2, col,xpos=xpos)
          printLn2(efb2 * 2 & spaces(5) & efb2 * 2, col,xpos=xpos)
          printLn2(efb2 * 2 & spaces(2) & efs2 & spaces(2) & efb2 * 2, col,xpos=xpos)
-         printLn2(spaces(1) & efb1 * 2 & spaces(0) & efs2 &  spaces(1) & efs2 & spaces(0) & efb1 * 2, col,xpos=xpos)
-         printLn2(spaces(2) & efb2 * 2 &  spaces(1) & efb2 * 2, col,xpos=xpos)
+         printLn2(spaces(1) & efb1 * 2 & spaces(0) & efs2 & spaces(1) & efs2 & spaces(0) & efb1 * 2, col,xpos=xpos)
+         printLn2(spaces(2) & efb2 * 2 & spaces(1) & efb2 * 2, col,xpos=xpos)
          curup(6)          
  
               
@@ -893,7 +893,7 @@ proc printCxFontText*(textseq:seq[int],xpos:int = 2,cxfont:seq[seq[string]],colo
   var nxpos = xpos
   for achar in textseq:
       printCxFontLetter(achar,nxpos,cxfont,color,vertstepping)
-      nxpos = nxpos +  kerning
+      nxpos = nxpos + kerning
   decho(5)
 
   
@@ -1034,9 +1034,11 @@ proc showCxFont*(name:string) =
 proc dotMatrixFontTest*() =
     ## dotMatrixFontTest
     ## 
-    ## The current way to use fonts bracketmatrix and dotmatrix
+    ## The current way to use fonts bracketmatrix and swamp
+    ##  
+    ## is to run similar as below for dotmatrix you can now use dotmatrixtyper
     ## 
-    ## is to run 
+    ## 
     ##
     ##.. code-block:: nim 
     ##  import nimcx 
@@ -1119,6 +1121,137 @@ proc dotMatrixFontTest*() =
     let myswampfont = createCxFont("swamp")
     printCxFontText(@[59,47,66,64,55,70],xpos = 30,myswampfont,vertstepping=7,kerning = 15)  # swamp needs vertstepping 7 to avoid steps...
     decho(12)
+    
+
+
+proc dotMatrixTyper*(s:string,xpos:int = 1) =
+  ## prints the entered string in dotmatrix font
+  ## 
+  ## no checking as to terminalwidth is done so adjust terminal width and char sizes accordingly
+  ## 
+  ## cursor will be positioned at top right of last character
+  ## 
+  ##.. code-block:: nim 
+  ##   import nimcx 
+  ##   let myfont = createCxFont("dotmatrix")
+  ##   decho(5)    
+  ##   dotmatrixtyper("NIMCX - dotmatrix",myfont)
+  ##   decho(8)
+  
+  var nxpos = xpos
+  let myfont = createCxFont("dotmatrix")
+  for x in s:
+    
+    case $x
+      of "0" : printCxFontText(@[0],xpos = nxpos,cxfont=myfont) 
+      of "1" : printCxFontText(@[1],xpos = nxpos,cxfont=myfont)
+      of "2" : printCxFontText(@[2],xpos = nxpos,cxfont=myfont)
+      of "3" : printCxFontText(@[3],xpos = nxpos,cxfont=myfont)
+      of "4" : printCxFontText(@[4],xpos = nxpos,cxfont=myfont)
+      of "5" : printCxFontText(@[5],xpos = nxpos,cxfont=myfont)
+      of "6" : printCxFontText(@[6],xpos = nxpos,cxfont=myfont)
+      of "7" : printCxFontText(@[7],xpos = nxpos,cxfont=myfont)
+      of "8" : printCxFontText(@[8],xpos = nxpos,cxfont=myfont)
+      of "9" : printCxFontText(@[9],xpos = nxpos,cxfont=myfont)
+      of ":" : printCxFontText(@[10],xpos = nxpos,cxfont=myfont)
+      of ";" : printCxFontText(@[11],xpos = nxpos,cxfont=myfont)
+      of "<" : printCxFontText(@[12],xpos = nxpos,cxfont=myfont)
+      of "=" : printCxFontText(@[13],xpos = nxpos,cxfont=myfont)
+      of ">" : printCxFontText(@[14],xpos = nxpos,cxfont=myfont)
+      of "?" : printCxFontText(@[15],xpos = nxpos,cxfont=myfont)
+      of "@" : printCxFontText(@[16],xpos = nxpos,cxfont=myfont)
+      of "A" : printCxFontText(@[17],xpos = nxpos,cxfont=myfont)  
+      of "B" : printCxFontText(@[18],xpos = nxpos,cxfont=myfont) 
+      of "C" : printCxFontText(@[19],xpos = nxpos,cxfont=myfont) 
+      of "D" : printCxFontText(@[20],xpos = nxpos,cxfont=myfont)
+      of "E" : printCxFontText(@[21],xpos = nxpos,cxfont=myfont)
+      of "F" : printCxFontText(@[22],xpos = nxpos,cxfont=myfont)
+      of "G" : printCxFontText(@[23],xpos = nxpos,cxfont=myfont)
+      of "H" : printCxFontText(@[24],xpos = nxpos,cxfont=myfont)
+      of "I" : printCxFontText(@[25],xpos = nxpos,cxfont=myfont)
+      of "J" : printCxFontText(@[26],xpos = nxpos,cxfont=myfont)
+      of "K" : printCxFontText(@[27],xpos = nxpos,cxfont=myfont)
+      of "L" : printCxFontText(@[28],xpos = nxpos,cxfont=myfont)
+      of "M" : printCxFontText(@[29],xpos = nxpos,cxfont=myfont)
+      of "N" : printCxFontText(@[30],xpos = nxpos,cxfont=myfont)
+      of "O" : printCxFontText(@[31],xpos = nxpos,cxfont=myfont)
+      of "P" : printCxFontText(@[32],xpos = nxpos,cxfont=myfont)
+      of "Q" : printCxFontText(@[33],xpos = nxpos,cxfont=myfont)
+      of "R" : printCxFontText(@[34],xpos = nxpos,cxfont=myfont)
+      of "S" : printCxFontText(@[35],xpos = nxpos,cxfont=myfont)
+      of "T" : printCxFontText(@[36],xpos = nxpos,cxfont=myfont)
+      of "U" : printCxFontText(@[37],xpos = nxpos,cxfont=myfont)
+      of "V" : printCxFontText(@[38],xpos = nxpos,cxfont=myfont)
+      of "W" : printCxFontText(@[39],xpos = nxpos,cxfont=myfont)
+      of "X" : printCxFontText(@[40],xpos = nxpos,cxfont=myfont)
+      of "Y" : printCxFontText(@[41],xpos = nxpos,cxfont=myfont)
+      of "Z" : printCxFontText(@[42],xpos = nxpos,cxfont=myfont)
+      of "[" : printCxFontText(@[43],xpos = nxpos,cxfont=myfont)
+      of "\\" : printCxFontText(@[44],xpos = nxpos,cxfont=myfont)
+      of "]" : printCxFontText(@[45],xpos = nxpos,cxfont=myfont)
+      of "^" : printCxFontText(@[46],xpos = nxpos,cxfont=myfont)
+      of "'" : printCxFontText(@[47],xpos = nxpos,cxfont=myfont)
+      of "a" : printCxFontText(@[48],xpos = nxpos,cxfont=myfont)  
+      of "b" : printCxFontText(@[49],xpos = nxpos,cxfont=myfont) 
+      of "c" : printCxFontText(@[50],xpos = nxpos,cxfont=myfont) 
+      of "d" : printCxFontText(@[51],xpos = nxpos,cxfont=myfont)
+      of "e" : printCxFontText(@[52],xpos = nxpos,cxfont=myfont)
+      of "f" : printCxFontText(@[53],xpos = nxpos,cxfont=myfont)
+      of "g" : printCxFontText(@[54],xpos = nxpos,cxfont=myfont)
+      of "h" : printCxFontText(@[55],xpos = nxpos,cxfont=myfont)
+      of "i" : printCxFontText(@[56],xpos = nxpos,cxfont=myfont)
+      of "j" : printCxFontText(@[57],xpos = nxpos,cxfont=myfont)
+      of "k" : printCxFontText(@[58],xpos = nxpos,cxfont=myfont)
+      of "l" : printCxFontText(@[59],xpos = nxpos,cxfont=myfont)
+      of "m" : printCxFontText(@[60],xpos = nxpos,cxfont=myfont)
+      of "n" : printCxFontText(@[61],xpos = nxpos,cxfont=myfont)
+      of "o" : printCxFontText(@[62],xpos = nxpos,cxfont=myfont)
+      of "p" : printCxFontText(@[63],xpos = nxpos,cxfont=myfont)
+      of "q" : printCxFontText(@[64],xpos = nxpos,cxfont=myfont)
+      of "r" : printCxFontText(@[65],xpos = nxpos,cxfont=myfont)
+      of "s" : printCxFontText(@[66],xpos = nxpos,cxfont=myfont)
+      of "t" : printCxFontText(@[67],xpos = nxpos,cxfont=myfont)
+      of "u" : printCxFontText(@[68],xpos = nxpos,cxfont=myfont)
+      of "v" : printCxFontText(@[69],xpos = nxpos,cxfont=myfont)
+      of "w" : printCxFontText(@[70],xpos = nxpos,cxfont=myfont)
+      of "x" : printCxFontText(@[71],xpos = nxpos,cxfont=myfont)
+      of "y" : printCxFontText(@[72],xpos = nxpos,cxfont=myfont)
+      of "z" : printCxFontText(@[73],xpos = nxpos,cxfont=myfont)
+      of "{" : printCxFontText(@[74],xpos = nxpos,cxfont=myfont)
+      of "|" : printCxFontText(@[75],xpos = nxpos,cxfont=myfont)
+      of "}" : printCxFontText(@[76],xpos = nxpos,cxfont=myfont)
+      of "~" : printCxFontText(@[77],xpos = nxpos,cxfont=myfont)
+      #of "AE" : printCxFontText(@[78],xpos = nxpos,cxfont=myfont)   # some german umlaut need to be done for german keyboard
+      of "Ö" : printCxFontText(@[79],xpos = nxpos,cxfont=myfont)
+      #of "UE" : printCxFontText(@[80],xpos = nxpos,cxfont=myfont)
+      #of "ae" : printCxFontText(@[81],xpos = nxpos,cxfont=myfont)
+      of "ö" : printCxFontText(@[82],xpos = nxpos,cxfont=myfont)
+      #of "ue" : printCxFontText(@[83],xpos = nxpos,cxfont=myfont)
+      of "!" : printCxFontText(@[84],xpos = nxpos,cxfont=myfont)
+      of "$" : printCxFontText(@[87],xpos = nxpos,cxfont=myfont)
+      of "%" : printCxFontText(@[88],xpos = nxpos,cxfont=myfont)
+      of "&" : printCxFontText(@[89],xpos = nxpos,cxfont=myfont)
+      of "(" : printCxFontText(@[91],xpos = nxpos,cxfont=myfont)
+      of ")" : printCxFontText(@[92],xpos = nxpos,cxfont=myfont)
+      of "*" : printCxFontText(@[93],xpos = nxpos,cxfont=myfont)
+      of "+" : printCxFontText(@[94],xpos = nxpos,cxfont=myfont)
+      of "," : printCxFontText(@[95],xpos = nxpos,cxfont=myfont)
+      of "-" : printCxFontText(@[96],xpos = nxpos,cxfont=myfont)
+      of "." : printCxFontText(@[97],xpos = nxpos,cxfont=myfont)
+      of "/" : printCxFontText(@[98],xpos = nxpos,cxfont=myfont)
+      of " " : 
+               curdn(5)
+               nxpos = nxpos - 15
+      else:discard
+    nxpos = nxpos + 19  
+    curup(5)       
+    
+    
+    
+    
+    
+    
+    
     
     
 # end of dotmatrixfont related functions        

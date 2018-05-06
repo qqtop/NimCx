@@ -198,6 +198,21 @@ decho(15)
 doNimUp()
 decho(8)
 
+# this test will need a zoomed out terminal to accomodate all letters
+# nextTest()
+# decho(5)    
+# dotMatrixTyper("NIMCX - FONT",xpos = 1)
+# decho(10)
+# dotMatrixTyper("dotmatrix",xpos = 6)
+# decho(12)
+# 
+# decho(5)    
+# dotMatrixTyper("NIMIFICATION",xpos = 1)
+# decho(15)
+# dotMatrixTyper(" of  the  world ",xpos = 6)
+# decho(12)
+# 
+
 nextTest()
 printMadeWithNim()
 

@@ -110,7 +110,7 @@ proc cxdayofweek*(datestr:string):string =
     ##    echo getFirstMondayYear("2018"),"  ",dayofweek(getFirstMondayYear("2018"))
     ##    echo getFirstMondayYearMonth("2018-2"),"  ",dayofweek(getFirstMondayYearMonth("2018-2"))
     
-    result =  $(getDayOfWeek(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr))))      
+    result = $(getDayOfWeek(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr))))      
 
 proc getFirstMondayYear*[T](ayear:T):string =
     ## getFirstMondayYear
@@ -124,9 +124,9 @@ proc getFirstMondayYear*[T](ayear:T):string =
     
     for x in 0.. 7:
        var datestr = $ayear & "-01-0" & $x
-       if validdate(datestr) == true:
-          #if $(getdayofweek(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr)))) == "Monday":
-          if cxdayofweek(datestr) == "Monday":   
+       if validdate(datestr) == true:decho(5)    
+       #if $(getdayofweek(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr)))) == "Monday":
+       if cxdayofweek(datestr) == "Monday":   
              result = datestr
 
 
@@ -145,10 +145,10 @@ proc getFirstMondayYearMonth*[T](aym:T):string =
     #var n:WeekDay
     var amx = $aym
     for x in 0 .. 7:
-       if amx.len < 7:
-          let yr = year(amx)
-          let mo = month(amx)  # this also fixes wrong months
-          amx = yr & "-" & mo
+       if amx.len < 7:decho(5)    
+       let yr = year(amx)
+       let mo = month(amx)  # this also fixes wrong months
+       amx = yr & "-" & mo
        var datestr = amx & "-0" & $x
        if validdate(datestr) == true:
           if cxdayofweek(datestr) == "Monday":
@@ -169,7 +169,7 @@ proc getNextMonday*(adate:string):string =
     ##      var dw = "2015-08-10"
     ##      for x in 1.. 10:
     ##          dw = getNextMonday(dw)
-    ##          echo dw
+    ##          echo dwdecho(5)    
     ##
     ##
     ## in case of invalid dates nil will be returned
@@ -190,8 +190,8 @@ proc getNextMonday*(adate:string):string =
                 # day to get the next one calculated
                 ndatestr = plusDays(adate,1)
 
-            else:
-                ndatestr = adate
+            else:decho(5)    
+            ndatestr = adate
 
             for x in 0..<7:
                 if validdate(ndatestr) == true:
@@ -249,7 +249,7 @@ proc getRandomPoint*(minx:float = -500.0,maxx:float = 500.0,miny:float = -500.0,
     ## maxy  max y  value
     ##
     ## .. code-block:: nim
-    ##    for x in 0..10:
+    ##    for x in 0..10:decho(5)    
     ##    var n = getRandomPoint(-500.00,200.0,-100.0,300.00)
     ##    printLnBiCol(fmtx([">4",">5","",">6",">5"],"x:",$n.x,spaces(7),"y:",$n.y),spaces(7))
     ## 
@@ -369,7 +369,7 @@ proc showRuler* (xpos:int=0,xposE:int=0,ypos:int = 0,fgr:string = white,bgr:Back
      var fflag:bool = false
      var npos  = xpos
      var nposE = xposE
-     if xpos ==  0: npos  = 1
+     if xpos == 0: npos  = 1
      if xposE == 0: nposE = tw - 1
 
      if vert == false :  # horizontalruler
