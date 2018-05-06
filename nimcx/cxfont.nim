@@ -10,7 +10,7 @@ import strutils,terminal,sets
 # 
 # 
 # 
-# Last : 2018-05-06 
+# Last : 2018-05-07 
 # 
 
 # type used in slim number printing
@@ -20,7 +20,7 @@ type
       
 # experimental your results may depend on terminal in use
 # 
-# suggested : konsole for best effect
+# suggested : konsole for best effect  with truecolor
 # 
 # experimental font building  
 
@@ -1124,7 +1124,7 @@ proc dotMatrixFontTest*() =
     
 
 
-proc dotMatrixTyper*(s:string,xpos:int = 1) =
+proc dotMatrixTyper*(s:string,xpos:int = 1,color:string = randcol()) =
   ## prints the entered string in dotmatrix font
   ## 
   ## no checking as to terminalwidth is done so adjust terminal width and char sizes accordingly
@@ -1133,9 +1133,8 @@ proc dotMatrixTyper*(s:string,xpos:int = 1) =
   ## 
   ##.. code-block:: nim 
   ##   import nimcx 
-  ##   let myfont = createCxFont("dotmatrix")
   ##   decho(5)    
-  ##   dotmatrixtyper("NIMCX - dotmatrix",myfont)
+  ##   dotmatrixtyper("NIMCX - dotmatrix")
   ##   decho(8)
   
   var nxpos = xpos
@@ -1143,102 +1142,102 @@ proc dotMatrixTyper*(s:string,xpos:int = 1) =
   for x in s:
     
     case $x
-      of "0" : printCxFontText(@[0],xpos = nxpos,cxfont=myfont) 
-      of "1" : printCxFontText(@[1],xpos = nxpos,cxfont=myfont)
-      of "2" : printCxFontText(@[2],xpos = nxpos,cxfont=myfont)
-      of "3" : printCxFontText(@[3],xpos = nxpos,cxfont=myfont)
-      of "4" : printCxFontText(@[4],xpos = nxpos,cxfont=myfont)
-      of "5" : printCxFontText(@[5],xpos = nxpos,cxfont=myfont)
-      of "6" : printCxFontText(@[6],xpos = nxpos,cxfont=myfont)
-      of "7" : printCxFontText(@[7],xpos = nxpos,cxfont=myfont)
-      of "8" : printCxFontText(@[8],xpos = nxpos,cxfont=myfont)
-      of "9" : printCxFontText(@[9],xpos = nxpos,cxfont=myfont)
-      of ":" : printCxFontText(@[10],xpos = nxpos,cxfont=myfont)
-      of ";" : printCxFontText(@[11],xpos = nxpos,cxfont=myfont)
-      of "<" : printCxFontText(@[12],xpos = nxpos,cxfont=myfont)
-      of "=" : printCxFontText(@[13],xpos = nxpos,cxfont=myfont)
-      of ">" : printCxFontText(@[14],xpos = nxpos,cxfont=myfont)
-      of "?" : printCxFontText(@[15],xpos = nxpos,cxfont=myfont)
-      of "@" : printCxFontText(@[16],xpos = nxpos,cxfont=myfont)
-      of "A" : printCxFontText(@[17],xpos = nxpos,cxfont=myfont)  
-      of "B" : printCxFontText(@[18],xpos = nxpos,cxfont=myfont) 
-      of "C" : printCxFontText(@[19],xpos = nxpos,cxfont=myfont) 
-      of "D" : printCxFontText(@[20],xpos = nxpos,cxfont=myfont)
-      of "E" : printCxFontText(@[21],xpos = nxpos,cxfont=myfont)
-      of "F" : printCxFontText(@[22],xpos = nxpos,cxfont=myfont)
-      of "G" : printCxFontText(@[23],xpos = nxpos,cxfont=myfont)
-      of "H" : printCxFontText(@[24],xpos = nxpos,cxfont=myfont)
-      of "I" : printCxFontText(@[25],xpos = nxpos,cxfont=myfont)
-      of "J" : printCxFontText(@[26],xpos = nxpos,cxfont=myfont)
-      of "K" : printCxFontText(@[27],xpos = nxpos,cxfont=myfont)
-      of "L" : printCxFontText(@[28],xpos = nxpos,cxfont=myfont)
-      of "M" : printCxFontText(@[29],xpos = nxpos,cxfont=myfont)
-      of "N" : printCxFontText(@[30],xpos = nxpos,cxfont=myfont)
-      of "O" : printCxFontText(@[31],xpos = nxpos,cxfont=myfont)
-      of "P" : printCxFontText(@[32],xpos = nxpos,cxfont=myfont)
-      of "Q" : printCxFontText(@[33],xpos = nxpos,cxfont=myfont)
-      of "R" : printCxFontText(@[34],xpos = nxpos,cxfont=myfont)
-      of "S" : printCxFontText(@[35],xpos = nxpos,cxfont=myfont)
-      of "T" : printCxFontText(@[36],xpos = nxpos,cxfont=myfont)
-      of "U" : printCxFontText(@[37],xpos = nxpos,cxfont=myfont)
-      of "V" : printCxFontText(@[38],xpos = nxpos,cxfont=myfont)
-      of "W" : printCxFontText(@[39],xpos = nxpos,cxfont=myfont)
-      of "X" : printCxFontText(@[40],xpos = nxpos,cxfont=myfont)
-      of "Y" : printCxFontText(@[41],xpos = nxpos,cxfont=myfont)
-      of "Z" : printCxFontText(@[42],xpos = nxpos,cxfont=myfont)
-      of "[" : printCxFontText(@[43],xpos = nxpos,cxfont=myfont)
-      of "\\" : printCxFontText(@[44],xpos = nxpos,cxfont=myfont)
-      of "]" : printCxFontText(@[45],xpos = nxpos,cxfont=myfont)
-      of "^" : printCxFontText(@[46],xpos = nxpos,cxfont=myfont)
-      of "'" : printCxFontText(@[47],xpos = nxpos,cxfont=myfont)
-      of "a" : printCxFontText(@[48],xpos = nxpos,cxfont=myfont)  
-      of "b" : printCxFontText(@[49],xpos = nxpos,cxfont=myfont) 
-      of "c" : printCxFontText(@[50],xpos = nxpos,cxfont=myfont) 
-      of "d" : printCxFontText(@[51],xpos = nxpos,cxfont=myfont)
-      of "e" : printCxFontText(@[52],xpos = nxpos,cxfont=myfont)
-      of "f" : printCxFontText(@[53],xpos = nxpos,cxfont=myfont)
-      of "g" : printCxFontText(@[54],xpos = nxpos,cxfont=myfont)
-      of "h" : printCxFontText(@[55],xpos = nxpos,cxfont=myfont)
-      of "i" : printCxFontText(@[56],xpos = nxpos,cxfont=myfont)
-      of "j" : printCxFontText(@[57],xpos = nxpos,cxfont=myfont)
-      of "k" : printCxFontText(@[58],xpos = nxpos,cxfont=myfont)
-      of "l" : printCxFontText(@[59],xpos = nxpos,cxfont=myfont)
-      of "m" : printCxFontText(@[60],xpos = nxpos,cxfont=myfont)
-      of "n" : printCxFontText(@[61],xpos = nxpos,cxfont=myfont)
-      of "o" : printCxFontText(@[62],xpos = nxpos,cxfont=myfont)
-      of "p" : printCxFontText(@[63],xpos = nxpos,cxfont=myfont)
-      of "q" : printCxFontText(@[64],xpos = nxpos,cxfont=myfont)
-      of "r" : printCxFontText(@[65],xpos = nxpos,cxfont=myfont)
-      of "s" : printCxFontText(@[66],xpos = nxpos,cxfont=myfont)
-      of "t" : printCxFontText(@[67],xpos = nxpos,cxfont=myfont)
-      of "u" : printCxFontText(@[68],xpos = nxpos,cxfont=myfont)
-      of "v" : printCxFontText(@[69],xpos = nxpos,cxfont=myfont)
-      of "w" : printCxFontText(@[70],xpos = nxpos,cxfont=myfont)
-      of "x" : printCxFontText(@[71],xpos = nxpos,cxfont=myfont)
-      of "y" : printCxFontText(@[72],xpos = nxpos,cxfont=myfont)
-      of "z" : printCxFontText(@[73],xpos = nxpos,cxfont=myfont)
-      of "{" : printCxFontText(@[74],xpos = nxpos,cxfont=myfont)
-      of "|" : printCxFontText(@[75],xpos = nxpos,cxfont=myfont)
-      of "}" : printCxFontText(@[76],xpos = nxpos,cxfont=myfont)
-      of "~" : printCxFontText(@[77],xpos = nxpos,cxfont=myfont)
-      #of "AE" : printCxFontText(@[78],xpos = nxpos,cxfont=myfont)   # some german umlaut need to be done for german keyboard
-      of "Ö" : printCxFontText(@[79],xpos = nxpos,cxfont=myfont)
-      #of "UE" : printCxFontText(@[80],xpos = nxpos,cxfont=myfont)
-      #of "ae" : printCxFontText(@[81],xpos = nxpos,cxfont=myfont)
-      of "ö" : printCxFontText(@[82],xpos = nxpos,cxfont=myfont)
-      #of "ue" : printCxFontText(@[83],xpos = nxpos,cxfont=myfont)
-      of "!" : printCxFontText(@[84],xpos = nxpos,cxfont=myfont)
-      of "$" : printCxFontText(@[87],xpos = nxpos,cxfont=myfont)
-      of "%" : printCxFontText(@[88],xpos = nxpos,cxfont=myfont)
-      of "&" : printCxFontText(@[89],xpos = nxpos,cxfont=myfont)
-      of "(" : printCxFontText(@[91],xpos = nxpos,cxfont=myfont)
-      of ")" : printCxFontText(@[92],xpos = nxpos,cxfont=myfont)
-      of "*" : printCxFontText(@[93],xpos = nxpos,cxfont=myfont)
-      of "+" : printCxFontText(@[94],xpos = nxpos,cxfont=myfont)
-      of "," : printCxFontText(@[95],xpos = nxpos,cxfont=myfont)
-      of "-" : printCxFontText(@[96],xpos = nxpos,cxfont=myfont)
-      of "." : printCxFontText(@[97],xpos = nxpos,cxfont=myfont)
-      of "/" : printCxFontText(@[98],xpos = nxpos,cxfont=myfont)
+      of "0" : printCxFontText(@[0],xpos = nxpos,cxfont=myfont,color = color) 
+      of "1" : printCxFontText(@[1],xpos = nxpos,cxfont=myfont,color=color)
+      of "2" : printCxFontText(@[2],xpos = nxpos,cxfont=myfont,color=color)
+      of "3" : printCxFontText(@[3],xpos = nxpos,cxfont=myfont,color=color)
+      of "4" : printCxFontText(@[4],xpos = nxpos,cxfont=myfont,color=color)
+      of "5" : printCxFontText(@[5],xpos = nxpos,cxfont=myfont,color=color)
+      of "6" : printCxFontText(@[6],xpos = nxpos,cxfont=myfont,color=color)
+      of "7" : printCxFontText(@[7],xpos = nxpos,cxfont=myfont,color=color)
+      of "8" : printCxFontText(@[8],xpos = nxpos,cxfont=myfont,color=color)
+      of "9" : printCxFontText(@[9],xpos = nxpos,cxfont=myfont,color=color)
+      of ":" : printCxFontText(@[10],xpos = nxpos,cxfont=myfont,color=color)
+      of ";" : printCxFontText(@[11],xpos = nxpos,cxfont=myfont,color=color)
+      of "<" : printCxFontText(@[12],xpos = nxpos,cxfont=myfont,color=color)
+      of "=" : printCxFontText(@[13],xpos = nxpos,cxfont=myfont,color=color)
+      of ">" : printCxFontText(@[14],xpos = nxpos,cxfont=myfont,color=color)
+      of "?" : printCxFontText(@[15],xpos = nxpos,cxfont=myfont,color=color)
+      of "@" : printCxFontText(@[16],xpos = nxpos,cxfont=myfont,color=color)
+      of "A" : printCxFontText(@[17],xpos = nxpos,cxfont=myfont,color=color)  
+      of "B" : printCxFontText(@[18],xpos = nxpos,cxfont=myfont,color=color) 
+      of "C" : printCxFontText(@[19],xpos = nxpos,cxfont=myfont,color=color) 
+      of "D" : printCxFontText(@[20],xpos = nxpos,cxfont=myfont,color=color)
+      of "E" : printCxFontText(@[21],xpos = nxpos,cxfont=myfont,color=color)
+      of "F" : printCxFontText(@[22],xpos = nxpos,cxfont=myfont,color=color)
+      of "G" : printCxFontText(@[23],xpos = nxpos,cxfont=myfont,color=color)
+      of "H" : printCxFontText(@[24],xpos = nxpos,cxfont=myfont,color=color)
+      of "I" : printCxFontText(@[25],xpos = nxpos,cxfont=myfont,color=color)
+      of "J" : printCxFontText(@[26],xpos = nxpos,cxfont=myfont,color=color)
+      of "K" : printCxFontText(@[27],xpos = nxpos,cxfont=myfont,color=color)
+      of "L" : printCxFontText(@[28],xpos = nxpos,cxfont=myfont,color=color)
+      of "M" : printCxFontText(@[29],xpos = nxpos,cxfont=myfont,color=color)
+      of "N" : printCxFontText(@[30],xpos = nxpos,cxfont=myfont,color=color)
+      of "O" : printCxFontText(@[31],xpos = nxpos,cxfont=myfont,color=color)
+      of "P" : printCxFontText(@[32],xpos = nxpos,cxfont=myfont,color=color)
+      of "Q" : printCxFontText(@[33],xpos = nxpos,cxfont=myfont,color=color)
+      of "R" : printCxFontText(@[34],xpos = nxpos,cxfont=myfont,color=color)
+      of "S" : printCxFontText(@[35],xpos = nxpos,cxfont=myfont,color=color)
+      of "T" : printCxFontText(@[36],xpos = nxpos,cxfont=myfont,color=color)
+      of "U" : printCxFontText(@[37],xpos = nxpos,cxfont=myfont,color=color)
+      of "V" : printCxFontText(@[38],xpos = nxpos,cxfont=myfont,color=color)
+      of "W" : printCxFontText(@[39],xpos = nxpos,cxfont=myfont,color=color)
+      of "X" : printCxFontText(@[40],xpos = nxpos,cxfont=myfont,color=color)
+      of "Y" : printCxFontText(@[41],xpos = nxpos,cxfont=myfont,color=color)
+      of "Z" : printCxFontText(@[42],xpos = nxpos,cxfont=myfont,color=color)
+      of "[" : printCxFontText(@[43],xpos = nxpos,cxfont=myfont,color=color)
+      of "\\" : printCxFontText(@[44],xpos = nxpos,cxfont=myfont,color=color)
+      of "]" : printCxFontText(@[45],xpos = nxpos,cxfont=myfont,color=color)
+      of "^" : printCxFontText(@[46],xpos = nxpos,cxfont=myfont,color=color)
+      of "'" : printCxFontText(@[47],xpos = nxpos,cxfont=myfont,color=color)
+      of "a" : printCxFontText(@[48],xpos = nxpos,cxfont=myfont,color=color)  
+      of "b" : printCxFontText(@[49],xpos = nxpos,cxfont=myfont,color=color) 
+      of "c" : printCxFontText(@[50],xpos = nxpos,cxfont=myfont,color=color) 
+      of "d" : printCxFontText(@[51],xpos = nxpos,cxfont=myfont,color=color)
+      of "e" : printCxFontText(@[52],xpos = nxpos,cxfont=myfont,color=color)
+      of "f" : printCxFontText(@[53],xpos = nxpos,cxfont=myfont,color=color)
+      of "g" : printCxFontText(@[54],xpos = nxpos,cxfont=myfont,color=color)
+      of "h" : printCxFontText(@[55],xpos = nxpos,cxfont=myfont,color=color)
+      of "i" : printCxFontText(@[56],xpos = nxpos,cxfont=myfont,color=color)
+      of "j" : printCxFontText(@[57],xpos = nxpos,cxfont=myfont,color=color)
+      of "k" : printCxFontText(@[58],xpos = nxpos,cxfont=myfont,color=color)
+      of "l" : printCxFontText(@[59],xpos = nxpos,cxfont=myfont,color=color)
+      of "m" : printCxFontText(@[60],xpos = nxpos,cxfont=myfont,color=color)
+      of "n" : printCxFontText(@[61],xpos = nxpos,cxfont=myfont,color=color)
+      of "o" : printCxFontText(@[62],xpos = nxpos,cxfont=myfont,color=color)
+      of "p" : printCxFontText(@[63],xpos = nxpos,cxfont=myfont,color=color)
+      of "q" : printCxFontText(@[64],xpos = nxpos,cxfont=myfont,color=color)
+      of "r" : printCxFontText(@[65],xpos = nxpos,cxfont=myfont,color=color)
+      of "s" : printCxFontText(@[66],xpos = nxpos,cxfont=myfont,color=color)
+      of "t" : printCxFontText(@[67],xpos = nxpos,cxfont=myfont,color=color)
+      of "u" : printCxFontText(@[68],xpos = nxpos,cxfont=myfont,color=color)
+      of "v" : printCxFontText(@[69],xpos = nxpos,cxfont=myfont,color=color)
+      of "w" : printCxFontText(@[70],xpos = nxpos,cxfont=myfont,color=color)
+      of "x" : printCxFontText(@[71],xpos = nxpos,cxfont=myfont,color=color)
+      of "y" : printCxFontText(@[72],xpos = nxpos,cxfont=myfont,color=color)
+      of "z" : printCxFontText(@[73],xpos = nxpos,cxfont=myfont,color=color)
+      of "{" : printCxFontText(@[74],xpos = nxpos,cxfont=myfont,color=color)
+      of "|" : printCxFontText(@[75],xpos = nxpos,cxfont=myfont,color=color)
+      of "}" : printCxFontText(@[76],xpos = nxpos,cxfont=myfont,color=color)
+      of "~" : printCxFontText(@[77],xpos = nxpos,cxfont=myfont,color=color)
+      #of "AE" : printCxFontText(@[78],xpos = nxpos,cxfont=myfont,color=color)   # some german umlaut need to be done for german keyboard
+      of "Ö" : printCxFontText(@[79],xpos = nxpos,cxfont=myfont,color=color)
+      #of "UE" : printCxFontText(@[80],xpos = nxpos,cxfont=myfont,color=color)
+      #of "ae" : printCxFontText(@[81],xpos = nxpos,cxfont=myfont,color=color)
+      of "ö" : printCxFontText(@[82],xpos = nxpos,cxfont=myfont,color=color)
+      #of "ue" : printCxFontText(@[83],xpos = nxpos,cxfont=myfont,color=color)
+      of "!" : printCxFontText(@[84],xpos = nxpos,cxfont=myfont,color=color)
+      of "$" : printCxFontText(@[87],xpos = nxpos,cxfont=myfont,color=color)
+      of "%" : printCxFontText(@[88],xpos = nxpos,cxfont=myfont,color=color)
+      of "&" : printCxFontText(@[89],xpos = nxpos,cxfont=myfont,color=color)
+      of "(" : printCxFontText(@[91],xpos = nxpos,cxfont=myfont,color=color)
+      of ")" : printCxFontText(@[92],xpos = nxpos,cxfont=myfont,color=color)
+      of "*" : printCxFontText(@[93],xpos = nxpos,cxfont=myfont,color=color)
+      of "+" : printCxFontText(@[94],xpos = nxpos,cxfont=myfont,color=color)
+      of "," : printCxFontText(@[95],xpos = nxpos,cxfont=myfont,color=color)
+      of "-" : printCxFontText(@[96],xpos = nxpos,cxfont=myfont,color=color)
+      of "." : printCxFontText(@[97],xpos = nxpos,cxfont=myfont,color=color)
+      of "/" : printCxFontText(@[98],xpos = nxpos,cxfont=myfont,color=color)
       of " " : 
                curdn(5)
                nxpos = nxpos - 15
@@ -1248,13 +1247,133 @@ proc dotMatrixTyper*(s:string,xpos:int = 1) =
     
     
     
+
+proc bracketMatrixTyper*(s:string,xpos:int = 1,color:string = randcol()) =
+  ## prints the entered string in bracketmatrix font
+  ## 
+  ## no checking as to terminalwidth is done so adjust terminal width and char sizes accordingly
+  ## 
+  ## cursor will be positioned at top right of last character
+  ## 
+  ##.. code-block:: nim 
+  ##   import nimcx 
+  ##   decho(5)    
+  ##   dotmatrixtyper("NIMCX - ")
+  ##   decho(8)
+  ##   bracketmatrixTyper("bracketmatrix")
+  ##    
+  
+  var nxpos = xpos
+  let myfont = createCxFont("bracketmatrix")
+  for x in s:
     
+    case $x
+      of "0" : printCxFontText(@[0],xpos = nxpos,cxfont=myfont,color = color) 
+      of "1" : printCxFontText(@[1],xpos = nxpos,cxfont=myfont,color=color)
+      of "2" : printCxFontText(@[2],xpos = nxpos,cxfont=myfont,color=color)
+      of "3" : printCxFontText(@[3],xpos = nxpos,cxfont=myfont,color=color)
+      of "4" : printCxFontText(@[4],xpos = nxpos,cxfont=myfont,color=color)
+      of "5" : printCxFontText(@[5],xpos = nxpos,cxfont=myfont,color=color)
+      of "6" : printCxFontText(@[6],xpos = nxpos,cxfont=myfont,color=color)
+      of "7" : printCxFontText(@[7],xpos = nxpos,cxfont=myfont,color=color)
+      of "8" : printCxFontText(@[8],xpos = nxpos,cxfont=myfont,color=color)
+      of "9" : printCxFontText(@[9],xpos = nxpos,cxfont=myfont,color=color)
+      of ":" : printCxFontText(@[10],xpos = nxpos,cxfont=myfont,color=color)
+      of ";" : printCxFontText(@[11],xpos = nxpos,cxfont=myfont,color=color)
+      of "<" : printCxFontText(@[12],xpos = nxpos,cxfont=myfont,color=color)
+      of "=" : printCxFontText(@[13],xpos = nxpos,cxfont=myfont,color=color)
+      of ">" : printCxFontText(@[14],xpos = nxpos,cxfont=myfont,color=color)
+      of "?" : printCxFontText(@[15],xpos = nxpos,cxfont=myfont,color=color)
+      of "@" : printCxFontText(@[16],xpos = nxpos,cxfont=myfont,color=color)
+      of "A" : printCxFontText(@[17],xpos = nxpos,cxfont=myfont,color=color)  
+      of "B" : printCxFontText(@[18],xpos = nxpos,cxfont=myfont,color=color) 
+      of "C" : printCxFontText(@[19],xpos = nxpos,cxfont=myfont,color=color) 
+      of "D" : printCxFontText(@[20],xpos = nxpos,cxfont=myfont,color=color)
+      of "E" : printCxFontText(@[21],xpos = nxpos,cxfont=myfont,color=color)
+      of "F" : printCxFontText(@[22],xpos = nxpos,cxfont=myfont,color=color)
+      of "G" : printCxFontText(@[23],xpos = nxpos,cxfont=myfont,color=color)
+      of "H" : printCxFontText(@[24],xpos = nxpos,cxfont=myfont,color=color)
+      of "I" : printCxFontText(@[25],xpos = nxpos,cxfont=myfont,color=color)
+      of "J" : printCxFontText(@[26],xpos = nxpos,cxfont=myfont,color=color)
+      of "K" : printCxFontText(@[27],xpos = nxpos,cxfont=myfont,color=color)
+      of "L" : printCxFontText(@[28],xpos = nxpos,cxfont=myfont,color=color)
+      of "M" : printCxFontText(@[29],xpos = nxpos,cxfont=myfont,color=color)
+      of "N" : printCxFontText(@[30],xpos = nxpos,cxfont=myfont,color=color)
+      of "O" : printCxFontText(@[31],xpos = nxpos,cxfont=myfont,color=color)
+      of "P" : printCxFontText(@[32],xpos = nxpos,cxfont=myfont,color=color)
+      of "Q" : printCxFontText(@[33],xpos = nxpos,cxfont=myfont,color=color)
+      of "R" : printCxFontText(@[34],xpos = nxpos,cxfont=myfont,color=color)
+      of "S" : printCxFontText(@[35],xpos = nxpos,cxfont=myfont,color=color)
+      of "T" : printCxFontText(@[36],xpos = nxpos,cxfont=myfont,color=color)
+      of "U" : printCxFontText(@[37],xpos = nxpos,cxfont=myfont,color=color)
+      of "V" : printCxFontText(@[38],xpos = nxpos,cxfont=myfont,color=color)
+      of "W" : printCxFontText(@[39],xpos = nxpos,cxfont=myfont,color=color)
+      of "X" : printCxFontText(@[40],xpos = nxpos,cxfont=myfont,color=color)
+      of "Y" : printCxFontText(@[41],xpos = nxpos,cxfont=myfont,color=color)
+      of "Z" : printCxFontText(@[42],xpos = nxpos,cxfont=myfont,color=color)
+      of "[" : printCxFontText(@[43],xpos = nxpos,cxfont=myfont,color=color)
+      of "\\" : printCxFontText(@[44],xpos = nxpos,cxfont=myfont,color=color)
+      of "]" : printCxFontText(@[45],xpos = nxpos,cxfont=myfont,color=color)
+      of "^" : printCxFontText(@[46],xpos = nxpos,cxfont=myfont,color=color)
+      of "'" : printCxFontText(@[47],xpos = nxpos,cxfont=myfont,color=color)
+      of "a" : printCxFontText(@[48],xpos = nxpos,cxfont=myfont,color=color)  
+      of "b" : printCxFontText(@[49],xpos = nxpos,cxfont=myfont,color=color) 
+      of "c" : printCxFontText(@[50],xpos = nxpos,cxfont=myfont,color=color) 
+      of "d" : printCxFontText(@[51],xpos = nxpos,cxfont=myfont,color=color)
+      of "e" : printCxFontText(@[52],xpos = nxpos,cxfont=myfont,color=color)
+      of "f" : printCxFontText(@[53],xpos = nxpos,cxfont=myfont,color=color)
+      of "g" : printCxFontText(@[54],xpos = nxpos,cxfont=myfont,color=color)
+      of "h" : printCxFontText(@[55],xpos = nxpos,cxfont=myfont,color=color)
+      of "i" : printCxFontText(@[56],xpos = nxpos,cxfont=myfont,color=color)
+      of "j" : printCxFontText(@[57],xpos = nxpos,cxfont=myfont,color=color)
+      of "k" : printCxFontText(@[58],xpos = nxpos,cxfont=myfont,color=color)
+      of "l" : printCxFontText(@[59],xpos = nxpos,cxfont=myfont,color=color)
+      of "m" : printCxFontText(@[60],xpos = nxpos,cxfont=myfont,color=color)
+      of "n" : printCxFontText(@[61],xpos = nxpos,cxfont=myfont,color=color)
+      of "o" : printCxFontText(@[62],xpos = nxpos,cxfont=myfont,color=color)
+      of "p" : printCxFontText(@[63],xpos = nxpos,cxfont=myfont,color=color)
+      of "q" : printCxFontText(@[64],xpos = nxpos,cxfont=myfont,color=color)
+      of "r" : printCxFontText(@[65],xpos = nxpos,cxfont=myfont,color=color)
+      of "s" : printCxFontText(@[66],xpos = nxpos,cxfont=myfont,color=color)
+      of "t" : printCxFontText(@[67],xpos = nxpos,cxfont=myfont,color=color)
+      of "u" : printCxFontText(@[68],xpos = nxpos,cxfont=myfont,color=color)
+      of "v" : printCxFontText(@[69],xpos = nxpos,cxfont=myfont,color=color)
+      of "w" : printCxFontText(@[70],xpos = nxpos,cxfont=myfont,color=color)
+      of "x" : printCxFontText(@[71],xpos = nxpos,cxfont=myfont,color=color)
+      of "y" : printCxFontText(@[72],xpos = nxpos,cxfont=myfont,color=color)
+      of "z" : printCxFontText(@[73],xpos = nxpos,cxfont=myfont,color=color)
+      of "{" : printCxFontText(@[74],xpos = nxpos,cxfont=myfont,color=color)
+      of "|" : printCxFontText(@[75],xpos = nxpos,cxfont=myfont,color=color)
+      of "}" : printCxFontText(@[76],xpos = nxpos,cxfont=myfont,color=color)
+      of "~" : printCxFontText(@[77],xpos = nxpos,cxfont=myfont,color=color)
+      #of "AE" : printCxFontText(@[78],xpos = nxpos,cxfont=myfont,color=color)   # some german umlaut need to be done for german keyboard
+      of "Ö" : printCxFontText(@[79],xpos = nxpos,cxfont=myfont,color=color)
+      #of "UE" : printCxFontText(@[80],xpos = nxpos,cxfont=myfont,color=color)
+      #of "ae" : printCxFontText(@[81],xpos = nxpos,cxfont=myfont,color=color)
+      of "ö" : printCxFontText(@[82],xpos = nxpos,cxfont=myfont,color=color)
+      #of "ue" : printCxFontText(@[83],xpos = nxpos,cxfont=myfont,color=color)
+      of "!" : printCxFontText(@[84],xpos = nxpos,cxfont=myfont,color=color)
+      of "$" : printCxFontText(@[87],xpos = nxpos,cxfont=myfont,color=color)
+      of "%" : printCxFontText(@[88],xpos = nxpos,cxfont=myfont,color=color)
+      of "&" : printCxFontText(@[89],xpos = nxpos,cxfont=myfont,color=color)
+      of "(" : printCxFontText(@[91],xpos = nxpos,cxfont=myfont,color=color)
+      of ")" : printCxFontText(@[92],xpos = nxpos,cxfont=myfont,color=color)
+      of "*" : printCxFontText(@[93],xpos = nxpos,cxfont=myfont,color=color)
+      of "+" : printCxFontText(@[94],xpos = nxpos,cxfont=myfont,color=color)
+      of "," : printCxFontText(@[95],xpos = nxpos,cxfont=myfont,color=color)
+      of "-" : printCxFontText(@[96],xpos = nxpos,cxfont=myfont,color=color)
+      of "." : printCxFontText(@[97],xpos = nxpos,cxfont=myfont,color=color)
+      of "/" : printCxFontText(@[98],xpos = nxpos,cxfont=myfont,color=color)
+      of " " : 
+               curdn(5)
+               nxpos = nxpos - 15
+      else:discard
+    nxpos = nxpos + 19  
+    curup(5)       
     
+
     
-    
-    
-    
-# end of dotmatrixfont related functions        
+# end of dotmatrix and bracketmatrix related functions        
 
        
 # 
