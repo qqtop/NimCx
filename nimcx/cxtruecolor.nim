@@ -2,7 +2,7 @@ import cxglobal,cxconsts,cxprint,terminal,strutils,random
 
 # cxtruecolor.nim   
 #
-# Experimental -- you might be transported to Orion for free by using this module.
+# Experimental -- you might be transported to Orion for free by using this module and run out of memory fast.
 # 
 # 
 # support variables and functions for experimental cxTrueColor related routines
@@ -10,11 +10,15 @@ import cxglobal,cxconsts,cxprint,terminal,strutils,random
 # 
 # 
 # see examples cxtruecolorE1.nim for experimental usage
+# 
+# Note you will need konsole or similar terminal to see colors
+# the standard gnome terminal etc may or may not be able to show colors above the standard terminal colors
+# 
 #
-# Last : 2018-04-14
+# Last : 2018-05-15
 # 
 type
-  CXRGB = tuple[R: int, G: int, B: int,cxCol:string]
+  CXRGB* = tuple[R: int, G: int, B: int,cxCol:string]  # the idea for the cxCol field is to give interesting colors a name
   
 var cxTrueCol* = newSeq[string]()  # a global for conveniently holding truecolor codes if used  if above works maybe this can be deprecated
 var cxRGB* = newSeq[CXRGB]()       # a global holding rgb color values if used
@@ -22,6 +26,31 @@ var cxRGB* = newSeq[CXRGB]()       # a global holding rgb color values if used
 var colorNumber38* = 0             # used as a temp storage of a random truecolor number drawn from the 38 set
 var colorNumber48* = 1             # used as a temp storage of a random truecolor number drawn from the 48 set
 
+
+proc cxRGBCol*(acol:CXRGB) : string = 
+   ## cxRGBcol  
+   ## 
+   ## returns a color build from rgb values passed in via CXRGB type tuple 
+   ## 
+   ## Note the colCol string value of the cxRGB type is not used here
+   ## 
+   result = "\x1b[38;2;" & "$1;$2;$3m" % [$acol[0],$acol[1],$acol[2]]
+       
+proc cxRndRGB*():string = 
+     ## cxRndRGB
+     ##
+     ## returns a random color string useable by var. print procs
+     ## 
+     ## suitable only for terminals supporting truecolor like konsole
+     ## 
+     ## other terminals will display some bland color most of the time
+     ## 
+     ## use rndCol() or randCol() instead.
+     ##
+     ## 
+     ##
+      
+     result = cxRGBCol((getrndint(0,25000),getrndint(0,25000),getrndint(0,25000),""))
 
 proc checkTrueColorSupport*(): bool  {.discardable.} = 
      # checkTrueColorSupport 
@@ -50,8 +79,11 @@ proc checkTrueColorSupport*(): bool  {.discardable.} =
 # truecolors support exceeding colors available from stdlib   
 # the generated cxtruecolor numbers are only valid within the context of
 # the parameters set in cxTrueColorSet , a call with different params
-# will currently give different color numbers 
-# overall still need a better way to select desired colors or colorsets
+# will give different color numbers 
+# overall still needs a better way to select desired colors or colorsets
+# also larger pallettes while possible need lots of memory and increased
+# compilation time
+# 
 
 
 proc cxTrueColorSet(min:int = 0 ,max:int = 888 , step: int = 12,flag48:bool = false):seq[string] {.inline.} =
@@ -76,7 +108,7 @@ proc cxTrueColorSet(min:int = 0 ,max:int = 888 , step: int = 12,flag48:bool = fa
    ## 
    ## here there fgr color is drawn from cxColorNames and the background color from the cxTruecolor set
    ## 
-   # could be mixed up anywhich way to create interesting paletts rgb,bgr etc
+   # could be mixed up anywhich way to create interesting palettes rgb,bgr etc
    result = @[]
    for r in countup(min,max,step):
      for g in countup(min,max,step):

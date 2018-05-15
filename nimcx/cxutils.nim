@@ -1010,13 +1010,13 @@ proc seqHighLite*[T](b:seq[T],b1:seq[T],col:string=gold) =
    ##.. code-block:: nim
    ##   import nimcx
    ##   var b = createSeqInt(30,1,10)
-   ##   seqHighLite(b,@[5,6])   # subseq will be highlighted if found
+   ##   seqHighLite(b,@[5])   # subseq will be highlighted if found
    ## 
    ## 
    var bs:string = $b1
    bs = bs.replace("@[","")
    bs.removesuffix(']')
-   printLn(b,col,styled = {styleReverse},substr = bs)       
+   printLn2(b,col,styled = {styleReverse},substr = bs)       
        
 
 proc shift*[T](x: var seq[T], zz: Natural = 0): T =

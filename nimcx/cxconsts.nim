@@ -12,7 +12,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-05-01
+##     Latest      : 2018-05-14
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -57,6 +57,15 @@ const
       # cannot get enough of them try this       :  loopy2(0,tw * 8,print(showRune($RuneEmpty),randcol()))
       RuneEmpty* = 0xFFFD
 
+const
+      # style constants for convenience
+      cxNoStyle* = {}
+      cxReverse* = {styleReverse}
+      cxBright*  = {styleBright}
+      cxReverseBright* = {styleReverse,styleBright}
+           
+      
+      
 const
       # block chars for font building with some easy to remember names
       efb1* = "▀"

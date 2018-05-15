@@ -1095,11 +1095,11 @@ proc infoLine*() =
     print(" | ",brightblack)
     print("Nim : ",lime)
     print(NimVersion & " | ",brightblack)
-    print("cx : ",peru)
+    print("nimcx : ",peru)
     print(CXLIBVERSION,brightblack)
     print(" | ",brightblack)
     print($someGcc & " | ",brightblack)
-    print("Size : " & ff2(float(getfilesize(getAppFilename())) / 1000.0) & " Kb",peru) # appears to be approximate
+    print("Size: " & brightblack &  formatSize(getFileSize(getAppFilename())),peru)
     print(" | ",brightblack)
     qqTop()
 
@@ -1154,7 +1154,7 @@ proc doFinish*() =
         print(fmtx(["<14"],"Elapsed    : "),yellowgreen)
         print(fmtx(["<",">5"],ff(epochtime() - cxstart,3)," secs"),goldenrod)
         printLnBiCol("  Compiled on: " & $CompileDate & " at " & $CompileTime)
-        if detectOs(OpenSUSE):  # some additional data if on openSuse systems
+        if detectOs(OpenSUSE) or detectOs(Parrot):  # some additional data if on openSuse systems
             let ux1 = uname().split("#")[0].split(" ")
             printLnBiCol("Kernel     :  " & ux1[2] & "  Computer : " & ux1[1] & "  System : " & ux1[0],yellowgreen,lightslategray,":",0,false,{})
             let rld = release().splitLines()
@@ -1244,8 +1244,9 @@ decho(2)
 setControlCHook(handler)
 
 #uncomment following line to have global support for cxTrueCol inside cx if needed
-getcxTrueColorSet()         # preload the cxTrueCol seq in default mode
-#checktruecolorsupport()    # comment out if above line uncommented
+#getcxTrueColorSet()         # preload the cxTrueCol seq in default mode 
+checktruecolorsupport()      # comment out if above line uncommented
+
 # this will reset any color changes in the terminal
 # so no need for this line in the calling prog
 system.addQuitProc(resetAttributes)
