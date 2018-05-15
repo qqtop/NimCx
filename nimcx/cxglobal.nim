@@ -579,7 +579,7 @@ proc fmtengine[T](a:string,astring:T):string =
 
      if a.startswith("<") or a.startswith(">"):
            textflag = false
-     elif isdigit($a[0]):
+     elif a.len > 0 and isDigit($a[0]):
            textflag = false
      else: textflag = true
 
@@ -684,14 +684,13 @@ proc fmtx*[T](fmts:openarray[string],fstrings:varargs[T,`$`]):string =
      ##    printLnBiCol(fmtx([">15." & $getRndInt(2,4),":",">10"],getRndFloat() * float(getRndInt(50000,500000)),spaces(5),getRndInt(12222,10000000)))
      ##
      
-     var okresult = ""
+     result = ""
      # if formatstrings count not same as vararg count we bail out some error about fmts will be shown
      doassert(fmts.len == fstrings.len)
      # now iterate and generate the desired output
-     for cc in 0..<fmts.len:
-         okresult = okresult & fmtengine(fmts[cc],fstrings[cc])
-     result = okresult
-
+     for cc in 0 ..< fmts.len:
+         result = result & fmtengine(fmts[cc],fstrings[cc])
+    
      
      
 proc showRune*(s:string) : string {.discardable.} =

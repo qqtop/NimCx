@@ -1099,7 +1099,7 @@ proc infoLine*() =
     print(CXLIBVERSION,brightblack)
     print(" | ",brightblack)
     print($someGcc & " | ",brightblack)
-    print("Size: " & brightblack &  formatSize(getFileSize(getAppFilename())),peru)
+    print("Size: " & brightblack & formatSize(getFileSize(getAppFilename())),peru)
     print(" | ",brightblack)
     qqTop()
 

@@ -10,7 +10,7 @@ import strutils,terminal,sets
 # 
 # 
 # 
-# Last : 2018-05-07 
+# Last : 2018-05-15 
 # 
 
 # type used in slim number printing
@@ -360,7 +360,7 @@ template cxs*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
          printLn2(efb1 * 1 & spaces(1) & efs2 * 1 ,col,xpos=xpos)
          printLn2(spaces(4) & efb1 & efs2 * 1 ,col,xpos=xpos)
          printLn2(spaces(5) & efs2 * 2,col,xpos=xpos)
-         printLn2(efb2 * 5 &  efs2 * 1 & efb1 * 1 ,col,xpos=xpos)
+         printLn2(efb2 * 5 & efs2 * 1 & efb1 * 1 ,col,xpos=xpos)
          curup(6)  
   
  
