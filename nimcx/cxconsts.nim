@@ -116,7 +116,11 @@ const
       chide*    = "\x1b[?25l"   # ok hide cursor
       cshow*    = "\x1b[?25h"   # ok show cursor
 
-
+const
+      euro*   = "€"
+      dollar* = "$"
+      yen*    = "¥"
+      
 const
       # Terminal ForegroundColor Normal
 

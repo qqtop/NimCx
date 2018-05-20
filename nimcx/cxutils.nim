@@ -1119,7 +1119,7 @@ proc checkMem*(xpos:int=2) =
    withFile(f,"/proc/meminfo",fmRead):
         seqline = f.readAll().splitLines()
    for aline in seqline:
-      if aline.startswith("Mem"):
+        if aline.startswith("Mem"):
            let zline = aline.split(":")
            printLnInfoMsg2(cxpad(zline[0],n),fmtx([">15"],zline[1].strip()),yellowgreen,xpos = xpos)
           
@@ -1165,6 +1165,32 @@ proc memCheck*(stats:bool = false) =
   checkmem(xpos=55)
   echo()
           
-          
+     
+proc distanceTo*(origin:(float,float),dest:(float,float)):float =
+        ## distanceTo
+        ## 
+        ## calculates distance on the great circle using haversine formular
+        ## 
+        ## input is 2 tuples of (longitude,latitude)      
+        ## 
+        ## Example
+        ## 
+        ## also see https://github.com/qqtop/Nim-Snippets/blob/master/geodistance.nim
+        ## 
+        ##.. code-block:: nim
+        ##  import nimcx 
+        ##  echo "Hongkong - London"
+        ##  echo distanceto((114.109497,22.396427),(-0.126236,51.500153)) , " km"
+        ##  echo distanceto((114.109497,22.396427),(-0.126236,51.500153)) / 1.609345 ," miles"
+        ##  decho(2)
+
+        let r = 6371.0    # mean Earth radius in kilometers  6371.0
+        let lam_1 = degtorad(origin[0])
+        let lam_2 = degtorad(dest[0])
+        let phi_1 = degtorad(origin[1])
+        let phi_2 = degtorad(dest[1])
+        let h = (sin((phi_2 - phi_1) / 2) ^ 2 + cos(phi_1) * cos(phi_2) * sin((lam_2 - lam_1) / 2) ^ 2)
+        return 2 * r * arcsin(sqrt(h))
+     
           
 # END OF CXUTILS.NIM #

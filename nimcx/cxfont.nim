@@ -4,13 +4,15 @@ import strutils,terminal,sets
 
 # cxfont.nim
 #
-# experimental font, slim numbers , swap , dotmatric , bracketmatrix font and 
+# Experimental font building  
+#
+# experimental font, slim numbers , swampfont , dotmatrix , bracketmatrix font and 
 # 
 # old block font related procs (not in use ) 
 # 
 # 
 # 
-# Last : 2018-05-15 
+# Last : 2018-05-20 
 # 
 
 # type used in slim number printing
@@ -20,9 +22,11 @@ type
       
 # experimental your results may depend on terminal in use
 # 
-# suggested : konsole for best effect  with truecolor
+# suggested : konsole for best effect with truecolor , adjust terminal width 
 # 
-# experimental font building  
+# and char size for desired effect
+# 
+
 
 
 template cxZero*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
@@ -1034,11 +1038,13 @@ proc showCxFont*(name:string) =
 proc dotMatrixFontTest*() =
     ## dotMatrixFontTest
     ## 
-    ## The current way to use fonts bracketmatrix and swamp
+    ## The current way to use fonts swamp
     ##  
-    ## is to run similar as below for dotmatrix you can now use dotmatrixtyper
+    ## is to run similar as below .
     ## 
+    ## for dotmatrix     use dotMatrixTyper
     ## 
+    ## for bracketmatrix use bracketMatrixTyper
     ##
     ##.. code-block:: nim 
     ##  import nimcx 
@@ -1052,8 +1058,7 @@ proc dotMatrixFontTest*() =
     ##    let myfont = createCxFont("dotmatrix")
     ##    # lets print <NIM>123
     ##    printCxFontText(@[12,30,25,29,14,1,2,3],xpos = 2,myfont) 
-    ## import "/data5/NimStuff/NimCxDevel/cx.nim"
-
+    ## 
     ##    
     ## Alternatively compile cxmatrixfontE1.nim which calls this function
     ##             
@@ -1131,11 +1136,14 @@ proc dotMatrixTyper*(s:string,xpos:int = 1,color:string = randcol()) =
   ## 
   ## cursor will be positioned at top right of last character
   ## 
-  ##.. code-block:: nim 
-  ##   import nimcx 
-  ##   decho(5)    
-  ##   dotmatrixtyper("NIMCX - dotmatrix")
-  ##   decho(8)
+  ##.. code-block:: nim
+  ##  # example for dotMatrixTyper and bracketMatrixTyper 
+  ##  import nimcx 
+  ##  decho(5)
+  ##  dotMatrixTyper("NIMCX - ")
+  ##  decho(8)
+  ##  bracketMatrixTyper("bracketmatrix")
+  ##  decho(12)
   
   var nxpos = xpos
   let myfont = createCxFont("dotmatrix")
@@ -1255,13 +1263,7 @@ proc bracketMatrixTyper*(s:string,xpos:int = 1,color:string = randcol()) =
   ## 
   ## cursor will be positioned at top right of last character
   ## 
-  ##.. code-block:: nim 
-  ##   import nimcx 
-  ##   decho(5)    
-  ##   dotmatrixtyper("NIMCX - ")
-  ##   decho(8)
-  ##   bracketmatrixTyper("bracketmatrix")
-  ##    
+
   
   var nxpos = xpos
   let myfont = createCxFont("bracketmatrix")
