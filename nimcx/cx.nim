@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-04-14
+##     Latest      : 2018-05-21
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -1091,9 +1091,9 @@ proc infoLine*() =
     ##
     hlineLn()
     print(fmtx(["<14"],"Application:"),yellowgreen)
-    print(extractFileName(getAppFilename()),brightblack)
+    print(extractFileName(getAppFilename()),skyblue)
     print(" | ",brightblack)
-    print("Nim : ",lime)
+    print("Nim : ",greenyellow)
     print(NimVersion & " | ",brightblack)
     print("nimcx : ",peru)
     print(CXLIBVERSION,brightblack)
@@ -1153,15 +1153,15 @@ proc doFinish*() =
         printLn(" - " & year(getDateStr()),brightblack)
         print(fmtx(["<14"],"Elapsed    : "),yellowgreen)
         print(fmtx(["<",">5"],ff(epochtime() - cxstart,3)," secs"),goldenrod)
-        printLnBiCol("  Compiled on: " & $CompileDate & " at " & $CompileTime)
-        if detectOs(OpenSUSE) or detectOs(Parrot):  # some additional data if on openSuse systems
+        printLnBiCol("  Compiled on: " & $CompileDate & spaces(1) & $CompileTime & spaces(1) & cxTimeZone())
+        if detectOs(OpenSUSE) or detectOs(Parrot):  # some additional data if on openSuse or parrotOs systems
             let ux1 = uname().split("#")[0].split(" ")
-            printLnBiCol("Kernel     :  " & ux1[2] & "  Computer : " & ux1[1] & "  System : " & ux1[0],yellowgreen,lightslategray,":",0,false,{})
+            printLnBiCol("Kernel     :  " & ux1[2] & " | Computer: " & ux1[1] & " | Os: " & ux1[0] & " | Processors: " & $(osproc.countProcessors()),yellowgreen,lightslategray,":",0,false,{})
             let rld = release().splitLines()
             let rld3 = rld[2].splitty(":")
             let rld4 = rld3[0] & spaces(2) & strip(rld3[1])
             printBiCol(rld4,yellowgreen,lightslategray,":",0,false,{})
-            printLnBiCol(spaces(3) & rld[3],yellowgreen,lightslategray,":",0,false,{})
+            printLnBiCol(spaces(2) & "Release: " & strip((split(rld[3],":")[1])),yellowgreen,lightslategray,":",0,false,{})
             echo()
         
         else:

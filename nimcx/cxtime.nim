@@ -5,7 +5,7 @@ import os,terminal,times,parseutils,strutils
 # 
 # time/date related procs including printDTimeMsg etc.
 # 
-# Last : 2018-02-27
+# Last : 2018-05-21
 # 
 # 
 
@@ -265,7 +265,7 @@ proc cxTimeZone*(amode:string = "long"):string =
       mode = "long"
    if mode == "long":
         var ltt = $now()
-        result = "UTC" & $ltt[(($ltt).len - 6)..($ltt).len]     
+        result = "UTC" & $ltt[(($ltt).len - 6) ..< ($ltt).len]     
             
 
 proc createSeqDate*(fromDate:string,days:int = 1):seq[string] = 
