@@ -230,25 +230,6 @@ proc minusDays*(aDate:string,days:int):string =
       result = "Error"
 
 
-
-proc createSeqDate*(fromDate:string,toDate:string):seq[string] = 
-     ## createSeqDate
-     ## 
-     ## creates a seq of dates in format yyyy-MM-dd 
-     ## 
-     ## from fromDate to toDate
-     ##  
-
-     var aresult = newSeq[string]()
-     var aDate = fromDate
-     while compareDates(aDate,toDate) == 2 : 
-         if validDate(aDate) == true: 
-            aresult.add(aDate)
-         aDate = plusDays(aDate,1)  
-     result = aresult    
-         
-     
-
   
 proc cxTimeZone*(amode:string = "long"):string = 
    ## cxTimeZone
@@ -268,13 +249,39 @@ proc cxTimeZone*(amode:string = "long"):string =
         result = "UTC" & $ltt[(($ltt).len - 6) ..< ($ltt).len]     
             
 
+proc createSeqDate*(fromDate:string,toDate:string):seq[string] = 
+     ## createSeqDate
+     ## 
+     ## creates a seq of dates in format yyyy-MM-dd 
+     ## 
+     ## fromDate and toDate must be a date in form yyyy-MM-dd eg. 2018-06-18
+     ## 
+     ## 
+     ## .. code-block:: nim
+     ##   showSeq(createseqdate(cxtoday, "2022-05-25"),maxitemwidth=12)    
+     ##  
+
+     var aresult = newSeq[string]()
+     var aDate = fromDate
+     while compareDates(aDate,toDate) == 2 : 
+         if validDate(aDate) == true: 
+            aresult.add(aDate)
+         aDate = plusDays(aDate,1)  
+     result = aresult    
+                     
+            
+            
 proc createSeqDate*(fromDate:string,days:int = 1):seq[string] = 
      ## createSeqDate
      ## 
      ## creates a seq of dates in format yyyy-MM-dd 
      ## 
      ## from fromDate to fromDate + days
-     ## 
+     ##
+     ##.. code-block:: nim 
+     ##   showSeq(createseqdate(cxtoday, 60),maxitemwidth=12)  
+     ##   
+     ##   
      var aresult = newSeq[string]()
      var aDate = fromDate
      var toDate = plusDays(adate,days)
