@@ -9,6 +9,28 @@ import os,terminal,times,parseutils,strutils
 # 
 # 
 
+# types used in cxtimer
+type
+    CxTimer* =  object {.packed.}
+            name* : string
+            start*: float
+            stop  : float
+            lap*  : seq[float]
+      
+     
+# type used for cxtimer results
+type
+    Cxtimerres* = tuple[tname:string,
+                        start:float,
+                        stop :float,
+                        lap  :seq[float]]
+
+    Cxcounter* =  object
+            value*: int                        
+
+            
+
+
 proc localTime*() : auto =
   ## localTime
   ## 
@@ -66,7 +88,7 @@ proc toDateTime*(date:string = "2000-01-01"): DateTime =
          printLnBErrorMsg("Wrong Month in " & adate[1])
          quit(0)
    
-   var zday = parseint(adate[2])
+   let zday = parseint(adate[2])
    result.year = zyear
    result.month = zmonth
    result.monthday = zday
@@ -149,9 +171,10 @@ proc day*(aDate:string) : string =
    aDate.split("-")[2]
 
 proc month*(aDate:string) : string =
-    var asdm = $(parseInt(aDate.split("-")[1]))
-    if len(asdm) < 2: asdm = "0" & asdm
-    result = asdm
+    result = $(parseInt(aDate.split("-")[1]))
+    if result.len < 2:
+       result = "0" & result
+    
 
 
 proc year*(aDate:string) : string = aDate.split("-")[0]
@@ -241,11 +264,11 @@ proc cxTimeZone*(amode:string = "long"):string =
    ##
   
    var mode = amode
-   var okmodes = @["long","short"]
+   let okmodes = @["long","short"]
    if mode in okmodes == false:
       mode = "long"
    if mode == "long":
-        var ltt = $now()
+        let ltt = $now()
         result = "UTC" & $ltt[(($ltt).len - 6) ..< ($ltt).len]     
             
 
@@ -284,7 +307,7 @@ proc createSeqDate*(fromDate:string,days:int = 1):seq[string] =
      ##   
      var aresult = newSeq[string]()
      var aDate = fromDate
-     var toDate = plusDays(adate,days)
+     let toDate = plusDays(adate,days)
      while compareDates(aDate,toDate) == 2 : 
          if validDate(aDate) == true: 
             aresult.add(aDate)
@@ -320,7 +343,7 @@ proc getRndDate*(minyear:int = parseint(year(cxtoday)) - 50,maxyear:int = parsei
              if ddd.len == 1:
                 ddd = "0" & $ddd
             
-             var nd = $getRndInt(mminyear,mmaxyear) & "-" & mmd & "-" & ddd
+             let nd = $getRndInt(mminyear,mmaxyear) & "-" & mmd & "-" & ddd
              if validDate(nd) == false:
                  okflag = false
              else : 
@@ -349,27 +372,8 @@ proc printLnDateMsg*(atext:string = getDateStr(),xpos:int = 1):string {.discarda
 
    
    
-# cxtimer
+# cxtimer functions
 
-type
-    CxTimer* =  object {.packed.}
-            name* : string
-            start*: float
-            stop  : float
-            lap*  : seq[float]
-      
-     
-# type used for cxtimer results
-type
-    Cxtimerres* = tuple[tname:string,
-                        start:float,
-                        stop :float,
-                        lap  :seq[float]]
-
-    Cxcounter* =  object
-            value*: int                        
-
-            
 # global used to store all cxtimer results 
 var cxtimerresults* =  newSeq[Cxtimerres]()
 
@@ -421,8 +425,7 @@ proc  resetTimer*(co: ref(CxTimer)) =
       co.start = 0.0
       co.stop = 0.0
       co.lap = @[] 
-      
-      
+       
 proc  startTimer*(co:ref(CxTimer)) = co.start = epochTime()
 
 proc  lapTimer*(co:ref(CxTimer)):auto {.discardable.}  =
@@ -532,4 +535,4 @@ proc clearAllTimerResults*(quiet:bool = true,xpos:int = 3) =
    
    
    
-   
+# end of module cxtime.nim   

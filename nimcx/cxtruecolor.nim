@@ -15,7 +15,7 @@ import cxglobal,cxconsts,cxprint,terminal,strutils,random
 # the standard gnome terminal etc may or may not be able to show colors above the standard terminal colors
 # 
 #
-# Last : 2018-05-15
+# Last : 2018-05-26
 # 
 type
   CXRGB* = tuple[R: int, G: int, B: int,cxCol:string]  # the idea for the cxCol field is to give interesting colors a name

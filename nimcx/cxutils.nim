@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-05-04
+##     Latest      : 2018-05-26
 ##
 ##     OS          : Linux
 ##
@@ -84,8 +84,6 @@ proc cxVideoInfo*():string =
    var (output,error) = execCmdEx("lshw -c video")
    result = output   
    
-   
-
 
 proc showCpuCores*() =
     ## showCpuCores
@@ -340,7 +338,7 @@ template getCard* :auto =
 proc showRandomCard*(xpos:int = centerX()) = 
     ## showRandomCard
     ##
-    ## shows a random card at xpos , default is centered
+    ## shows a random card at xpos from the cards set in cxconstant.nim, default is centered
     ##
     print(getCard(),randCol(),xpos = xpos)
 
@@ -348,7 +346,7 @@ proc showRandomCard*(xpos:int = centerX()) =
 proc showRuler* (xpos:int=0,xposE:int=0,ypos:int = 0,fgr:string = white,bgr:BackgroundColor = bgBlack, vert:bool = false) =
      ## ruler
      ##
-     ## simple terminal ruler indicating dot x positions to give a feedback
+     ## simple terminal ruler indicating dot x positions starts with position 1
      ##
      ## horizontal --> vert = false
      ## 
@@ -589,7 +587,6 @@ proc superHeaderA*(bb:string = "",strcol:string = white,frmcol:string = green,an
             else:
                 cleanScreen()
             
-
       echo()
 
 # Unicode random word creators

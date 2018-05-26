@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-05-04 
+##     Latest      : 2018-05-26 
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -33,6 +33,7 @@ import
           unicode,
           macros,
           colors,
+          json,
           streams,
           typeinfo,
           typetraits
@@ -55,21 +56,9 @@ proc styledEchoProcessArg(color: BackgroundColor) = setBackgroundColor color
 
 # macros
 
-# macro styledEchoPrint*(m: varargs[untyped]): typed =
-#   ## partially lifted from an earler macro in terminal.nim and removed new line
-#   ## currently used in print
-#   ##
-#   let m = callsite()   # deprecated but what to use instead
-#   result = newNimNode(nnkStmtList)
-#   for i in countup(1, m.len - 1):
-#       result.add(newCall(bindSym"styledEchoProcessArg", m[i]))
-#   result.add(newCall(bindSym"write", bindSym"stdout", newStrLitNode("")))
-#   result.add(newCall(bindSym"resetAttributes"))
-#   
-  
 macro styledEchoPrint*(m: varargs[untyped]): typed =
   ## partially lifted from an earler macro in terminal.nim and removed new line
-  #  improvements by araq
+  #  improvements by araq to avoid the deprecated callsite()
   result = newNimNode(nnkStmtList)
   for i in countup(0, m.len - 1):
       result.add(newCall(bindSym"styledEchoProcessArg", m[i]))
@@ -85,10 +74,21 @@ proc tupleTypes*(atuple: tuple):seq[string] =
   result = newSeq[string]()
   for field in fields(atuple):
       result.add($type(field))  
+ 
+template unidecodeU*(ustring:untyped):untyped = 
+         ## unidecodeU
+         ## 
+         ## decode \u escaped strings like "\u96e8\u3002"
+         ## based on code by yglukhov ex Nim Forum
+         ## 
+         ##.. code-block:: nim
+         ##   printLn(unidecodeU("\u5f9e\u6e05\u6668\u958b\u59cb\u4e00\u76f4\u4e0b\u96e8\u3002" & spaces(2) & "\u96e8\u3002"),yellowgreen)
+         ## 
+         parseJson("\"" & ustring & "\"").getStr() 
+         #escapeJson(ustring)   # this works but adds quotation marks
+             
   
-  
-  
-template `*`*(s:string,n:int):string =
+template `*`*(s:string,n:int):untyped =
     ## returns input string  n times mimicking python
     s.repeat(n)    
 

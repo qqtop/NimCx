@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-04-26 
+##     Latest      : 2018-05-26 
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -1142,10 +1142,13 @@ proc cechoLn*(col    : string,
       cecho(col ,z)
 
 
+ 
+      
+      
 proc printCxLine*(aline:var Cxline) =
      ## printCxLine
      ## 
-     ## prints a horizontal for frames or other use with or without text ,
+     ## prints a horizontal line for frames or other use with or without text ,
      ## with or without brackets around the text as specified in an Cxline object
      ## the underlaying CxLine object is still further developed.
      ## cxline object is defined in cxglobal.nim
@@ -1179,161 +1182,48 @@ proc printCxLine*(aline:var Cxline) =
             rdotpos = rdotpos + 1
             hline(aline.endpos - aline.startpos - 1,aline.linecolor,xpos = xpos + 1,lt = aline.linechar)  
             rdotpos = rdotpos + aline.endpos - aline.startpos
-            
+
+            template cxhline(aline:CxLine,bline:CxLineText) =
+                ## cxhline
+                ## 
+                if aline.showbrackets == true:
+                    print(bline.textbracketopen,bline.textbracketcolor,xpos = xpos + bline.textpos)  
+                    rdotpos = rdotpos + 1
+                    print(bline.text,bline.textcolor,styled=bline.textstyle)
+                else:   
+                    print(bline.text,bline.textcolor,xpos = xpos + bline.textpos,styled=bline.textstyle)
+                if aline.showbrackets == true:
+                        print(bline.textbracketclose,bline.textbracketcolor)
+                        rdotpos = rdotpos + 1 
             
             # we need some reason why to print the cxtextline objects and the current reason is text.len
             # nothing will be shown if text.len == 0
             # printing the first of max 12 cxlinetext object
-            
-            
-            if aline.cxlinetext.text.len > 0:
-                if aline.showbrackets == true:
-                   print(aline.cxlinetext.textbracketopen,aline.cxlinetext.textbracketcolor,xpos = xpos + aline.cxlinetext.textpos)  
-                   rdotpos = rdotpos + 1
-                   print(aline.cxlinetext.text,aline.cxlinetext.textcolor,styled=aline.cxlinetext.textstyle)
-                else:   
-                   print(aline.cxlinetext.text,aline.cxlinetext.textcolor,xpos = xpos + aline.cxlinetext.textpos,styled=aline.cxlinetext.textstyle)
-                if aline.showbrackets == true:
-                   print(aline.cxlinetext.textbracketclose,aline.cxlinetext.textbracketcolor)
-                   rdotpos = rdotpos + 1
-                   
-                   
+
+            if aline.cxlinetext.text.len > 0: cxhline(aline,aline.cxlinetext)
             # printing the 2nd of max 12 cxlinetext object 
-            if aline.cxlinetext2.text.len > 0:
-                if aline.showbrackets == true:
-                   print(aline.cxlinetext2.textbracketopen,aline.cxlinetext2.textbracketcolor,xpos = xpos + aline.cxlinetext2.textpos)  
-                   rdotpos = rdotpos + 1
-                   print(aline.cxlinetext2.text,aline.cxlinetext2.textcolor,styled=aline.cxlinetext2.textstyle)
-                else:   
-                   print(aline.cxlinetext2.text,aline.cxlinetext2.textcolor,xpos = xpos + aline.cxlinetext2.textpos,styled=aline.cxlinetext2.textstyle)
-                if aline.showbrackets == true:
-                   print(aline.cxlinetext2.textbracketclose,aline.cxlinetext2.textbracketcolor)
-                   rdotpos = rdotpos + 1   
-               
+            if aline.cxlinetext2.text.len > 0: cxhline(aline,aline.cxlinetext2)                
             # printing the 3rd of max 12 cxlinetext object 
-            if aline.cxlinetext3.text.len > 0:
-                if aline.showbrackets == true:
-                   print(aline.cxlinetext3.textbracketopen,aline.cxlinetext3.textbracketcolor,xpos = xpos + aline.cxlinetext3.textpos)  
-                   rdotpos = rdotpos + 1
-                   print(aline.cxlinetext3.text,aline.cxlinetext3.textcolor,styled=aline.cxlinetext3.textstyle)
-                else:   
-                   print(aline.cxlinetext3.text,aline.cxlinetext3.textcolor,xpos = xpos + aline.cxlinetext3.textpos,styled=aline.cxlinetext3.textstyle)
-                if aline.showbrackets == true:
-                   print(aline.cxlinetext3.textbracketclose,aline.cxlinetext3.textbracketcolor)
-                   rdotpos = rdotpos + 1      
-               
+            if aline.cxlinetext3.text.len > 0: cxhline(aline,aline.cxlinetext3)
             # printing the 4th of max 12 cxlinetext object   
-            if aline.cxlinetext4.text.len > 0:
-                if aline.showbrackets == true:
-                   print(aline.cxlinetext4.textbracketopen,aline.cxlinetext4.textbracketcolor,xpos = xpos + aline.cxlinetext4.textpos)  
-                   rdotpos = rdotpos + 1
-                   print(aline.cxlinetext4.text,aline.cxlinetext4.textcolor,styled=aline.cxlinetext4.textstyle)
-                else:   
-                   print(aline.cxlinetext4.text,aline.cxlinetext4.textcolor,xpos = xpos + aline.cxlinetext4.textpos,styled=aline.cxlinetext4.textstyle)
-                if aline.showbrackets == true:
-                   print(aline.cxlinetext4.textbracketclose,aline.cxlinetext4.textbracketcolor)
-                   rdotpos = rdotpos + 1      
-            
+            if aline.cxlinetext4.text.len > 0: cxhline(aline,aline.cxlinetext4)
             # printing the 5th of max 12 cxlinetext object   
-            if aline.cxlinetext5.text.len > 0:
-                if aline.showbrackets == true:
-                   print(aline.cxlinetext5.textbracketopen,aline.cxlinetext5.textbracketcolor,xpos = xpos + aline.cxlinetext5.textpos)  
-                   rdotpos = rdotpos + 1
-                   print(aline.cxlinetext5.text,aline.cxlinetext5.textcolor,styled=aline.cxlinetext5.textstyle)
-                else:   
-                   print(aline.cxlinetext5.text,aline.cxlinetext5.textcolor,xpos = xpos + aline.cxlinetext5.textpos,styled=aline.cxlinetext5.textstyle)
-                if aline.showbrackets == true:
-                   print(aline.cxlinetext5.textbracketclose,aline.cxlinetext5.textbracketcolor)
-                   rdotpos = rdotpos + 1      
-            
+            if aline.cxlinetext5.text.len > 0: cxhline(aline,aline.cxlinetext5)  
             # printing the 6th of max 12 cxlinetext object   
-            if aline.cxlinetext6.text.len > 0:
-                if aline.showbrackets == true:
-                   print(aline.cxlinetext6.textbracketopen,aline.cxlinetext6.textbracketcolor,xpos = xpos + aline.cxlinetext6.textpos)  
-                   rdotpos = rdotpos + 1
-                   print(aline.cxlinetext6.text,aline.cxlinetext6.textcolor,styled=aline.cxlinetext6.textstyle)
-                else:   
-                   print(aline.cxlinetext6.text,aline.cxlinetext6.textcolor,xpos = xpos + aline.cxlinetext6.textpos,styled=aline.cxlinetext6.textstyle)
-                if aline.showbrackets == true:
-                   print(aline.cxlinetext6.textbracketclose,aline.cxlinetext6.textbracketcolor)
-                   rdotpos = rdotpos + 1      
-            
+            if aline.cxlinetext6.text.len > 0: cxhline(aline,aline.cxlinetext6)
             # printing the 7th of max 12 cxlinetext object   
-            if aline.cxlinetext7.text.len > 0:
-                if aline.showbrackets == true:
-                   print(aline.cxlinetext7.textbracketopen,aline.cxlinetext7.textbracketcolor,xpos = xpos + aline.cxlinetext7.textpos)  
-                   rdotpos = rdotpos + 1
-                   print(aline.cxlinetext7.text,aline.cxlinetext7.textcolor,styled=aline.cxlinetext7.textstyle)
-                else:   
-                   print(aline.cxlinetext7.text,aline.cxlinetext7.textcolor,xpos = xpos + aline.cxlinetext7.textpos,styled=aline.cxlinetext7.textstyle)
-                if aline.showbrackets == true:
-                   print(aline.cxlinetext7.textbracketclose,aline.cxlinetext7.textbracketcolor)
-                   rdotpos = rdotpos + 1      
-            
+            if aline.cxlinetext7.text.len > 0: cxhline(aline,aline.cxlinetext7)
             # printing the 8th of max 12 cxlinetext object   
-            if aline.cxlinetext8.text.len > 0:
-                if aline.showbrackets == true:
-                   print(aline.cxlinetext8.textbracketopen,aline.cxlinetext8.textbracketcolor,xpos = xpos + aline.cxlinetext8.textpos)  
-                   rdotpos = rdotpos + 1
-                   print(aline.cxlinetext8.text,aline.cxlinetext8.textcolor,styled=aline.cxlinetext8.textstyle)
-                else:   
-                   print(aline.cxlinetext8.text,aline.cxlinetext8.textcolor,xpos = xpos + aline.cxlinetext8.textpos,styled=aline.cxlinetext8.textstyle)
-                if aline.showbrackets == true:
-                   print(aline.cxlinetext8.textbracketclose,aline.cxlinetext8.textbracketcolor)
-                   rdotpos = rdotpos + 1      
-            
+            if aline.cxlinetext8.text.len > 0: cxhline(aline,aline.cxlinetext8)                 
             # printing the 9th of max 12 cxlinetext object   
-            if aline.cxlinetext9.text.len > 0:
-                if aline.showbrackets == true:
-                   print(aline.cxlinetext9.textbracketopen,aline.cxlinetext9.textbracketcolor,xpos = xpos + aline.cxlinetext9.textpos)  
-                   rdotpos = rdotpos + 1
-                   print(aline.cxlinetext9.text,aline.cxlinetext9.textcolor,styled=aline.cxlinetext9.textstyle)
-                else:   
-                   print(aline.cxlinetext9.text,aline.cxlinetext9.textcolor,xpos = xpos + aline.cxlinetext9.textpos,styled=aline.cxlinetext9.textstyle)
-                if aline.showbrackets == true:
-                   print(aline.cxlinetext9.textbracketclose,aline.cxlinetext9.textbracketcolor)
-                   rdotpos = rdotpos + 1      
-            
+            if aline.cxlinetext9.text.len > 0: cxhline(aline,aline.cxlinetext9) 
             # printing the 10th of max 12 cxlinetext object   
-            if aline.cxlinetext10.text.len > 0:
-                if aline.showbrackets == true:
-                   print(aline.cxlinetext10.textbracketopen,aline.cxlinetext10.textbracketcolor,xpos = xpos + aline.cxlinetext10.textpos)  
-                   rdotpos = rdotpos + 1
-                   print(aline.cxlinetext10.text,aline.cxlinetext10.textcolor,styled=aline.cxlinetext10.textstyle)
-                else:   
-                   print(aline.cxlinetext10.text,aline.cxlinetext10.textcolor,xpos = xpos + aline.cxlinetext10.textpos,styled=aline.cxlinetext10.textstyle)
-                if aline.showbrackets == true:
-                   print(aline.cxlinetext10.textbracketclose,aline.cxlinetext10.textbracketcolor)
-                   rdotpos = rdotpos + 1      
-                   
+            if aline.cxlinetext10.text.len > 0: cxhline(aline,aline.cxlinetext10)
             # printing the 11th of max 12 cxlinetext object   
-            if aline.cxlinetext11.text.len > 0:
-                if aline.showbrackets == true:
-                   print(aline.cxlinetext11.textbracketopen,aline.cxlinetext11.textbracketcolor,xpos = xpos + aline.cxlinetext11.textpos)  
-                   rdotpos = rdotpos + 1
-                   print(aline.cxlinetext11.text,aline.cxlinetext11.textcolor,styled=aline.cxlinetext11.textstyle)
-                else:   
-                   print(aline.cxlinetext11.text,aline.cxlinetext11.textcolor,xpos = xpos + aline.cxlinetext11.textpos,styled=aline.cxlinetext11.textstyle)
-                if aline.showbrackets == true:
-                   print(aline.cxlinetext11.textbracketclose,aline.cxlinetext11.textbracketcolor)
-                   rdotpos = rdotpos + 1      
-                   
+            if aline.cxlinetext11.text.len > 0: cxhline(aline,aline.cxlinetext11)     
             # printing the 12th of max 12 cxlinetext object   
-            if aline.cxlinetext12.text.len > 0:
-                if aline.showbrackets == true:
-                   print(aline.cxlinetext12.textbracketopen,aline.cxlinetext12.textbracketcolor,xpos = xpos + aline.cxlinetext12.textpos)  
-                   rdotpos = rdotpos + 1
-                   print(aline.cxlinetext12.text,aline.cxlinetext12.textcolor,styled=aline.cxlinetext12.textstyle)
-                else:   
-                   print(aline.cxlinetext12.text,aline.cxlinetext12.textcolor,xpos = xpos + aline.cxlinetext12.textpos,styled=aline.cxlinetext12.textstyle)
-                if aline.showbrackets == true:
-                   print(aline.cxlinetext12.textbracketclose,aline.cxlinetext12.textbracketcolor)
-                   rdotpos = rdotpos + 1      
-            
-            
-            
-               
-            #print("." & aline.newline,aline.dotrightcolor,xpos = rdotpos - 3)
+            if aline.cxlinetext12.text.len > 0: cxhline(aline,aline.cxlinetext12)
+                        
             print("." & aline.newline,aline.dotrightcolor,xpos = aline.endpos - 1)
             
 
@@ -1380,6 +1270,8 @@ proc dotyLn*(d    :int,
      ## dotyLn
      ##
      ## prints number d of widedot ⏺  style dots in given fore/background color and issues new line
+     ## 
+     ## may not be available on all systems
      ##
      ## each dot is of char length 4
 
