@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-05-26 
+##     Latest      : 2018-05-30 
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##

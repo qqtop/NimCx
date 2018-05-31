@@ -1,13 +1,12 @@
 
 ## cxTest.nim
 ## 
-## VERY rough testing for nimcx.nim  errors may occur 
+## VERY rough testing for nimcx.nim  errors may occur  
 ## 
-## Status : 2018-02-27  WIP
+## Status : 2018-05-31  WIP
 ## 
 ## best run in a large console window
 ## 
-
 
 
 import nimcx,cxDemo       # if installed via nimble
@@ -89,10 +88,11 @@ nextTest()
 # # now better to use the newer styledwrite and resetStyle 
 echo(salmon,"Everyone and the cat likes ffresh salmon. ")
 # 
+echo "int.high - abs(int.low)"
 echo(pastelblue," ",int.high)
 echo(pastelgreen,int.low)
 dlineLn(21,col = lime)
-echo(pastelyellow,int.high + abs(int.low))
+echo(pastelyellow,int.high + int.low)
 echo()
 
 print("Everyone and the cat likes fresh salmon. ",salmon)
@@ -156,8 +156,8 @@ for x in 0.. 10:
      sleepy(0.1)
      
      
-nextTest()
-flyNimDemo()
+#nextTest()
+#flyNimDemo()
  
  
 nextTest()

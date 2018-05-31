@@ -327,7 +327,7 @@ template getCard* :auto =
     ##
     ## gets a random card from the Cards seq
     ##
-    ## .. code-block:: nim
+    ## .. code-block:: nimPeluang untuk terus berkembang
     ##    import nimcx
     ##    print(getCard(),randCol(),xpos = centerX())  # get card and print in random color at xpos
     ##    doFinish()
@@ -976,18 +976,24 @@ proc showSeq*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5,di
     ##      
     result = ""
     var c = 0
-    for x in 0..<z.len:
+    for x in 0 ..< z.len:
       result = result & $z[x] & spaces(1)
       if displayflag == true:
-        inc c
-        if c < cols + 1 : 
+        
+        if c < cols: 
             if fgr == "rand":
                   printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$x , " : ",  $z[x] , spaces(1)) ,colLeft=gold,colRight=randcol(),0,false,{}) 
             else:
                   printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$x , " : ",  $z[x] , spaces(1)) ,colLeft=fgr,colRight=gold,0,false,{})     
+            inc c
         else:
              c = 0
-             if  c mod 10 == 0: echo() 
+             echo()
+             if fgr == "rand":
+                  printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$x , " : ",  $z[x] , spaces(1)) ,colLeft=gold,colRight=randcol(),0,false,{}) 
+             else:
+                  printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$x , " : ",  $z[x] , spaces(1)) ,colLeft=fgr,colRight=gold,0,false,{})     
+             inc c     
     
     if displayflag == true:
       decho(2)      
@@ -995,8 +1001,7 @@ proc showSeq*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5,di
       printLnInfoMsg("Item Count ",cxpad($z.len,msg1.len),xpos = 3) 
       #discard typeTest2(z)
       decho(2)          
-
-    
+ 
 
        
 proc seqHighLite*[T](b:seq[T],b1:seq[T],col:string=gold) =
@@ -1030,7 +1035,16 @@ proc shift*[T](x: var seq[T], zz: Natural = 0): T =
      result = x[zz]
      x.delete(zz) 
  
-
+iterator reverseIter*[T](a: openArray[T]): T =
+  ## reverse iterator  
+  ##
+  ##.. code-block:: nim
+  ##   
+  ##   let a = createseqfloat(10)
+  ##   for b in reverse(a): echo b
+  ##
+  for i in countdown(a.high,0):
+     yield a[i] 
      
 template withFile*(f,fn, mode, actions: untyped): untyped =
   ## withFile
@@ -1100,7 +1114,8 @@ proc checkMemFull*(xpos:int = 2) =
            let zline = aline.split(":")
            try:
               printLnInfoMsg(cxpad(zline[0],n),fmtx([">15"],zline[1].strip()),yellowgreen,xpos = xpos)
-           except IndexError:
+           except IndexError  as ex:
+              printLnErrorMsg(ex.msg)
               discard
  
 

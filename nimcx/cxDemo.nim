@@ -4,10 +4,10 @@ import nimcx
 ## this file is imported by cxTest.nim to actually run the demos
 ## may and will change anytime and errors may happen anytime
 
-## 2018-02-25  - WIP 
+## 2018-05-30  - WIP 
 
 
-proc flyNimDemo*(astring:string = "  Fly Nim",col:string = red,tx:float = 0.04) =
+proc flyNimDemo*(astring:string = "  Fly Nim",col:string = red,tx:float = 0.01) =
 
       ## flyNim
       ## 
@@ -172,7 +172,7 @@ proc printFontTest*() =
     printFont("now.",red,xpos=80)
     decho(10)
     printFontFancy("You like it ")
-    printFont("now.",red,xpos = 80)
+    printFont("now.",randcol2("blue"),xpos = 80)
     decho(10)
     printFontFancy("1234567890.0")
     decho(10)

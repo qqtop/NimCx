@@ -593,7 +593,8 @@ proc printFontFancy*(s:string, coltop1 = rndcol(),xpos:int = -10) =
      ## 
      ## 
      var npos = xpos
-     var coltop = rndTrueCol()
+     #var coltop = rndTrueCol() 
+     var coltop = randCol()
      for x in s.toLowerAscii:
         npos += 10
         case x 

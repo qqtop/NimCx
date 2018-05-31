@@ -58,7 +58,7 @@ proc styledEchoProcessArg(color: BackgroundColor) = setBackgroundColor color
 
 macro styledEchoPrint*(m: varargs[untyped]): typed =
   ## partially lifted from an earler macro in terminal.nim and removed new line
-  #  improvements by araq to avoid the deprecated callsite()
+  #  improvements by araq to avoid the now deprecated callsite()
   result = newNimNode(nnkStmtList)
   for i in countup(0, m.len - 1):
       result.add(newCall(bindSym"styledEchoProcessArg", m[i]))
