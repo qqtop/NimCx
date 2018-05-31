@@ -1,11 +1,11 @@
 # NimCx   ![Image](https://camo.githubusercontent.com/b0224997019dec4e51d692c722ea9bee2818c837/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f6c6963656e73652f6d6173686170652f6170697374617475732e737667)   ![Image](https://raw.githubusercontent.com/yglukhov/nimble-tag/master/nimble.png)
 
 
-![Image](http://qqtop.github.io/nimification.png?raw=true)
+![Image](http://qqtop.github.io/scrh5.png?raw=true)
 
 
 ![Image](http://qqtop.github.io/cxlineobject.png?raw=true)
-Example screenshot of cxlineobjectE1.nim
+Example screenshots of cxlineobjectE1.nim
 
  NIMCX - Color and Utilities for the Linux Terminal
 --------------------------------------------------------
@@ -78,6 +78,8 @@ Example usage of print procs
 ![Image](http://qqtop.github.io/nimblues.png?raw=true)
 
 
+![Image](http://qqtop.github.io/nimification.png?raw=true)
+
 ![Image](http://qqtop.github.io/nimcxmatrix.png?raw=true)
 Screenshot from cxmatrixfontE1.nim
 
@@ -99,8 +101,6 @@ dofinish()
 ![Image](http://qqtop.github.io/nimcolors35.png?raw=true)
 
 ![Image](http://qqtop.github.io/nimcolors36.png?raw=true)
-
-![Image](http://qqtop.github.io/truecolor1.png?raw=true)
 
 ![Image](http://qqtop.github.io/nimbox.png?raw=true)
 
