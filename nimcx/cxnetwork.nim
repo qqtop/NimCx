@@ -3,10 +3,10 @@ import cxconsts,cxglobal,cxprint
 
 # cxnetwork.nim
 # 
-# Var. internet related procs
+# Var. internet related procs and experiments
 # 
 # 
-# Last 2018-02-27
+# Last 2018-06-02
 # 
 
 proc getIpInfo*(ip:string):JsonNode =
@@ -91,71 +91,7 @@ proc showLocalIpInfo*() =
      printLnInfoMsg("Machine " , localIp())
      printLnInfoMsg("Router  " , localRouterIp())
    
-proc getHosts*(dm:string):seq[string] =
-    ## getHosts
-    ##
-    ## returns IP addresses inside a seq[string] for a domain name and
-    ##
-    ## may resolve multiple IP pointing to same domain
-    ##
-    ##.. code-block:: Nim
-    ##    import nimcx
-    ##    var z = getHosts("bbc.co.uk")
-    ##    for x in z:
-    ##      echo x
-    ##    doFinish()
-    ##
-    ##
-    var rx = newSeq[string]()
-    try:
-      for i in getHostByName(dm).addrList:
-        if i.len > 0:
-          var s = ""
-          var cc = 0
-          for c in i:
-              if s != "":
-                  if cc == 3:
-                    s.add(",")
-                    cc = 0
-                  else:
-                    cc += 1
-                    s.add('.')
-              s.add($int(c))
-          var ss = s.split(",")
-          for x in 0..<ss.len:
-              rx.add(ss[x])
 
-        else:
-          rx = @[]
-    except:
-           rx = @[]
-    var rxs = rx.toSet # removes doubles
-    rx = @[]
-    for x in rxs:
-        rx.add(x)
-    result = rx
-
-
-proc showHosts*(dm:string) =
-    ## showHosts
-    ##
-    ## displays IP addresses for a domain name and
-    ##
-    ## may resolve multiple IP pointing to same domain
-    ##
-    ##.. code-block:: Nim
-    ##    import nimcx
-    ##    showHosts("bbc.co.uk")
-    ##    doFinish()
-    ##
-    ##
-    cechoLn(yellowgreen,"Hosts Data for " & dm)
-    let z = getHosts(dm)
-    if z.len < 1:
-         printLn("Nothing found or not resolved",red)
-    else:
-       for x in z:
-         printLn(x)
 
 proc pingy*(dest:string,pingcc:int = 3,col:string = termwhite) = 
         ## pingy
@@ -255,3 +191,144 @@ proc cxPortCheck*(cmd:string = "lsof -i") =
            echo()
            discard
      printLnStatusMsg("cxPortCheck Finished.")      
+     
+     
+     
+# Experimental section with procs may or maynot return expected data     
+     
+proc cxDig*(ipadd:string):tuple = 
+     ## cxDig
+     ##
+     ## returns reverse DNS of an ip address
+     ## 
+     ## needs dig command available on system
+     ## 
+     ## may or may not return expected data
+     ## 
+     ## see showDig() for display
+     ## 
+     let acmd = "dig -x " & ipadd #& " +short"
+     result = execCmdEx(acmd)
+
+    
+proc cxDns*(dns:string):tuple =    
+     ## cxHost
+     ## 
+     ## see showHost()
+     ## 
+     let acmd = "host " & dns
+     result = execCmdEx(acmd) 
+
+
+proc showDig*(hostip:string = $"172.217.5.14") =
+        ## showDig
+        ## 
+        ## reverse dns lookup , default a google ip
+        ## 
+        ## 
+        decho(2)
+        var z = cxDig(hostip)
+        var zz = z.output.splitLines()
+        var zze = z.exitCode
+        printLnInfoMsg("HostIp ",hostip & spaces(10),xpos = 2)
+        echo()
+        for x in 0 ..< zz.len:
+          if zz[x].strip().len() > 0:
+            var zzz = zz[x].replace(";;","").replace(";","")
+            
+            printLnBiCol(fmtx(["<4","",""],$x," : ",zzz),xpos=2)
+        decho(1)
+        if zze > 0:
+            printLnInfoMsg("Exitcode   ",fmtx(["<8"],$zze),xpos=8)
+
+
+proc showDns*(hostdns:string = "google.com") =   
+        ## showHost
+        ## 
+        ## ip and connected hosts look up for a domain name
+        ## 
+        ## default = google.com
+        ## 
+        ##.. code_block:: nim
+        ##   showHost("bbc.com")
+        ## 
+
+        decho(2)
+        var h = cxDns(hostdns)
+        var hh = h.output.splitlines()
+        var hhe = h.exitCode
+
+        printLnInfoMsg("HostDns",hostdns & spaces(10),xpos = 2)
+        echo()
+        for x in 0 ..< hh.len:
+          if hh[x].strip().len() > 0:
+             printLnBiCol(fmtx(["<4","",""],$x," : ",hh[x]),xpos = 2)
+        decho(1)
+        if hhe > 0:
+             printLnInfoMsg("Exitcode   ",fmtx(["<8"],$hhe),xpos=8)
+    
+proc getHosts*(dm:string):seq[string] =
+    ## getHosts
+    ##
+    ## returns IP addresses inside a seq[string] for a domain name and
+    ##
+    ## may resolve multiple IP pointing to same domain
+    ##
+    ##.. code-block:: Nim
+    ##    import nimcx
+    ##    var z = getHosts("bbc.co.uk")
+    ##    for x in z:
+    ##      echo x
+    ##    doFinish()
+    ##
+    ##
+    var rx = newSeq[string]()
+    try:
+      for i in getHostByName(dm).addrList:
+        if i.len > 0:
+          var s = ""
+          var cc = 0
+          for c in i:
+              if s != "":
+                  if cc == 3:
+                    s.add(",")
+                    cc = 0
+                  else:
+                    cc += 1
+                    s.add('.')
+              s.add($int(c))
+          var ss = s.split(",")
+          for x in 0..<ss.len:
+              rx.add(ss[x])
+
+        else:
+          rx = @[]
+    except:
+           rx = @[]
+    var rxs = rx.toSet # removes doubles
+    rx = @[]
+    for x in rxs:
+        rx.add(x)
+    result = rx
+
+
+proc showHosts*(dm:string) =
+    ## showHosts
+    ##
+    ## displays IP addresses for a domain name and
+    ##
+    ## may resolve multiple IP pointing to same domain
+    ##
+    ##.. code-block:: Nim
+    ##    import nimcx
+    ##    showHosts("bbc.co.uk")
+    ##    doFinish()
+    ##
+    ##
+    cechoLn(yellowgreen,"Hosts Data for " & dm)
+    let z = getHosts(dm)
+    if z.len < 1:
+         printLn("Nothing found or not resolved",red)
+    else:
+       for x in z:
+         printLn(x)    
