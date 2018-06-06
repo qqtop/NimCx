@@ -91,6 +91,19 @@ template unidecodeU*(ustring:untyped):untyped =
 template `*`*(s:string,n:int):untyped =
     ## returns input string  n times mimicking python
     s.repeat(n)    
+    
+    
+template toki*(s:untyped):untyped = 
+  ## toki
+  ## 
+  ## tokenizes input string and returns token in a seq[string]
+  ##
+  ##.. code-block:: nim 
+  ##   var b = "酢の一種"  
+  ##   let s = &"a + b = 12 3.5% & {b}"
+  ##   echo toki(s)
+  ## 
+  toSeq(s.tokenize).filterIt(not it.isSep).mapIt(it.token)    
 
 proc newLine*(n:int = 1):string = 
      ## issues n newLines , default = 1
