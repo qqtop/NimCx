@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-05-30 
+##     Latest      : 2018-06-20 
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -69,7 +69,7 @@ proc print*[T](astring :T,
     ##  
     ##   available styles :
     ##  
-    ##   styleBright = 1,            # bright text
+    ##   styleBright = 1,            # bright/bold text
     ##  
     ##   styleDim,                   # dim text
     ##  
@@ -83,7 +83,10 @@ proc print*[T](astring :T,
     ##  
     ##   styleHidden                 # hidden text
     ##  
-    ##  
+    ##   styleItalic                 # italic
+    ##   
+    ##   styleStrikethrough          # strikethrough
+    ##   
     ##   for extended colorset background colors use styleReverse
     ##  
     ##   or use 2 or more print statements for the desired effect
@@ -93,7 +96,7 @@ proc print*[T](astring :T,
     ##.. code-block:: nim
     ##    # To achieve colored text with styleReverse try:
     ##    setBackgroundColor(bgRed)
-    ##    print("The end never comes on time ! ",pastelBlue,styled = {styleReverse})
+    ##    print("The end never comes on time ! ",pastelBlue,styled = {styleReverse,styleItalic})
     ##    print("whats up with truecolors now ? ",cxTrueCol[34567],bgRed,xpos = 10,styled={})
     ##    echo()
     ##
@@ -190,9 +193,6 @@ proc cxPrint*[T](ss    :T,
       ## Experimental
       ## 
       ## note the module base name and function name is the same
-    
-    
- 
       ## 
       ## truecolor print function
       ## 
@@ -284,39 +284,39 @@ proc cxPrintLn*[T](ss       : T,
       printLn(s,fgr = bgr,xpos = xpos,styled=styled)  
             
 
-
-proc print*[T](ss:varargs[T,`$`],
-           fgr : string = termwhite ,
-           bgr : BackgroundColor = bgBlack,
-           xpos: int = 0,
-           sep : string = spaces(1)) =
-           
-   ## print
-   ## 
-   ## a print routine which allows printing of varargs in desired color , position and separator
-   ## 
-   ## no newline is added
-   ## 
-   ## sep must not be wider than 1 , if it is wider the comma will be used as default otherwise default will be 1 space
-   ## 
-   ##.. code-block:: nim
-   ##    import nimcx
-   ##    
-   ##    print("TEST VARARGS : ",createSeqint(20).sampleSeq(8,13),getRndInt(10000,12000),createSeqint(3),newword(6,10),ff2(getRndfloat(),4),$(hiragana().sampleSeq(8,13)),randcol(),bblack,0,"") 
-   ##    echo()
-   ##    
-   ##    
-   var ssep = sep
-   if ssep.len > 1:
-      ssep = ","
-   var oldxlen = 0
-   for x in 0..<ss.len:
-      if x == ss.len - 1:
-         print(ss[x],fgr,bgr,xpos = xpos + oldxlen)
-      else:
-         print(ss[x] & ssep,fgr,bgr,xpos = xpos + oldxlen)
-      oldxlen =  oldxlen + ss[x].len + 1
-                
+# 
+# proc print*[T](ss:varargs[T,`$`],
+#            fgr : string = termwhite ,
+#            bgr : BackgroundColor = bgBlack,
+#            xpos: int = 0,
+#            sep : string = spaces(1)) =
+#            
+#    ## print
+#    ## 
+#    ## a print routine which allows printing of varargs in desired color , position and separator
+#    ## 
+#    ## no newline is added
+#    ## 
+#    ## sep must not be wider than 1 , if it is wider the comma will be used as default otherwise default will be 1 space
+#    ## 
+#    ##.. code-block:: nim
+#    ##    import nimcx
+#    ##    
+#    ##    print("TEST VARARGS : ",createSeqint(20).sampleSeq(8,13),getRndInt(10000,12000),createSeqint(3),newword(6,10),ff2(getRndfloat(),4),$(hiragana().sampleSeq(8,13)),randcol(),bblack,0,"") 
+#    ##    echo()
+#    ##    
+#    ##    
+#    var ssep = sep
+#    if ssep.len > 1:
+#       ssep = ","
+#    var oldxlen = 0
+#    for x in 0..<ss.len:
+#       if x == ss.len - 1:
+#          print(ss[x],fgr,bgr,xpos = xpos + oldxlen)
+#       else:
+#          print(ss[x] & ssep,fgr,bgr,xpos = xpos + oldxlen)
+#       oldxlen =  oldxlen + ss[x].len + 1
+#                 
 
 proc printLn*[T](astring:T,
                 fgr:string = termwhite,
@@ -427,7 +427,10 @@ proc print2*[T](astring:T,
     ##  
     ##   styleHidden                 # hidden text
     ##  
-    ##  
+    ##   styleItalic                 # italic
+    ##   
+    ##   styleStrikethrough          # strikethrough
+    ##     
     ##   for extended colorset background colors use styleReverse
     ##  
     ##   or use 2 or more print statements for the desired effect

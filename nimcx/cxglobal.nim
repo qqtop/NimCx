@@ -53,6 +53,7 @@ proc styledEchoProcessArg(style: set[Style]) = setStyle style
 proc styledEchoProcessArg(color: ForegroundColor) = setForegroundColor color
 proc styledEchoProcessArg(color: BackgroundColor) = setBackgroundColor color
 
+var getcxTrueColorSetFlag*:bool = false   # set this to true if you want cxtruecolor set preloaded from start
 
 # macros
 

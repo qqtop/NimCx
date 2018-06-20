@@ -229,6 +229,7 @@ proc playFindRGB(r:int,g:int,b:int) =
         
      printLn(rightarrow & "  " & $ok)
 ################################################################################################################################
+getcxTrueColorSet()   # needed as currently commented out in cx.nim for faster compiling
 # select one or more items to play with  . Had enough ?  Ctrl-C
 # playSpectrum()
 # decho(2)

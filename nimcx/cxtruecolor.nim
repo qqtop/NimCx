@@ -128,13 +128,15 @@ proc getCxTrueColorSet*(min:int = 0,max:int = 888,step:int = 12,flag48:bool = fa
      ##  
      result = false
      if checktruecolorsupport() == true:
+         if getcxTrueColorSetFlag == true:    # defined in cxglobal.nim  default == false
            {.hints: on.}
            {.hint    : "\x1b[38;2;154;205;50m \u2691 NimCx working on :" & "\x1b[38;2;255;100;0m getCxTrueColorset ! \xE2\x9A\xAB" & " " & "\xE2\x9A\xAB" & spaces(2) & "\x1b[38;2;154;205;50m \u2691" & spaces(1) .} 
            {.hints: off.}
-           cxTrueCol = @[]
-           cxTrueCol = cxTrueColorSet(min,max,step,flag48) 
-           #printLnBiCol("cxTrueCol Length : " & $cxtruecol.len)
-           result = true
+           echo()
+         cxTrueCol = @[]
+         cxTrueCol = cxTrueColorSet(min,max,step,flag48) 
+         #printLnBiCol("cxTrueCol Length : " & $cxtruecol.len)
+         result = true
      else:
            result = false
            printLnErrorMsg("cxTrueCol truecolor scheme can not be used on this terminal/konsole")
@@ -183,7 +185,17 @@ proc rndTrueColFull*() : auto =
      ## 
      colornumber38 = color3848(cxTrueCol)
      result = cxTrueCol[colornumber38]     
+
      
+proc checkCxTrueColor*(n:int):int =
+    ## checkCxTrueColor
+    ## 
+    ## returns n if available in cxtruecol else returns cxtruecol.max
+    ## 
+    result = n
+    if n > cxTrueCol.len:
+      {.warning : " Color Number requested not available. Using max available number from cxTrueCol set".}
+      result = cxTrueCol.len
    
 proc showCxTrueColorPalette*(min:int = 0,max:int = 888,step: int = 12,flag48:bool = false) {.inline.} = 
    ## showCxTrueColorPalette

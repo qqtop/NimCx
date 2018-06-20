@@ -1244,7 +1244,9 @@ decho(2)
 setControlCHook(handler)
 
 #uncomment following line to have global support for cxTrueCol inside cx if needed
-#getcxTrueColorSet()         # preload the cxTrueCol seq in default mode 
+
+if getcxTrueColorSetFlag == true:   # defined in cxglobal
+   getcxTrueColorSet()       # preload the cxTrueCol seq in default mode if getcxTrueColorSetFlag == true  --> default == false
 checktruecolorsupport()      # comment out if above line uncommented
 
 # this will reset any color changes in the terminal
