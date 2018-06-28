@@ -194,7 +194,7 @@ proc checkCxTrueColor*(n:int):int =
     ## 
     result = n
     if n > cxTrueCol.len:
-      {.warning : " Color Number requested not available. Using max available number from cxTrueCol set".}
+      #{.warning : " Color Number requested not available. Using max color from cxTrueCol set".}
       result = cxTrueCol.len
    
 proc showCxTrueColorPalette*(min:int = 0,max:int = 888,step: int = 12,flag48:bool = false) {.inline.} = 

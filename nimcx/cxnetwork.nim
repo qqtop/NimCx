@@ -6,7 +6,7 @@ import cxconsts,cxglobal,cxprint
 # Var. internet related procs and experiments
 # 
 # 
-# Last 2018-06-02
+# Last 2018-06-28
 # 
 
 proc getIpInfo*(ip:string):JsonNode =
@@ -76,7 +76,9 @@ proc localIp*():string =
    # returns current machine ip
    # 
 
-   result =  execCmdEx("ip route | grep src").output.split("src")[1].strip()
+   var z = execCmdEx("ip route | grep src").output.split("src")[1].strip()
+   var zz = z.split(" ") # in case there is something after the ip
+   result = zz[0]
   
 proc localRouterIp*():string = 
    # localRouterIp

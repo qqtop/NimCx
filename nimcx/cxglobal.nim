@@ -271,7 +271,9 @@ proc getRndInt*(mi:int = 0 , ma: int = int.high):int  {.noInit,inline.} =
      ## returns a random int between mi and < ma
      ## so for 0 or 1 we need rand(0..2)
      var maa = ma
-     if ma == 1: maa = 2
+     if maa <= mi :    # just take care of situation where ma <= mi provided 
+             maa = mi + 1   
+             #echo(lightslategray, "[getRndint in cxglobal]\n" & red & "No reasonabale values for min and max random value provided.\nUsing : Min = " & $mi & " Max = " & $maa, termwhite)
      result = rand(mi..maa)
 
   
@@ -792,7 +794,7 @@ template colPaletteName*(coltype:string,n:int): auto =
 template aPaletteSample*(coltype:string):int = 
      ## aPaletteSample
      ## 
-     ##  returns an rand entry (int) from a palette
+     ##  returns a rand entry (int) from a palette
      ##  see example at colPalette
      ## 
      var coltypen = coltype.toLowerAscii()
@@ -800,7 +802,24 @@ template aPaletteSample*(coltype:string):int =
      for x in 0..<colPaletteLen(coltypen): b.add(x)
      rand(b)   #rndSample
      
-
+template paletix*(pl:string):untyped = 
+  ## paletix
+  ## 
+  ## returns a random color from colorNames containing the string pl
+  ## 
+  ## so paletix("pastel") filters on all colorNames having the string "pastel"
+  ## 
+  ## if filter not available then the first available color will be used
+  ## 
+  ##.. code-block:: nim
+  ##   loopy2(1,10):
+  ##      printLn(cxpad(" Hello from NimCx !  " & $xloopy,25),paletix("pastel"),styled={styleReverse,styleItalic,styleBright})
+    
+  
+  
+  colPalette(pl,getRndInt(0,colPaletteLen(pl) - 1))
+  
+  
 template randCol2*(coltype:string): auto =
          ## ::
          ##   randCol2    -- experimental
@@ -1049,12 +1068,12 @@ template curBk*(x:int = 1) =
      cursorBackward(stdout,x)
 
 
-template curFw*(x:int = 1) =
+proc curFw*(x:int = 1):auto {.discardable.} =
      ## curFw
      ##
      ## mirrors terminal cursorForward
      cursorForward(stdout,x)
-
+     result = " " * x
 
 template curSetx*(x:int) =
      ## curSetx
@@ -1290,7 +1309,7 @@ template colPalette*(coltype:string,n:int): auto =
  
 template colorsPalette*(coltype:string): auto =
          ## ::
-         ##   colPalette
+         ##   colorsPalette
          ## 
          ##   returns a colorpalette which can be used to iterate over
          ##    
