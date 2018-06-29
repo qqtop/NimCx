@@ -71,6 +71,8 @@ Installation :
 
 Example usage of print procs 
 
+![Image](http://qqtop.github.io/nimspirals.png?raw=true)
+
 
 ![Image](http://qqtop.github.io/sierpred.png?raw=true)
 
