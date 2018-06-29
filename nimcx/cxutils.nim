@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-05-26
+##     Latest      : 2018-06-29
 ##
 ##     OS          : Linux
 ##
@@ -98,61 +98,21 @@ proc getAmzDateString*():string =
     ## 
     return format(utc(getTime()), iso_8601_aws) 
     
-proc cxdayofweek*(datestr:string):string = 
-    ## dayofweek
+proc cxDayOfWeek*(datestr:string):string = 
+    ## cxDayOfWeek
     ## 
     ## returns day of week from a date in format yyyy-MM-dd
     ## 
     ##.. code-block:: nim    
-    ##    echo getNextMonday("2017-07-15"),"  ",dayofweek(getNextMonday("2017-07-15"))
-    ##    echo getFirstMondayYear("2018"),"  ",dayofweek(getFirstMondayYear("2018"))
-    ##    echo getFirstMondayYearMonth("2018-2"),"  ",dayofweek(getFirstMondayYearMonth("2018-2"))
-    
-    result = $(getDayOfWeek(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr))))      
+    ##    echo cxDayOfWeek(cxtoday())
+    ##    echo getNextMonday("2017-07-15"),"  ",cxDayOfWeek(getNextMonday("2017-07-15"))
 
-proc getFirstMondayYear*[T](ayear:T):string =
-    ## getFirstMondayYear
-    ##
-    ## returns date of first monday of any given year
-    ##
-    ##.. code-block:: nim
-    ##    echo  getFirstMondayYear("2015")
-    ##
-    ##
-    
-    for x in 0.. 7:
-       var datestr = $ayear & "-01-0" & $x
-       if validdate(datestr) == true:decho(5)    
-       #if $(getdayofweek(parseInt(day(datestr)),parseInt(month(datestr)),parseInt(year(datestr)))) == "Monday":
-       if cxdayofweek(datestr) == "Monday":   
-             result = datestr
-
-
-proc getFirstMondayYearMonth*[T](aym:T):string =
-    ## getFirstMondayYearMonth
-    ##
-    ## returns date of first monday in given year and month
-    ##
-    ##.. code-block:: nim
-    ##    echo  getFirstMondayYearMonth("2015-12")
-    ##    echo  getFirstMondayYearMonth("2015-06")
-    ##    echo  getFirstMondayYearMonth("2015-2")
-    ##
-    ## in case of invalid dates nil will be returned
-
-    #var n:WeekDay
-    var amx = $aym
-    for x in 0 .. 7:
-       if amx.len < 7:decho(5)    
-       let yr = year(amx)
-       let mo = month(amx)  # this also fixes wrong months
-       amx = yr & "-" & mo
-       var datestr = amx & "-0" & $x
-       if validdate(datestr) == true:
-          if cxdayofweek(datestr) == "Monday":
-            result = datestr
-
-
+    if datestr.len==10:
+       result = $(getDayOfWeek(parseInt(day(datestr)),parseInt(month(datestr)).Month,parseInt(year(datestr))))      
+    else:
+       printLnErrorMsg("Invalid date received . Required format is yyyy-MM-dd. --> cxUtils : cxDayOfWeek")
+       result=""
+       
 
 proc getNextMonday*(adate:string):string =
     ## getNextMonday
@@ -167,7 +127,7 @@ proc getNextMonday*(adate:string):string =
     ##      var dw = "2015-08-10"
     ##      for x in 1.. 10:
     ##          dw = getNextMonday(dw)
-    ##          echo dwdecho(5)    
+    ##          echo decho(5)    
     ##
     ##
     ## in case of invalid dates nil will be returned
@@ -176,7 +136,7 @@ proc getNextMonday*(adate:string):string =
     
     var ndatestr = ""
     if isNil(adate) == true :
-       print("Error received a date with value : nil",red)
+       printErrorMsg("Received an invalid date.  value : nil")
     else:
 
         if validdate(adate) == true:
@@ -187,8 +147,7 @@ proc getNextMonday*(adate:string):string =
                 # so the datestr points to a monday we need to add a
                 # day to get the next one calculated
                 ndatestr = plusDays(adate,1)
-
-            else:decho(5)    
+            
             ndatestr = adate
 
             for x in 0..<7:
@@ -211,7 +170,7 @@ proc getRandomPointInCircle*(radius:float) : seq[float] =
     ##
     ##
     ## .. code-block:: nim
-    ##    import nimcx,math,strfmt
+    ##    import nimcx
     ##    # get randompoints in a circle
     ##    var crad:float = 1
     ##    for x in 0..100:
@@ -221,17 +180,13 @@ proc getRandomPointInCircle*(radius:float) : seq[float] =
     ##    doFinish()
     ##
     ##
-
-    let t = 2 * math.Pi * getRandomFloat()
-    let u = getRandomFloat() + getRandomFloat()
-    var r = 0.00
-    if u > 1 :
-      r = 2-u
-    else:
-      r = u
-    var z = newSeq[float]()
-    z.add(radius * r * math.cos(t))
-    z.add(radius * r * math.sin(t))
+    var r = radius * sqrt(getrndfloat(0,1))        # polar
+    var theta = getrndfloat(0,1) * 2 * math.Pi     # polar
+    var x = r * cos(theta)                         # cartesian
+    var y = r * sin(theta)                         # cartesian
+    var z = newSeq[float]()   
+    z.add(x)
+    z.add(y)
     return z
 
 

@@ -5,7 +5,7 @@ import os,terminal,times,parseutils,strutils
 # 
 # time/date related procs including printDTimeMsg etc.
 # 
-# Last : 2018-05-21
+# Last : 2018-06-29
 # 
 # 
 
@@ -168,7 +168,11 @@ proc day*(aDate:string) : string =
    ##
    ## a date string of format yyyy-MM-dd
    ##
-   aDate.split("-")[2]
+   
+   try:
+     result = aDate.split("-")[2]
+   except:
+     result = ""
 
 proc month*(aDate:string) : string =
     result = $(parseInt(aDate.split("-")[1]))
