@@ -12,7 +12,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-05-14
+##     Latest      : 2018-06-30
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -120,6 +120,24 @@ const
       euro*   = "€"
       dollar* = "$"
       yen*    = "¥"
+      
+# selected box chars
+# run : showseq(createSeqBoxChars())
+# to see more
+# 
+const
+    linechar* = "─"
+    leftbottom* = "╰"
+    lefttop* = "╭"
+    righttop* = "╮"
+    rightbottom* = "╯"
+    vertlinechar* = "│"
+    cross* = "┼"
+    rcross* = "┤"
+    lcross* = "├"
+    topcross* ="┬"
+    bottomcross* ="┴"      
+      
       
 const
       # Terminal ForegroundColor Normal

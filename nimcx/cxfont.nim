@@ -10,9 +10,7 @@ import strutils,terminal,sets
 # 
 # old block font related procs (not in use ) 
 # 
-# 
-# 
-# Last : 2018-05-20 
+# Last : 2018-06-30 
 # 
 
 # type used in slim number printing
@@ -1151,7 +1149,7 @@ proc dotMatrixTyper*(s:string,xpos:int = 1,color:string = randcol()) =
   for x in s:
     
     case $x
-      of "0" : printCxFontText(@[0],xpos = nxpos,cxfont=myfont,color = color) 
+      of "0" : printCxFontText(@[0],xpos = nxpos,cxfont=myfont,color=color) 
       of "1" : printCxFontText(@[1],xpos = nxpos,cxfont=myfont,color=color)
       of "2" : printCxFontText(@[2],xpos = nxpos,cxfont=myfont,color=color)
       of "3" : printCxFontText(@[3],xpos = nxpos,cxfont=myfont,color=color)

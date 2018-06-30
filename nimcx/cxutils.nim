@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-06-29
+##     Latest      : 2018-06-30
 ##
 ##     OS          : Linux
 ##
@@ -172,12 +172,14 @@ proc getRandomPointInCircle*(radius:float) : seq[float] =
     ## .. code-block:: nim
     ##    import nimcx
     ##    # get randompoints in a circle
-    ##    var crad:float = 1
+    ##    var crad:float = 2.1
     ##    for x in 0..100:
-    ##       var k = getRandomPointInCircle(crad)
-    ##       assert k[0] <= crad and k[1] <= crad
-    ##       printLnBiCol(fmtx([">25","<6",">25"],ff2(k[0])," :",ff2(k[1])))
-    ##    doFinish()
+    ##        var k = getRandomPointInCircle(crad)
+    ##        assert k[0] <= crad and k[1] <= crad
+    ##        if k[0] <= crad and k[1] <= crad:
+    ##            printLnBiCol(fmtx([">25","<6",">10"],ff2(k[0])," :",ff2(k[1])))
+    ##        else:
+    ##            printLnBiCol(fmtx([">25","<6",">10"],ff2(k[0])," :",ff2(k[1])),colLeft=red,colRight=red)
     ##
     ##
     var r = radius * sqrt(getrndfloat(0,1))        # polar
@@ -393,7 +395,6 @@ proc superHeader*(bstring:string) =
       ##
       ## be cut to terminal window width without ceremony
       ##
-      ## for box with or without intersections see drawBox
       ##
       var astring = bstring
       # minimum default size that is string max len = 43 and
@@ -796,7 +797,7 @@ proc createSeqAll*(min:int = 0,max:int = 40878):seq[string] =
      
             # there are more chars up to maybe 120150 some
             # maybe for indian langs,iching, some special arab and koran symbols if installed on the system
-            # if not installed on your system you will see the omnious rectangle char  0xFFFD
+            # if not installed on your symondaystem you will see the omnious rectangle char  0xFFFD
             # https://www.w3schools.com/charsets/ref_html_utf8.asp
             # tablerune(createSeqAll(),cols=6,maxitemwidth=12)  
             # 
@@ -911,7 +912,67 @@ proc createSeqBoxChars*():seq[string] =
         boxy.add($RUne(j))
     result = boxy
 
-   
+    
+    
+proc boxy*(w:int = 20, h:int = 5,fgr=randcol(),xpos:int=1) =
+    ## boxy
+    ## 
+    ## draws a box with width w , height h , color color at position xpos
+    ## 
+    println2(lefttop & linechar * w & righttop,fgr = fgr,xpos=xpos)
+    for x in 0..h:
+        println2(vertlinechar & spaces(w) & vertlinechar,fgr = fgr,xpos=xpos)
+    printLn2(leftbottom & linechar * w & rightbottom,fgr = fgr,xpos=xpos)
+ 
+ 
+    
+proc boxy2*(w:int = 20, h:int = 5,fgr=randcol(),xpos:int=1) =
+    ## boxy2
+    ## 
+    ## draws a box with width w , height h , color color at position xpos
+    ## 
+    ## similar to boxy but with random color for each element rather than each box
+    ## 
+    println2(lefttop & linechar * w & righttop,fgr = randcol(),xpos=xpos)
+    for x in 0..h:
+        println2(vertlinechar & spaces(w) & vertlinechar,fgr = randcol(),xpos=xpos)
+    printLn2(leftbottom & linechar * w & rightbottom,fgr = randcol(),xpos=xpos)     
+    
+
+
+ 
+proc spiralBoxy*(w:int = 20, h:int = 20,xpos:int = 1) =
+     ## spiralBoxy
+     var ww = w
+     var hh = h
+     var xxpos = xpos
+     for x in countdown(h,h div 2):
+       boxy(ww,hh,randcol(),xxpos)
+       dec ww
+       dec ww
+       dec hh
+       dec hh
+       inc xxpos
+       curup(hh + 4) 
+ 
+ 
+proc spiralBoxy2*(w:int = 20, h:int = 20,xpos:int = 1) =
+     ## spiralBoxy2   uses boxy2
+     var ww = w
+     var hh = h
+     var xxpos = xpos
+     for x in countdown(h,h div 2):
+       boxy2(ww,hh,randcol(),xxpos)
+       dec ww
+       dec ww
+       dec hh
+       dec hh
+       inc xxpos
+       curup(hh + 4)
+     
+    
+    
+    
 proc showSeq*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5,displayflag : bool = true):string {.discardable.} = 
     ## showSeq
     ##
