@@ -351,9 +351,10 @@ proc nimcat*(curFile:string,countphrase : varargs[string,`$`] = "")=
             if countphrase.len > 0:
               println("\nPhraseCount stats :    \n",gold,styled={styleUnderScore})
               for x in 0..<countphrase.len:
-                    printLnBiCol(fmtx(["<" & $maxphrasewidth,"",""],countphrase[x]," : " & rightarrow & " Count: ",phraseinline[x].len))
-                    printLnBiCol("Lines : " , phraseinline[x],"\n" ,colLeft = cyan ,colRight = termwhite ,sep = ":",0,false,{})
-            
+                    printLnBiCol(fmtx(["<" & $maxphrasewidth,"",""],countphrase[x]," : " & rightarrow & " Count: ",phraseinline[x].len),xpos = 4)
+                    printLnBiCol("Occurence : Line No." ,colLeft = truetomato ,colRight = yellow ,sep = ":",4,false,{})
+                    showseq(phraseinline[x])
+                    
   
 template repeats(count: int, statements: untyped) =
   for i in 0..<count:
