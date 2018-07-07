@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-05-21
+##     Latest      : 2018-07-07
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -297,13 +297,14 @@ proc showColors*() =
 proc nimcat*(curFile:string,countphrase : varargs[string,`$`] = "")=
     ## nimcat
     ## 
-    ## a simple file lister which shows all rows and some stats as well as allows counting of tokens
-    ## a file name without extension will be assuemed to be .nim ... it is the nimcat afterall
-    ## countphrase is case sensitive
-    ## this proc uses memslices and memfiles for speed
+    ## A simple file lister which shows all rows and some stats.
+    ## It also allows counting of tokens.
+    ## A file name without extension will be assuemed to be .nim 
+    ## Countphrase is case sensitive
+    ## This proc uses memslices and memfiles for speed
     ##  
     ##  
-    ##.. code-block: nim
+    ##.. code-block:: nim
     ## 
     ##   nimcat("notes.txt")                   # show all lines
     ##   nimcat("bigdatafile.csv")
