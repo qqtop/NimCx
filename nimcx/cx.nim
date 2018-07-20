@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-07-07
+##     Latest      : 2018-07-20
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -87,7 +87,7 @@
 ##
 ##                   unicode libraries and terminal support in your system
 ##
-##                   terminal x-axis position start with 1
+##                   terminal x-axis position starts with 1 (mostly)
 ##
 ##                   proc fmtx a simple formatting utility has been added and works with strformat too
 ##
@@ -1092,6 +1092,7 @@ proc infoLine*() =
     ## prints some info for current application
     ##
     hlineLn()
+    echo()
     print(fmtx(["<14"],"Application:"),yellowgreen)
     print(extractFileName(getAppFilename()),skyblue)
     print(" | ",brightblack)
@@ -1199,7 +1200,7 @@ proc handler*() {.noconv.} =
     cechoLn(yellowgreen,"Thank you for using        : " & getAppFilename())
     hlineLn()
     printLnBiCol(fmtx(["<","<11",">9"],"Last compilation on        : " , CompileDate , CompileTime),brightcyan,termwhite,":",0,false,{})
-    printLnBiCol(fmtx(["<","<11",">9"],"Exit handler invocation at : " , cxtoday() , getClockStr()),pastelorange,termwhite,":",0,false,{})
+    printLnBiCol(fmtx(["<","<11",">9"]," Exit handler invocation at : " , cxtoday() , getClockStr()),pastelorange,termwhite,":",0,false,{})
     hlineLn()
     echo()
     printInfoMsg("Nim Version ",NimVersion)

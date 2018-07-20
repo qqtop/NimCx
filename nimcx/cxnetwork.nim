@@ -6,7 +6,7 @@ import cxconsts,cxglobal,cxprint
 # Var. internet related procs and experiments
 # 
 # 
-# Last 2018-06-28
+# Last 2018-07-20
 # 
 
 proc getIpInfo*(ip:string):JsonNode =

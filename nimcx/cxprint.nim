@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-06-20 
+##     Latest      : 2018-07-20 
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -32,8 +32,8 @@ proc printLn*[T](astring:T,fgr:string = termwhite , bgr:BackgroundColor = bgBlac
 proc printBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) 
 proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) 
 proc printRainbow*(s : string,styled:set[Style] = {})     ## forward declaration
-proc hline*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-") : string {.discardable.} ## forward declaration
-proc hlineLn*(n:int = tw,col:string = white,xpos:int = 1,lt:string = "-") : string {.discardable.}## forward declaration
+proc hline*(n:int = tw,col:string = white,xpos:int = 0,lt:string = "-") : string {.discardable.} ## forward declaration
+proc hlineLn*(n:int = tw,col:string = white,xpos:int = 0,lt:string = "-") : string {.discardable.}## forward declaration
 proc printErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} 
 proc printLnErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} 
 
@@ -584,7 +584,7 @@ proc rainbow*[T](s : T,
 # output  horizontal lines
 proc hline*(n:int = tw,
             col:string = white,
-            xpos:int = 1,
+            xpos:int = 0,
             lt:string = "-"):string {.discardable.} =
      ## hline
      ##
@@ -601,7 +601,7 @@ proc hline*(n:int = tw,
 
 proc hlineLn*(n:int = tw,
               col:string = white,
-              xpos:int = 1,
+              xpos:int = 0,
               lt:string = "-"):string {.discardable.} =
      ## hlineLn
      ##
@@ -612,7 +612,10 @@ proc hlineLn*(n:int = tw,
      ##.. code-block:: nim
      ##    hlineLn(30,green)
      ##
-     result = hline(n,col,xpos,lt) & "/n"
+     
+     let res = hline(n,col,xpos,lt) 
+     result = res & newLine()
+     
      
 
 

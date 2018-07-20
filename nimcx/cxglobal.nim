@@ -749,10 +749,10 @@ proc cleanScreen*() =
 
 
 
-proc centerX*(): int = tw div 2
+proc centerX*(): int = tw div 2 + 2
           ## centerX
      ##
-     ## returns an int with terminal center position
+     ## returns an int with best terminal center position
      ##
      ##
 
@@ -767,7 +767,7 @@ proc centerPos*(astring: string) =
      ##    printLn(s,gray)
      ##
      ##
-          setCursorXPos(stdout, centerX() - astring.len div 2 - 1)
+          setCursorXPos(stdout, centerX() - astring.len div 2 - 2)
 
 
 
@@ -878,16 +878,6 @@ template rndCol*(r: int = getRndInt(0, 254), g: int = getRndInt(0, 254),
 # cxLine is a line creation object with several properties 
 # up to 12 CxlineText objects can be placed into a cxline
 # also see printCxLine in cxprint.nim for possible usage
-
-
-
-
-
-
-
-
-
-
 
 type
 

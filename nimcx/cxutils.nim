@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-06-30
+##     Latest      : 2018-07-20
 ##
 ##     OS          : Linux
 ##
@@ -324,18 +324,18 @@ proc showRuler* (xpos:int=0,xposE:int=0,ypos:int = 0,fgr:string = white,bgr:Back
      var fflag:bool = false
      var npos  = xpos
      var nposE = xposE
-     if xpos == 0: npos  = 1
+     if xpos == 0: npos  = 0
      if xposE == 0: nposE = tw - 1
 
      if vert == false :  # horizontalruler
 
           for x in npos..nposE:
 
-            if x == 1:
+            if x == 0:
                 curup(1)
-                print(".",lime,bgr,xpos = 1)
+                print(".",lime,bgr,xpos = 0)
                 curdn(1)
-                print(x,fgr,bgr,xpos = 1)
+                print(1,fgr,bgr,xpos = 0)
                 curup(1)
                 fflag = true
 
