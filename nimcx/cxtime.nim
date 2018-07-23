@@ -5,7 +5,7 @@ import os,terminal,times,parseutils,strutils
 # 
 # time/date related procs including printDTimeMsg etc.
 # 
-# Last : 2018-06-29
+# Last : 2018-07-23
 # 
 # 
 
@@ -226,7 +226,7 @@ proc plusDays*(aDate:string,days:int):string =
    if validdate(aDate) == true:
       var rxs = ""
       let tifo = parse(aDate,"yyyy-MM-dd") # this returns a DateTime type
-      var myinterval = initTimeInterval()
+      var myinterval = initInterval()
       myinterval.days = days
       rxs = fx(tifo + myinterval)
       result = rxs
@@ -248,7 +248,7 @@ proc minusDays*(aDate:string,days:int):string =
    if validdate(aDate) == true:
       var rxs = ""
       let tifo = parse(aDate,"yyyy-MM-dd") # this returns a DateTime type
-      var myinterval = initTimeInterval()
+      var myinterval = initInterval()
       myinterval.days = days
       rxs = fx(tifo - myinterval)
       result = rxs
