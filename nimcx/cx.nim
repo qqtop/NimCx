@@ -244,7 +244,9 @@ proc newColor*(r,g,b:int):string = "\x1b[38;2;$1;$2;$3m" % [$r,$g,$b]
     ##   creates a new color string from r,g,b values passed in
     ##   colors can be used as foregroundcolor in print,printLn routines
     ##   and as bgr in cxPrint,cxPrintLn 
+    ##   
     ##.. code-block:: nim
+    ##
     ##   import nimcx
     ##   printLn("Test for rgb color 12345  " & efb2 * 10,newColor(27354,4763,1089))
     ##   decho(2)
