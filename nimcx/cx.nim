@@ -238,12 +238,11 @@ converter toInt*(x: char): int = result = ord(x)
 converter toChar*(x: int): char = result = chr(x)  
 
 
-proc newColor*(r,g,b:int):string = "\x1b[38;2;$1;$2;$3m" % [$r,$g,$b]
+proc newColor*(r,g,b:int):string = 
     ##   newColor
     ##   
-    ##   creates a new color string from r,g,b values passed in
-    ##   colors can be used as foregroundcolor in print,printLn routines
-    ##   and as bgr in cxPrint,cxPrintLn 
+    ##   creates a new color string from r,g,b values passed in colors can be used as 
+    ##   foregroundcolor in print,printLn routines and as bgr in cxPrint,cxPrintLn 
     ##   
     ##.. code-block:: nim
     ##
@@ -263,6 +262,10 @@ proc newColor*(r,g,b:int):string = "\x1b[38;2;$1;$2;$3m" % [$r,$g,$b]
     ##   printLn("Here we go",mymystiquecolor)
     ##   doFinish()
     ##
+    ##
+    result = "\x1b[38;2;$1;$2;$3m" % [$r,$g,$b]
+    
+    
 proc newColor2*(r,g,b:int):string = "\x1b[48;2;$1;$2;$3m" % [$r,$g,$b]     
     ##   newColor2
     ##   
