@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-07-20
+##     Latest      : 2018-08-02
 ##
 ##     OS          : Linux
 ##
@@ -316,7 +316,7 @@ template getCard* :auto =
     ##
     ## gets a random card from the Cards seq
     ##
-    ## .. code-block:: nimPeluang untuk terus berkembang
+    ## .. code-block:: nim
     ##    import nimcx
     ##    print(getCard(),randCol(),xpos = centerX())  # get card and print in random color at xpos
     ##    doFinish()

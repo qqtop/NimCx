@@ -251,7 +251,7 @@ proc showDns*(hostdns:string = "google.com") =
         ## 
         ## default = google.com
         ## 
-        ##.. code_block:: nim
+        ##.. code-block:: nim
         ##   showHost("bbc.com")
         ## 
 

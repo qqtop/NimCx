@@ -246,23 +246,22 @@ proc newColor*(r,g,b:int):string =
     ##   
     ##   Example
     ##   
-    ##.. code-block:: nim
-    ##
-    ##   import nimcx
-    ##   printLn("Test for rgb color 12345  " & efb2 * 10,newColor(27354,4763,1089))
-    ##   decho(2)
-    ##   printLn("Test for rgb color 12345  " & efb2 * 10,newColor(73547,4873,4888))
-    ##   decho(2)
-    ##   printLn("Test for rgb color 12345  " & efb2 * 10,newColor(990,483,38),bgblue)
-    ##   decho(2)
-    ##   cxPrintLn("Test cxprintln test 12345 " &  efb2 * 10,fontcolor = colBlue,bgr=newcolor(990,5483,38))
-    ##   cxPrintLn("Test cxprintln test 12345 " &  efb2 * 10,fontcolor = colBlue,bgr=newcolor(9390,5483,38))
-    ##   cxPrintLn("Test cxprintln test 12345 " &  efb2 * 10,fontcolor = colBlue,bgr=newcolor(93900,54830,3800))
-    ##   decho(2)
-    ##   # or save it
-    ##   let mymystiquecolor = newColor2(93547,84873,77888)
-    ##   printLn("Here we go",mymystiquecolor)
-    ##   doFinish()
+    ##   .. code-block:: nim
+    ##     import nimcx
+    ##     printLn("Test for rgb color 12345  " & efb2 * 10,newColor(27354,4763,1089))
+    ##     decho(2)
+    ##     printLn("Test for rgb color 12345  " & efb2 * 10,newColor(73547,4873,4888))
+    ##     decho(2)
+    ##     printLn("Test for rgb color 12345  " & efb2 * 10,newColor(990,483,38),bgblue)
+    ##     decho(2)
+    ##     cxPrintLn("Test cxprintln test 12345 " &  efb2 * 10,fontcolor = colBlue,bgr=newcolor(990,5483,38))
+    ##     cxPrintLn("Test cxprintln test 12345 " &  efb2 * 10,fontcolor = colBlue,bgr=newcolor(9390,5483,38))
+    ##     cxPrintLn("Test cxprintln test 12345 " &  efb2 * 10,fontcolor = colBlue,bgr=newcolor(93900,54830,3800))
+    ##     decho(2)
+    ##     # or save it
+    ##     let mymystiquecolor = newColor2(93547,84873,77888)
+    ##     printLn("Here we go",mymystiquecolor)
+    ##     doFinish()
     ##
     ##
     result = "\x1b[38;2;$1;$2;$3m" % [$r,$g,$b]
