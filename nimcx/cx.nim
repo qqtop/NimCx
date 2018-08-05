@@ -242,7 +242,9 @@ proc newColor*(r,g,b:int):string =
     ##   newColor
     ##   
     ##   creates a new color string from r,g,b values passed in colors can be used as 
-    ##   foregroundcolor in print,printLn routines and as bgr in cxPrint,cxPrintLn 
+    ##   foregroundcolor in print,printLn routines and as bgr in cxPrint,cxPrintLn .
+    ##   
+    ##   Example
     ##   
     ##.. code-block:: nim
     ##
