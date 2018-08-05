@@ -257,7 +257,39 @@ proc getRandomPoint*(minx:int = -500 ,maxx:int = 500 ,miny:int = -500 ,maxy:int 
     point.y =  getRandomSignI() * getRndInt(miny,maxy)  
     result =  point
 
+
+proc getPointInSphere*():auto =
+    ## getPointInSphere
+    ## 
+    ## returns x,y,x coordinates for a point in sphere with max size  1,1,1
+    ## 
+    ## https://karthikkaranth.me/blog/generating-random-points-in-a-sphere/#better-choice-of-spherical-coordinates
+    ## 
+    ## .. code-block:: nim
+    ##    # display 100 coordinates of in sphere points
+    ##    for x in 0..<100:      
+    ##       let b = getPointinSphere()  
+    ##       printLnBiCol(fmtx(["",">7","",">7","",">7"],"  x: ",b[0],"  y: ",b[1],"  z: ",b[2]))
+    ##       
+    ##       
     
+    
+    
+    var u = rand(1.0);
+    var v = rand(1.0);
+    var theta = u * 2.0 * PI;
+    var phi = arccos(2.0 * v - 1.0);
+    var r = cbrt(rand(1.0));
+    var sinTheta = sin(theta);
+    var cosTheta = cos(theta);
+    var sinPhi = sin(phi);
+    var cosPhi = cos(phi);
+    var x = r * sinPhi * cosTheta;
+    var y = r * sinPhi * sinTheta;
+    var z = r * cosPhi;
+    result = @[x,y,z]
+    
+        
 proc randpos*():int =
     ## randpos
     ##

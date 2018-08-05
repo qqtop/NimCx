@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-07-20
+##     Latest      : 2018-08-01
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -239,34 +239,34 @@ converter toChar*(x: int): char = result = chr(x)
 
 
 proc newColor*(r,g,b:int):string = "\x1b[38;2;$1;$2;$3m" % [$r,$g,$b]
-##   newColor
-##   
-##   creates a new color string from r,g,b values passed in
-##   colors can be used as foregroundcolor in print,printLn routines
-##   and as bgr in cxPrint,cxPrintLn 
-##.. code-block:: nim
-##   import nimcx
-##   printLn("Test for rgb color 12345  " & efb2 * 10,newColor(27354,4763,1089))
-##   decho(2)
-##   printLn("Test for rgb color 12345  " & efb2 * 10,newColor(73547,4873,4888))
-##   decho(2)
-##   printLn("Test for rgb color 12345  " & efb2 * 10,newColor(990,483,38),bgblue)
-##   decho(2)
-##   cxPrintLn("Test cxprintln test 12345 " &  efb2 * 10,fontcolor = colBlue,bgr=newcolor(990,5483,38))
-##   cxPrintLn("Test cxprintln test 12345 " &  efb2 * 10,fontcolor = colBlue,bgr=newcolor(9390,5483,38))
-##   cxPrintLn("Test cxprintln test 12345 " &  efb2 * 10,fontcolor = colBlue,bgr=newcolor(93900,54830,3800))
-##   decho(2)
-##   # or save it
-##   let mymystiquecolor = newColor2(93547,84873,77888)
-##   printLn("Here we go",mymystiquecolor)
-##   doFinish()
-##
+    ##   newColor
+    ##   
+    ##   creates a new color string from r,g,b values passed in
+    ##   colors can be used as foregroundcolor in print,printLn routines
+    ##   and as bgr in cxPrint,cxPrintLn 
+    ##.. code-block:: nim
+    ##   import nimcx
+    ##   printLn("Test for rgb color 12345  " & efb2 * 10,newColor(27354,4763,1089))
+    ##   decho(2)
+    ##   printLn("Test for rgb color 12345  " & efb2 * 10,newColor(73547,4873,4888))
+    ##   decho(2)
+    ##   printLn("Test for rgb color 12345  " & efb2 * 10,newColor(990,483,38),bgblue)
+    ##   decho(2)
+    ##   cxPrintLn("Test cxprintln test 12345 " &  efb2 * 10,fontcolor = colBlue,bgr=newcolor(990,5483,38))
+    ##   cxPrintLn("Test cxprintln test 12345 " &  efb2 * 10,fontcolor = colBlue,bgr=newcolor(9390,5483,38))
+    ##   cxPrintLn("Test cxprintln test 12345 " &  efb2 * 10,fontcolor = colBlue,bgr=newcolor(93900,54830,3800))
+    ##   decho(2)
+    ##   # or save it
+    ##   let mymystiquecolor = newColor2(93547,84873,77888)
+    ##   printLn("Here we go",mymystiquecolor)
+    ##   doFinish()
+    ##
 proc newColor2*(r,g,b:int):string = "\x1b[48;2;$1;$2;$3m" % [$r,$g,$b]     
-##   newColor2
-##   
-##   creates a new color string from r,g,b values passed in with styleReverse effect for text
-##   best used as foregroundcolor in print, printLn routines
-##     
+    ##   newColor2
+    ##   
+    ##   creates a new color string from r,g,b values passed in with styleReverse effect for text
+    ##   best used as foregroundcolor in print, printLn routines
+    ##     
 
 proc checkColor*(colname: string): bool =
      ## checkColor
@@ -1159,7 +1159,7 @@ proc doFinish*() =
         printLnBiCol("  Compiled on: " & $CompileDate & spaces(1) & $CompileTime & spaces(1) & cxTimeZone())
         if detectOs(OpenSUSE) or detectOs(Parrot):  # some additional data if on openSuse or parrotOs systems
             let ux1 = uname().split("#")[0].split(" ")
-            printLnBiCol("Kernel     :  " & ux1[2] & " | Computer: " & ux1[1] & " | Os: " & ux1[0] & " | Processors: " & $(osproc.countProcessors()),yellowgreen,lightslategray,":",0,false,{})
+            printLnBiCol("Kernel     :  " & ux1[2] & " | Computer: " & ux1[1] & " | Os: " & ux1[0] & " | CPU Cores: " & $(osproc.countProcessors()),yellowgreen,lightslategray,":",0,false,{})
             let rld = release().splitLines()
             let rld3 = rld[2].splitty(":")
             let rld4 = rld3[0] & spaces(2) & strip(rld3[1])

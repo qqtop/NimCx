@@ -888,7 +888,7 @@ type
 
           CxlineText* = object
                     text*: string # text                                default none
-                    textcolor*: string # text color                          default termwhite
+                    textcolor*: string # text color                     default termwhite
                     textstyle*: set[Style] # text styled
                     textpos*: int # position of text from startpos      default 3
                     textbracketopen*: string # open bracket surounding the text    default [

@@ -38,6 +38,8 @@ proc localTime*() : auto =
   ## 
   result = now()
   
+ 
+  
 template cxtoday*:string = getDateStr() 
      ## today
      ## 
@@ -56,6 +58,7 @@ proc getTimeStr*():string =
     else:
        result = split(ctt[1],"+")[0]
 
+      
 
 proc toDateTime*(date:string = "2000-01-01"): DateTime =
    ## toDateTime
