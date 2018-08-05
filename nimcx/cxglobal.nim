@@ -1179,7 +1179,7 @@ template loopy2*(mi: int = 0, ma: int = 5, st: untyped) =
      ##        printLnBiCol(xloopy , "  The house is in the back.",randcol(),randcol(),":",0,false,{})
      ##        printLn("Some integer : " & $getRndInt())
      ##
-          for xloopy {.inject.} in mi..<ma: st
+     for xloopy {.inject.} in mi..<ma: st
 
 
 proc fromCString*(p: pointer, len: int): string =
@@ -1188,11 +1188,10 @@ proc fromCString*(p: pointer, len: int): string =
      ## convert C pointer to Nim string
      ## (code ex nim forum https://forum.nim-lang.org/t/3045 by jangko)
      ##
-          result = newString(len)
-          copyMem(result.cstring, p, len)
+     result = newString(len)
+     copyMem(result.cstring, p, len)
 
-proc streamFile*(filename: string, mode: FileMode): FileStream = newFileStream(
-                    filename, mode)
+proc streamFile*(filename: string, mode: FileMode): FileStream = newFileStream(filename, mode)
      ## streamFile
      ##
      ## creates a new filestream opened with the desired filemode
@@ -1231,7 +1230,7 @@ proc uniform*(a, b: float): float {.inline.} =
       ##   doFinish()
       ##   
       ##
-          result = a + (b - a) * float(rand(b))
+      result = a + (b - a) * float(rand(b))
 
 
 proc sampleSeq*[T](x: seq[T], a: int, b: int): seq[T] =
