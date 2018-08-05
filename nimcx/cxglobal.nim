@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-06-30 
+##     Latest      : 2018-08-02 
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -18,6 +18,9 @@
 ##
 ##     Description : provides many basic utility functions required by other modules
 ##
+#
+#      Some weird comment indentation introduced by a nimpretty run ....
+#
 
 
 
@@ -875,6 +878,9 @@ template rndCol*(r: int = getRndInt(0, 254), g: int = getRndInt(0, 254),
     ##    loopy(0..5,printLn("Hello Random Color",rndCol()))
     ##
     ##
+    
+    
+    
 # cxLine is a line creation object with several properties 
 # up to 12 CxlineText objects can be placed into a cxline
 # also see printCxLine in cxprint.nim for possible usage
@@ -1161,39 +1167,40 @@ template loopy*[T](ite: T, st: untyped) =
 
 
 template loopy2*(mi: int = 0, ma: int = 5, st: untyped) =
-          ## loopy2
+     ## loopy2
      ##
      ## the advanced version of loopy the simple for-loop template
      ## which also injects the loop counter xloopy if loopy2() was called with parameters
      ## if called without parameters xloopy will not be injected .
      ## 
      ##.. code-block:: nim
-     ##   loopy2(1,10):2
-     ##      printLnBiCol(xloopy , "  The house is in the back.",randcol(),randcol(),":",0,false,{})
-     ##      printLn("Some integer : " , getRndInt())
+     ##   loopy2(1,10):
+     ##     block:
+     ##        printLnBiCol(xloopy , "  The house is in the back.",randcol(),randcol(),":",0,false,{})
+     ##        printLn("Some integer : " & $getRndInt())
      ##
           for xloopy {.inject.} in mi..<ma: st
 
 
 proc fromCString*(p: pointer, len: int): string =
-          ## fromCString
-  ## 
-  ## convert C pointer to Nim string
-  ## (code ex nim forum https://forum.nim-lang.org/t/3045 by jangko)
-  ##
+     ## fromCString
+     ## 
+     ## convert C pointer to Nim string
+     ## (code ex nim forum https://forum.nim-lang.org/t/3045 by jangko)
+     ##
           result = newString(len)
           copyMem(result.cstring, p, len)
 
 proc streamFile*(filename: string, mode: FileMode): FileStream = newFileStream(
                     filename, mode)
-          ## streamFile
+     ## streamFile
      ##
      ## creates a new filestream opened with the desired filemode
      ##
      ##
 
 proc uniform*(a, b: float): float {.inline.} =
-          ## uniform
+      ## uniform
       ## 
       ## returns a rand float uniformly distributed between a and  b
       ## 
@@ -1360,15 +1367,6 @@ template randPastelCol*: string = rand(pastelset)
      ##
      ##
 # templates
-
-
-
-
-
-
-
-
-
 
 template upperCase*(s: string): string = toUpperAscii(s)
           ## upperCase
