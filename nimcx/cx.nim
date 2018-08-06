@@ -278,7 +278,7 @@ proc checkColor*(colname: string): bool =
      ## checkColor
      ##
      ## returns true if colname is a known color name in colorNames constants.nim 
-     ## string and 
+     ## 
      ##
      result = false
      for x in  colorNames:
@@ -869,29 +869,31 @@ proc cxAlertLn*(xpos:int = 1) =
 proc cxhelp*(s:openarray[string],xpos :int = 2)=
   ## cxHelp
   ## 
-  ## a help generator which can easily be called from within or on app start 
-  ## maybe via myapp -h
-  ## 
+  ## a help generator which can easily be called from within or on app start  
+  ## with ability to include code blocks
   ## 
   ##
   ##.. code-block:: nim
-  ##   cxHelp("Help system for my application",
-  ##       "Read the book","use more data",
-  ##       cxcodestart,
-  ##       "Example 1",
-  ##       "abc = @[1,2,3]",
-  ##       "    ",
-  ##       "xfg = mysupergenerator(abc,3)",
-  ##       cxcodeend,
-  ##       "this should be help style again",
-  ##       cxcodestart,
-  ##       "Example 2  ",
-  ##       "for x in 0..<n:",
-  ##       """   printLn("Something Nice",blue)"""",
-  ##       cxcodeend,   
-  ##       "Have a nice day")
-  ##
-  ##
+  ##    cxHelp(["Help system for my application",
+  ##         "",
+  ##        "1) Read the book",
+  ##        "2) use more data",
+  ##        "3) have a beer",
+  ##        cxcodestart,
+  ##        "Example 1",
+  ##        "",
+  ##        "let abc = @[1,2,3]",
+  ##        "    ",
+  ##        "var xfg = mysupergenerator(abc,3)",
+  ##        cxcodeend,
+  ##        "this should be help style again",
+  ##        cxcodestart,
+  ##        "Example 2  ",
+  ##        "",
+  ##        "for x in 0..<n:",
+  ##        """   printLn("Something Nice  ",blue)"""",
+  ##        cxcodeend,
+  ##        "Have a nice day"])
   
   var maxlen = 0
   
