@@ -6,7 +6,7 @@ import cxconsts,cxglobal,cxprint
 # Var. internet related procs and experiments
 # 
 # 
-# Last 2018-07-20
+# Last 2018-08-07
 # 
 
 proc getIpInfo*(ip:string):JsonNode =
@@ -245,14 +245,14 @@ proc showDig*(hostip:string = $"172.217.5.14") =
 
 
 proc showDns*(hostdns:string = "google.com") =   
-        ## showHost
+        ## showDns
         ## 
         ## ip and connected hosts look up for a domain name
         ## 
         ## default = google.com
         ## 
         ##.. code-block:: nim
-        ##   showHost("bbc.com")
+        ##   showDns("bbc.com")
         ## 
 
         decho(2)
@@ -334,3 +334,7 @@ proc showHosts*(dm:string) =
     else:
        for x in z:
          printLn(x)    
+         
+         
+         
+# end of cxnetwork.nim          

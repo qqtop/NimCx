@@ -1015,6 +1015,20 @@ proc tmpFilename*(): string =
   cxTmpFileNames.add(tfn)  # add filename to seq 
   result = tfn
   
+  
+proc tmpFilename*(filename:string): string = 
+  # tmpFilename
+  # 
+  # creates a new tmpfilename with a specified name
+  # a file eventually created with this name will be automatically 
+  # erased upon exit if doFinish() , doByeBye() are called or upon exit via Ctrl-C  .
+  # a filename will look like so: /tmp/filename.tmp  
+  # 
+  let tfn = getTempDir() & $epochTime() & "-" & filename & ".tmp"
+  cxTmpFileNames.add(tfn)  # add filename to seq 
+  result = tfn  
+  
+  
 
 proc rmTmpFilenames*() = 
     # rmTmpFilenames

@@ -1234,7 +1234,7 @@ proc uniform*(a, b: float): float {.inline.} =
 
 
 proc sampleSeq*[T](x: seq[T], a: int, b: int): seq[T] =
-          ## sampleSeq
+     ## sampleSeq
      ##
      ## returns a continuous subseq a..b from an array or seq if a >= b
      ## 
@@ -1246,7 +1246,7 @@ proc sampleSeq*[T](x: seq[T], a: int, b: int): seq[T] =
      ##    echo x.sampleseq(4,8)
      ##    echo x.sampleSeq(4,8).rndSample()    # get one randly selected value from the subsequence
      ##
-          result = x[a..b]
+     result = x[a..b]
 
 
 proc tupleToStr*(xs: tuple): string =
@@ -1287,7 +1287,7 @@ template colPaletteLen*(coltype: string): auto =
 
 
 template colPalette*(coltype: string, n: int): auto =
-          ## ::
+         ## ::
          ##   colPalette
          ## 
          ##   returns a specific color from the palette which can be used in print statements
@@ -1311,18 +1311,18 @@ template colPalette*(coltype: string, n: int): auto =
          ##         printLn("Here we go " & rightarrow * 3 & spaces(2) & colPaletteName(mycol,xloopy), colPalette(mycol,xloopy))
          ##     doFinish()
          ##
-          var m = n
-          var ts = newseq[string]()
-          for colx in 0..<colorNames.len:
+         var m = n
+         var ts = newseq[string]()
+         for colx in 0..<colorNames.len:
                     if colorNames[colx][0].startswith(coltype) or colorNames[
                                         colx][0].contains(coltype):
                               ts.add(colorNames[colx][1])
-          if m > colPaletteLen(coltype): m = 0
-          ts[m]
+         if m > colPaletteLen(coltype): m = 0
+         ts[m]
 
 
 template colorsPalette*(coltype: string): auto =
-          ## ::
+         ## ::
          ##   colorsPalette
          ## 
          ##   returns a colorpalette which can be used to iterate over
@@ -1337,14 +1337,14 @@ template colorsPalette*(coltype: string): auto =
          ##    
          ##
 
-          var pal = newseq[(string, string)]()
-          for colx in 0..<colorNames.len:
+         var pal = newseq[(string, string)]()
+         for colx in 0..<colorNames.len:
                     if colorNames[colx][0].startswith(coltype) or colorNames[
                                         colx][0].contains(coltype):
                               pal.add((colorNames[colx][0], colorNames[colx][
                                                   1]))
 
-          if pal.len < 1:
+         if pal.len < 1:
                     printLnErrorMsg(colorsPalette)
                     printLnBErrorMsg("Desired filter may not be available",
                                         red)
@@ -1352,11 +1352,11 @@ template colorsPalette*(coltype: string): auto =
                                         "        Try:  medium , dark, light, blue, yellow etc.",
                                         red)
                     doFinish()
-          pal
+         pal
 
 
 template randPastelCol*: string = rand(pastelset)
-          ## randPastelCol
+     ## randPastelCol
      ##
      ## get a randcolor from pastelSet
      ##
@@ -1365,19 +1365,21 @@ template randPastelCol*: string = rand(pastelset)
      ##    loopy(0..5,printLn("Hello Random Color",randPastelCol()))
      ##
      ##
-# templates
+     
+     
+
 
 template upperCase*(s: string): string = toUpperAscii(s)
-          ## upperCase
-  ## 
-  ## upper cases a string
-  ##
+     ## upperCase
+     ## 
+     ## upper cases a string
+     ##
 
 template lowerCase*(s: string): string = toLowerAscii(s)
-          ## lowerCase
-  ## 
-  ## lower cases a string
-  ##
+     ## lowerCase
+     ## 
+     ## lower cases a string
+     ##
 
 template currentLine*() =
           ## currentLine
@@ -1433,3 +1435,4 @@ template hdx*(code: typed, frm: string = "+", width: int = tw,
 
 
 
+# end of cxglobal.nim
