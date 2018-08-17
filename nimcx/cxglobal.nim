@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-08-02 
+##     Latest      : 2018-08-09 
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -47,7 +47,6 @@ import
 proc ff*(zz: float, n: int = 5): string
 proc ff2*(zz: SomeNumber, n: int = 3): string
 
-
 # procs lifted from an early version of terminal.nim
 proc styledEchoProcessArg(s: string) = write stdout, s
 proc styledEchoProcessArg(style: Style) = setStyle({style})
@@ -68,7 +67,24 @@ macro styledEchoPrint*(m: varargs[untyped]): typed =
           result.add(newCall(bindSym"write", bindSym"stdout", newStrLitNode("")))
           result.add(newCall(bindSym"resetAttributes"))
 
-
+macro procName*(x: untyped): untyped =
+  ## procName 
+  ## prints the name of the proc if annoited with pragma {.procName.}
+  ## 
+  ## Example
+  ##.. code-block:: nim
+  ##   proc yippi(s:string) : string  {.procName.}  = 
+  ##       result = s & "007"
+  ##       
+  ##   printLn(yippi("Mouse"))     
+  ##   
+  ##   
+  
+  let name = $name(x)
+  let node = nnkCommand.newTree(newIdentNode(!"printLnBiCol"), newLit("Processed by : " & name))
+  insert(body(x), 0, node)
+  result = x
+  
 proc tupleTypes*(atuple: tuple): seq[string] =
           ## tupletypes
           ## 
@@ -98,14 +114,14 @@ template `*`*(s: string, n: int): untyped =
 
 template toki*(s: untyped): untyped =
           ## toki
-  ## 
-  ## tokenizes input string and returns token in a seq[string]
-  ##
-  ##.. code-block:: nim 
-  ##   var b = "酢の一種"  
-  ##   let s = &"a + b = 12 3.5% & {b}"
-  ##   echo toki(s)
-  ##
+          ## 
+          ## tokenizes input string and returns token in a seq[string]
+          ##
+          ##.. code-block:: nim 
+          ##   var b = "酢の一種"  
+          ##   let s = &"a + b = 12 3.5% & {b}"
+          ##   echo toki(s)
+          ##
           toSeq(s.tokenize).filterIt(not it.isSep).mapIt(it.token)
 
 proc newLine*(n: int = 1): string =
@@ -114,9 +130,9 @@ proc newLine*(n: int = 1): string =
 
 proc cxtoLower*(c: char): char =
           ## cxtoLower
-     ## 
-     ## same as toLowerAscii()
-     ##
+          ## 
+          ## same as toLowerAscii()
+          ##
           result = c
           if c in {'A'..'Z'}: result = chr(ord(c) + (ord('a') - ord('A')))
 
@@ -127,11 +143,11 @@ proc isNumeric*(s: string): bool = s.allCharsInSet({'0'..'9'})
 
 proc getTerminalWidth*(): int =
           ## getTerminalWidth
-        ##
-        ## get linux terminal width in columns
-        ## a terminalwidth function is now incorporated in Nim dev after 2016-09-02
-        ## which maybe is slightly slower than the one presented here
-        ##
+          ##
+          ## get linux terminal width in columns
+          ## a terminalwidth function is now incorporated in Nim dev after 2016-09-02
+          ## which maybe is slightly slower than the one presented here
+          ##
           result = 0
           type WinSize = object
                     row, col, xpixel, ypixel: cushort
@@ -147,9 +163,9 @@ template tw*: int = getTerminalWidth() ## tw , a global where latest terminal wi
 
 proc getTerminalHeight*(): int =
           ## getTerminalHeight
-        ##
-        ## get linux terminal height in rows
-        ##
+          ##
+          ## get linux terminal height in rows
+          ##
 
           type WinSize = object
                     row, col, xpixel, ypixel: cushort
@@ -166,53 +182,53 @@ template th*: int = getTerminalheight() ## th , a global where latest terminal h
 
 func cxpad*(s: string, padlen: int, paddy: string = spaces(1)): string =
           ## cxpad
-  ## 
-  ## pads a string on the right side with spaces to specified width 
-  ##
+          ## 
+          ## pads a string on the right side with spaces to specified width 
+          ##
           result = s
           if s.len < padlen:
                     result = s & (paddy * (max(0, padlen - s.len)))
 
 func cxpdx*(padLen: int, s: string, paddy: string = spaces(1)): string =
           ## pdx 
-    ## 
-    ## same as cxpad but with padding char count in front
+          ## 
+          ## same as cxpad but with padding char count in front
           cxpad(s, padLen, paddy)
 
 func cxlpad*(s: string, padlen: int, paddy: string = spaces(1)): string =
           ## cxlpad
-  ## 
-  ## pads a string on the left side with spaces to specified width 
-  ##
+          ## 
+          ## pads a string on the left side with spaces to specified width 
+          ##
           result = s
           if s.len < padlen:
                     result = (paddy * (max(0, padlen - s.len))) & s
 
 func cxlpdx*(padLen: int, s: string, paddy: string = spaces(1)): string =
           ## cxlpdx 
-    ## 
-    ## same as cxpad but with padding char count in front
+          ## 
+          ## same as cxpad but with padding char count in front
           cxlpad(s, padLen, paddy)
 
 proc waitOn*(alen: int = 1) =
           ## waiton
-     ## 
-     ## stops program to wait for one or more keypresses. default = 1
-     ##
+          ## 
+          ## stops program to wait for one or more keypresses. default = 1
+          ##
           discard readBuffer(stdin, cast[pointer](newString(1)), alen)
 
 proc rndSample*[T](asq: seq[T]): T =
           ## rndSample  
-     ## returns one rand sample from a sequence
+          ## returns one rand sample from a sequence
           randomize()
           result = rand(asq)
 
 proc rndRGB*(): auto =
           # rndRGB
-   # 
-   # returns a random RGB value from colors available in colorNames 
-   # see cxconsts.nim for available values
-   #
+          # 
+          # returns a random RGB value from colors available in colorNames 
+          # see cxconsts.nim for available values
+          #
           var cln = newSeq[int]()
           for x in 0..<colorNames.len: cln.add(x)
           let argb = extractRgb(parsecolor(colorNames[rand(cln)][0])) #rndsample
@@ -220,29 +236,29 @@ proc rndRGB*(): auto =
 
 proc sum*[T](aseq: seq[T]): T = foldl(aseq, a + b)
           ## sum
-     ##
-     ## returns sum of float or int seqs
-     ## 
-     ## same effect as math.sum
-     ##
+          ##
+          ## returns sum of float or int seqs
+          ## 
+          ## same effect as math.sum
+          ##
 
 proc product*[T](aseq: seq[T]): T = foldl(aseq, a * b)
           ## product
-     ##
-     ## returns product of float or int seqs 
-     ##
-     ## if a seq contains a 0 element than result will be 0
-     ##
+          ##
+          ## returns product of float or int seqs 
+          ##
+          ## if a seq contains a 0 element than result will be 0
+          ##
 
 
 template doSomething*(secs: int, body: untyped) =
           ## doSomething
-  ## 
-  ## execute some code for a certain amount of seconds
-  ## 
-  ##.. code-block:: nim
-  ##    doSomething(10,myproc())  # executes my proc for ten secs   , obviously this will fail if your proc uses sleep...
-  ##
+          ## 
+          ## execute some code for a certain amount of seconds
+          ## 
+          ##.. code-block:: nim
+          ##    doSomething(10,myproc())  # executes my proc for ten secs   , obviously this will fail if your proc uses sleep...
+          ##
           let mytime = now()  #getTime().getLocalTime()
           while toTime(now()) < toTime(mytime) + secs.seconds:
                     body
@@ -254,7 +270,7 @@ proc isBlank*(val: string): bool {.inline.} =
    ## 
    ## returns true if a string is blank
    ##
-          return val == nil or val == ""
+          return val == ""
 
 
 proc isEmpty*(val: string): bool {.inline.} =
@@ -263,7 +279,7 @@ proc isEmpty*(val: string): bool {.inline.} =
    ## returns true if a string is empty if spaces are removed
    ##
 
-          return isNil(val) or val.strip() == ""
+          return val.strip() == ""
 
 
 
@@ -560,8 +576,8 @@ proc createSeqFloat*(n: int = 10, prec: int = 3): seq[float] =
 
 proc seqLeft*[T](it: seq[T], n: int): seq[T] =
           ## seqLeft
-    ## 
-    ## returns a new seq with n left end elements of the original seq
+          ## 
+          ## returns a new seq with n left end elements of the original seq
           try:
                     result = it
                     if it.len >= n: result = it[0..<n]
@@ -571,8 +587,8 @@ proc seqLeft*[T](it: seq[T], n: int): seq[T] =
 
 proc seqRight*[T](it: seq[T], n: int): seq[T] =
           ## seqRight
-    ## 
-    ## returns a new seq with n right end elements of the original seq
+          ## 
+          ## returns a new seq with n right end elements of the original seq
 
           try:
                     result = it
@@ -626,9 +642,9 @@ proc fmtengine[T](a: string, astring: T): string =
 
           if dotflag == true and textflag == false:
                     # floats should now be shown with thousand seperator
-               # like 1,234.56  instead of 1234.56
+                    # like 1,234.56  instead of 1234.56
                
-               # if df is nil we make it zero so no valueerror occurs
+                    # if df is nil we make it zero so no valueerror occurs
                     if df.strip(true, true).len == 0: df = "0"
                     # in case of any edge cases throwing an error
                     try:
@@ -636,7 +652,7 @@ proc fmtengine[T](a: string, astring: T): string =
                                                   df))
                     except ValueError:
                               #printLn("Error , invalid format string dedected.",red)
-                  #printLn("Showing exception thrown : ",peru)
+                              #printLn("Showing exception thrown : ",peru)
                               echo()
                               raise
 
@@ -648,7 +664,7 @@ proc fmtengine[T](a: string, astring: T): string =
                     else: discard
 
           # this cuts the okstring to size for display , not wider than dg parameter passed in
-     # if the format string is "" no op no width than this will not be attempted
+          # if the format string is "" no op no width than this will not be attempted
           if okstring.len > parseInt(dg) and parseInt(dg) > 0:
                     var dps = ""
                     for x in 0..<parseInt(dg):
@@ -660,50 +676,50 @@ proc fmtengine[T](a: string, astring: T): string =
 
 proc fmtx*[T](fmts: openarray[string], fstrings: varargs[T, `$`]): string =
           ## fmtx
-     ## 
-     ## ::
-     ##   simple format utility similar to strfmt to accommodate our needs
-     ##   implemented :  right or left align within given param and float precision
-     ##   returns a string and seems to work fine with strformat 
-     ##
-     ##   Some observations:
-     ##
-     ##   If text starts with a digit it must be on the right side...
-     ##   Function calls must be executed on the right side
-     ##
-     ##   Space adjustment can be done with any "" on left or right side
-     ##   an assert error is thrown if format block left and data block right are imbalanced
-     ##   the "" acts as suitable placeholder
-     ##
-     ##   If one of the operator chars are needed as a first char in some text put it on the right side
-     ##
-     ##   Operator chars : <  >  .
-     ##
-     ##   <12  means align left and pad so that max length = 12 and any following char will be in position 13
-     ##   >12  means align right so that the most right char is in position 12
-     ##   >8.2 means align a float right so that most right char is position 8 with precision 2
-     ##
-     ##   Note that thousand separators are counted as position so 123456 needs 
-     ##   echo fmtx(["<10.2"],123456)    --->  123,456.00
-     ## 
-     ## 
-     ##
-     ## Examples :
-     ##
-     ##.. code-block:: nim
-     ##    import nimcx
-     ##    echo fmtx(["","","<8.3",""," High : ","<8","","","","","","","",""],lime,"Open : ",unquote("1234.5986"),yellow,"",3456.67,red,showRune("FFEC"),white," Change:",unquote("-1.34 - 0.45%"),"  Range : ",lime,@[123,456,789])
-     ##    echo fmtx(["","<18",":",">15","","",">8.2"],salmon,"nice something",steelblue,123,spaces(5),yellow,456.12345676)
-     ##    echo()
-     ##    showRuler()
-     ##    for x in 0.. 10: printlnBiCol(fmtx([">22",">10"],"nice something :",x ))
-     ##    echo()
-     ##    printLnBiCol(fmtx(["",">15.3f"],"Result : ",123.456789),lime,red,":",0,false,{})  # formats the float to a string with precision 3 the f is not necessary
-     ##    echo()
-     ##    echo fmtx([">22.3"],234.43324234)  # this formats float and aligns last char to pos 22
-     ##    echo fmtx(["22.3"],234.43324234)   # this formats float but ignores position as no align operator given
-     ##    printLnBiCol(fmtx([">15." & $getRndInt(2,4),":",">10"],getRndFloat() * float(getRndInt(50000,500000)),spaces(5),getRndInt(12222,10000000)))
-     ##
+         ## 
+         ## ::
+         ##   simple format utility similar to strfmt to accommodate our needs
+         ##   implemented :  right or left align within given param and float precision
+         ##   returns a string and seems to work fine with strformat 
+         ##
+         ##   Some observations:
+         ##
+         ##   If text starts with a digit it must be on the right side...
+         ##   Function calls must be executed on the right side
+         ##
+         ##   Space adjustment can be done with any "" on left or right side
+         ##   an assert error is thrown if format block left and data block right are imbalanced
+         ##   the "" acts as suitable placeholder
+         ##
+         ##   If one of the operator chars are needed as a first char in some text put it on the right side
+         ##
+         ##   Operator chars : <  >  .
+         ##
+         ##   <12  means align left and pad so that max length = 12 and any following char will be in position 13
+         ##   >12  means align right so that the most right char is in position 12
+         ##   >8.2 means align a float right so that most right char is position 8 with precision 2
+         ##
+         ##   Note that thousand separators are counted as position so 123456 needs 
+         ##   echo fmtx(["<10.2"],123456)    --->  123,456.00
+         ## 
+         ## 
+         ##
+         ## Examples :
+         ##
+         ##.. code-block:: nim
+         ##    import nimcx
+         ##    echo fmtx(["","","<8.3",""," High : ","<8","","","","","","","",""],lime,"Open : ",unquote("1234.5986"),yellow,"",3456.67,red,showRune("FFEC"),white," Change:",unquote("-1.34 - 0.45%"),"  Range : ",lime,@[123,456,789])
+         ##    echo fmtx(["","<18",":",">15","","",">8.2"],salmon,"nice something",steelblue,123,spaces(5),yellow,456.12345676)
+         ##    echo()
+         ##    showRuler()
+         ##    for x in 0.. 10: printlnBiCol(fmtx([">22",">10"],"nice something :",x ))
+         ##    echo()
+         ##    printLnBiCol(fmtx(["",">15.3f"],"Result : ",123.456789),lime,red,":",0,false,{})  # formats the float to a string with precision 3 the f is not necessary
+         ##    echo()
+         ##    echo fmtx([">22.3"],234.43324234)  # this formats float and aligns last char to pos 22
+         ##    echo fmtx(["22.3"],234.43324234)   # this formats float but ignores position as no align operator given
+         ##    printLnBiCol(fmtx([">15." & $getRndInt(2,4),":",">10"],getRndFloat() * float(getRndInt(50000,500000)),spaces(5),getRndInt(12222,10000000)))
+         ##
 
           result = ""
           # if formatstrings count not same as vararg count we bail out some error about fmts will be shown
@@ -715,20 +731,20 @@ proc fmtx*[T](fmts: openarray[string], fstrings: varargs[T, `$`]): string =
 
 
 proc showRune*(s: string): string {.discardable.} =
-          ## showRune
-     ## ::
-     ##   utility proc to show a single unicode char given in hex representation
-     ##   note that not all unicode chars may be available on all systems
-     ##
-     ## Example
-     ## 
-     ##.. code-block :: nim
-     ##      for x in 10.. 55203: printLnBiCol($x & " : " & showRune(toHex(x)))
-     ##      print(showRune("FFEA"),lime)
-     ##      print(showRune("FFEC"),red)
-     ##
-     ##
-          result = $Rune(parseHexInt(s))
+         ## showRune
+         ## ::
+         ##   utility proc to show a single unicode char given in hex representation
+         ##   note that not all unicode chars may be available on all systems
+         ##
+         ## Example
+         ## 
+         ##.. code-block :: nim
+         ##      for x in 10.. 55203: printLnBiCol($x & " : " & showRune(toHex(x)))
+         ##      print(showRune("FFEA"),lime)
+         ##      print(showRune("FFEC"),red)
+         ##
+         ##
+         result = $Rune(parseHexInt(s))
 
 
 
@@ -754,26 +770,22 @@ proc cleanScreen*() =
 
 proc centerX*(): int = tw div 2 + 2
           ## centerX
-     ##
-     ## returns an int with best terminal center position
-     ##
-     ##
+          ##
+          ## returns an int with best terminal center position
+          ##
 
 proc centerPos*(astring: string) =
-          ## centerpos
-     ##
-     ## tries to move cursor so that string is centered when printing
-     ##
-     ##.. code-block:: nim
-     ##    var s = "Hello I am centered"
-     ##    centerPos(s)
-     ##    printLn(s,gray)
-     ##
-     ##
-          setCursorXPos(stdout, centerX() - astring.len div 2 - 2)
-
-
-
+         ## centerpos
+         ##
+         ## tries to move cursor so that string is centered when printing
+         ##
+         ##.. code-block:: nim
+         ##    var s = "Hello I am centered"
+         ##    centerPos(s)
+         ##    printLn(s,gray)
+         ##
+         ##
+         setCursorXPos(stdout, centerX() - astring.len div 2 - 2)
 
 
 template colPaletteName*(coltype: string, n: int): auto =
@@ -786,12 +798,11 @@ template colPaletteName*(coltype: string, n: int): auto =
           var ts = newseq[string]()
           # build the custom palette ts
           for colx in 0..<colorNames.len:
-                    if colorNames[colx][0].startswith(coltype) or colorNames[
-                                        colx][0].contains(coltype):
-                              ts.add(colorNames[colx][0])
+             if colorNames[colx][0].startswith(coltype) or colorNames[colx][0].contains(coltype):
+                ts.add(colorNames[colx][0])
 
           # simple error handling to avoid indexerrors if n too large we try 0
-         # if this fails too something will error out
+          # if this fails too something will error out
           var m = n
           if m > colPaletteLen(coltype): m = 0
           ts[m]
@@ -799,29 +810,27 @@ template colPaletteName*(coltype: string, n: int): auto =
 
 template aPaletteSample*(coltype: string): int =
           ## aPaletteSample
-     ## 
-     ##  returns a rand entry (int) from a palette
-     ##  see example at colPalette
-     ##
+          ## 
+          ##  returns a rand entry (int) from a palette
+          ##  see example at colPalette
+          ##
           var coltypen = coltype.toLowerAscii()
           var b = newSeq[int]()
           for x in 0..<colPaletteLen(coltypen): b.add(x)
-          rand(b)             #rndSample
+          rand(b)            
 
 template paletix*(pl: string): untyped =
           ## paletix
-  ## 
-  ## returns a random color from colorNames containing the string pl
-  ## 
-  ## so paletix("pastel") filters on all colorNames having the string "pastel"
-  ## 
-  ## if filter not available then the first available color will be used
-  ## 
-  ##.. code-block:: nim
-  ##   loopy2(1,10):
-  ##      printLn(cxpad(" Hello from NimCx !  " & $xloopy,25),paletix("pastel"),styled={styleReverse,styleItalic,styleBright})
-
-
+          ## 
+          ## returns a random color from colorNames containing the string pl
+          ## 
+          ## so paletix("pastel") filters on all colorNames having the string "pastel"
+          ## 
+          ## if filter not available then the first available color will be used
+          ## 
+          ##.. code-block:: nim
+          ##   loopy2(1,10):
+          ##      printLn(cxpad(" Hello from NimCx !  " & $xloopy,25),paletix("pastel"),styled={styleReverse,styleItalic,styleBright})
 
           colPalette(pl, getRndInt(0, colPaletteLen(pl) - 1))
 
@@ -1016,7 +1025,7 @@ proc splitty*(txt: string, sep: string): seq[string] =
           var rx = newSeq[string]()
           let z = txt.split(sep)
           for xx in 0..<z.len:
-                    if z[xx] != txt and z[xx] != nil:
+                    if z[xx] != txt and z[xx] != "":
                               if xx < z.len-1:
                                         rx.add(z[xx] & sep)
                               else:

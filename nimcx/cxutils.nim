@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-08-02
+##     Latest      : 2018-08-17
 ##
 ##     OS          : Linux
 ##
@@ -21,9 +21,9 @@
 ##                   
 ##  
 
-import os,osproc,math,stats,cpuinfo,httpclient,browsers,typeinfo,typetraits
+import os,osproc,math,stats,cpuinfo,httpclient,browsers,typeinfo,typetraits,rdstdin
 import terminal,strutils,times,random,sequtils,unicode,streams
-import cxconsts,cxglobal,cxprint,cxtime
+import cxconsts,cxglobal,cxprint,cxtime,cxhash
 
 # type used in getRandomPoint
 type
@@ -41,7 +41,8 @@ proc typeTest2*[T](x:T): T {.discardable.}  =
      # same as typetest but without showing values (which may be huge in case of seqs)
      printLnBiCol("Type       : " & $type(x),xpos = 3)   
      
-proc typeTest3*[T](x:T): string =   $type(x)
+proc typeTest3*[T](x:T): string = $type(x)
+
 proc fibonacci*(n: int):float =  
     ## fibonacci
     ## 
@@ -98,6 +99,46 @@ proc getAmzDateString*():string =
     ## 
     return format(utc(getTime()), iso_8601_aws) 
     
+
+proc getUserName*():string =
+     # just a simple user name prompt 
+     result = readLineFromStdin(" Enter your user name    : ")
+     
+     
+
+proc getPassword*(ahash:int64 = 0i64):string =
+     ## getFbPassword
+     ## 
+     ## convenience function prompts user a password
+     ## to be checked against a passwordhash which could come 
+     ## from a security database or other source
+     ## 
+     #  using a hash to confirm the password
+     #  this is a skeleton password function 
+     #  additional user verification, role verification can be added 
+     #  depending on security needs 
+   
+     result = ""
+     curfw(1)
+     let zz = readPasswordFromStdin("Enter Database Password : ")
+     if verifyHash(zz,ahash) :
+           curup(1)
+           print(cleareol)
+           # following could also be send to a logger
+           printLnOkMsg("Database access granted at : " & ($localTime()).replace("T"," ") & ".")
+           echo()
+           result = zz
+     else:
+           echo()
+           let dn = "Database access denied at : " & ($localTime()).replace("T"," ")
+           printLnFailMsg(dn)
+           printLnErrorMsg(cxpad("Exiting now . Bye Bye.",dn.len))
+           quit(1)
+    
+    
+    
+    
+    
 proc cxDayOfWeek*(datestr:string):string = 
     ## cxDayOfWeek
     ## 
@@ -135,7 +176,7 @@ proc getNextMonday*(adate:string):string =
 
     
     var ndatestr = ""
-    if isNil(adate) == true :
+    if adate == "" :
        printErrorMsg("Received an invalid date.  value : nil")
     else:
 
@@ -272,9 +313,7 @@ proc getPointInSphere*():auto =
     ##       printLnBiCol(fmtx(["",">7","",">7","",">7"],"  x: ",b[0],"  y: ",b[1],"  z: ",b[2]))
     ##       
     ##       
-    
-    
-    
+   
     var u = rand(1.0);
     var v = rand(1.0);
     var theta = u * 2.0 * PI;
@@ -1137,18 +1176,15 @@ template withFile*(f,fn, mode, actions: untyped): untyped =
   ##                   break 
   block:
         var f = streamFile(fn,mode)    # streamfile is in cxglobal.nim
-        if not f.isNil:
-            try:
-                actions
-            finally:
-                close(f)
-        else:
-                echo()
-                printLnErrorMsg("Cannot open file " & fn)
-                quit()
-         
-
-
+        try:
+            actions
+        except:    
+            echo()
+            printLnErrorMsg("Cannot open file " & fn)
+            quit()
+        finally:
+            close(f)
+                        
 proc checkMemFull*(xpos:int = 2) =
    ## checkMemFull
    ## 

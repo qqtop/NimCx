@@ -7,6 +7,8 @@ import cxprint,hashes
 ## Last 2018-02-27
 ## 
 
+export hashes
+
 # activate if errormsg print ok        
 proc checkHash*[T](kata:string,hsx:T)  =
   ## checkHash

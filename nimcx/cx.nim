@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-08-01
+##     Latest      : 2018-08-17
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -94,6 +94,8 @@
 ##                   for printing of multiple columns in the terminal the print2,printLn2,printBiCol2,printLnBiCol2
 ##                   
 ##                   routines should be used.  
+##                   
+##                   Due to the flurry of updates in the development branch occasional carnage may occure.
 ##
 ##
 ##     Installation: nimble install nimcx
