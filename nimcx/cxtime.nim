@@ -36,15 +36,19 @@ proc localTime*() : auto =
   ## 
   ## quick access to local time for printing
   ## 
-  result = now()
+  result = $now()
   
  
   
-template cxtoday*:string = getDateStr() 
+proc cxtoday*():string = getDateStr() 
      ## today
      ## 
      ## returns date string
-     ##   
+     ##
+     
+proc cxnow*():string = 
+          # formated datetime
+          result = ($now()).replace("T"," ").replace(":",".")
   
 proc getTimeStr*():string =
     ## getTimeStr
@@ -288,7 +292,7 @@ proc createSeqDate*(fromDate:string,toDate:string):seq[string] =
      ## 
      ## 
      ## .. code-block:: nim
-     ##   showSeq(createseqdate(cxtoday, "2022-05-25"),maxitemwidth=12)    
+     ##   showSeq(createseqdate(cxtoday(), "2022-05-25"),maxitemwidth=12)    
      ##  
 
      var aresult = newSeq[string]()
@@ -309,7 +313,7 @@ proc createSeqDate*(fromDate:string,days:int = 1):seq[string] =
      ## from fromDate to fromDate + days
      ##
      ##.. code-block:: nim 
-     ##   showSeq(createseqdate(cxtoday, 60),maxitemwidth=12)  
+     ##   showSeq(createseqdate(cxtoday(), 60),maxitemwidth=12)  
      ##   
      ##   
      var aresult = newSeq[string]()
@@ -322,7 +326,7 @@ proc createSeqDate*(fromDate:string,days:int = 1):seq[string] =
      result = aresult    
          
 
-proc getRndDate*(minyear:int = parseint(year(cxtoday)) - 50,maxyear:int = parseint(year(cxtoday)) + 50):string =  
+proc getRndDate*(minyear:int = parseint(year(cxtoday())) - 50,maxyear:int = parseint(year(cxtoday())) + 50):string =  
          ## getRndDate
          ## 
          ## returns a valid rand date between 1900 and 3001 in format 2017-12-31
