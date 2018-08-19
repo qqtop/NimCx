@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-08-09 
+##     Latest      : 2018-08-19 
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -59,7 +59,8 @@ var getcxTrueColorSetFlag*: bool = false # set this to true if you want cxtrueco
 # macros
 
 macro styledEchoPrint*(m: varargs[untyped]): typed =
-          ## partially lifted from an earler macro in terminal.nim and removed new line #  improvements by araq to avoid the now deprecated callsite()
+          ## partially lifted from an earler macro in terminal.nim and removed new line 
+          ## improvements suggested by araq to avoid the now deprecated callsite()
 
           result = newNimNode(nnkStmtList)
           for i in countup(0, m.len - 1):
@@ -68,22 +69,22 @@ macro styledEchoPrint*(m: varargs[untyped]): typed =
           result.add(newCall(bindSym"resetAttributes"))
 
 macro procName*(x: untyped): untyped =
-  ## procName 
-  ## prints the name of the proc if annoited with pragma {.procName.}
-  ## 
-  ## Example
-  ##.. code-block:: nim
-  ##   proc yippi(s:string) : string  {.procName.}  = 
-  ##       result = s & "007"
-  ##       
-  ##   printLn(yippi("Mouse"))     
-  ##   
-  ##   
-  
-  let name = $name(x)
-  let node = nnkCommand.newTree(newIdentNode(!"printLnBiCol"), newLit("Processed by : " & name))
-  insert(body(x), 0, node)
-  result = x
+          ## procName 
+          ## prints the name of the proc if annoited with pragma {.procName.}
+          ## 
+          ## Example
+          ##.. code-block:: nim
+          ##   proc yippi(s:string) : string  {.procName.}  = 
+          ##       result = s & "007"
+          ##       
+          ##   printLn(yippi("Mouse"))     
+          ##   
+          ##   
+          
+          let name = $name(x)
+          let node = nnkCommand.newTree(newIdentNode(!"printLnBiCol"), newLit("Processed by : " & name))
+          insert(body(x), 0, node)
+          result = x
   
 proc tupleTypes*(atuple: tuple): seq[string] =
           ## tupletypes
@@ -220,15 +221,16 @@ proc waitOn*(alen: int = 1) =
 proc rndSample*[T](asq: seq[T]): T =
           ## rndSample  
           ## returns one rand sample from a sequence
+          ## 
           randomize()
           result = rand(asq)
 
 proc rndRGB*(): auto =
-          # rndRGB
-          # 
-          # returns a random RGB value from colors available in colorNames 
-          # see cxconsts.nim for available values
-          #
+          ## rndRGB
+          ## 
+          ## returns a random RGB value from colors available in colorNames 
+          ## see cxconsts.nim for available values
+          ##
           var cln = newSeq[int]()
           for x in 0..<colorNames.len: cln.add(x)
           let argb = extractRgb(parsecolor(colorNames[rand(cln)][0])) #rndsample
@@ -267,27 +269,26 @@ template doSomething*(secs: int, body: untyped) =
 
 proc isBlank*(val: string): bool {.inline.} =
           ## isBlank
-   ## 
-   ## returns true if a string is blank
-   ##
+          ## 
+          ## returns true if a string is blank
+          ##
           return val == ""
 
 
 proc isEmpty*(val: string): bool {.inline.} =
           ## isEmpty
-   ## 
-   ## returns true if a string is empty if spaces are removed
-   ##
-
+          ## 
+          ## returns true if a string is empty if spaces are removed
+          ##
           return val.strip() == ""
 
 
 
 proc getRndInt*(mi: int = 0, ma: int = int.high): int {.noInit, inline.} =
           ## getRndInt
-     ##
-     ## returns a random int between mi and < ma
-     ## so for 0 or 1 we need rand(0..2)
+          ##
+          ## returns a random int between mi and < ma
+          ## so for 0 or 1 we need rand(0..2)
           var maa = ma
           if maa <= mi: # just take care of situation where ma <= mi provided
                     maa = mi + 1
@@ -304,33 +305,33 @@ proc getRndBool*(): bool =
 
 proc getRandomSignI*(): int =
           ## getRandomSignI
-    ## 
-    ## returns -1 or 1 integer  to have a rand positive or negative multiplier
-    ##
+          ## 
+          ## returns -1 or 1 integer  to have a rand positive or negative multiplier
+          ##
           result = 1
           if 0 == getRndInt(0, 1): result = -1
 
 
 proc getRandomSignF*(): float =
           ## getRandomSignF
-    ## 
-    ## returns -1.0 or 1.0 float  to have a rand positive or negative multiplier
-    ##
+          ## 
+          ## returns -1.0 or 1.0 float  to have a rand positive or negative multiplier
+          ##
           result = 1.0
           if 0 == getRndInt(0, 1): result = -1.0
 
 
 proc reverseMe*[T](xs: openarray[T]): seq[T] =
           ## reverseMe
-  ##
-  ## reverse a sequence
-  ##
-  ##.. code-block:: nim
-  ##
-  ##    var z = @["nice","bad","abc","zztop","reverser"]
-  ##    printLn(z,lime)
-  ##    printLn(z.reverseMe,red)
-  ##
+          ##
+          ## reverse a sequence
+          ##
+          ##.. code-block:: nim
+          ##
+          ##    var z = @["nice","bad","abc","zztop","reverser"]
+          ##    printLn(z,lime)
+          ##    printLn(z.reverseMe,red)
+          ##
           result = newSeq[T](xs.len)
           for i, x in xs:
                     result[xs.high - i] = x
@@ -346,19 +347,19 @@ proc reverseText*(text: string): string =
 
 proc reverseString*(text: string): string =
           ## reverseString
-  ## 
-  ## reverses chars in a word   
-  ## 
-  ## 
-  ##.. code-block:: nim
-  ## 
-  ##    var s = "A text to reverse could be this example 12345.0"
-  ##    echo "Original      : " & s  
-  ##    echo "reverseText   : " & reverseText(s)
-  ##    echo "reverseString : " & reverseString(s)
-  ##    # check if back to original is correct
-  ##    assert s == reverseString(reverseString(s))
-  ##
+          ## 
+          ## reverses chars in a word   
+          ## 
+          ## 
+          ##.. code-block:: nim
+          ## 
+          ##    var s = "A text to reverse could be this example 12345.0"
+          ##    echo "Original      : " & s  
+          ##    echo "reverseText   : " & reverseText(s)
+          ##    echo "reverseString : " & reverseString(s)
+          ##    # check if back to original is correct
+          ##    assert s == reverseString(reverseString(s))
+          ##
           result = ""
           for x in reverseMe(text): result = result & x
 
@@ -367,16 +368,17 @@ proc reverseString*(text: string): string =
 # Convenience procs for rand data creation and handling
 proc createSeqBool*(n: int = 10): seq[bool] {.inline.} =
           # createSeqBool
-     # 
-     # returns a seq of rand bools
-     #
+          # 
+          # returns a seq of rand bools
+          #
           result = newSeq[bool]()
           for x in 0..<n: result.add(getRndBool())
 
 proc createSeqBinary*(n: int = 10): seq[int] {.inline.} =
           ## createSeqBinary
-     ## 
-     ## returns a seq of integers between 0 and 1
+          ## 
+          ## returns a seq of integers between 0 and 1
+          ## 
           result = newSeq[int]()
           let b = createSeqBool(n)
           for x in b:
@@ -386,19 +388,18 @@ proc createSeqBinary*(n: int = 10): seq[int] {.inline.} =
 
 proc createSeqInt*(n: int = 10, mi: int = 0, ma: int = 1000): seq[int] {.inline.} =
           ## createSeqInt
-    ##
-    ## convenience proc to create a seq of rand int with
-    ##
-    ## default length 10
-    ##
-    ## gives @[4556,455,888,234,...] or similar
-    ##
-    ##.. code-block:: nim
-    ##    # create a seq with 50 rand integers ,of set 100.. 2000
-    ##    # including the limits 100 and 2000
-    ##    echo createSeqInt(50,100,2000)
+          ##
+          ## convenience proc to create a seq of rand int with
+          ##
+          ## default length 10
+          ##
+          ## gives @[4556,455,888,234,...] or similar
+          ##
+          ##.. code-block:: nim
+          ##    # create a seq with 50 rand integers ,of set 100.. 2000
+          ##    # including the limits 100 and 2000
+          ##    echo createSeqInt(50,100,2000)
           # result = newSeqofCap[int](n)  # slow use if memory considerations are of top importance
-
           result = newSeq[int]() # faster
           # as we do not want any print commands in this module we change
           case mi <= ma
@@ -409,36 +410,36 @@ proc createSeqInt*(n: int = 10, mi: int = 0, ma: int = 1000): seq[int] {.inline.
 
 proc ff*(zz: float, n: int = 5): string =
           ## ff
-     ##
-     ## formats a float to string with n decimals
-     ##
+          ##
+          ## formats a float to string with n decimals
+          ##
           result = $formatFloat(zz, ffDecimal, precision = n)
 
 
 proc ff22*(zz: int, n: int = 0): string =
           ## ff22
-  ## 
-  ## formats a integer into form 12,345,678 with thousands separators shown
-  ## 
-  ## precision is after comma given by n with default set to 0
-  ## in context of integer this means display format could even show 
-  ## a 0 after comma part if needed
-  ## 
-  ## ff2i(12345,0)  ==> 12,345     # display an integer with thousands seperator as we know it
-  ## ff2i(12345,1)  ==> 12,345.0   # display an integer but like a float with 1 after comma pos
-  ## ff2i(12345,2)  ==> 12,345.00  # display an integer but like a float with 2 after comma pos
-  ## 
-  ## 
-  ##.. code-block:: nim
-  ##    import nimcx
-  ##    
-  ##    # int example
-  ##    for x in 1.. 20:
-  ##       # generate some positve and negative rand integer
-  ##       var z = getRndInt(50000,100000000) * getRandomSignI()
-  ##       printLnBiCol(fmtx(["",">6","",">20.0"],"NIM ",$x," : ",z))
-  ##       
-  ##
+          ## 
+          ## formats a integer into form 12,345,678 with thousands separators shown
+          ## 
+          ## precision is after comma given by n with default set to 0
+          ## in context of integer this means display format could even show 
+          ## a 0 after comma part if needed
+          ## 
+          ## ff2i(12345,0)  ==> 12,345     # display an integer with thousands seperator as we know it
+          ## ff2i(12345,1)  ==> 12,345.0   # display an integer but like a float with 1 after comma pos
+          ## ff2i(12345,2)  ==> 12,345.00  # display an integer but like a float with 2 after comma pos
+          ## 
+          ## 
+          ##.. code-block:: nim
+          ##    import nimcx
+          ##    
+          ##    # int example
+          ##    for x in 1.. 20:
+          ##       # generate some positve and negative rand integer
+          ##       var z = getRndInt(50000,100000000) * getRandomSignI()
+          ##       printLnBiCol(fmtx(["",">6","",">20.0"],"NIM ",$x," : ",z))
+          ##       
+          ##
 
           var sc = 0
           var nz = ""
@@ -464,29 +465,29 @@ proc ff22*(zz: int, n: int = 0): string =
 
           result = nz
 
-proc typeTest3*[T](x: T): string = $ type(x)
+proc typeTest33*[T](x: T): string = $ type(x)
 proc ff2*(zz: SomeNumber, n: int = 3): string =
           ## ff2
-  ## 
-  ## formats a float into form 12,345,678.234 that is thousands separators are shown
-  ## 
-  ## 
-  ## precision is after comma given by n with default set to 3
-  ## 
-  ##.. code-block:: nim
-  ##    import nimcx
-  ##    
-  ##    # floats example
-  ##    for x in 1.. 2000:
-  ##       # generate some positve and negative rand float
-  ##       var z = getrandfloat() * 2345243.132310 * getRandomSignF()
-  ##       printLnBiCol(fmtx(["",">6","",">20"],"NZ ",$x," : ",ff2(z)))
-  ##  
-  ##
+          ## 
+          ## formats a float into form 12,345,678.234 that is thousands separators are shown
+          ## 
+          ## 
+          ## precision is after comma given by n with default set to 3
+          ## 
+          ##.. code-block:: nim
+          ##    import nimcx
+          ##    
+          ##    # floats example
+          ##    for x in 1.. 2000:
+          ##       # generate some positve and negative rand float
+          ##       var z = getrandfloat() * 2345243.132310 * getRandomSignF()
+          ##       printLnBiCol(fmtx(["",">6","",">20"],"NZ ",$x," : ",ff2(z)))
+          ##  
+          ##
 
-          if typetest3(zz).startswith("int") == true:
+          if typetest33(zz).startswith("int") == true:
                     result = ff22(parseInt($zz), n)
-          elif typetest3(zz).startswith("float") == true:
+          elif typetest33(zz).startswith("float") == true:
                     if abs(zz) < 1000 == true: #  number less than 1000 so no 1000 seps needed
                               result = ff(float(zz), n)
 
@@ -509,49 +510,48 @@ proc ff2*(zz: SomeNumber, n: int = 3): string =
 
 proc getRandomFloat*(mi: float = -1.0, ma: float = 1.0): float =
           ## getRandomFloat
-     ##
-     ## convenience proc so we do not need to import rand in calling prog
-     ##
-     ## to get positive or negative rand floats multiply with getRandomSignF
-     ## 
-     ## Note: changed so to get positive and or negative floats
-     ## 
-     ##.. code-block:: nim
-     ##    echo  getRandomFloat() * 10000.00 * getRandomSignF()
-     ##
+          ##
+          ## convenience proc so we do not need to import rand in calling prog
+          ##
+          ## to get positive or negative rand floats multiply with getRandomSignF
+          ## 
+          ## Note: changed so to get positive and or negative floats
+          ## 
+          ##.. code-block:: nim
+          ##    echo  getRandomFloat() * 10000.00 * getRandomSignF()
+          ##
           result = rand(-1.0..float(1.0))
 
-proc getRndFloat*(mi: float = -1.0, ma: float = 1.0): float {.noInit,
-          inline.} = rand(mi..ma)
+proc getRndFloat*(mi: float = -1.0, ma: float = 1.0): float {.noInit,inline.} = rand(mi..ma)
           ## getRndFloat
-     ##
-     ## same as getrandFloat()
-     ##
+          ##
+          ## same as getrandFloat()
+          ##
 
 proc createSeqFloat*(n: int = 10, prec: int = 3): seq[float] =
           ## createSeqFloat
-     ##
-     ## convenience proc to create an unsorted seq of rand floats with
-     ##
-     ## default length ma = 10 ( always consider how much memory is in the system )
-     ##
-     ## prec enables after comma precision up to 16 positions after comma
-     ##
-     ## this is on a best attempt basis and may not work all the time
-     ##
-     ## default after comma positions is prec = 3 max
-     ##
-     ## form @[0.34,0.056,...] or similar
-     ##
-     ##.. code-block:: nim
-     ##    # create a seq with 50 rand floats
-     ##    echo createSeqFloat(50)
-     ##
-     ##
-     ##.. code-block:: nim
-     ##    # create a seq with 50 rand floats formatted
-     ##    echo createSeqFloat(50,3)
-     ##
+          ##
+          ## convenience proc to create an unsorted seq of rand floats with
+          ##
+          ## default length ma = 10 ( always consider how much memory is in the system )
+          ##
+          ## prec enables after comma precision up to 16 positions after comma
+          ##
+          ## this is on a best attempt basis and may not work all the time
+          ##
+          ## default after comma positions is prec = 3 max
+          ##
+          ## form @[0.34,0.056,...] or similar
+          ##
+          ##.. code-block:: nim
+          ##    # create a seq with 50 rand floats
+          ##    echo createSeqFloat(50)
+          ##
+          ##
+          ##.. code-block:: nim
+          ##    # create a seq with 50 rand floats formatted
+          ##    echo createSeqFloat(50,3)
+          ##
           var ffnz = prec
           if ffnz > 16: ffnz = 16
           result = newSeq[float]()
@@ -562,7 +562,7 @@ proc createSeqFloat*(n: int = 10, prec: int = 3): seq[float] =
                               if ($afloat).len > prec + 2:
                                         x = x - 1
                                         if x < 0:
-                                                  x = 0
+                                              x = 0
                               else:
                                         inc x
                                         result.add(afloat)
@@ -591,20 +591,20 @@ proc seqRight*[T](it: seq[T], n: int): seq[T] =
           ## returns a new seq with n right end elements of the original seq
 
           try:
-                    result = it
-                    if n <= it.len: result = it[it.len - n..<it.len]
+                result = it
+                if n <= it.len: result = it[it.len - n..<it.len]
           except RangeError:
-                    discard
+                discard
 
 
 
 proc fmtengine[T](a: string, astring: T): string =
           ## fmtengine - used internally
-     ## ::
-     ##   simple string formater to right or left align within given param
-     ##   also can take care of floating point precision
-     ##   called by fmtx to process alignment requests
-     ##
+          ## ::
+          ## simple string formater to right or left align within given param
+          ## also can take care of floating point precision
+          ## called by fmtx to process alignment requests
+          ##
           var okstring = $astring
           var op = ""
           var dg = "0"
@@ -668,14 +668,14 @@ proc fmtengine[T](a: string, astring: T): string =
           if okstring.len > parseInt(dg) and parseInt(dg) > 0:
                     var dps = ""
                     for x in 0..<parseInt(dg):
-                              dps = dps & okstring[x]
+                           dps = dps & okstring[x]
                     okstring = dps
           result = okstring
 
 
 
 proc fmtx*[T](fmts: openarray[string], fstrings: varargs[T, `$`]): string =
-          ## fmtx
+         ## fmtx
          ## 
          ## ::
          ##   simple format utility similar to strfmt to accommodate our needs
@@ -721,12 +721,12 @@ proc fmtx*[T](fmts: openarray[string], fstrings: varargs[T, `$`]): string =
          ##    printLnBiCol(fmtx([">15." & $getRndInt(2,4),":",">10"],getRndFloat() * float(getRndInt(50000,500000)),spaces(5),getRndInt(12222,10000000)))
          ##
 
-          result = ""
-          # if formatstrings count not same as vararg count we bail out some error about fmts will be shown
-          doassert(fmts.len == fstrings.len)
-          # now iterate and generate the desired output
-          for cc in 0 ..< fmts.len:
-                    result = result & fmtengine(fmts[cc], fstrings[cc])
+         result = ""
+         # if formatstrings count not same as vararg count we bail out some error about fmts will be shown
+         doassert(fmts.len == fstrings.len)
+         # now iterate and generate the desired output
+         for cc in 0 ..< fmts.len:
+                   result = result & fmtengine(fmts[cc], fstrings[cc])
 
 
 
@@ -751,28 +751,28 @@ proc showRune*(s: string): string {.discardable.} =
 
 proc unquote*(s: string): string =
           ## unquote
-      ##
-      ## remove any double quotes from a string
-      ##
+          ##
+          ## remove any double quotes from a string
+          ## 
           result = s.multiReplace(($'"', ""))
 
 
 proc cleanScreen*() =
-          ## cleanScreen
-      ##
-      ## very fast clear screen proc with escape seqs
-      ##
-      ## similar to terminal.eraseScreen() but cleans the terminal window more completely at times
-      ##
-          write(stdout, "\e[H\e[J")
+         ## cleanScreen
+         ##
+         ## very fast clear screen proc with escape seqs
+         ##
+         ## similar to terminal.eraseScreen() but cleans the terminal window more completely at times
+         ##
+         write(stdout, "\e[H\e[J")
 
 
 
 proc centerX*(): int = tw div 2 + 2
-          ## centerX
-          ##
-          ## returns an int with best terminal center position
-          ##
+         ## centerX
+         ##
+         ## returns an int with best terminal center position
+         ##
 
 proc centerPos*(astring: string) =
          ## centerpos
@@ -789,12 +789,13 @@ proc centerPos*(astring: string) =
 
 
 template colPaletteName*(coltype: string, n: int): auto =
-          ## ::
-         ##
-         ## returns the actual name of the palette entry n
-         ## eg. "mediumslateblue"
-         ## see example at colPalette
-         ##
+         
+          ## colPaletteName
+          ##
+          ## returns the actual name of the palette entry n
+          ## eg. "mediumslateblue"
+          ## see example at colPalette
+          ##
           var ts = newseq[string]()
           # build the custom palette ts
           for colx in 0..<colorNames.len:
@@ -837,18 +838,18 @@ template paletix*(pl: string): untyped =
 
 template randCol2*(coltype: string): auto =
           ## ::
-         ##   randCol2    -- experimental
-         ##   
-         ##   returns a rand color based on a palette
-         ##   
-         ##   palettes are filters into colorNames
-         ##   
-         ##   coltype examples : "red","blue","medium","dark","light","pastel" etc..
-         ##   
-         ##.. code-block:: nim
-         ##    loopy(0..5,printLn("Random blue shades",randcol2("blue")))
-         ##
-         ##
+          ##   randCol2    -- experimental
+          ##   
+          ##   returns a rand color based on a palette
+          ##   
+          ##   palettes are filters into colorNames
+          ##   
+          ##   coltype examples : "red","blue","medium","dark","light","pastel" etc..
+          ##   
+          ##.. code-block:: nim
+          ##    loopy(0..5,printLn("Random blue shades",randcol2("blue")))
+          ##
+          ##
           var coltypen = coltype.toLowerAscii()
           if coltypen == "black": # no black
                     coltypen = "darkgray"
@@ -863,30 +864,28 @@ template randCol2*(coltype: string): auto =
 
 
 template randCol*(): string = rand(colorNames)[1]
-          ## randCol
-     ##
-     ## get a randcolor from colorNames , no filter is applied 
-     ##
-     ##.. code-block:: nim
-     ##    # print a string 6 times in a rand color selected from colorNames
-     ##    loopy(0..5,printLn("Hello Random Color",randCol()))
-     ##
+        ## randCol
+        ##
+        ## get a randcolor from colorNames , no filter is applied 
+        ##
+        ##.. code-block:: nim
+        ##    # print a string 6 times in a rand color selected from colorNames
+        ##    loopy(0..5,printLn("Hello Random Color",randCol()))
+        ##
 
 
 
-template rndCol*(r: int = getRndInt(0, 254), g: int = getRndInt(0, 254),
-                    
-                    b: int = getRndInt(0, 254)): string = "\x1b[38;2;" & $r & ";" & $b & ";" & $g & "m"
-          ## rndCol
-    ## 
-    ## return a randcolor from the whole rgb spectrum in the ranges of RGB [0..254]
-    ## expect this colors maybe a bit more drab than the colors returned from randCol()
-    ## 
-    ##.. code-block:: nim
-    ##    # print a string 6 times in a rand color selected from rgb spectrum
-    ##    loopy(0..5,printLn("Hello Random Color",rndCol()))
-    ##
-    ##
+template rndCol*(r: int = getRndInt(0, 254), g: int = getRndInt(0, 254),b: int = getRndInt(0, 254)): string = "\x1b[38;2;" & $r & ";" & $b & ";" & $g & "m"
+        ## rndCol
+        ## 
+        ## return a randcolor from the whole rgb spectrum in the ranges of RGB [0..254]
+        ## expect this colors maybe a bit more drab than the colors returned from randCol()
+        ## 
+        ##.. code-block:: nim
+        ##    # print a string 6 times in a rand color selected from rgb spectrum
+        ##    loopy(0..5,printLn("Hello Random Color",rndCol()))
+        ##
+    
     
     
     
@@ -947,9 +946,9 @@ proc newCxlineText*(): CxlineText =
 
 proc newCxLine*(): Cxline =
           ## newCxLine 
-     ## 
-     ## creates a new cxLine object with some defaults , ready to be changed according to needs
-     ##
+          ## 
+          ## creates a new cxLine object with some defaults , ready to be changed according to needs
+          ##
           result.startpos = 1
           result.endpos = 1
           result.toppos = 1
@@ -977,13 +976,13 @@ proc newCxLine*(): Cxline =
 
 proc fastsplit*(s: string, sep: char): seq[string] =
           ## fastsplit
-  ##
-  ## code by jehan lifted from Nim Forum
-  ##
-  ## maybe best results compile prog with : nim cc -d:release --gc:markandsweep
-  ##
-  ## seperator must be a char type
-  ##
+          ##
+          ## code by jehan lifted from Nim Forum
+          ##
+          ## maybe best results compile prog with : nim cc -d:release --gc:markandsweep
+          ##
+          ## seperator must be a char type
+          ##
           var count = 1
           for ch in s:
                     if ch == sep:
@@ -1002,34 +1001,34 @@ proc fastsplit*(s: string, sep: char): seq[string] =
 
 proc splitty*(txt: string, sep: string): seq[string] =
           ## splitty
-   ##
-   ## same as build in split function but this retains the
-   ##
-   ## separator on the left side of the split
-   ##
-   ## z = splitty("Nice weather in : Djibouti",":")
-   ##
-   ## will yield:
-   ##
-   ## Nice weather in :
-   ## Djibouti
-   ##
-   ## rather than:
-   ##
-   ## Nice weather in
-   ## Djibouti
-   ##
-   ## with the original split()
-   ##
-   ##
+          ##
+          ## same as build in split function but this retains the
+          ##
+          ## separator on the left side of the split
+          ##
+          ## z = splitty("Nice weather in : Djibouti",":")
+          ##
+          ## will yield:
+          ##
+          ## Nice weather in :
+          ## Djibouti
+          ##
+          ## rather than:
+          ##
+          ## Nice weather in
+          ## Djibouti
+          ##
+          ## with the original split()
+          ##
+          ##
           var rx = newSeq[string]()
           let z = txt.split(sep)
           for xx in 0..<z.len:
-                    if z[xx] != txt and z[xx] != "":
-                              if xx < z.len-1:
-                                        rx.add(z[xx] & sep)
-                              else:
-                                        rx.add(z[xx])
+                 if z[xx] != txt and z[xx] != "":
+                         if xx < z.len-1:
+                               rx.add(z[xx] & sep)
+                         else:
+                               rx.add(z[xx])
           result = rx
 
 
@@ -1038,16 +1037,16 @@ proc doFlag*[T](flagcol: string = yellowgreen,
                 text: T = "",
                 textcol: string = termwhite): string {.discardable.} =
           ## doFlag
-  ## 
-  ##.. code-block:: nim
-  ##   import nimcx
-  ##   
-  ##   # print word Hello : in color dodgerblue followed by 6 little flags in red 
-  ##   # and the word alert in color truetomato followed by 6 little flags in red
-  ##   
-  ##   print("Hello :  " & doflag(red,6,"alert",truetomato) & spaces(1) & doflag(red,6), dodgerblue)
-  ##   
-  ##
+          ## 
+          ##.. code-block:: nim
+          ##   import nimcx
+          ##   
+          ##   # print word Hello : in color dodgerblue followed by 6 little flags in red 
+          ##   # and the word alert in color truetomato followed by 6 little flags in red
+          ##   
+          ##   print("Hello :  " & doflag(red,6,"alert",truetomato) & spaces(1) & doflag(red,6), dodgerblue)
+          ##   
+          ##
 
           result = ""
           for x in 0..<flags: result = result & flagcol & fullflag
@@ -1056,9 +1055,9 @@ proc doFlag*[T](flagcol: string = yellowgreen,
 
 proc getAscii*(s: string): seq[int] =
           ## getAsciicode
-   ## 
-   ## returns a seq[int]  with ascii integer codes of every character in a string 
-   ##
+          ## 
+          ## returns a seq[int]  with ascii integer codes of every character in a string 
+          ##
           result = @[]
           for c in s:
                     result.add(c.int)
@@ -1067,79 +1066,79 @@ proc getAscii*(s: string): seq[int] =
 # simple navigation mostly mirrors terminal.nim functions
 
 template curUp*(x: int = 1) =
-          ## curUp
-     ##
-     ## mirrors terminal cursorUp
-          cursorUp(stdout, x)
+         ## curUp
+         ##
+         ## mirrors terminal cursorUp
+         cursorUp(stdout, x)
 
 
 template curDn*(x: int = 1) =
-          ## curDn
-     ##
-     ## mirrors terminal cursorDown
-          cursorDown(stdout, x)
+         ## curDn
+         ##
+         ## mirrors terminal cursorDown
+         cursorDown(stdout, x)
 
 
 template curBk*(x: int = 1) =
-          ## curBkn
-     ##
-     ## mirrors terminal cursorBackward
-          cursorBackward(stdout, x)
+         ## curBkn
+         ##
+         ## mirrors terminal cursorBackward
+         cursorBackward(stdout, x)
 
 
 proc curFw*(x: int = 1): auto {.discardable.} =
-          ## curFw
-     ##
-     ## mirrors terminal cursorForward
-          cursorForward(stdout, x)
-          result = " " * x
+         ## curFw
+         ##
+         ## mirrors terminal cursorForward
+         cursorForward(stdout, x)
+         result = " " * x
 
 template curSetx*(x: int) =
-          ## curSetx
-     ##
-     ## mirrors terminal setCursorXPos
-          setCursorXPos(stdout, x)
+         ## curSetx
+         ##
+         ## mirrors terminal setCursorXPos
+         setCursorXPos(stdout, x)
 
 
 template curSet*(x: int = 0, y: int = 0) =
-          ## curSet
-     ##
-     ## mirrors terminal setCursorPos
-     ##
-     ##
-          setCursorPos(x, y)
+         ## curSet
+         ##
+         ## mirrors terminal setCursorPos
+         ##
+         ##
+         setCursorPos(x, y)
 
 
 template clearup*(x: int = 80) =
-          ## clearup
-     ##
-     ## a convenience proc to clear monitor x rows
-     ##
-          erasescreen(stdout)
-          curup(x)
+         ## clearup
+         ##
+         ## a convenience proc to clear monitor x rows
+         ##
+         erasescreen(stdout)
+         curup(x)
 
 
 proc curMove*(up: int = 0,
               dn: int = 0,
               fw: int = 0,
               bk: int = 0) =
-          ## curMove
-     ##
-     ## conveniently move the cursor to where you need it
-     ##
-     ## relative of current postion , which you app need to track itself
-     ##
-     ## setting cursor off terminal will wrap output to next line
-     ##
-          curup(up)
-          curdn(dn)
-          curfw(fw)
-          curbk(bk)
+         ## curMove
+         ##
+         ## conveniently move the cursor to where you need it
+         ##
+         ## relative of current postion , which you app need to track itself
+         ##
+         ## setting cursor off terminal will wrap output to next line
+         ##
+         curup(up)
+         curdn(dn)
+         curfw(fw)
+         curbk(bk)
 
 
 proc stripper*(str: string): string =
           # stripper
-     # strip controlcodes "\ba\x00b\n\rc\fd\xc3"
+          # strip controlcodes "\ba\x00b\n\rc\fd\xc3"
           result = ""
           for ac in str:
                     if ord(ac) in 32..126:
@@ -1147,9 +1146,7 @@ proc stripper*(str: string): string =
 
 template `<>`* (a, b: untyped): untyped =
           ## unequal operator 
-  ## 
-  ## 
-  ##
+          ##
           not (a == b)
 
 
@@ -1162,33 +1159,31 @@ proc `[]`*[T; U](a: seq[T], x: Slice[U]): seq[T] =
           else:
                     result = @[]
 
-
-
 template loopy*[T](ite: T, st: untyped) =
-          ## loopy
-     ##
-     ## the lazy programmer's quick simple for-loop template
-     ##
-     ##.. code-block:: nim
-     ##       loopy(0..<10,printLn("The house is in the back.",randcol()))
-     ##
-          for x in ite: st
+         ## loopy
+         ##
+         ## the lazy programmer's quick simple for-loop template
+         ##
+         ##.. code-block:: nim
+         ##       loopy(0..<10,printLn("The house is in the back.",randcol()))
+         ##
+         for x in ite: st
 
 
 template loopy2*(mi: int = 0, ma: int = 5, st: untyped) =
-     ## loopy2
-     ##
-     ## the advanced version of loopy the simple for-loop template
-     ## which also injects the loop counter xloopy if loopy2() was called with parameters
-     ## if called without parameters xloopy will not be injected .
-     ## 
-     ##.. code-block:: nim
-     ##   loopy2(1,10):
-     ##     block:
-     ##        printLnBiCol(xloopy , "  The house is in the back.",randcol(),randcol(),":",0,false,{})
-     ##        printLn("Some integer : " & $getRndInt())
-     ##
-     for xloopy {.inject.} in mi..<ma: st
+         ## loopy2
+         ##
+         ## the advanced version of loopy the simple for-loop template
+         ## which also injects the loop counter xloopy if loopy2() was called with parameters
+         ## if called without parameters xloopy will not be injected .
+         ## 
+         ##.. code-block:: nim
+         ##   loopy2(1,10):
+         ##     block:
+         ##        printLnBiCol(xloopy , "  The house is in the back.",randcol(),randcol(),":",0,false,{})
+         ##        printLn("Some integer : " & $getRndInt())
+         ##
+         for xloopy {.inject.} in mi..<ma: st
 
 
 proc fromCString*(p: pointer, len: int): string =
@@ -1260,15 +1255,15 @@ proc sampleSeq*[T](x: seq[T], a: int, b: int): seq[T] =
 
 proc tupleToStr*(xs: tuple): string =
           ## tupleToStr
-     ##
-     ## tuple to string unpacker , returns a string
-     ##
-     ## code ex nim forum
-     ##
-     ##.. code-block:: nim
-     ##    echo tupleToStr((1,2))         # prints (1, 2)
-     ##    echo tupleToStr((3,4))         # prints (3, 4)
-     ##    echo tupleToStr(("A","B","C")) # prints (A, B, C)
+          ##
+          ## tuple to string unpacker , returns a string
+          ##
+          ## code ex nim forum
+          ##
+          ##.. code-block:: nim
+          ##    echo tupleToStr((1,2))         # prints (1, 2)
+          ##    echo tupleToStr((3,4))         # prints (3, 4)
+          ##    echo tupleToStr(("A","B","C")) # prints (A, B, C)
 
           result = "("
           for x in xs.fields:
@@ -1279,14 +1274,13 @@ proc tupleToStr*(xs: tuple): string =
 
 
 
-template colPaletteIndexer*(colx: seq[string]): auto = toSeq(
-                    colx.low .. colx.high)
+template colPaletteIndexer*(colx: seq[string]): auto = toSeq(colx.low .. colx.high)
 
 template colPaletteLen*(coltype: string): auto =
           ##  colPaletteLen
-         ##  
-         ##  returns the len of a colPalette of colors in colorNames
-         ##
+          ##  
+          ##  returns the len of a colPalette of colors in colorNames
+          ##
           var ts = newseq[string]()
           for x in 0..<colorNames.len:
                     if colorNames[x][0].startswith(coltype) or colorNames[x][
@@ -1365,60 +1359,55 @@ template colorsPalette*(coltype: string): auto =
 
 
 template randPastelCol*: string = rand(pastelset)
-     ## randPastelCol
-     ##
-     ## get a randcolor from pastelSet
-     ##
-     ##.. code-block:: nim
-     ##    # print a string 6 times in a rand color selected from pastelSet
-     ##    loopy(0..5,printLn("Hello Random Color",randPastelCol()))
-     ##
-     ##
+         ## randPastelCol
+         ##
+         ## get a randcolor from pastelSet
+         ##
+         ##.. code-block:: nim
+         ##    # print a string 6 times in a rand color selected from pastelSet
+         ##    loopy(0..5,printLn("Hello Random Color",randPastelCol()))
+         ##
+         ##
      
      
 
 
 template upperCase*(s: string): string = toUpperAscii(s)
-     ## upperCase
-     ## 
-     ## upper cases a string
-     ##
+         ## upperCase
+         ## 
+         ## upper cases a string
+         ##
 
 template lowerCase*(s: string): string = toLowerAscii(s)
-     ## lowerCase
-     ## 
-     ## lower cases a string
-     ##
+         ## lowerCase
+         ## 
+         ## lower cases a string
+         ##
 
 template currentLine*() =
           ## currentLine
-   ## 
-   ## simple template to return line number , maybe usefull for debugging
-          var pos: tuple[filename: string, line: int, column: int] = ("", -1,
-                              -1)
+          ## 
+          ## simple template to return line number , maybe usefull for debugging
+          ## 
+          var pos: tuple[filename: string, line: int, column: int] = ("", -1,-1)
           pos = instantiationInfo()
-          printLnInfoMsg("File: " & pos.filename,
-                              "Line:" & $(pos.line) & " Column:" & $(pos.column), truetomato, xpos = 3)
+          printLnInfoMsg("File: " & pos.filename,"Line:" & $(pos.line) & " Column:" & $(pos.column), truetomato, xpos = 3)
           echo()
 
 template currentLine*(xpos: int) =
           ## currentLine
-   ## 
-   ## simple template to return line number , maybe usefull for debugging
+          ## 
+          ## simple template to return line number , maybe usefull for debugging
 
-          var pos: tuple[filename: string, line: int, column: int] = ("", -1,
-                              -1)
+          var pos: tuple[filename: string, line: int, column: int] = ("", -1,-1)
           pos = instantiationInfo()
           var xpos = tw
           # calc the total width of this msg so we aline it rightside of terminal if needed
-          var msgl = 6 + (pos.filename).len + 5 + ($(pos.line)).len + 8 + ($(
-                              pos.column)).len + 3
+          var msgl = 6 + (pos.filename).len + 5 + ($(pos.line)).len + 8 + ($(pos.column)).len + 3
           var tww = tw
           #if tww - xpos < msgl: xpos = msgl - 1
           xpos = tww - msgl - 5
-          printLnInfoMsg("File: " & pos.filename,
-                              "Line:" & $(pos.line) & " Column:" & $(pos.column), truetomato, pastelWhite,
-                              xpos)
+          printLnInfoMsg("File: " & pos.filename,"Line:" & $(pos.line) & " Column:" & $(pos.column), truetomato, pastelWhite,xpos)
           echo()
 
 
@@ -1426,14 +1415,14 @@ template currentLine*(xpos: int) =
 template hdx*(code: typed, frm: string = "+", width: int = tw,
                     nxpos: int = 0): typed =
           ## hdx
-   ##
-   ## a simple sandwich frame made with + default or any string passed in
-   ##
-   ## width and xpos can be adjusted
-   ##
-   ##.. code-block:: nim
-   ##    hdx(printLn("Nice things happen randomly",yellowgreen,xpos = 9),width = 35,nxpos = 5)
-   ##
+          ##
+          ## a simple sandwich frame made with + default or any string passed in
+          ##
+          ## width and xpos can be adjusted
+          ##
+          ##.. code-block:: nim
+          ##    hdx(printLn("Nice things happen randomly",yellowgreen,xpos = 9),width = 35,nxpos = 5)
+          ##
           var xpos = nxpos
           var lx = repeat(frm, width div frm.len)
           printLn(lx, xpos = xpos)

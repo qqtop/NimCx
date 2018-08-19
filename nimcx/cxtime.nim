@@ -28,9 +28,6 @@ type
     Cxcounter* =  object
             value*: int                        
 
-            
-
-
 proc localTime*() : auto =
   ## localTime
   ## 

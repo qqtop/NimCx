@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-03-05 
+##     Latest      : 2018-08-19 
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -106,3 +106,36 @@ proc showRegression*(rr: RunningRegress,n:int = 5,xpos:int = 1) =
      printLnBiCol2("Correlation   : " & ff(rr.correlation(),n),yellowgreen,white,":",xpos = xpos,false,{})
 
      
+
+proc zscore*(data:seq[SomeNumber]):seq[float] {.inline.} =
+    ## zscore
+    ## 
+    ## returns the z-score in a seq[float] for each data point
+    ##  
+    ## ##.. code-block:: nim
+    ##  
+    ##   import nimcx
+    ##   printLn("DATA SERIES FLOAT",yellowgreen,xpos=2)     
+    ##   let data = createSeqFloat(12)  
+    ##   showSeq(data,maxitemwidth=8) 
+    ##   printLn("ZSCORE",salmon,xpos=2) 
+    ##   showSeq(zscore(data),maxitemwidth=8) 
+    ##   decho(3)
+    ##   printLn("DATA SERIES INTEGER",yellowgreen,xpos=2) 
+    ##   let data2 = createSeqint(12,1,1000)    
+    ##   showSeq(data2,maxitemwidth=8) 
+    ##   printLn("ZSCORE",salmon,xpos=2) 
+    ##   showSeq(zscore(data2),maxitemwidth=8) 
+    ##   doFinish() 
+
+    var okdata = newSeq[float]()
+    for x in 0 ..< data.len: okdata.add(float(data[x]))
+    var rsa:Runningstat
+    rsa.clear
+    rsa.push(okdata)
+    for x in 0..<okdata.len:
+         result.add((okdata[x] - rsa.mean) / rsa.standardDeviation )  # z-score
+         
+         
+# end of cxstats.nim         
+         

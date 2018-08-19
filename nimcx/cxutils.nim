@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-08-17
+##     Latest      : 2018-08-19
 ##
 ##     OS          : Linux
 ##
@@ -31,17 +31,17 @@ type
     RpointFloat* = tuple[x, y : float]
 
  
-proc `$`*[T](some:typedesc[T]): string = name(T)
-proc typeTest*[T](x:T):  T {.discardable.} =
-     # used to determine the field types 
-     printLnBiCol("Type     : " & $type(x))
-     printLnBiCol("Value    : " & $x)
-     
-proc typeTest2*[T](x:T): T {.discardable.}  =
-     # same as typetest but without showing values (which may be huge in case of seqs)
-     printLnBiCol("Type       : " & $type(x),xpos = 3)   
-     
-proc typeTest3*[T](x:T): string = $type(x)
+# proc `$`*[T](some:typedesc[T]): string = name(T)
+# proc typeTest*[T](x:T):  T {.discardable.} =
+#      # used to determine the field types 
+#      printLnBiCol("Type     : " & $type(x))
+#      printLnBiCol("Value    : " & $x)
+#      
+# proc typeTest2*[T](x:T): T {.discardable.}  =
+#      # same as typetest but without showing values (which may be huge in case of seqs)
+#      printLnBiCol("Type       : " & $type(x),xpos = 3)   
+#      
+# proc typeTest3*[T](x:T): string = $type(x)
 
 proc fibonacci*(n: int):float =  
     ## fibonacci
@@ -177,7 +177,7 @@ proc getNextMonday*(adate:string):string =
     
     var ndatestr = ""
     if adate == "" :
-       printErrorMsg("Received an invalid date.  value : nil")
+       printErrorMsg("Received an invalid date.")
     else:
 
         if validdate(adate) == true:
