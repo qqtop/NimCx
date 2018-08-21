@@ -90,7 +90,7 @@ proc cxTrueColorSet(min:int = 0 ,max:int = 888 , step: int = 12,flag48:bool = fa
    ## cxTrueColorSet
    ## 
    ## generates a seq with truecolors  
-   ## defaults are reasonable 843750 colors to choose from 
+   ## defaults are reasonable 421875 colors to choose from . Run showCxTrueColorPalette() to get a taste.
    ## 
    ## the colors are stored as numbers with odd for 38 types and even for 48 types
    ## 38 types refers to: "\x1b[38;2;....m"
@@ -110,6 +110,7 @@ proc cxTrueColorSet(min:int = 0 ,max:int = 888 , step: int = 12,flag48:bool = fa
    ## 
    # could be mixed up anywhich way to create interesting palettes rgb,bgr etc
    result = @[]
+   cxRGB = @[]
    for r in countup(min,max,step):
      for g in countup(min,max,step):
        for b in countup(min,max,step):
@@ -124,17 +125,20 @@ proc getCxTrueColorSet*(min:int = 0,max:int = 888,step:int = 12,flag48:bool = fa
      ## 
      ## this function fills the global cxTrueCol seq with truecolor values
      ## and needs to be run once if truecolor functionality exceeding stdlib support required
-     ## 
+     ## see cx.nim if it is currently enabled for this version of the library
      ##  
      result = false
      if checktruecolorsupport() == true:
          if getcxTrueColorSetFlag == true:    # defined in cxglobal.nim  default == false
            {.hints: on.}
-           {.hint    : "\x1b[38;2;154;205;50m \u2691 NimCx working on :" & "\x1b[38;2;255;100;0m getCxTrueColorset ! \xE2\x9A\xAB" & " " & "\xE2\x9A\xAB" & spaces(2) & "\x1b[38;2;154;205;50m \u2691" & spaces(1) .} 
+           {.hint    : "\x1b[38;2;154;205;50m \u2691 NimCx loading :" & "\x1b[38;2;255;100;0m cxTrueCol  \xE2\x9A\xAB" & " " & "\xE2\x9A\xAB" & spaces(2) & "\x1b[38;2;154;205;50m \u2691" & spaces(1) .} 
            {.hints: off.}
-           echo()
-         cxTrueCol = @[]
-         cxTrueCol = cxTrueColorSet(min,max,step,flag48) 
+           cxTrueCol = cxTrueColorSet(min,max,step,flag48)
+         else:
+            {.hints: off.}  
+            cxTrueCol = @[]
+         echo()
+          
          #printLnBiCol("cxTrueCol Length : " & $cxtruecol.len)
          result = true
      else:
@@ -142,23 +146,25 @@ proc getCxTrueColorSet*(min:int = 0,max:int = 888,step:int = 12,flag48:bool = fa
            printLnErrorMsg("cxTrueCol truecolor scheme can not be used on this terminal/konsole")
            #doFinish() 
    
-proc color38*(cxTrueCol:seq[string]) : int =
+proc color38*(cxTrueCol:seq[string]) : int {.inline.} =
      # random truecolor ex 38 set
      var lcol = rand(cxTrueCol.len - 1)
      while lcol mod 2 <> 0 : lcol = rand(cxTrueCol.len - 1)
      result = lcol
    
-proc color48*(cxTrueCol:seq[string]) : int =
+proc color48*(cxTrueCol:seq[string]) : int {.inline.} =
      # random truecolor ex 48 set
-     var rcol = rand(cxTrueCol.len - 1)
-     while rcol mod 2 == 0 : rcol = rand(cxTrueCol.len - 1)
-     result = rcol   
+     result = 1
+     if cxTrueCol.len > 1:
+        var rcol = rand(cxTrueCol.len - 1)
+        while rcol mod 2 == 0 : rcol = rand(cxTrueCol.len - 1)
+        result = rcol   
 
-proc color3848*(cxTrueCol:seq[string]) : int =
+proc color3848*(cxTrueCol:seq[string]) : int {.inline.} =
      # random truecolor ex 38 and 48 set
      result = rand(cxTrueCol.len - 1)
      
-proc rndTrueCol*() : auto = 
+proc rndTrueCol*() : auto {.inline.}  = 
      ## rndTrueCol
      ## 
      ## returns a random color from the cxtruecolorset for use as 
@@ -168,7 +174,7 @@ proc rndTrueCol*() : auto =
      result = cxTrueCol[colornumber38]
 
      
-proc rndTrueCol2*() : auto = 
+proc rndTrueCol2*() : auto {.inline.} = 
      ## rndTrueCol2
      ## 
      ## returns a  color from the cxtruecolorset for use as 
@@ -177,7 +183,7 @@ proc rndTrueCol2*() : auto =
      colornumber48 = color48(cxTrueCol)
      result = cxTrueCol[colornumber48]     
      
-proc rndTrueColFull*() : auto = 
+proc rndTrueColFull*() : auto {.inline.} = 
      ## rndTrueCol
      ## 
      ## returns a random color from the cxtruecolorset for use as 
@@ -207,8 +213,9 @@ proc showCxTrueColorPalette*(min:int = 0,max:int = 888,step: int = 12,flag48:boo
    ## 
    ## shows truecolors , in order not run out of memory adjust max and step carefully 
    ## note - less steps more colors
-   ## e.g max 888 step 4 needs abt 4.3 GB free and has  22,179,134 color shades to select from
-   ## default has 421,750 palette entries in cxTruecCol 
+   ## e.g max 888 step 4 needs abt 4.3 GB free and has 22,179,134 color shades to select from
+   ## default has 421,750 palette entries in cxTruecCol and is loaded during compile
+   ## see cxglobal getcxTrueColorSetFlag status
    ## 
    ## cxTrueCol is a initial empty global defined in cx.nim which will only be filled
    ## with a call to getCxTrueColorSet() ,also see there how the Palette is build up
@@ -230,10 +237,10 @@ proc showCxTrueColorPalette*(min:int = 0,max:int = 888,step: int = 12,flag48:boo
                inc rgx
          #if rgx == 15167 and lcol > 7735106:      
                
-            var tcol  = color38(cxTrueCol)
-            var bcol  = color38(cxTrueCol)
-            var dlcol = color38(cxTrueCol)
-            var drcol = color38(cxTrueCol)
+            let tcol  = color38(cxTrueCol)
+            let bcol  = color38(cxTrueCol)
+            let dlcol = color38(cxTrueCol)
+            let drcol = color38(cxTrueCol)
             testLine.startpos = 5  
             testLine.endpos = 150
             testLine.linecolor        = cxTrueCol[lcol]

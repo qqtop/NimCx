@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-07-20 
+##     Latest      : 2018-07-21 
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -1431,3 +1431,6 @@ macro pdebug*(n: varargs[typed]): untyped =
     else:
       # add newline
       result.add(newCall("writeLine", newIdentNode("stdout"), newStrLitNode("")))     
+
+      
+# end of cxprint.nim      

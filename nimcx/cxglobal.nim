@@ -54,7 +54,7 @@ proc styledEchoProcessArg(style: set[Style]) = setStyle style
 proc styledEchoProcessArg(color: ForegroundColor) = setForegroundColor color
 proc styledEchoProcessArg(color: BackgroundColor) = setBackgroundColor color
 
-var getcxTrueColorSetFlag*: bool = false # set this to true if you want cxtruecolor set preloaded from start
+var getcxTrueColorSetFlag*: bool = true # set this to true if you want cxtruecolor set preloaded from start 
 
 # macros
 
@@ -233,8 +233,12 @@ proc rndRGB*(): auto =
           ##
           var cln = newSeq[int]()
           for x in 0..<colorNames.len: cln.add(x)
-          let argb = extractRgb(parsecolor(colorNames[rand(cln)][0])) #rndsample
-          result = rgb(argb.r, argb.g, argb.b)
+          try:
+             let argb = extractRgb(parsecolor(colorNames[rand(cln)][0])) #rndsample
+             let resrgb = rgb(argb.r, argb.g, argb.b)
+             result = resrgb
+          except ValueError:
+             discard   
 
 proc sum*[T](aseq: seq[T]): T = foldl(aseq, a + b)
           ## sum

@@ -226,12 +226,14 @@ proc plusDays*(aDate:string,days:int):string =
    ## and returns a string of format yyyy-MM-dd
    ##
    ## the passed in date string must be a valid date or an error message will be returned
+   ## 
+   ##.. code-block:: nim 
+   ##   echo plusDays(cxtoday(),343) 
    ##
    if validdate(aDate) == true:
       var rxs = ""
       let tifo = parse(aDate,"yyyy-MM-dd") # this returns a DateTime type
-      var myinterval = initInterval()
-      myinterval.days = days
+      let myinterval = initInterval(days = days)
       rxs = fx(tifo + myinterval)
       result = rxs
    else:
@@ -252,8 +254,7 @@ proc minusDays*(aDate:string,days:int):string =
    if validdate(aDate) == true:
       var rxs = ""
       let tifo = parse(aDate,"yyyy-MM-dd") # this returns a DateTime type
-      var myinterval = initInterval()
-      myinterval.days = days
+      let myinterval = initInterval(days = days)
       rxs = fx(tifo - myinterval)
       result = rxs
    else:
