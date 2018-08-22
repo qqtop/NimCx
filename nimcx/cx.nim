@@ -165,11 +165,11 @@ elif defined(cpp) : someGcc = "c++ target"
 else: someGcc = "undefined"    
 
 when defined(macosx):
-  {.warning : " \u2691 CX is only tested on Linux ! Your mileage may vary".}
+  {.warning : " \u2691 nimCx is only tested on Linux ! Your mileage may vary".}
 
 when defined(windows):
   {.hint    : "Time to switch to Linux !".}
-  {.hint    : "CX does not support Windows at this stage , you are on your own !".}
+  {.hint    : "nimCx does not directly support Windows , you are on your own !".}
 
 when defined(posix):
   {.hint    : "\x1b[38;2;154;205;50m \u2691  NimCx      :" & "\x1b[38;2;255;215;0m Officially works on Linux only." & spaces(13) & "\x1b[38;2;154;205;50m \u2691".}
@@ -243,7 +243,7 @@ converter toChar*(x: int): char = result = chr(x)
 proc newColor*(r,g,b:int):string = 
     ##   newColor
     ##   
-    ##   creates a new color string from r,g,b values passed in colors can be used as 
+    ##   creates a new color string from r,g,b values. Passed in colors can be used as 
     ##   foregroundcolor in print,printLn routines and as bgr in cxPrint,cxPrintLn .
     ##   
     ##   Example

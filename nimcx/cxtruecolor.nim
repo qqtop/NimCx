@@ -14,8 +14,10 @@ import cxglobal,cxconsts,cxprint,terminal,strutils,random
 # Note you will need konsole or similar terminal to see colors
 # the standard gnome terminal etc may or may not be able to show colors above the standard terminal colors
 # 
+# in order to load cxTrueCol at compiletime use  -d:cxTrueCol   or load it anytime with a call to getCxTrueColorSet()
 #
-# Last : 2018-05-26
+#
+# Last : 2018-08-22
 # 
 type
   CXRGB* = tuple[R: int, G: int, B: int,cxCol:string]  # the idea for the cxCol field is to give interesting colors a name
@@ -129,13 +131,15 @@ proc getCxTrueColorSet*(min:int = 0,max:int = 888,step:int = 12,flag48:bool = fa
      ##  
      result = false
      if checktruecolorsupport() == true:
-         if getcxTrueColorSetFlag == true:    # defined in cxglobal.nim  default == false
+         #if getcxTrueColorSetFlag == true:    # defined in cxglobal.nim  default == false  # <--- currently not in use 
+         when defined(cxTrueCol):
            {.hints: on.}
            {.hint    : "\x1b[38;2;154;205;50m \u2691 NimCx loading :" & "\x1b[38;2;255;100;0m cxTrueCol  \xE2\x9A\xAB" & " " & "\xE2\x9A\xAB" & spaces(2) & "\x1b[38;2;154;205;50m \u2691" & spaces(1) .} 
            {.hints: off.}
            cxTrueCol = cxTrueColorSet(min,max,step,flag48)
          else:
-            {.hints: off.}  
+            #{.hints: off.}  
+            {.hint    : "\x1b[38;2;154;205;50m \u2691 NimCx :" & "\x1b[38;2;255;100;0m cxTrueCol not loaded  \xE2\x9A\xAB" & " " & "\xE2\x9A\xAB" & spaces(2) & "\x1b[38;2;154;205;50m \u2691" & spaces(1) .} 
             cxTrueCol = @[]
          echo()
           
@@ -211,14 +215,16 @@ proc showCxTrueColorPalette*(min:int = 0,max:int = 888,step: int = 12,flag48:boo
    ## 
    ## play with truecolors
    ## 
-   ## shows truecolors , in order not run out of memory adjust max and step carefully 
+   ## shows truecolors , in order not to run out of memory adjust max and step carefully 
    ## note - less steps more colors
    ## e.g max 888 step 4 needs abt 4.3 GB free and has 22,179,134 color shades to select from
    ## default has 421,750 palette entries in cxTruecCol and is loaded during compile
    ## see cxglobal getcxTrueColorSetFlag status
    ## 
-   ## cxTrueCol is a initial empty global defined in cx.nim which will only be filled
+   ## cxTrueCol is an initial empty global seq defined in cx.nim which will only be filled
    ## with a call to getCxTrueColorSet() ,also see there how the Palette is build up
+   ## 
+   ## This function will reload cxTrueCol with default settings or as specified
    ## 
    ## press ctrl-c if showTrueColorPalette runs too long ....
    ## 
@@ -246,8 +252,7 @@ proc showCxTrueColorPalette*(min:int = 0,max:int = 888,step: int = 12,flag48:boo
             testLine.linecolor        = cxTrueCol[lcol]
             testLine.dotleftcolor     = cxTrueCol[dlcol]
             testLine.dotrightcolor    = cxTrueCol[drcol]
-            
-            
+                        
             testLine.cxlinetext.textpos = 8
             testLine.cxlinetext.textbracketcolor = cxTrueCol[bcol]
             testLine.cxlinetext.text = fmtx(["<20","<14",">8",""], "Testing" ,"cxTruecolor : " ,$lcol," of " & cxtlen & spaces(1))
@@ -275,49 +280,53 @@ proc showCxTrueColorPalette*(min:int = 0,max:int = 888,step: int = 12,flag48:boo
 proc showCxTrueColorPalette2*() =
       # same as above but displaying a prev. loaded palette
       # so we avoid expensive loading
-      let cxtlen = $(cxTruecol.len)
-      var testLine = newcxline()
-      var rgx = 0
-      for lcol in countup(0,cxTruecol.len - 1,2): # note step size 2 so we only select 38 type colors
-            if lcol mod 255 == 0 : 
-               inc rgx
-         #if rgx == 15167 and lcol > 7735106:      
-               
-            var tcol  = color38(cxTrueCol)
-            var bcol  = color38(cxTrueCol)
-            var dlcol = color38(cxTrueCol)
-            var drcol = color38(cxTrueCol)
-            testLine.startpos = 5  
-            testLine.endpos = 150
-            testLine.linecolor        = cxTrueCol[lcol]
-            testLine.dotleftcolor     = cxTrueCol[dlcol]
-            testLine.dotrightcolor    = cxTrueCol[drcol]
-            
-            
-            testLine.cxlinetext.textpos = 8
-            testLine.cxlinetext.textbracketcolor = cxTrueCol[bcol]
-            testLine.cxlinetext.text = fmtx(["<20","<14",">8",""], "Testing" ,"cxTruecolor : " ,$lcol," of " & cxtlen & spaces(1))
-            testLine.cxlinetext.textcolor = cxTrueCol[lcol]  # change this to tcol to have text in a random truecolor
-            testLine.cxlinetext.textstyle = {styleReverse}
-            
-            testLine.cxlinetext2.textpos = 80
-            testLine.cxlinetext2.textbracketcolor = cxTrueCol[bcol]
-            testLine.cxlinetext2.text = fmtx(["<55"], "RGX " & $cxrgb[lcol])
-            testLine.cxlinetext2.textcolor = cxTrueCol[lcol]  # change this to tcol to have text in a random truecolor
-            testLine.cxlinetext2.textstyle = {styleReverse}
-            
-            testLine.newline = "\L"                  # need a new line character here or we overwrite 
-            printCxLine(testLine)
-      
-      decho(2)
       let msgxpos = 5
-      printLnInfoMsg("Note            " , cxpad("cxTrueColor Value can be used like so ",96),xpos = msgxpos)
-      printLnInfoMsg("                " , cxpad("""as backgroundcolor : cxprintLn("say something  ",fontcolor = colWhite,bgr = cxTruecol[421873])""",96),xpos=msgxpos)
-      printLnInfoMsg("                " , cxpad("""as foregroundcolor : printLn2("say something  ",fgr = cxTruecol[421874])""",96),xpos = msgxpos)
-      echo()
-      printLnInfoMsg("Palette Entries " , ff2(cxTruecol.len),xpos = msgxpos)   
-      
-    
-      
+      if cxTrueCol.len > 0:
+              let cxtlen = $(cxTruecol.len)
+              var testLine = newcxline()
+              var rgx = 0
+              for lcol in countup(0,cxTruecol.len - 1,2): # note step size 2 so we only select 38 type colors
+                    if lcol mod 255 == 0 : 
+                       inc rgx
+                 #if rgx == 15167 and lcol > 7735106:      
+                       
+                    var tcol  = color38(cxTrueCol)
+                    var bcol  = color38(cxTrueCol)
+                    var dlcol = color38(cxTrueCol)
+                    var drcol = color38(cxTrueCol)
+                    testLine.startpos = 5  
+                    testLine.endpos = 150
+                    testLine.linecolor        = cxTrueCol[lcol]
+                    testLine.dotleftcolor     = cxTrueCol[dlcol]
+                    testLine.dotrightcolor    = cxTrueCol[drcol]
+                    
+                    
+                    testLine.cxlinetext.textpos = 8
+                    testLine.cxlinetext.textbracketcolor = cxTrueCol[bcol]
+                    testLine.cxlinetext.text = fmtx(["<20","<14",">8",""], "Testing" ,"cxTruecolor : " ,$lcol," of " & cxtlen & spaces(1))
+                    testLine.cxlinetext.textcolor = cxTrueCol[lcol]  # change this to tcol to have text in a random truecolor
+                    testLine.cxlinetext.textstyle = {styleReverse}
+                    
+                    testLine.cxlinetext2.textpos = 80
+                    testLine.cxlinetext2.textbracketcolor = cxTrueCol[bcol]
+                    testLine.cxlinetext2.text = fmtx(["<55"], "RGX " & $cxrgb[lcol])
+                    testLine.cxlinetext2.textcolor = cxTrueCol[lcol]  # change this to tcol to have text in a random truecolor
+                    testLine.cxlinetext2.textstyle = {styleReverse}
+                    
+                    testLine.newline = "\L"                  # need a new line character here or we overwrite 
+                    printCxLine(testLine)
+              
+              decho(2)
+              printLnInfoMsg("Note            " , cxpad("cxTrueColor Value can be used like so ",96),xpos = msgxpos)
+              printLnInfoMsg("                " , cxpad("""as backgroundcolor : cxprintLn("say something  ",fontcolor = colWhite,bgr = cxTruecol[421873])""",96),xpos=msgxpos)
+              printLnInfoMsg("                " , cxpad("""as foregroundcolor : printLn2("say something  ",fgr = cxTruecol[421874])""",96),xpos = msgxpos)
+              echo()
+              printLnInfoMsg("Palette Entries " , ff2(cxTruecol.len),xpos = msgxpos)   
+      else:        
+              echo()
+              printLnInfoMsg("Palette Entries " , ff2(cxTruecol.len),xpos = msgxpos)   
+              printLnInfoMsg("Note            " , cxpad("cxTrueCol is not loaded.",96),xpos = msgxpos)
+              printLnInfoMsg("                " , cxPad("Run getcxTrueColorSet() in your code or compile with -d:cxTrueCol",96),xpos = msgxpos)   
+              decho(2) 
       
 #  end experimental truecolors     

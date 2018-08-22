@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-08-19 
+##     Latest      : 2018-08-22 
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -31,6 +31,7 @@ import
           parseutils,
           sequtils,
           strmisc,
+          math,
           random,
           algorithm,
           unicode,
@@ -54,7 +55,7 @@ proc styledEchoProcessArg(style: set[Style]) = setStyle style
 proc styledEchoProcessArg(color: ForegroundColor) = setForegroundColor color
 proc styledEchoProcessArg(color: BackgroundColor) = setBackgroundColor color
 
-var getcxTrueColorSetFlag*: bool = true # set this to true if you want cxtruecolor set preloaded from start 
+var getcxTrueColorSetFlag*: bool = true # set to true so cxtruecolor default set preloaded at compile time 
 
 # macros
 
@@ -180,7 +181,35 @@ proc getTerminalHeight*(): int =
 
 template th*: int = getTerminalheight() ## th , a global where latest terminal height is always available
 
+proc remapIntToFloat*(s: seq[int]): seq[float] =
+  ## remapIntToFloat
+  ## 
+  s.map do (x: int) -> float: x.float
 
+proc remapFloatToInt*(s: seq[float]): seq[int] =
+  ## remapFloatToInt
+  ## 
+  s.map do (x: float) -> int: round(x).int    
+    
+proc remapToString*[T](s: seq[T]): seq[string] =
+  ## remapToString
+  ## 
+  s.map do (x: T) -> string: $x    
+  
+  
+proc fwriteUnlocked(buf: pointer, size, n: int, f: File): int {.
+  importc: "fwrite_unlocked", noDecl.}
+proc fastWrite*(f: File, s: string) =
+  ## fastWrite
+  ## 
+  ## good for logging or vast file writes
+  ## 
+  ## based on code ex https://hookrace.net/blog/writing-an-async-logger-in-nim/
+  ## 
+  if fwriteUnlocked(cstring(s), 1, s.len, f) != s.len:
+      raise newException(IOError, "cannot write string to file" )  
+  
+    
 func cxpad*(s: string, padlen: int, paddy: string = spaces(1)): string =
           ## cxpad
           ## 
