@@ -5,9 +5,14 @@ import os,terminal,times,parseutils,strutils
 # 
 # time/date related procs including printDTimeMsg etc.
 # 
-# Last : 2018-08-22
+# Last : 2018-08-24
 # 
 # 
+
+type
+  cxTz* = enum
+    long,short
+
 
 # types used in cxtimer
 type
@@ -29,39 +34,74 @@ type
             value*: int                        
 
             
-proc localTime*() : auto =
-  ## localTime
-  ## 
-  ## quick access to local time for printing
-  ## 
-  result = $now()
-  
- 
-  
-proc cxtoday*():string = getDateStr() 
+template cxLocal* : string = $now()
+     ## cxLocal
+     ## 
+     ## returns local datetime in a string same as now()
+     ## 
+     ## Examples for var. cx time,date functions
+     ## 
+     ## .. code-block:: nim
+     ##    printLnBiCol(["cxLocal           : ",cxLocal])
+     ##    printLnBiCol(["cxNow             : ",cxNow])  
+     ##    printLnBiCol(["cxTime            : ",cxTime]) 
+     ##    printLnBiCol(["cxToday           : ",cxToday])
+     ##    printLnBiCol(["cxTimeZone(long)  : ",cxTimezone(long)])
+     ##    printLnBiCol(["cxTimeZone(short) : ",cxTimezone(short)])
+     ##    
+
+     
+      
+template cxNow* : string = cxLocal.replace("T",spaces(1))
+     ## cxnow
+     ## 
+     ## formated datetime without the T 
+     ## 
+     ## eg: 2018-08-23 16:48:50+08.00
+     ##
+     
+template cxToday* : string = getDateStr() 
      ## today
      ## 
      ## returns date string
-     ##
-     
-proc cxnow*():string = 
-          # formated datetime
-          result = ($now()).replace("T"," ").replace(":",".")
-  
-proc getTimeStr*():string =
-    ## getTimeStr
-    ## 
-    ## returns current time parsed from stdlib now() function
-    ## 
+     ## 
+     ## eg : 2018-08-23
+     ##          
+        
+template cxTime* : string = getClockStr()
+     ## cxTime
+     ## 
+     ## eg : 16:48:50
+     ##     
+
+proc cxDateTime*() : string = 
+      result =  cxToday & spaces(1) & $cxTime
+     ## cxDateTime           
+     ## 
+     ## restunrs a date time string
+     ## 
+     ## eg : 2018-08-23 16:48:50
+     ## 
  
-    let ctt = split($now(),"T")
-    if ctt[1].contains("-"):
-       result = split(ctt[1],"-")[0]
-    else:
-       result = split(ctt[1],"+")[0]
-
-      
-
+proc cxTimeZone*(amode:cxTz = long):string = 
+   ## cxTimeZone
+   ##
+   ## returns a string with the actual timezone offset in hours as seen from UTC 
+   ## 
+   ## default long gives results parsed from getLocalTime 
+   ## like : UTC +08:00
+   ##
+  
+   case amode 
+     of long:
+        let ltt = $now()
+        result = "UTC" & $ltt[(($ltt).len - 6) ..< ($ltt).len] 
+     of short:
+        result = cxnow()[19 .. ^1]       
+     else:
+        discard        
+     
+     
 proc toDateTime*(date:string = "2000-01-01"): DateTime =
    ## toDateTime
    ## 
@@ -122,7 +162,7 @@ proc sleepy*[T:float|int](secs:T) =
 # Var. date and time handling procs mainly to provide convenience for
 # date format yyyy-MM-dd handling
 
-proc validdate*(adate:string):bool =
+proc validDate*(adate:string):bool =
       ## validdate
       ##
       ## try to ensure correct dates of form yyyy-MM-dd
@@ -198,7 +238,7 @@ proc compareDates*(startDate,endDate:string) : int =
      # s <= e   ==> 2
      # -1 undefined , invalid s date
      # -2 undefined . invalid e and or s date
-     if validdate(startDate) and validdate(enddate):
+     if validDate(startDate) and validDate(enddate):
         let std = startDate.multiReplace(("-",""))
         let edd = endDate.multiReplace(("-",""))
         if std == edd: 
@@ -231,7 +271,7 @@ proc plusDays*(aDate:string,days:int):string =
    ##.. code-block:: nim 
    ##   echo plusDays(cxtoday(),343) 
    ##
-   if validdate(aDate) == true:
+   if validDate(aDate) == true:
       var rxs = ""
       let tifo = parse(aDate,"yyyy-MM-dd") # this returns a DateTime type
       let myinterval = initInterval(days = days)
@@ -252,7 +292,7 @@ proc minusDays*(aDate:string,days:int):string =
    ## the passed in date string must be a valid date or an error message will be returned
    ##
 
-   if validdate(aDate) == true:
+   if validDate(aDate) == true:
       var rxs = ""
       let tifo = parse(aDate,"yyyy-MM-dd") # this returns a DateTime type
       let myinterval = initInterval(days = days)
@@ -262,25 +302,7 @@ proc minusDays*(aDate:string,days:int):string =
       printLnErrorMsg("minusDays : " & aDate)
       result = "Error"
 
-
-  
-proc cxTimeZone*(amode:string = "long"):string = 
-   ## cxTimeZone
-   ##
-   ## returns a string with the actual timezone offset in hours as seen from UTC 
-   ## 
-   ## default long gives results parsed from getLocalTime 
-   ## like : UTC +08:00
-   ##
-  
-   var mode = amode
-   let okmodes = @["long","short"]
-   if mode in okmodes == false:
-      mode = "long"
-   if mode == "long":
-        let ltt = $now()
-        result = "UTC" & $ltt[(($ltt).len - 6) ..< ($ltt).len]     
-            
+    
 
 proc createSeqDate*(fromDate:string,toDate:string):seq[string] = 
      ## createSeqDate
@@ -361,10 +383,10 @@ proc getRndDate*(minyear:int = parseint(year(cxtoday())) - 50,maxyear:int = pars
                  result = nd
   
 
-proc printTimeMsg*(atext:string = getTimeStr(),xpos:int = 1):string {.discardable.} =
+proc printTimeMsg*(atext:string = cxTime,xpos:int = 1):string {.discardable.} =
      printBiCol("[Time  ]" & spaces(1) & atext , colLeft = lightblue ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
 
-proc printLnTimeMsg*(atext:string = getTimeStr(),xpos:int = 1):string {.discardable.} =
+proc printLnTimeMsg*(atext:string = cxTime,xpos:int = 1):string {.discardable.} =
      printLnBiCol("[Time  ]" & spaces(1) & atext , colLeft = lightblue ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
 
 proc printDTimeMsg*(atext:string = $toTime(now()),xpos:int = 1):string {.discardable.} =
@@ -431,24 +453,24 @@ proc newCxtimer*(aname:string = "cxtimer"):ref(CxTimer) =
  
  
  
-proc  resetTimer*(co: ref(CxTimer)) = 
+proc resetTimer*(co: ref(CxTimer)) = 
       co.start = 0.0
       co.stop = 0.0
       co.lap = @[] 
        
-proc  startTimer*(co:ref(CxTimer)) = co.start = epochTime()
+proc startTimer*(co:ref(CxTimer)) = co.start = epochTime()
 
-proc  lapTimer*(co:ref(CxTimer)):auto {.discardable.}  =
+proc lapTimer*(co:ref(CxTimer)):auto {.discardable.}  =
                var tdf = epochTime() - co.start
                co.lap.add(tdf)
                result = tdf
-proc  stopTimer*(co: ref(CxTimer))  = 
+proc stopTimer*(co: ref(CxTimer))  = 
                 co.stop = epochTime()
                 saveTimerResults(co)
                 resettimer(co)
                 
 
-proc  duration*(co:ref(CxTimer)):float {.discardable.} = co.stop - co.start       
+proc duration*(co:ref(CxTimer)):float {.discardable.} = co.stop - co.start       
 
 proc saveTimerResults*(b:ref(CxTimer)) =
      ## saveTimerResults

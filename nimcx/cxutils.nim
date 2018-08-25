@@ -120,17 +120,17 @@ proc getPassword*(ahash:int64 = 0i64):string =
    
      result = ""
      curfw(1)
-     let zz = readPasswordFromStdin("Enter Database Password : ")
+     let zz = readPasswordFromStdin("Enter Password : ")
      if verifyHash(zz,ahash) :
            curup(1)
            print(cleareol)
            # following could also be send to a logger
-           printLnOkMsg("Database access granted at : " & ($localTime()).replace("T"," ") & ".")
+           printLnOkMsg("Access granted at : " & cxnow)
            echo()
            result = zz
      else:
            echo()
-           let dn = "Database access denied at : " & ($localTime()).replace("T"," ")
+           let dn = "Database access denied at : " & cxnow
            printLnFailMsg(dn)
            printLnErrorMsg(cxpad("Exiting now . Bye Bye.",dn.len))
            quit(1)

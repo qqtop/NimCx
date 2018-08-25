@@ -185,7 +185,7 @@ template rndCxBgrCol*():untyped =
 proc cxPrint*[T](ss    :T,
              fontcolor : string = "colWhite",
              bgr       : string = black,
-             xpos      : int = 1,
+             xpos      : int = 0,
              styled    : set[Style] = {styleReverse})  =
              
       ## cxPrint     
@@ -229,7 +229,7 @@ proc cxPrint*[T](ss    :T,
 proc cxPrintLn*[T](ss       : T,
                    fontcolor: string = "colWhite",
                    bgr      : string = black,
-                   xpos     : int = 1,
+                   xpos     : int = 0,
                    styled   : set[Style] = {styleReverse}) =
       ## cxPrintLn
       ## 
@@ -248,7 +248,7 @@ proc cxPrintLn*[T](ss       : T,
 proc cxPrint*[T](ss       : T,
                  fontcolor: auto = colWhite,
                  bgr      : string = black,
-                 xpos     : int = 1,
+                 xpos     : int = 0,
                  styled   : set[Style] = {styleReverse}) =
       ## cxPrint
       ## 
@@ -266,7 +266,7 @@ proc cxPrint*[T](ss       : T,
 proc cxPrintLn*[T](ss       : T,
                    fontcolor: auto = colWhite,
                    bgr      : string = "colBlack",
-                   xpos     : int = 1,
+                   xpos     : int = 0,
                    styled   : set[Style] = {styleReverse}) =
 
       ## cxPrintLn

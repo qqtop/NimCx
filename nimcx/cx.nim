@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-08-17
+##     Latest      : 2018-08-24
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -122,20 +122,21 @@
 
 import cxconsts,cxglobal,cxtime,cxprint,cxhash,cxfont,cxtruecolor,cxutils,cxnetwork,cxstats
 
-import os,osproc,times,random,strutils,strformat,parseutils,parseopt 
-import tables,sets,rdstdin,macros
+import os,osproc,times,random,strutils,strformat,parseutils,sequtils,parseopt 
+import tables,sets,macros
 import posix,terminal,math,stats,json,streams,options,memfiles
-import sequtils,httpclient,rawsockets,browsers,intsets,algorithm
+import httpclient,rawsockets,browsers,intsets,algorithm
 import unicode,typeinfo,typetraits,cpuinfo,colors,encodings,distros
+import rdstdin
 
 export cxconsts,cxglobal,cxtime,cxprint,cxhash,cxfont,cxtruecolor,cxutils,cxnetwork,cxstats
 
-export os,osproc,times,random,strutils,strformat,parseutils,parseopt 
-export tables,sets,rdstdin,macros
+export os,osproc,times,random,strutils,strformat,parseutils,sequtils,parseopt 
+export tables,sets,macros
 export posix,terminal,math,stats,json,streams,options,memfiles
-export sequtils,httpclient,rawsockets,browsers,intsets,algorithm
+export httpclient,rawsockets,browsers,intsets,algorithm
 export unicode,typeinfo,typetraits,cpuinfo,colors,encodings,distros
-
+export rdstdin
 
 
 # Profiling       
@@ -162,7 +163,11 @@ if defined(gcc) : someGcc = "gcc"
 elif defined(llvm_gcc):  someGcc = "llvm_gcc"
 elif defined(clang): someGcc = "clang"
 elif defined(cpp) : someGcc = "c++ target"
-else: someGcc = "undefined"    
+else: someGcc = "undefined"  
+
+const CXLIBVERSION* = "0.9.9"
+
+  
 
 when defined(macosx):
   {.warning : " \u2691 nimCx is only tested on Linux ! Your mileage may vary".}
@@ -172,12 +177,12 @@ when defined(windows):
   {.hint    : "nimCx does not directly support Windows , you are on your own !".}
 
 when defined(posix):
-  {.hint    : "\x1b[38;2;154;205;50m \u2691  NimCx      :" & "\x1b[38;2;255;215;0m Officially works on Linux only." & spaces(13) & "\x1b[38;2;154;205;50m \u2691".}
-  {.hint    : "\x1b[38;2;154;205;50m \u2691  Compiling  :" & "\x1b[38;2;255;100;0m Please wait , Nim will be right back ! \xE2\x9A\xAB" & " " & "\xE2\x9A\xAB" & spaces(2) & "\x1b[38;2;154;205;50m \u2691".} 
+  {.hint    : "\x1b[38;2;154;205;50m \u2691  NimCx  V. " & CXLIBVERSION & "  :" & "\x1b[38;2;255;215;0m Officially made for Linux only." & spaces(13) & "\x1b[38;2;154;205;50m \u2691".}
+  {.hint    : "\x1b[38;2;154;205;50m \u2691  Compiling        :" & "\x1b[38;2;255;100;0m Please wait , Nim will be right back ! \xE2\x9A\xAB" & " " & "\xE2\x9A\xAB" & spaces(2) & "\x1b[38;2;154;205;50m \u2691".} 
   {.hints: off.}   # turn on off as per requirement
   
   
-const CXLIBVERSION* = "0.9.9"
+
 
 let cxstart* = epochTime()  # simple execution timing with one line see doFinish()
 randomize()                 # seed rand number generator 
@@ -1224,7 +1229,7 @@ proc handler*() {.noconv.} =
     cechoLn(yellowgreen,"Thank you for using        : " & getAppFilename())
     hlineLn()
     printLnBiCol(fmtx(["<","<11",">9"],"Last compilation on        : " , CompileDate , CompileTime),brightcyan,termwhite,":",0,false,{})
-    printLnBiCol(fmtx(["<","<11",">9"]," Exit handler invocation at : " , cxtoday() , getClockStr()),pastelorange,termwhite,":",0,false,{})
+    printLnBiCol(fmtx(["<","<11",">9"]," Exit handler invocation at : " , cxtoday , getClockStr()),pastelorange,termwhite,":",0,false,{})
     hlineLn()
     echo()
     printInfoMsg("Nim Version ",NimVersion)
