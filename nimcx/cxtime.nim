@@ -5,7 +5,11 @@ import os,terminal,times,parseutils,strutils
 # 
 # time/date related procs including printDTimeMsg etc.
 # 
-# Last : 2018-08-24
+# some of it similar to stdlib functions or in different output format
+# 
+# 
+# 
+# Last : 2018-08-26
 # 
 # 
 
@@ -74,8 +78,7 @@ template cxTime* : string = getClockStr()
      ## eg : 16:48:50
      ##     
 
-proc cxDateTime*() : string = 
-      result =  cxToday & spaces(1) & $cxTime
+template cxDateTime* : string = getDateStr() & " " & getClockStr()
      ## cxDateTime           
      ## 
      ## restunrs a date time string
@@ -233,7 +236,7 @@ proc year*(aDate:string) : string = aDate.split("-")[0]
 proc compareDates*(startDate,endDate:string) : int =
      # dates must be in form yyyy-MM-dd
      # we want this to answer
-     # s == e   ==> 0
+     # s == e   ==> 0    # start s , end  e
      # s >= e   ==> 1
      # s <= e   ==> 2
      # -1 undefined , invalid s date
@@ -329,12 +332,12 @@ proc createSeqDate*(fromDate:string,toDate:string):seq[string] =
 proc createSeqDate*(fromDate:string,days:int = 1):seq[string] = 
      ## createSeqDate
      ## 
-     ## creates a seq of dates in format yyyy-MM-dd 
+     ## creates a seq of continous dates in format yyyy-MM-dd 
      ## 
      ## from fromDate to fromDate + days
      ##
      ##.. code-block:: nim 
-     ##   showSeq(createseqdate(cxtoday(), 60),maxitemwidth=12)  
+     ##   showSeq(createseqdate(cxToday, 60),maxitemwidth=12)  
      ##   
      ##   
      var aresult = newSeq[string]()
