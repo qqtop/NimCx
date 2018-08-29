@@ -1,15 +1,15 @@
 
 ## cxTest.nim
 ## 
-## VERY rough testing for nimcx.nim  errors may occur  
+## VERY rough testing for nimcx.nim errors may occur at times ...  
 ## 
-## Status : 2018-05-31  WIP
+## Status : 2018-08-29  always WIP
 ## 
 ## best run in a large console window
 ## 
 
 
-import nimcx,cxDemo       # if installed via nimble
+import nimcx,cxDemo       
 
 superHeader("nimCx Testing ")
 
@@ -117,10 +117,10 @@ nextTest()
 printSlimNumber($getClockStr() & "  ",pastelpink,bgblack,xpos=25)
 decho(5)
 
-# old block font tests will not be executed
-#nexttest() 
-#printBigNumber($getClockStr(),fgr=darkgoldenrod,xpos=10)
-#decho(5)
+nextTest()
+happyEmojis()
+decho(5)
+
 
 nextTest()
 var mycol = "green"  

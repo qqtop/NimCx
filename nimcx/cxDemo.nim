@@ -4,7 +4,7 @@ import nimcx
 ## this file is imported by cxTest.nim to actually run the demos
 ## may and will change anytime and errors may happen anytime
 
-## 2018-05-30  - WIP 
+## 2018-08-29  - WIP 
 
 
 proc flyNimDemo*(astring:string = "  Fly Nim",col:string = red,tx:float = 0.01) =
@@ -48,18 +48,38 @@ proc randomCardsDemo*() =
   
   
 proc happyEmojis*() =
-  ## happyEmojis
-  ## 
-  ## lists implemented emojis if available in your system
-  ## 
+    ## happyEmojis
+    ## 
+    ## playing with var. emojis lists available
+    ## 
   
-  decho(2)
-  cechoLn(lime & emojis[7] & yellowgreen & " Happy Emojis " & lime & emojis[7])
-  echo()
-  for x in 0..<emojis.len:
+    decho(2)
+    loopy(0..<10,printLn(spaces(3) & rndcol & rndSample(emojis) & randcol & " Happy Emojis " & rndcol & rndSample(emojis)))
+    echo()
+    for x in 0..<emojis.len:
       var ejs = fmtx(["<4","",""],$x," : ",emojis[x])
       printLnBiCol(ejs,colleft=white,colRight=randcol())
-  decho(2)
+    decho(2)
+  
+      
+    decho(2)
+    for x in 0..<5:
+       printLn(spaces(3) & rndcol & strip(rndSample(emojis)) & randcol & " Happy Emojis " & rndcol & strip(rndSample(emojis)))
+    decho(2)
+
+    # draw emojis from the emj3 seq 
+    showSeq(ejm3,maxitemwidth=4)  
+     
+    # show all emojis in the ejm4 seq 
+    showEmojisSmall()  
+
+    # emoji fun  
+    decho(2)
+    for x in 0..<20:
+      printLn(rndcol & (getEmojisSmall()[49] * (tw div 4)) &
+              rndcol & (getEmojisSmall()[50] * (tw div 4)) &
+              rndcol & (getEmojisSmall()[51] * (tw div 4)) &
+              rndcol & (getEmojisSmall()[52] * (tw div 4)) )
 
 
 

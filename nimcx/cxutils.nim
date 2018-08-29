@@ -135,9 +135,7 @@ proc getPassword*(ahash:int64 = 0i64):string =
            printLnErrorMsg(cxpad("Exiting now . Bye Bye.",dn.len))
            quit(1)
     
-    
-    
-    
+  
     
 proc cxDayOfWeek*(datestr:string):string = 
     ## cxDayOfWeek
@@ -441,7 +439,6 @@ proc showRuler* (xpos:int=0,xposE:int=0,ypos:int = 0,fgr:string = white,bgr:Back
                          printLn(".",fgr,bgr,xpos = xpos + 3)
                   else: printLn(".",truetomato,bgr,xpos = xpos + 3)
      decho(3)
-
 
 
 proc centerMark*(showpos :bool = false) =
@@ -1185,6 +1182,7 @@ template withFile*(f,fn, mode, actions: untyped): untyped =
         finally:
             close(f)
                         
+                        
 proc checkMemFull*(xpos:int = 2) =
    ## checkMemFull
    ## 
@@ -1287,6 +1285,23 @@ proc distanceTo*(origin:(float,float),dest:(float,float)):float =
         let phi_2 = degtorad(dest[1])
         let h = (sin((phi_2 - phi_1) / 2) ^ 2 + cos(phi_1) * cos(phi_2) * sin((lam_2 - lam_1) / 2) ^ 2)
         return 2 * r * arcsin(sqrt(h))
-     
+
+proc getEmojisSmall*(): seq[string] =
+       ## getEmojisSmall
+       ## 
+       ## a seq with 246 emojis will be returned 
+       ## 
+       ## for easy use in your text strings
+       ## 
+       var emojisSmall = newSeq[string]()
+       for x in 0..<ejm4.len: emojisSmall.add($Rune(ejm4[x]))
+       result = emojisSmall
+ 
+proc showEmojisSmall*() = 
+       ## showEmojisSmall
+       ## 
+       ## show a table of small emojis
+       ## 
+       showSeq(getEmojisSmall(),rndcol,maxitemwidth=4)      
           
 # END OF CXUTILS.NIM #

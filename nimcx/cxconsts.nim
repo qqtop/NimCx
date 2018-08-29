@@ -1181,7 +1181,7 @@ const
 
 const emojis* = @[check,xmark,heart,sun,star,darkstar,umbrella,flag,snowflake,music,scissors,
                trademark,copyright,roof,skull,smile,smiley,innocent,lol,tongue,blush,
-               sad,cry,rage,cat,kitty,monkey,cow]
+               sad,cry,rage,cat,kitty,monkey,cow,errorsymbol,errorsymbol2]
    
 
 # more emojis len 4   
