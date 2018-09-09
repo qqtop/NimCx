@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-08-19
+##     Latest      : 2018-08-29
 ##
 ##     OS          : Linux
 ##
@@ -50,7 +50,7 @@ proc fibonacci*(n: int):float =
     ##
     ## .. code-block:: nim
     ## 
-    ##    for x in 0..20: quickList(x,fibonacci(x))
+    ##    for x in 0..<25: printLn(fmtx([">3",">15",],$x,spaces(4),cxlpad($fibonacci(x),12)))
     ## 
     if n < 2: 
        result = float(n)
@@ -58,11 +58,11 @@ proc fibonacci*(n: int):float =
        result = fibonacci(n-1) + fibonacci(n-2)
        
 proc pswwaux*() =
-   # pswwaux
-   # 
-   # utility bash command :  ps -ww aux | sort -nk3 | tail
-   # displays output in console
-   # 
+   ## pswwaux
+   ## 
+   ## utility bash command :  ps -ww aux | sort -nk3 | tail
+   ## displays output in console
+   ## 
    let pswwaux = execCmdEx("ps -ww aux | sort -nk3 | tail ")
    printLn("ps -ww aux | sort -nk3 | tail ",yellowgreen)
    echo  pswwaux.output
@@ -107,17 +107,15 @@ proc getUserName*():string =
      
 
 proc getPassword*(ahash:int64 = 0i64):string =
-     ## getFbPassword
+     ## getPassword
      ## 
-     ## convenience function prompts user a password
+     ## convenience function, prompts user for a password
      ## to be checked against a passwordhash which could come 
      ## from a security database or other source
      ## 
      #  using a hash to confirm the password
      #  this is a skeleton password function 
-     #  additional user verification, role verification can be added 
-     #  depending on security needs 
-   
+        
      result = ""
      curfw(1)
      let zz = readPasswordFromStdin("Enter Password : ")
@@ -130,7 +128,7 @@ proc getPassword*(ahash:int64 = 0i64):string =
            result = zz
      else:
            echo()
-           let dn = "Database access denied at : " & cxnow
+           let dn = "Access denied at : " & cxnow
            printLnFailMsg(dn)
            printLnErrorMsg(cxpad("Exiting now . Bye Bye.",dn.len))
            quit(1)
@@ -859,7 +857,8 @@ proc clearScreen*():int {.discardable.} =
    
 
 proc createSeqAll*(min:int = 0,max:int = 40878):seq[string] =
-     # for testing purpose only in the future the unicodedb by nitely is the way to go
+     # for testing purpose only in the future the unicodedb from nimble
+     # by nitely is the way to go
      var gs = newSeq[string]()
      for j in min ..< max :        # depending on whats installed  
      
@@ -1120,103 +1119,103 @@ proc shift*[T](x: var seq[T], zz: Natural = 0): T =
      x.delete(zz) 
  
 iterator reverseIter*[T](a: openArray[T]): T =
-  ## reverse iterator  
-  ##
-  ##.. code-block:: nim
-  ##   
-  ##   let a = createseqfloat(10)
-  ##   for b in reverse(a): echo b
-  ##
-  for i in countdown(a.high,0):
-     yield a[i] 
+      ## reverse iterator  
+      ##
+      ##.. code-block:: nim
+      ##   
+      ##   let a = createseqfloat(10)
+      ##   for b in reverse(a): echo b
+      ##
+      for i in countdown(a.high,0):
+         yield a[i] 
      
 template withFile*(f,fn, mode, actions: untyped): untyped =
-  ## withFile
-  ## 
-  ## easy file handling template , which is using fileStreams
-  ## 
-  ## f is a file handle
-  ## fn is the filename
-  ## mode is fmWrite,fmRead,fmReadWrite,fmAppend or fmReadWriteExisiting
-  ## 
-  ## 
-  ## Example 1
-  ## 
-  ##.. code-block:: nim
-  ##   let curFile="/data5/notes.txt"    # some file
-  ##   withFile(fs, curFile, fmRead):
-  ##       var line = ""
-  ##       while fs.readLine(line):
-  ##           printLn(line,yellowgreen)
-  ##           
-  ##  Example 2   
-  ##    
-  ##.. code-block:: nim
-  ##   import nimcx
-  ##
-  ##   let curFile="/data5/notes.txt"    # some file
-  ##
-  ##   withFile(txt2, curFile, fmRead):
-  ##           var aline = ""
-  ##           var lc = 0
-  ##           var oc = 0
-  ##           while txt2.readline(aline):
-  ##               try:
-  ##                   inc lc
-  ##                   var sw = "the"   # find all lines containing : the
-  ##                   if aline.contains(sw) == true:
-  ##                       inc oc
-  ##                       printBiCol(fmtx(["<8",">6","","<7","<6"],"Line :",lc,rightarrow,"Count : ",oc))
-  ##                       printHl(aline,sw,yellowgreen)
-  ##                       echo()
-  ##               except:
-  ##                   break 
-  block:
-        var f = streamFile(fn,mode)    # streamfile is in cxglobal.nim
-        try:
-            actions
-        except:    
-            echo()
-            printLnErrorMsg("Cannot open file " & fn)
-            quit()
-        finally:
-            close(f)
-                        
+      ## withFile
+      ## 
+      ## easy file handling template , which is using fileStreams
+      ## 
+      ## f is a file handle
+      ## fn is the filename
+      ## mode is fmWrite,fmRead,fmReadWrite,fmAppend or fmReadWriteExisiting
+      ## 
+      ## 
+      ## Example 1
+      ## 
+      ##.. code-block:: nim
+      ##   let curFile="/data5/notes.txt"    # some file
+      ##   withFile(fs, curFile, fmRead):
+      ##       var line = ""
+      ##       while fs.readLine(line):
+      ##           printLn(line,yellowgreen)
+      ##           
+      ##  Example 2   
+      ##    
+      ##.. code-block:: nim
+      ##   import nimcx
+      ##
+      ##   let curFile="/data5/notes.txt"    # some file
+      ##
+      ##   withFile(txt2, curFile, fmRead):
+      ##           var aline = ""
+      ##           var lc = 0
+      ##           var oc = 0
+      ##           while txt2.readline(aline):
+      ##               try:
+      ##                   inc lc
+      ##                   var sw = "the"   # find all lines containing : the
+      ##                   if aline.contains(sw) == true:
+      ##                       inc oc
+      ##                       printBiCol(fmtx(["<8",">6","","<7","<6"],"Line :",lc,rightarrow,"Count : ",oc))
+      ##                       printHl(aline,sw,yellowgreen)
+      ##                       echo()
+      ##               except:
+      ##                   break 
+      block:
+            var f = streamFile(fn,mode)    # streamfile is in cxglobal.nim
+            try:
+                actions
+            except:    
+                echo()
+                printLnErrorMsg("Cannot open file " & fn)
+                quit()
+            finally:
+                close(f)
+                            
                         
 proc checkMemFull*(xpos:int = 2) =
-   ## checkMemFull
-   ## 
-   ## full 45 lines output of system memory status
-   ## 
-   var seqline = newSeq[string]()
-   let n = "HardwareCorrupted ".len
-   withFile(f,"/proc/meminfo",fmRead):
-          seqline = f.readAll().splitLines()
-   for aline in seqline:
-           let zline = aline.split(":")
-           try:
-              printLnInfoMsg(cxpad(zline[0],n),fmtx([">15"],zline[1].strip()),yellowgreen,xpos = xpos)
-           except IndexError  as ex:
-              printLnErrorMsg(ex.msg)
-              discard
+       ## checkMemFull
+       ## 
+       ## full 45 lines output of system memory status
+       ## 
+       var seqline = newSeq[string]()
+       let n = "HardwareCorrupted ".len
+       withFile(f,"/proc/meminfo",fmRead):
+              seqline = f.readAll().splitLines()
+       for aline in seqline:
+               let zline = aline.split(":")
+               try:
+                  printLnInfoMsg(cxpad(zline[0],n),fmtx([">15"],zline[1].strip()),yellowgreen,xpos = xpos)
+               except IndexError  as ex:
+                  printLnErrorMsg(ex.msg)
+                  discard
  
 
 proc checkMem*(xpos:int=2) = 
-   ## checkMem
-   ## 
-   ## reads meminfo to give memory status for memtotal,memfree and memavailable
-   ## maybe usefull during debugging of a function to see how memory is consumed 
-   ## 
-   
-   var seqline = newSeq[string]()
-   let n = "MemAvailable ".len
-   withFile(f,"/proc/meminfo",fmRead):
-        seqline = f.readAll().splitLines()
-   for aline in seqline:
-        if aline.startswith("Mem"):
-           let zline = aline.split(":")
-           printLnInfoMsg2(cxpad(zline[0],n),fmtx([">15"],zline[1].strip()),yellowgreen,xpos = xpos)
-          
+       ## checkMem
+       ## 
+       ## reads meminfo to give memory status for memtotal,memfree and memavailable
+       ## maybe usefull during debugging of a function to see how memory is consumed 
+       ## 
+       
+       var seqline = newSeq[string]()
+       let n = "MemAvailable ".len
+       withFile(f,"/proc/meminfo",fmRead):
+            seqline = f.readAll().splitLines()
+       for aline in seqline:
+            if aline.startswith("Mem"):
+               let zline = aline.split(":")
+               printLnInfoMsg2(cxpad(zline[0],n),fmtx([">15"],zline[1].strip()),yellowgreen,xpos = xpos)
+              
 
 proc fullgcstats*(xpos:int = 2):int {.discardable.} =
      let gcs = GC_getStatistics()
@@ -1229,36 +1228,36 @@ proc fullgcstats*(xpos:int = 2):int {.discardable.} =
      result = gcsl.len  
      
 proc memCheck*(stats:bool = false) =
-  ## memCheck
-  ## 
-  ## memCheck shows memory before and after a GC_FullCollect run
-  ## 
-  ## set stats to true for full GC_getStatistics
-  ## 
-  echo()
-  if stats == true:
-     printLnInfoMsg("MemCheck",cxpad("GC and System",30),skyblue,xpos = 2)
-  else:
-     printLnInfoMsg("MemCheck",cxpad("System",30),skyblue,xpos = 2)
-  printLnBiCol("Status : Current ",colLeft=salmon,xpos = 2)
-  
-  var b = 0
-  if stats == true:
-     b = fullgcstats(2)
-  checkmem()
-  GC_fullCollect()
-  sleepy(0.5)
-  if stats == true:
-    curup(b + 3)
-  else:
-    curup(b + 4)
-  printLnBiCol2("Status : GC_FullCollect executed",colLeft=salmon,colRight=pink,xpos=55)
-  #printLn(yellowgreen & "Mem " &  lightsteelblue & "Used  : " & white & ff2(getOccupiedMem()) & lightsteelblue & "  Free : " & white & ff2(getFreeMem()) & lightsteelblue & "  Total : " & white & ff2(getTotalMem() ))
-  if stats == true:
-     fullgcstats(xpos=55)
-  checkmem(xpos=55)
-  echo()
-          
+      ## memCheck
+      ## 
+      ## memCheck shows memory before and after a GC_FullCollect run
+      ## 
+      ## set stats to true for full GC_getStatistics
+      ## 
+      echo()
+      if stats == true:
+         printLnInfoMsg("MemCheck",cxpad("GC and System",30),skyblue,xpos = 2)
+      else:
+         printLnInfoMsg("MemCheck",cxpad("System",30),skyblue,xpos = 2)
+      printLnBiCol("Status : Current ",colLeft=salmon,xpos = 2)
+      
+      var b = 0
+      if stats == true:
+         b = fullgcstats(2)
+      checkmem()
+      GC_fullCollect()
+      sleepy(0.5)
+      if stats == true:
+        curup(b + 3)
+      else:
+        curup(b + 4)
+      printLnBiCol2("Status : GC_FullCollect executed",colLeft=salmon,colRight=pink,xpos=55)
+      #printLn(yellowgreen & "Mem " &  lightsteelblue & "Used  : " & white & ff2(getOccupiedMem()) & lightsteelblue & "  Free : " & white & ff2(getFreeMem()) & lightsteelblue & "  Total : " & white & ff2(getTotalMem() ))
+      if stats == true:
+         fullgcstats(xpos=55)
+      checkmem(xpos=55)
+      echo()
+              
      
 proc distanceTo*(origin:(float,float),dest:(float,float)):float =
         ## distanceTo
@@ -1301,6 +1300,14 @@ proc showEmojisSmall*() =
        ## showEmojisSmall
        ## 
        ## show a table of small emojis
+       ## 
+       ## Example
+       ## 
+       ##.. code-block:: nim
+       ##   showEmojisSmall()
+       ##   let es = getemojisSmall()
+       ##   loopy(0..10,printLn((es[197] & es[244] & es[231] ) * 20,rndcol))
+       ## 
        ## 
        showSeq(getEmojisSmall(),rndcol,maxitemwidth=4)      
           

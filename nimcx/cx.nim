@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-08-24
+##     Latest      : 2018-09-09
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -127,7 +127,7 @@ import tables,sets,macros
 import posix,terminal,math,stats,json,streams,options,memfiles
 import httpclient,rawsockets,browsers,intsets,algorithm
 import unicode,typeinfo,typetraits,cpuinfo,colors,encodings,distros
-import rdstdin
+import rdstdin,sugar
 
 export cxconsts,cxglobal,cxtime,cxprint,cxhash,cxfont,cxtruecolor,cxutils,cxnetwork,cxstats
 
@@ -136,7 +136,7 @@ export tables,sets,macros
 export posix,terminal,math,stats,json,streams,options,memfiles
 export httpclient,rawsockets,browsers,intsets,algorithm
 export unicode,typeinfo,typetraits,cpuinfo,colors,encodings,distros
-export rdstdin
+export rdstdin,sugar
 
 
 # Profiling       
@@ -495,10 +495,10 @@ proc showBench*() =
  if benchmarkresults.len > 0: 
     for x in benchmarkresults:
        echo()
-       let tit = fmtx(["","<$1" % $(bnamesize - len(gold) * 3),"","<30","<20"],spaces(1),"BenchMark",spaces(4),"Timing" ,"Iters : $1" % x.repeats)
+       let tit = fmtx(["","<$1" % $(bnamesize - len(gold) * 3),"","<28","<19"],spaces(2),"BenchMark",spaces(4),"Timing" ,"Cycles : $1" % x.repeats)
        
        if parseInt(x.repeats) > 0:
-          printLn(tit,greenyellow, styled = {styleUnderScore},substr = tit)
+          printLn(tit,sandybrown, styled = {styleUnderScore},substr = tit)
           echo()
        else:
           printLn(tit,red,styled = {styleUnderScore},substr = tit)
@@ -510,21 +510,21 @@ proc showBench*() =
        var ee1 = ""
        
        if parseFloat(x.epoch) > 0.00: 
-          dd1 = "Iters/sec : " & ff2(parsefloat(x.repeats)/parsefloat(x.epoch))
+          dd1 = "Cycles/sec : " & ff2(parsefloat(x.repeats)/parsefloat(x.epoch))
        else :
-          dd1 = "Iters/sec : Inf"
+          dd1 = "Cycles/sec : Inf"
        
        if parseFloat(x.cpu) > 0.00:   
-          ee1 = "Iters/sec : " & ff2(parsefloat(x.repeats)/parsefloat(x.cpu))
+          ee1 = "Cycles/sec : " & ff2(parsefloat(x.repeats)/parsefloat(x.cpu))
        else:
-          ee1 = "Iters/sec : Inf"
+          ee1 = "Cycles/sec : Inf"
          
        printLn(fmtx(["<$1" % $bnamesize,"","<70","<90"],aa1,spaces(3),bb1 ,dd1))
        printLn(fmtx(["<$1" % $bnamesize,"","<70","<50"],aa1,spaces(3),cc1,ee1))
 
     echo()
     benchmarkresults = @[]
-    printLn("Benchmark results finished. Results cleared.",goldenrod)
+    printLn("Benchmark finished. Results cleared.",goldenrod)
  else:
     printLn("Benchmark results emtpy. Nothing to show",red)   
 
