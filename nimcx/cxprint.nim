@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-07-21 
+##     Latest      : 2018-09-18 
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -1351,12 +1351,12 @@ proc printOKMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
 proc printLnOkMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printLnBiCol("[OK    ]" & spaces(1) & atext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})    
     
-proc printStatusMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printBiCol2("[Status]" & spaces(1) & atext , colLeft = lightseagreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
+proc printStatusMsg*(atext:string = "",xpos:int = 1,colLeft=lightseagreen):string {.discardable.} =
+     printBiCol2("[Status]" & spaces(1) & atext , colLeft = colleft ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
      
-proc printLnStatusMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printLnBiCol2("[Status]" & spaces(1) & atext , colLeft = lightseagreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})    
-
+proc printLnStatusMsg*(atext:string = "",xpos:int = 1,colLeft=lightseagreen):string {.discardable.} =
+     printLnBiCol2("[Status]" & spaces(1) & atext , colLeft = colLeft ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})    
+     
 proc printHelpMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printBiCol("[Help  ]" & spaces(1) & atext , colLeft = thistle ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
      

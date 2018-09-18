@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-08-22 
+##     Latest      : 2018-09-18 
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -18,10 +18,6 @@
 ##
 ##     Description : provides many basic utility functions required by other modules
 ##
-#
-#      Some weird comment indentation introduced by a nimpretty run ....
-#
-
 
 
 import
@@ -86,7 +82,21 @@ macro procName*(x: untyped): untyped =
           let node = nnkCommand.newTree(newIdentNode(!"printLnBiCol"), newLit("Processed by : " & name))
           insert(body(x), 0, node)
           result = x
-  
+
+macro toEnum*(words: static[string]): untyped =
+  ## toEnum
+  ## 
+  ## lifted from nim-blog
+  ##  
+  ## Example 
+  ##.. code-block:: nim 
+  ##   type
+  ##      Color = toEnum("Red Green Blue Indigo")
+  ##    
+  result = newTree(nnkEnumTy, newEmptyNode())
+  for w in splitWhitespace(words): result.add ident(w)          
+          
+            
 proc tupleTypes*(atuple: tuple): seq[string] =
           ## tupletypes
           ## 
@@ -197,8 +207,7 @@ proc remapToString*[T](s: seq[T]): seq[string] =
   s.map do (x: T) -> string: $x    
   
   
-proc fwriteUnlocked(buf: pointer, size, n: int, f: File): int {.
-  importc: "fwrite_unlocked", noDecl.}
+proc fwriteUnlocked(buf: pointer, size, n: int, f: File): int {.importc: "fwrite_unlocked", noDecl.}
 proc fastWrite*(f: File, s: string) =
   ## fastWrite
   ## 
