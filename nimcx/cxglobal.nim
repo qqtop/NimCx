@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-09-18 
+##     Latest      : 2018-09-23 
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -79,7 +79,7 @@ macro procName*(x: untyped): untyped =
           ##   
           
           let name = $name(x)
-          let node = nnkCommand.newTree(newIdentNode(!"printLnBiCol"), newLit("Processed by : " & name))
+          let node = nnkCommand.newTree(newIdentNode("printLnBiCol"), newLit("Processed by proc : " & name))
           insert(body(x), 0, node)
           result = x
 

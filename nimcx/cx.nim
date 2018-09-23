@@ -341,7 +341,6 @@ proc nimcat*(curFile:string,countphrase : varargs[string,`$`] = "")=
             var phraseinline = newSeqWith(countphrase.len, newSeq[int](0))  # holds the line numbers where a phrase to be counted was found
             var line = ""
             var c = 1
-            #if not isNil(fs):
             for line in memSlices(memfiles.open(ccurFile)):
                     echo yellowgreen, align($c, 6),termwhite,":",spaces(1),wordwrap($line,maxLineWidth = tw - 8,splitLongWords = false,newLine = "\x0D\x0A" & spaces(8))
                     if ($line).len > 0:
@@ -349,18 +348,14 @@ proc nimcat*(curFile:string,countphrase : varargs[string,`$`] = "")=
                       for mc in 0..<countphrase.len:
                           lc = ($line).count(countphrase[mc])
                           if lc > 0: phraseinline[mc].add(c)
-                    
                     inc c
 
             echo() 
             printLnBiCol("File       : " & ccurFile)
             printLnBiCol("Lines Shown: " & ff2(c - 1))
-            
             var maxphrasewidth = 0
-            
             for x in  countphrase:
-                  if x.len > maxphrasewidth: maxphrasewidth = x.len
-                
+                  if x.len > maxphrasewidth: maxphrasewidth = x.len             
             if countphrase.len > 0:
               println("\nPhraseCount stats :    \n",gold,styled={styleUnderScore})
               for x in 0..<countphrase.len:
@@ -533,17 +528,16 @@ proc showPalette*(coltype:string = "white") =
     ## ::
     ##   showPalette
     ##   
-    ##   Displays palette with all coltype as found in  colorNames
+    ##   Displays palette with all coltype as found in colorNames
     ##   coltype examples : "red","blue","medium","dark","light","pastel" etc..
     ##   
     echo()
     let z = colPaletteLen(coltype)
-    for x in 0..<z:
+    for x in 0 ..< z:
           printLn(fmtx([">3",">4"],$x,rightarrow) & " ABCD 1234567890   " & colPaletteName(coltype,x) , colPalette(coltype,x))
     printLnBiCol("\n" & coltype & "Palette items count   : " & $z)  
     echo()  
-
-    
+  
 
 proc colorio*() =
     ## colorio
@@ -634,7 +628,6 @@ proc spellInteger2*(n: string): string =
   ## code adapted from rosettacode and updated 
   ## 
   result = ""
-  
   var nn = n
   for x in nn:
      if x == '0':
@@ -735,11 +728,8 @@ proc remDir*(dirname:string):bool {.discardable.} =
 
      if dirname == "/home" or dirname == "/" :
         printLn("Directory " & dirname & " removal not allowed !",brightred)
-
      else:
-
         if existsDir(dirname):
-
             try:
                 removeDir(dirname)
                 printLnOkMsg("Directory " & dirname & " deleted")

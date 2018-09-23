@@ -12,7 +12,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-06-30
+##     Latest      : 2018-09-23
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -1139,6 +1139,7 @@ const
       enterkey*        = "↵"
       sigma*           = "Σ"
       loopedsquare*    = "⌘"
+      hand*            = "👋"
 
 # emojis
 # mileage here may vary depending on whatever your system supports
