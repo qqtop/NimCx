@@ -36,7 +36,7 @@ proc getIpInfo*(ip:string):JsonNode =
         except OSError:
             discard
 
-proc getWanIp*() :string =
+proc getWanIp*() : string =
     ## getWanIP
     ## 
     ## a way to get your wanip

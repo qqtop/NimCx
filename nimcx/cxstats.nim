@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-08-19 
+##     Latest      : 2018-09-26 
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -112,7 +112,7 @@ proc zscore*(data:seq[SomeNumber]):seq[float] {.inline.} =
     ## 
     ## returns the z-score in a seq[float] for each data point
     ##  
-    ## ##.. code-block:: nim
+    ##.. code-block:: nim
     ##  
     ##   import nimcx
     ##   printLn("DATA SERIES FLOAT",yellowgreen,xpos=2)     
