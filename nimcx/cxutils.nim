@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-09-09
+##     Latest      : 2018-10-01
 ##
 ##     OS          : Linux
 ##
@@ -23,7 +23,7 @@
 
 import os,osproc,math,stats,cpuinfo,httpclient,browsers,typeinfo,typetraits,rdstdin
 import terminal,strutils,times,random,sequtils,unicode,streams
-import cxconsts,cxglobal,cxprint,cxtime,cxhash
+import cxconsts,cxglobal,cxprint,cxtime,cxhash,macros
 
 # type used in getRandomPoint
 type
@@ -31,31 +31,13 @@ type
     RpointFloat* = tuple[x, y : float]
 
  
-# proc `$`*[T](some:typedesc[T]): string = name(T)
-# proc typeTest*[T](x:T):  T {.discardable.} =
-#      # used to determine the field types 
-#      printLnBiCol("Type     : " & $type(x))
-#      printLnBiCol("Value    : " & $x)
-#      
-# proc typeTest2*[T](x:T): T {.discardable.}  =
-#      # same as typetest but without showing values (which may be huge in case of seqs)
-#      printLnBiCol("Type       : " & $type(x),xpos = 3)   
-#      
-# proc typeTest3*[T](x:T): string = $type(x)
-
-proc fibonacci*(n: int):float =  
-    ## fibonacci
-    ## 
-    ## calculate fibonacci values
-    ##
-    ## .. code-block:: nim
-    ## 
-    ##    for x in 0..<25: printLn(fmtx([">3",">15",],$x,spaces(4),cxlpad($fibonacci(x),12)))
-    ## 
-    if n < 2: 
-       result = float(n)
-    else: 
-       result = fibonacci(n-1) + fibonacci(n-2)
+proc fibi*(n: int): uint64 =
+  # ex nim forum super fast fibonacci 
+  if n > 1 and n != 30: return fibi(n - 1) + fibi(n - 2)
+  if n <= 1: return 1
+  let x {.global.}: auto = fibi(29) + fibi(28)
+  return x 
+       
        
 proc pswwaux*() =
    ## pswwaux
@@ -169,24 +151,17 @@ proc getNextMonday*(adate:string):string =
     ##
     ## in case of invalid dates nil will be returned
     ##
-
-    
     var ndatestr = ""
     if adate == "" :
-       printErrorMsg("Received an invalid date.")
+        printErrorMsg("Received an invalid date.")
     else:
-
         if validdate(adate) == true:
-           
             var z = cxdayofweek(adate)
-            
             if z == "Monday":
                 # so the datestr points to a monday we need to add a
                 # day to get the next one calculated
                 ndatestr = plusDays(adate,1)
-            
             ndatestr = adate
-
             for x in 0..<7:
                 if validdate(ndatestr) == true:
                     z =  cxDayOfWeek(ndatestr)
@@ -194,7 +169,6 @@ proc getNextMonday*(adate:string):string =
                     ndatestr = plusDays(ndatestr,1)
                 else:
                     result = ndatestr
-
 
    
 proc getRandomPointInCircle*(radius:float) : seq[float] =
@@ -229,7 +203,6 @@ proc getRandomPointInCircle*(radius:float) : seq[float] =
     return z
 
 
-
 proc getRandomPoint*(minx:float = -500.0,maxx:float = 500.0,miny:float = -500.0,maxy:float = 500.0) : RpointFloat =
     ## getRandomPoint
     ##
@@ -254,14 +227,12 @@ proc getRandomPoint*(minx:float = -500.0,maxx:float = 500.0,miny:float = -500.0,
     else        :    rx = minx + 1.0  
     if maxy < 0.0:   rx = maxx - 1.0 
     else        :    rx = maxx + 1.0 
-        
     if miny < 0.0:   ry = miny - 1.0 
     else        :    ry = miny + 1.0  
     if maxy < 0.0:   ry = maxy - 1.0 
     else        :    ry = maxy + 1.0         
         
     var mpl = abs(maxx) * 1000     
-    
     while rx < minx or rx > maxx:
        rx =  getRandomSignF() * mpl * getRandomFloat()  
        
@@ -287,12 +258,10 @@ proc getRandomPoint*(minx:int = -500 ,maxx:int = 500 ,miny:int = -500 ,maxy:int 
     ##    var n = getRandomPoint(-500,500,-500,200)
     ##    printLnBiCol(fmtx([">4",">5","",">6",">5"],"x:",$n.x,spaces(7),"y:",$n.y),spaces(7))
     ## 
-  
     var point : RpointInt
-        
-    point.x =  getRandomSignI() * getRndInt(minx,maxx) 
-    point.y =  getRandomSignI() * getRndInt(miny,maxy)  
-    result =  point
+    point.x = getRandomSignI() * getRndInt(minx,maxx) 
+    point.y = getRandomSignI() * getRndInt(miny,maxy)  
+    result = point
 
 
 proc getPointInSphere*():auto =
@@ -304,24 +273,23 @@ proc getPointInSphere*():auto =
     ## 
     ## .. code-block:: nim
     ##    # display 100 coordinates of in sphere points
-    ##    for x in 0..<100:      
+    ##    for x in countup(0,99,1):      
     ##       let b = getPointinSphere()  
     ##       printLnBiCol(fmtx(["",">7","",">7","",">7"],"  x: ",b[0],"  y: ",b[1],"  z: ",b[2]))
     ##       
     ##       
-   
-    var u = rand(1.0);
-    var v = rand(1.0);
-    var theta = u * 2.0 * PI;
-    var phi = arccos(2.0 * v - 1.0);
-    var r = cbrt(rand(1.0));
-    var sinTheta = sin(theta);
-    var cosTheta = cos(theta);
-    var sinPhi = sin(phi);
-    var cosPhi = cos(phi);
-    var x = r * sinPhi * cosTheta;
-    var y = r * sinPhi * sinTheta;
-    var z = r * cosPhi;
+    let u = rand(1.0);
+    let v = rand(1.0);
+    let theta = u * 2.0 * PI;
+    let phi = arccos(2.0 * v - 1.0);
+    let r = cbrt(rand(1.0));
+    let sinTheta = sin(theta);
+    let cosTheta = cos(theta);
+    let sinPhi = sin(phi);
+    let cosPhi = cos(phi);
+    let x = r * sinPhi * cosTheta;
+    let y = r * sinPhi * sinTheta;
+    let z = r * cosPhi;
     result = @[x,y,z]
     
         
@@ -343,7 +311,6 @@ proc randpos*():int =
     let x = getRndInt(0, tw - 1)
     let y = getRndInt(0, th - 1)
     curdn(y)
-    #print($x & "/" & $y,xpos = x)
     result = x
 
 template getCard* :auto =
@@ -393,11 +360,8 @@ proc showRuler* (xpos:int=0,xposE:int=0,ypos:int = 0,fgr:string = white,bgr:Back
      var nposE = xposE
      if xpos == 0: npos  = 0
      if xposE == 0: nposE = tw - 1
-
      if vert == false :  # horizontalruler
-
           for x in npos..nposE:
-
             if x == 0:
                 curup(1)
                 print(".",lime,bgr,xpos = 0)
@@ -423,7 +387,6 @@ proc showRuler* (xpos:int=0,xposE:int=0,ypos:int = 0,fgr:string = white,bgr:Back
             else:
                 fflag = true
                 print(".",truetomato,bgr,xpos = x)
-
 
      else : # vertical ruler
 
@@ -471,8 +434,8 @@ proc superHeader*(bstring:string) =
       let okl = tw - 6
       let astrl = astring.len
       if astrl > okl :
-        astring = astring[0.. okl]
-        mddl = okl + 5
+          astring = astring[0.. okl]
+          mddl = okl + 5
       elif astrl > mmax :
           mddl = astrl + 4
       else :
@@ -481,7 +444,6 @@ proc superHeader*(bstring:string) =
           for x in 0..<n:
               astring = astring & " "
           mddl = mddl + 1
-
       # some framechars choose depending on what the system has installed
       #let framechar = "▒"
       let framechar = "⌘"
@@ -496,7 +458,6 @@ proc superHeader*(bstring:string) =
       printLn(astring,dodgerblue)
       printLn(pdl,yellowgreen)
       echo()
-
 
 
 proc superHeader*(bstring:string,strcol:string,frmcol:string) =
@@ -556,8 +517,7 @@ proc superHeader*(bstring:string,strcol:string,frmcol:string) =
 
         proc headermessage(astring:string)  =
             print(astring,strcol)
-
-
+            
         # draw everything
         frameline(pdl)
         #left marker
@@ -571,45 +531,6 @@ proc superHeader*(bstring:string,strcol:string,frmcol:string) =
         # bottom frame line
         frameline(pdl)
         # finished drawing
-
-
-proc superHeaderA*(bb:string = "",strcol:string = white,frmcol:string = green,anim:bool = true,animcount:int = 1) =
-      ## superHeaderA
-      ##
-      ## attempt of an animated superheader , some defaults are given
-      ##
-      ## parameters for animated superheaderA :
-      ##
-      ## headerstring, txt color, frame color, left/right animation : true/false ,animcount
-      ##
-      ## Example :
-      ##
-      ## .. code-block:: nim
-      ##    import nimcx
-      ##    cleanScreen()
-      ##    let bb = "NIM the system language for the future, which extends to as far as you need !!"
-      ##    superHeaderA(bb,white,red,true,3)
-      ##    clearup(3)
-      ##    superheader("Ok That's it for Now !",salmon,yellowgreen)
-      ##    doFinish()
-
-      for am in 0..<animcount:
-          for x in 0..<1:
-            cleanScreen()
-            for zz in 0..bb.len:
-                  cleanScreen()
-                  superheader($bb[0..zz],strcol,frmcol)
-                  sleepy(0.05)
-                  curup(80)
-            if anim == true:
-                for zz in countdown(bb.len,-1,1):
-                      superheader($bb[0..zz],strcol,frmcol)
-                      sleepy(0.05)
-                      cleanScreen()
-            else:
-                cleanScreen()
-            
-      echo()
 
 # Unicode random word creators
 
@@ -627,14 +548,10 @@ proc newWordCJK*(minwl:int = 3 ,maxwl:int = 10):string =
       ## .. code-block:: nim
       ##    # create a string of chinese or CJK chars with length 20 
       ##    echo newWordCJK(20,20)
-      
       result = ""
       let c5 = toSeq(minwl..maxwl)
       let chc = toSeq(parsehexint("3400")..parsehexint("4DB5"))
       for xx in 0..<rand(c5): result = result & $Rune(rand(chc))
-
-
-
 
 proc newWord*(minwl:int=3,maxwl:int = 10):string =
     ## newWord
@@ -654,15 +571,13 @@ proc newWord*(minwl:int=3,maxwl:int = 10):string =
         let nwl = rand(maxws)
         let chc = toSeq(33..126)
         while nw.len < nwl:
-          var x = rand(chc)
-          if char(x) in Letters:
+           var x = rand(chc)
+           if char(x) in Letters:
               nw = nw & $char(x)
         result = normalize(nw)   # return in lower case , cleaned up
-
     else:
          printLnErrorMsg("minimum word length larger than maximum word length")
          result = ""
-
 
 
 proc newWord2*(minwl:int=3,maxwl:int = 10 ):string =
@@ -686,7 +601,6 @@ proc newWord2*(minwl:int=3,maxwl:int = 10 ):string =
           if char(x) in IdentChars:
               nw = nw & $char(x)
         result = normalize(nw)   # return in lower case , cleaned up
-
     else:
          printLnErrorMsg("minimum word length larger than maximum word length")
          result = ""
@@ -718,7 +632,6 @@ proc newWord3*(minwl:int=3,maxwl:int = 10 ,nflag:bool = true):string =
            result = normalize(nw)   # return in lower case , cleaned up
         else :
            result = nw
-
     else:
          printLnErrorMsg("minimum word length larger than maximum word length")
          result = ""
@@ -745,7 +658,6 @@ proc newHiragana*(minwl:int=3,maxwl:int = 10 ):string =
          printLnErrorMsg("minimum word length larger than maximum word length")
          result = ""
 
-    
 
 proc newKatakana*(minwl:int=3,maxwl:int = 10 ):string =
     ## newKatakana
@@ -759,14 +671,93 @@ proc newKatakana*(minwl:int=3,maxwl:int = 10 ):string =
     if minwl <= maxwl:
         result  = ""
         while result.len < rand(toSeq(minwl..maxwl)):
-              result = result & $Rune(rand(toSeq(parsehexint("30A0")..parsehexint("30FF"))))
-       
+              result = result & $Rune(rand(toSeq(parsehexint("30A0")..parsehexint("30FF"))))  
     else:
-         printLnErrorMsg("minimum word length larger than maximum word length")
-         result = ""
+        printLnErrorMsg("minimum word length larger than maximum word length")
+        result = ""
 
-
-
+proc newText*(textLen:int = 1000,textgen:string = "newWord"):string = 
+     ## newText
+     ## 
+     ## creates random text made up of random chars from 
+     ## 
+     ## var. newWord procs 
+     ## 
+     ## textgen can be one of :
+     ## 
+     ##  newWord
+     ##  newWord2
+     ##  newWord3 
+     ##  newHiragana
+     ##  newKatakana
+     ##  newWordCJK
+     ##  
+     ##..code-block:: nim
+     ##  printLn(newText(10000,"newHiragana"),rndcol)
+     ##    
+     ##  
+     var tres = ""
+     case toLowerAscii(textgen) 
+       of "newword":
+             tres = ""
+             while result.len < textLen:
+                if tres.len < 100: # line length
+                       tres = tres & " " & newWord()
+                else:
+                       result = result & newline() & tres
+                       tres = ""
+       of "newword2":
+             tres = ""
+             while result.len < textLen:
+                if tres.len < 100: # line length
+                       tres = tres & " " & newWord2()
+                else:
+                       result = result & newline() & tres
+                       tres = ""
+       
+       of "newword3":
+             tres = ""
+             while result.len < textLen:
+                if tres.len < 100: # line length
+                       tres = tres & " " & newWord3()
+                else:
+                       result = result & newline() & tres
+                       tres = ""
+                       
+       of "newhiragana":
+             tres = ""
+             while result.len < textLen:
+                if tres.len < 100: # line length
+                       tres = tres & " " & newHiragana()
+                else:
+                       result = result & newline() & tres
+                       tres = ""
+       
+       of "newkatakana":
+             tres = ""
+             while result.len < textLen:
+                if tres.len < 100: # line length
+                       tres = tres & " " & newKatakana()
+                else:
+                       result = result & newline() & tres
+                       tres = ""
+                       
+       of "newwordcjk":
+             tres = ""
+             while result.len < textLen:
+                if tres.len < 100: # line length
+                       tres = tres & " " & newWordCJK()
+                else:
+                       result = result & newline() & tres
+                       tres = ""     
+       else:
+            decho(2)
+            printLnFailMsg("newText() ")
+            printLnErrorMsg(textgen & " generator proc not available !")
+            discard                
+                     
+                                  
+                                  
 proc drawRect*(h     :int = 0,
               w      :int = 3,
               frhLine:string = "_",
@@ -808,8 +799,6 @@ proc drawRect*(h     :int = 0,
       ##    doFinish()
       ##
       ##
-          
-      
       # topline
       printDotPos(xpos,dotCol,blink,dottype)
       print2(frhLine.repeat(w - dottype.len),frcol)
@@ -825,8 +814,7 @@ proc drawRect*(h     :int = 0,
       print2(frhLine.repeat(w - dottype.len),frcol)
       printDotPos(xpos + w - dottype.len,dotCol,blink,dottype)
       writeLine(stdout,"")
-
-         
+        
     
 proc cxBinomialCoeff*(n, k:int): int =
     # cxBinomialCoeff
@@ -840,25 +828,17 @@ proc cxBinomialCoeff*(n, k:int): int =
     kk = min(kk, n - kk) 
     for i in 0..<kk: result = result * (n - i) div (i + 1)
  
+ 
 template bitCheck*(a, b: untyped): bool =
     ## bitCheck
     ## 
     ## check bitsets 
     ##  
-    (a and (1 shl b)) != 0   
-         
-         
-proc clearScreen*():int {.discardable.} =
-     ## clearScreen
-     ## 
-     ## slow clear screen proc using call to Os
-     ## 
-     execShellCmd("clear")
-   
+    (a and (1 shl b)) != 0    
+      
 
 proc createSeqAll*(min:int = 0,max:int = 40878):seq[string] =
-     # for testing purpose only in the future the unicodedb from nimble
-     # by nitely is the way to go
+     # for testing purpose only in the future the unicodedb by nitely is the way to go
      var gs = newSeq[string]()
      for j in min ..< max :        # depending on whats installed  
      
@@ -870,6 +850,7 @@ proc createSeqAll*(min:int = 0,max:int = 40878):seq[string] =
             # 
             gs.add($Rune(j)) 
      result = gs    
+   
     
 proc createSeqGeoshapes*():seq[string] =
      ## createSeqGeoshapes
@@ -897,11 +878,9 @@ proc createSeqKatakana*():seq[string] =
     ##
     var kat = newSeq[string]()
     # s U+30A0–U+30FF.
-    for j in parsehexint("30A0").. parsehexint("30FF"): kat.add($Rune(j))
-    for j in parsehexint("31F0").. parsehexint("31FF"): kat.add($Rune(j))  # Katakana Phonetic Extensions
+    for j in parsehexint("30A0")..parsehexint("30FF"): kat.add($Rune(j))
+    for j in parsehexint("31F0")..parsehexint("31FF"): kat.add($Rune(j))  # Katakana Phonetic Extensions
     result = kat
-
-
 
 proc createSeqCJK*():seq[string] =
     ## full cjk unicode range returned in a seq
@@ -944,7 +923,6 @@ proc createSeqCJK*():seq[string] =
     result = chzh    
 
 
-
 proc createSeqIching*():seq[string] =
     ## createSeqIching
     ##
@@ -952,7 +930,6 @@ proc createSeqIching*():seq[string] =
     var ich = newSeq[string]()
     for j in 119552..119638: ich.add($Rune(j))
     result = ich
-
 
 
 proc createSeqApl*():seq[string] =
@@ -964,7 +941,6 @@ proc createSeqApl*():seq[string] =
     # s U+30A0–U+30FF.
     for j in parsehexint("2300").. parsehexint("23FF"): adx.add($Rune(j))
     result = adx
-
     
           
 proc createSeqBoxChars*():seq[string] =
@@ -978,7 +954,6 @@ proc createSeqBoxChars*():seq[string] =
     for j in parsehexint("2500").. parsehexint("257F"):
         boxy.add($RUne(j))
     result = boxy
-
     
     
 proc boxy*(w:int = 20, h:int = 5,fgr=randcol(),xpos:int=1) =
@@ -990,7 +965,6 @@ proc boxy*(w:int = 20, h:int = 5,fgr=randcol(),xpos:int=1) =
     for x in 0..h:
         println2(vertlinechar & spaces(w) & vertlinechar,fgr = fgr,xpos=xpos)
     printLn2(leftbottom & linechar * w & rightbottom,fgr = fgr,xpos=xpos)
- 
  
     
 proc boxy2*(w:int = 20, h:int = 5,fgr=randcol(),xpos:int=1) =
@@ -1005,8 +979,6 @@ proc boxy2*(w:int = 20, h:int = 5,fgr=randcol(),xpos:int=1) =
         println2(vertlinechar & spaces(w) & vertlinechar,fgr = randcol(),xpos=xpos)
     printLn2(leftbottom & linechar * w & rightbottom,fgr = randcol(),xpos=xpos)     
     
-
-
  
 proc spiralBoxy*(w:int = 20, h:int = 20,xpos:int = 1) =
      ## spiralBoxy
@@ -1037,8 +1009,6 @@ proc spiralBoxy2*(w:int = 20, h:int = 20,xpos:int = 1) =
        inc xxpos
        curup(hh + 4)
      
-    
-    
     
 proc showSeq*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5,displayflag : bool = true):string {.discardable.} = 
     ## showSeq
@@ -1082,7 +1052,6 @@ proc showSeq*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5,di
       decho(2)      
       let msg1 = "0 - " & $(z.len - 1) & spaces(3)
       printLnInfoMsg("Item Count ",cxpad($z.len,msg1.len),xpos = 3) 
-      #discard typeTest2(z)
       decho(2)          
  
 
@@ -1148,28 +1117,6 @@ template withFile*(f,fn, mode, actions: untyped): untyped =
       ##       while fs.readLine(line):
       ##           printLn(line,yellowgreen)
       ##           
-      ##  Example 2   
-      ##    
-      ##.. code-block:: nim
-      ##   import nimcx
-      ##
-      ##   let curFile="/data5/notes.txt"    # some file
-      ##
-      ##   withFile(txt2, curFile, fmRead):
-      ##           var aline = ""
-      ##           var lc = 0
-      ##           var oc = 0
-      ##           while txt2.readline(aline):
-      ##               try:
-      ##                   inc lc
-      ##                   var sw = "the"   # find all lines containing : the
-      ##                   if aline.contains(sw) == true:
-      ##                       inc oc
-      ##                       printBiCol(fmtx(["<8",">6","","<7","<6"],"Line :",lc,rightarrow,"Count : ",oc))
-      ##                       printHl(aline,sw,yellowgreen)
-      ##                       echo()
-      ##               except:
-      ##                   break 
       block:
             var f = streamFile(fn,mode)    # streamfile is in cxglobal.nim
             try:
@@ -1240,21 +1187,19 @@ proc memCheck*(stats:bool = false) =
       else:
          printLnInfoMsg("MemCheck",cxpad("System",30),skyblue,xpos = 2)
       printLnBiCol("Status : Current ",colLeft=salmon,xpos = 2)
-      
       var b = 0
       if stats == true:
-         b = fullgcstats(2)
+          b = fullgcstats(2)
       checkmem()
       GC_fullCollect()
       sleepy(0.5)
       if stats == true:
-        curup(b + 3)
+          curup(b + 3)
       else:
-        curup(b + 4)
+          curup(b + 4)
       printLnBiCol2("Status : GC_FullCollect executed",colLeft=salmon,colRight=pink,xpos=55)
-      #printLn(yellowgreen & "Mem " &  lightsteelblue & "Used  : " & white & ff2(getOccupiedMem()) & lightsteelblue & "  Free : " & white & ff2(getFreeMem()) & lightsteelblue & "  Total : " & white & ff2(getTotalMem() ))
       if stats == true:
-         fullgcstats(xpos=55)
+          fullgcstats(xpos=55)
       checkmem(xpos=55)
       echo()
               

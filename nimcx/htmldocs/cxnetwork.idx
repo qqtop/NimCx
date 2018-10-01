@@ -1,3 +1,4 @@
+parseIps	cxnetwork.html#parseIps.i,string	cxnetwork: parseIps(soup: string): string	
 getIpInfo	cxnetwork.html#getIpInfo,string	cxnetwork: getIpInfo(ip: string): JsonNode	
 getWanIp	cxnetwork.html#getWanIp,	cxnetwork: getWanIp(): string	
 showIpInfo	cxnetwork.html#showIpInfo,string	cxnetwork: showIpInfo(ip: string)	

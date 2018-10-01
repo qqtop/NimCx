@@ -1,6 +1,6 @@
 RpointInt	cxutils.html#RpointInt	cxutils: RpointInt	
 RpointFloat	cxutils.html#RpointFloat	cxutils: RpointFloat	
-fibonacci	cxutils.html#fibonacci,int	cxutils: fibonacci(n: int): float	
+fibi	cxutils.html#fibi,int	cxutils: fibi(n: int): uint64	
 pswwaux	cxutils.html#pswwaux,	cxutils: pswwaux()	
 cxCpuInfo	cxutils.html#cxCpuInfo,	cxutils: cxCpuInfo(): string	
 cxVideoInfo	cxutils.html#cxVideoInfo,	cxutils: cxVideoInfo(): string	
@@ -21,17 +21,16 @@ showRuler	cxutils.html#showRuler,int,int,int,string,BackgroundColor,bool	cxutils
 centerMark	cxutils.html#centerMark,bool	cxutils: centerMark(showpos: bool = false)	
 superHeader	cxutils.html#superHeader,string	cxutils: superHeader(bstring: string)	
 superHeader	cxutils.html#superHeader,string,string,string	cxutils: superHeader(bstring: string; strcol: string; frmcol: string)	
-superHeaderA	cxutils.html#superHeaderA,string,string,string,bool,int	cxutils: superHeaderA(bb: string = &quot;&quot;; strcol: string = white; frmcol: string = green;\n             anim: bool = true; animcount: int = 1)	
 newWordCJK	cxutils.html#newWordCJK,int,int	cxutils: newWordCJK(minwl: int = 3; maxwl: int = 10): string	
 newWord	cxutils.html#newWord,int,int	cxutils: newWord(minwl: int = 3; maxwl: int = 10): string	
 newWord2	cxutils.html#newWord2,int,int	cxutils: newWord2(minwl: int = 3; maxwl: int = 10): string	
 newWord3	cxutils.html#newWord3,int,int,bool	cxutils: newWord3(minwl: int = 3; maxwl: int = 10; nflag: bool = true): string	
 newHiragana	cxutils.html#newHiragana,int,int	cxutils: newHiragana(minwl: int = 3; maxwl: int = 10): string	
 newKatakana	cxutils.html#newKatakana,int,int	cxutils: newKatakana(minwl: int = 3; maxwl: int = 10): string	
+newText	cxutils.html#newText,int,string	cxutils: newText(textLen: int = 1000; textgen: string = &quot;newWord&quot;): string	
 drawRect	cxutils.html#drawRect,int,int,string,string,string,string,int,bool,string	cxutils: drawRect(h: int = 0; w: int = 3; frhLine: string = &quot;_&quot;; frVLine: string = &quot;|&quot;;\n         frCol: string = darkgreen; dotCol: string = truetomato; xpos: int = 1;\n         blink: bool = false; dottype: string = &quot;.&quot;)	
 cxBinomialCoeff	cxutils.html#cxBinomialCoeff,int,int	cxutils: cxBinomialCoeff(n, k: int): int	
 bitCheck	cxutils.html#bitCheck.t,untyped,untyped	cxutils: bitCheck(a, b: untyped): bool	
-clearScreen	cxutils.html#clearScreen,	cxutils: clearScreen(): int	
 createSeqAll	cxutils.html#createSeqAll,int,int	cxutils: createSeqAll(min: int = 0; max: int = 40878): seq[string]	
 createSeqGeoshapes	cxutils.html#createSeqGeoshapes,	cxutils: createSeqGeoshapes(): seq[string]	
 createSeqHiragana	cxutils.html#createSeqHiragana,	cxutils: createSeqHiragana(): seq[string]	

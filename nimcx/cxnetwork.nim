@@ -1,4 +1,4 @@
-import os,osproc,json,httpclient,strutils,posix,rawsockets,sets,terminal
+import os,osproc,json,httpclient,strutils,strscans,posix,rawsockets,sets,terminal
 import cxconsts,cxglobal,cxprint
 
 # cxnetwork.nim
@@ -6,8 +6,33 @@ import cxconsts,cxglobal,cxprint
 # Var. internet related procs and experiments
 # 
 # 
-# Last 2018-08-07
+# Last 2018-09-30
 # 
+
+  
+iterator parseIps*(soup: string): string =
+  ##  parseIps  
+  ##  for ipv4 addresses only
+  ##  
+  ##  ex nim documentation strscans module
+  ##  
+  const digits = {'0'..'9'}
+  var a, b, c, d: int
+  var buf = ""
+  var idx = 0
+  while idx < soup.len:
+    if scanp(soup, idx, (`digits`{1,3}, '.', `digits`{1,3}, '.',
+             `digits`{1,3}, '.', `digits`{1,3}) -> buf.add($_)):
+      discard buf.scanf("$i.$i.$i.$i", a, b, c, d)
+      if (a >= 0 and a <= 254) and
+         (b >= 0 and b <= 254) and
+         (c >= 0 and c <= 254) and
+         (d >= 0 and d <= 254):
+        yield buf
+    buf.setLen(0) # need to clear `buf` each time, cause it might contain garbage
+    idx.inc
+    
+
 
 proc getIpInfo*(ip:string):JsonNode =
      ## getIpInfo

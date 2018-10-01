@@ -122,7 +122,7 @@
 
 import cxconsts,cxglobal,cxtime,cxprint,cxhash,cxfont,cxtruecolor,cxutils,cxnetwork,cxstats
 
-import os,osproc,times,random,strutils,strformat,parseutils,sequtils,parseopt 
+import os,osproc,times,random,strutils,strformat,strscans,parseutils,sequtils,parseopt 
 import tables,sets,macros
 import posix,terminal,math,stats,json,streams,options,memfiles
 import httpclient,rawsockets,browsers,intsets,algorithm
@@ -131,7 +131,7 @@ import rdstdin,sugar
 
 export cxconsts,cxglobal,cxtime,cxprint,cxhash,cxfont,cxtruecolor,cxutils,cxnetwork,cxstats
 
-export os,osproc,times,random,strutils,strformat,parseutils,sequtils,parseopt 
+export os,osproc,times,random,strutils,strformat,strscans,parseutils,sequtils,parseopt 
 export tables,sets,macros
 export posix,terminal,math,stats,json,streams,options,memfiles
 export httpclient,rawsockets,browsers,intsets,algorithm
@@ -180,8 +180,6 @@ when defined(posix):
   {.hint    : "\x1b[38;2;154;205;50m \u2691  NimCx  V. " & CXLIBVERSION & "  :" & "\x1b[38;2;255;215;0m Officially made for Linux only." & spaces(13) & "\x1b[38;2;154;205;50m \u2691".}
   {.hint    : "\x1b[38;2;154;205;50m \u2691  Compiling        :" & "\x1b[38;2;255;100;0m Please wait , Nim will be right back ! \xE2\x9A\xAB" & " " & "\xE2\x9A\xAB" & spaces(2) & "\x1b[38;2;154;205;50m \u2691".} 
   {.hints: off.}   # turn on off as per requirement
-  
-  
 
 
 let cxstart* = epochTime()  # simple execution timing with one line see doFinish()
@@ -230,7 +228,7 @@ proc newCxCounter*():ref(Cxcounter) =
     ## counter1.reset # set to 0
     ## echo counter1.value # show current value
     ## 
-    result =  (ref CxCounter)(value : 0)
+    result = (ref CxCounter)(value : 0)
     
 proc  add*(co:ref Cxcounter) = inc co.value 
 proc  dec*(co:ref Cxcounter) = dec co.value
@@ -298,9 +296,9 @@ proc showColors*() =
   ## display all colorNames in color !
   ##
   for x in colorNames:
-     print(fmtx(["<22"],x[0]) & spaces(2) & "▒".repeat(10) & spaces(2) & "⌘".repeat(10) & spaces(2) & "ABCD abcd 1234567890 --> " & " Nim Colors  " , x[1],bgBlack)
-     printLn(fmtx(["<23"],"  " & x[0]) ,x[1],styled = {styleReverse},substr =  fmtx(["<23"],"  " & x[0]))
-     sleepy(0.015)
+     print(fmtx(["<22"],x[0]) & spaces(2) & "▒".repeat(10) & spaces(2) & "⌘".repeat(10) & spaces(2) & "ABCD abcd 1234567890 --> " & " Nim Colors  " , x[1],bgBlack,xpos=3)
+     printLn(fmtx(["<23"],spaces(2) & x[0]) ,x[1],styled = {styleReverse},substr =  fmtx(["<23"],"  " & x[0]))
+     sleepy(0.01)
   decho(2)
 
      
@@ -326,7 +324,6 @@ proc nimcat*(curFile:string,countphrase : varargs[string,`$`] = "")=
     var ccurFile = curFile
     let (dir, name, ext) = splitFile(ccurFile)
     if ext == "": ccurFile = ccurFile & ".nim"
-   
     if not fileExists(ccurfile):
             echo()
             printLnErrorMsg(ccurfile & " not found !")
@@ -337,7 +334,6 @@ proc nimcat*(curFile:string,countphrase : varargs[string,`$`] = "")=
             decho(2)
             dlineLn()
             echo()
-            
             var phraseinline = newSeqWith(countphrase.len, newSeq[int](0))  # holds the line numbers where a phrase to be counted was found
             var line = ""
             var c = 1
@@ -544,7 +540,6 @@ proc colorio*() =
     ## 
     ## Displays name,hex code and rgb of colors available in cx.nim
     ## 
-
     printLn(fmtx(["<20","","<20","",">5","",">5","",">5"],"ColorName in cx", spaces(2) , "HEX Code",spaces(2),"R",spaces(1),"G",spaces(1),"B") ,zippi)
     echo()
     for x in 0..<colorNames.len:
@@ -553,7 +548,6 @@ proc colorio*() =
            printLn(fmtx(["<20","","<20","",">5","",">5","",">5"],colorNames[x][0], spaces(2) , $(parsecolor(colorNames[x][0])),spaces(2),zr[0],spaces(1),zr[1],spaces(1),zr[2]) ,fgr = colorNames[x][1])
         except ValueError:
            printLn(fmtx(["<20","","<20"],colorNames[x][0], spaces(2) , "NIMCX CUSTOM COLOR " ),fgr = colorNames[x][1])
-            
 
 
 # spellInteger 
@@ -815,7 +809,6 @@ proc getColorConst*[T](sc:T):string =
        if x[0] == sc:
           result = x[1]
           
-
  
 proc showTerminalSize*() =
       ## showTerminalSize
@@ -863,7 +856,7 @@ proc cxAlertLn*(xpos:int = 1) =
      printLn(doflag(red,6,"ALERT ",truetomato) & doflag(red,6),xpos = xpos)
              
 
-proc cxhelp*(s:openarray[string],xpos :int = 2)=
+proc cxHelp*(s:openarray[string],xpos :int = 2)=
   ## cxHelp
   ## 
   ## a help generator which can easily be called from within or on app start  
@@ -893,7 +886,6 @@ proc cxhelp*(s:openarray[string],xpos :int = 2)=
   ##        "Have a nice day"])
   
   var maxlen = 0
-  
   for ss in 0..<s.len:
     # scan for max len which will be the max width of the help
     # but need to limit it to within tw
@@ -933,8 +925,6 @@ proc cxhelp*(s:openarray[string],xpos :int = 2)=
         if cxcodeendflag == false and ss > 0:
            printLnBelpMsg(sss,xpos=xpos)
   echo()      
- 
-
  
  
 template infoProc*(code: untyped) =
@@ -987,19 +977,15 @@ template checkLocals*() =
       print("[checkLocals -->] ",gold) 
       printLnBiCol(fmtx(["","<20","","","","","<25","","","","",""],"Variable : ",$name,spaces(3),peru,"Type : ",termwhite,$type(value),spaces(1),aqua,"Value : ",termwhite,$value))
   
-
      
 proc qqTop*() =
   ## qqTop
   ##
   ## prints qqTop in custom color
   ##
-  print("qq",cyan)
-  print("T",brightgreen)
-  print("o",brightred)
-  print("p",cyan)
+  print(cyan & "qq" & greenyellow & "T" & brightred & "o" & gold & "p")
 
-        
+          
 proc tmpFilename*(): string = 
   # tmpFilename
   # 

@@ -94,7 +94,7 @@ Screenshot from cxmatrixfontE1.nim
 import nimcx
 # show the colors
 showColors()
-dofinish()
+doFinish()
 
 ```
 
