@@ -497,7 +497,7 @@ proc showTimerResults*(aname:string) =
      var bname = aname
      if bname == "": bname = "cxtimer"    # if no name given we assume defaultname cxtimer 
      echo()
-     loopy2(0,cxtimerresults.len):
+     loopy2(0,cxtimerresults.len - 1):
        var b = cxtimerresults[xloopy]
        if b.tname == bname:
           printLnBiCol("Timer    : " & $(b.tname))
@@ -505,12 +505,16 @@ proc showTimerResults*(aname:string) =
           printLnBiCol("Stop     : " & $fromUnix(int(b.stop)))
           printLnBiCol("Laptimes : ")
           if b.lap.len > 0:
-             printLnBiCol("Laptimes : ")
              loopy2(0,b.lap.len):
-                printLnBiCol(fmtx([">7","",""],$(xloopy + 1), " : " , $b.lap[xloopy]),xpos = 8)
+                if ($b.lap[xloopy]).strip() <> "":
+                    printLnBiCol(fmtx([">7","",""],$(xloopy + 1), " : " , $b.lap[xloopy]),xpos = 8)
+                else:
+                    curup(1)
+                    printLnBiCol(fmtx(["","",""],"", " : " , "none recorded"),xpos = 8)    
              echo()
           else:
-             printLnBiCol("Laptimes : none recorded")
+              curup(1)
+              printLnBiCol(fmtx(["","",""],"", " : " , "none recorded"),xpos = 8)
           printLnBiCol("Duration : " & $(b.stop - b.start) & " secs.")   
                
              
@@ -521,21 +525,26 @@ proc showTimerResults*() =
      ## shows results for all timers
      ## 
      echo()
-     loopy2(0,cxtimerresults.len):
+     loopy2(0,cxtimerresults.len - 1):
        var b = cxtimerresults[xloopy]
        echo()
        printLnBiCol("Timer    : " & $(b.tname))
        printLnBiCol("Start    : " & $fromUnix(int(b.start)))
        printLnBiCol("Stop     : " & $fromUnix(int(b.stop)))
+       printLnBiCol("Laptimes : ")
        if b.lap.len > 0:
-          printLnBiCol("Laptimes : ")
-          loopy2(0,b.lap.len):
-             printLnBiCol(fmtx([">7","",""],$(xloopy + 1), " : " , $b.lap[xloopy]),xpos = 8)
-          echo()
+             loopy2(0,b.lap.len):
+                if ($b.lap[xloopy]).strip() <> "":
+                    printLnBiCol(fmtx([">7","",""],$(xloopy + 1), " : " , $b.lap[xloopy]),xpos = 8)
+                else: # maybe not needed
+                    curup(1)
+                    printLnBiCol(fmtx(["","",""],"", " : " , "none recorded"),xpos = 8)    
+             echo()
        else:
-          printLnBiCol("Laptimes : none recorded")
+              curup(1)
+              printLnBiCol(fmtx(["","",""],"", " : " , "none recorded"),xpos = 8)
        printLnBiCol("Duration : " & $(b.stop - b.start) & " secs.")
-       
+       echo()
        
 proc clearTimerResults*(aname:string = "",quiet:bool = true,xpos:int = 3) =
      ## clearTimerResults

@@ -144,13 +144,11 @@ proc getNextMonday*(adate:string):string =
     ##      import nimcx
     ##      # get next 10 mondays
     ##      var dw = "2015-08-10"
-    ##      for x in 1.. 10:
+    ##      for x in 1 .. 10:
     ##          dw = getNextMonday(dw)
-    ##          echo decho(5)    
+    ##          decho(5)    
     ##
-    ##
-    ## in case of invalid dates nil will be returned
-    ##
+        
     var ndatestr = ""
     if adate == "" :
         printErrorMsg("Received an invalid date.")
