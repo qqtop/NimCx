@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-09-09
+##     Latest      : 2018-10-05
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -125,7 +125,7 @@ import cxconsts,cxglobal,cxtime,cxprint,cxhash,cxfont,cxtruecolor,cxutils,cxnetw
 import os,osproc,times,random,strutils,strformat,strscans,parseutils,sequtils,parseopt 
 import tables,sets,macros
 import posix,terminal,math,stats,json,streams,options,memfiles
-import httpclient,rawsockets,browsers,intsets,algorithm
+import httpclient,rawsockets,browsers,intsets,algorithm,net
 import unicode,typeinfo,typetraits,cpuinfo,colors,encodings,distros
 import rdstdin,sugar
 
@@ -134,7 +134,7 @@ export cxconsts,cxglobal,cxtime,cxprint,cxhash,cxfont,cxtruecolor,cxutils,cxnetw
 export os,osproc,times,random,strutils,strformat,strscans,parseutils,sequtils,parseopt 
 export tables,sets,macros
 export posix,terminal,math,stats,json,streams,options,memfiles
-export httpclient,rawsockets,browsers,intsets,algorithm
+export httpclient,rawsockets,browsers,intsets,algorithm,net
 export unicode,typeinfo,typetraits,cpuinfo,colors,encodings,distros
 export rdstdin,sugar
 
@@ -512,9 +512,13 @@ proc showBench*() =
          
        printLn(fmtx(["<$1" % $bnamesize,"","<70","<90"],aa1,spaces(3),bb1 ,dd1))
        printLn(fmtx(["<$1" % $bnamesize,"","<70","<50"],aa1,spaces(3),cc1,ee1))
+       
+       if dd1.contains("Inf") or ee1.contains("Inf"):
+          printLnInfoMsg("Inf","To measure something increase the loop count.")
 
     echo()
     benchmarkresults = @[]
+    
     printLn("Benchmark finished. Results cleared.",goldenrod)
  else:
     printLn("Benchmark results emtpy. Nothing to show",red)   

@@ -9,9 +9,9 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-09-18 
+##     Latest      : 2018-10-04 
 ##
-##     Compiler    : Nim >= 0.18.x dev branch
+##     Compiler    : Nim >= 0.19.x dev branch
 ##
 ##     OS          : Linux
 ##
@@ -31,7 +31,7 @@ proc print*[T](astring:T,fgr:string = termwhite ,bgr:BackgroundColor = bgBlack,x
 proc printLn*[T](astring:T,fgr:string = termwhite , bgr:BackgroundColor = bgBlack,xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {},substr:string = "")
 proc printBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) 
 proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) 
-proc printRainbow*(s : string,styled:set[Style] = {})     ## forward declaration
+proc printRainbow*(astr : string,styled:set[Style] = {})     ## forward declaration
 proc hline*(n:int = tw,col:string = white,xpos:int = 0,lt:string = "-") : string {.discardable.} ## forward declaration
 proc hlineLn*(n:int = tw,col:string = white,xpos:int = 0,lt:string = "-") : string {.discardable.}## forward declaration
 proc printErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} 
@@ -217,14 +217,11 @@ proc cxPrint*[T](ss    :T,
       ##  a) a random background color from cxTrueColor palette :  bgr = rndCxBgrCol() 
       ##  b) a color from the cxTrueColor palette               :  bgr = cxTrueCol[65451])
       ##  c) a specified color from colorNames seq              :  bgr = darkgreen
-      
-      var s = $ss  
-   
+             
       for xbgr in  0..<txCol.len:
           if cxcolornames[xbgr][0] == toLowerAscii(fontcolor):   # as we are doing styleReverse we set it as backgroundcolor 
              setBackgroundColor cxcolornames[xbgr][1]
-              
-      print(s,fgr = bgr,xpos = xpos,styled=styled) 
+      print($ss,fgr = bgr,xpos = xpos,styled=styled) 
       
 proc cxPrintLn*[T](ss       : T,
                    fontcolor: string = "colWhite",
@@ -237,12 +234,11 @@ proc cxPrintLn*[T](ss       : T,
       ##           
       ## see cxtruecolorE1.nim  for example usage
       ## 
-      
-      let s = $ss
+            
       for xbgr in  0..<txCol.len:
          if cxcolornames[xbgr][0] == toLowerAscii(fontcolor):
             setBackgroundColor cxcolornames[xbgr][1]
-      printLn(s,fgr = bgr,xpos = xpos,styled=styled) 
+      printLn($ss,fgr = bgr,xpos = xpos,styled=styled) 
       
  
 proc cxPrint*[T](ss       : T,
@@ -258,10 +254,9 @@ proc cxPrint*[T](ss       : T,
       ##             
       ## see cxtruecolorE1.nim  for example usage
       ## 
-      
-      let s = $ss
+           
       setBackgroundColor fontcolor
-      print(s,fgr = bgr,xpos = xpos,styled=styled)  
+      print($ss,fgr = bgr,xpos = xpos,styled=styled)  
       
 proc cxPrintLn*[T](ss       : T,
                    fontcolor: auto = colWhite,
@@ -278,46 +273,11 @@ proc cxPrintLn*[T](ss       : T,
       ##     
       ## see cxtruecolorE1.nim  for example usage
       ## 
-      
-      let s = $ss
+           
       setBackgroundColor fontcolor
-      printLn(s,fgr = bgr,xpos = xpos,styled=styled)  
-            
-
-# 
-# proc print*[T](ss:varargs[T,`$`],
-#            fgr : string = termwhite ,
-#            bgr : BackgroundColor = bgBlack,
-#            xpos: int = 0,
-#            sep : string = spaces(1)) =
-#            
-#    ## print
-#    ## 
-#    ## a print routine which allows printing of varargs in desired color , position and separator
-#    ## 
-#    ## no newline is added
-#    ## 
-#    ## sep must not be wider than 1 , if it is wider the comma will be used as default otherwise default will be 1 space
-#    ## 
-#    ##.. code-block:: nim
-#    ##    import nimcx
-#    ##    
-#    ##    print("TEST VARARGS : ",createSeqint(20).sampleSeq(8,13),getRndInt(10000,12000),createSeqint(3),newword(6,10),ff2(getRndfloat(),4),$(hiragana().sampleSeq(8,13)),randcol(),bblack,0,"") 
-#    ##    echo()
-#    ##    
-#    ##    
-#    var ssep = sep
-#    if ssep.len > 1:
-#       ssep = ","
-#    var oldxlen = 0
-#    for x in 0..<ss.len:
-#       if x == ss.len - 1:
-#          print(ss[x],fgr,bgr,xpos = xpos + oldxlen)
-#       else:
-#          print(ss[x] & ssep,fgr,bgr,xpos = xpos + oldxlen)
-#       oldxlen =  oldxlen + ss[x].len + 1
-#                 
-
+      printLn($ss,fgr = bgr,xpos = xpos,styled=styled)  
+    
+     
 proc printLn*[T](astring:T,
                 fgr:string = termwhite,
                 bgr:BackgroundColor,
@@ -667,7 +627,7 @@ proc decho*(z:int = 1)  =
     for x in 0..<z: writeLine(stdout,"")
 
 
-proc printRainbow*(s : string,styled:set[Style] = {}) =
+proc printRainbow*(astr : string,styled:set[Style] = {}) =
     ## printRainbow
     ##
     ##
@@ -675,9 +635,7 @@ proc printRainbow*(s : string,styled:set[Style] = {}) =
     ##
     ## may not work with certain Rune
     ##
-   
 
-    var astr = s
     var c = 0
     for x in 0..<astr.len:
         c = rxcol[getRndInt(ma=rxcol.len - 1)]
@@ -699,7 +657,7 @@ proc printLnRainbow*[T](s : T,styled:set[Style] = {}) =
     ##  loopy(0..100,
     ##      block:
     ##          printLnRainBow(cxpad(" ",tw),{styleReverse})
-    ##          printLnRainBow(cxpad(" NimCx " * 21 ,tw),{styleBright})
+    ##          printLnRainBow(cxpad(" NimCx " * 18 ,tw - 18),{styleBright})
     ##          sleepy(0.01))
     ##
     ##
@@ -841,9 +799,9 @@ proc printBiCol2*[T](s:varargs[T,`$`],
                     centered:bool = false,
                     styled : set[Style]= {}) =
                     
-     ## printBiCol
+     ## printBiCol2
      ##
-     ## Notes see printLnBiCol
+     ## Notes see printLnBiCol2
      ##
      
      {.gcsafe.}:
@@ -874,8 +832,6 @@ proc printBiCol2*[T](s:varargs[T,`$`],
                     let npos = centerX() - (zz).len div 2 - 1
                     print2(z[0],fgr = colLeft,xpos = npos,styled = styled)
                     print2(z[1],fgr = colRight,styled = styled)
-
-
 
 
 proc printLnBiCol2*[T](s:varargs[T,`$`],
@@ -1352,10 +1308,10 @@ proc printLnOkMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printLnBiCol("[OK    ]" & spaces(1) & atext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})    
     
 proc printStatusMsg*(atext:string = "",xpos:int = 1,colLeft=lightseagreen):string {.discardable.} =
-     printBiCol2("[Status]" & spaces(1) & atext , colLeft = colleft ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
+     printBiCol3(["[Status]" , spaces(1) , atext] , colLeft = colleft ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
      
 proc printLnStatusMsg*(atext:string = "",xpos:int = 1,colLeft=lightseagreen):string {.discardable.} =
-     printLnBiCol2("[Status]" & spaces(1) & atext , colLeft = colLeft ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})    
+     printLnBiCol3(["[Status]" , spaces(1) , atext] , colLeft = colLeft ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})    
      
 proc printHelpMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printBiCol("[Help  ]" & spaces(1) & atext , colLeft = thistle ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
@@ -1384,14 +1340,14 @@ proc printLnPassMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
 
 # printInfoMsg and printLnInfoMsg can take two strings for more generic use     
 proc printInfoMsg*(info,atext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
-     printBiCol2("[$1 ]" % info & spaces(1) & atext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
+     printBiCol3(["[$1 ]" % info , spaces(1) , atext] , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
 
 proc printLnInfoMsg*(info,atext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
      printLnBiCol("[$1 ]" % info & spaces(1) & atext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
 
 # experimental - use printLn2 so that we do not overwrite msg next to each other in case of blocks of printLnmsg2 statements
 proc printLnInfoMsg2*(info,atext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
-     printLnBiCol2("[$1 ]" % info & spaces(1) & atext , colLeft = colLeft ,colRight = colRight,sep= "]",xpos = xpos,false,{stylereverse})
+     printLnBiCol3(["[$1 ]" % info , spaces(1) , atext] , colLeft = colLeft ,colRight = colRight,sep= "]",xpos = xpos,false,{stylereverse})
      
       
 proc dprint*[T](s:T) = 
@@ -1399,7 +1355,7 @@ proc dprint*[T](s:T) =
      ## 
      ## debug print shows contents of s in repr mode
      ## 
-     ## usefull for debugging  (for some reason the  line number maybe off sometimes)
+     ## usefull for debugging  (for some reason the line number maybe off sometimes)
      ##
      echo()
      print("** REPR OUTPTUT START ***",truetomato)
