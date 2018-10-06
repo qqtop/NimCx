@@ -1132,9 +1132,9 @@ proc theEnd*() =
   # animated the end
   loopy2(0,2):
      loopy2(-10,30):
-       printfontfancy("THE END",xpos = xloopy)
+       printFontFancy("THE END",xpos = xloopy)
        sleepy(0.02)
-       cleanscreen()
+       cleanScreen()
   printfontfancy("qqtop",coltop1 = red,xpos = tw div 3 - 20)     
   decho(10)
 
@@ -1177,7 +1177,7 @@ proc doFinish*() =
             echo()
         
         else:
-           var un = execCmdEx("uname -v")
+           let un = execCmdEx("uname -v")
            printLnInfoMsg("uname -v ",un.output)
         
         rmTmpFilenames()
