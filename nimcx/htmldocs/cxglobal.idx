@@ -2,6 +2,7 @@ getcxTrueColorSetFlag	cxglobal.html#getcxTrueColorSetFlag	cxglobal: getcxTrueCol
 styledEchoPrint	cxglobal.html#styledEchoPrint.m,varargs[untyped]	cxglobal: styledEchoPrint(m: varargs[untyped]): typed	
 procName	cxglobal.html#procName.m,untyped	cxglobal: procName(x: untyped): untyped	
 toEnum	cxglobal.html#toEnum.m,static[string]	cxglobal: toEnum(words: static[string]): untyped	
+cxgetType	cxglobal.html#cxgetType.m,typed	cxglobal: cxgetType(s: typed): untyped	
 tupleTypes	cxglobal.html#tupleTypes,	cxglobal: tupleTypes(atuple: tuple): seq[string]	
 unidecodeU	cxglobal.html#unidecodeU.t,untyped	cxglobal: unidecodeU(ustring: untyped): untyped	
 `*`	cxglobal.html#*.t,string,int	cxglobal: `*`(s: string; n: int): untyped	
@@ -80,6 +81,8 @@ curSetx	cxglobal.html#curSetx.t,int	cxglobal: curSetx(x: int)
 curSet	cxglobal.html#curSet.t,int,int	cxglobal: curSet(x: int = 0; y: int = 0)	
 clearup	cxglobal.html#clearup.t,int	cxglobal: clearup(x: int = 80)	
 curMove	cxglobal.html#curMove,int,int,int,int	cxglobal: curMove(up: int = 0; dn: int = 0; fw: int = 0; bk: int = 0)	
+curOn	cxglobal.html#curOn.t,	cxglobal: curOn()	
+curOff	cxglobal.html#curOff.t,	cxglobal: curOff()	
 stripper	cxglobal.html#stripper,string	cxglobal: stripper(str: string): string	
 `&lt;&gt;`	cxglobal.html#<>.t,untyped,untyped	cxglobal: `&lt;&gt;`(a, b: untyped): untyped	
 `[]`	cxglobal.html#[],seq[T],Slice[U]	cxglobal: `[]`[T; U](a: seq[T]; x: Slice[U]): seq[T]	
@@ -98,5 +101,4 @@ randPastelCol	cxglobal.html#randPastelCol.t,	cxglobal: randPastelCol(): string
 upperCase	cxglobal.html#upperCase.t,string	cxglobal: upperCase(s: string): string	
 lowerCase	cxglobal.html#lowerCase.t,string	cxglobal: lowerCase(s: string): string	
 currentLine	cxglobal.html#currentLine.t,	cxglobal: currentLine()	
-currentLine	cxglobal.html#currentLine.t,int	cxglobal: currentLine(xpos: int)	
 hdx	cxglobal.html#hdx.t,typed,string,int,int	cxglobal: hdx(code: typed; frm: string = &quot;+&quot;; width: int = tw; nxpos: int = 0): typed	

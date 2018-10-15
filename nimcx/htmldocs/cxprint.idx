@@ -56,5 +56,5 @@ printLnPassMsg	cxprint.html#printLnPassMsg,string,int	cxprint: printLnPassMsg(at
 printInfoMsg	cxprint.html#printInfoMsg,string,string,string,string,int	cxprint: printInfoMsg(info, atext: string = &quot;&quot;; colLeft: string = lightslategray;\n             colRight: string = pastelWhite; xpos: int = 1): string	
 printLnInfoMsg	cxprint.html#printLnInfoMsg,string,string,string,string,int	cxprint: printLnInfoMsg(info, atext: string = &quot;&quot;; colLeft: string = lightslategray;\n               colRight: string = pastelWhite; xpos: int = 1): string	
 printLnInfoMsg2	cxprint.html#printLnInfoMsg2,string,string,string,string,int	cxprint: printLnInfoMsg2(info, atext: string = &quot;&quot;; colLeft: string = lightslategray;\n                colRight: string = pastelWhite; xpos: int = 1): string	
-dprint	cxprint.html#dprint,T	cxprint: dprint[T](s: T)	
+dprint	cxprint.html#dprint.t,T	cxprint: dprint[T](s: T)	
 pdebug	cxprint.html#pdebug.m,varargs[typed]	cxprint: pdebug(n: varargs[typed]): untyped	

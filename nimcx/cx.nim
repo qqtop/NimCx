@@ -18,9 +18,9 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-10-05
+##     Latest      : 2018-10-15
 ##
-##     Compiler    : Nim >= 0.18.x dev branch
+##     Compiler    : Nim >= 0.19.x dev branch
 ##
 ##     OS          : Linux
 ##
@@ -1165,7 +1165,7 @@ proc doFinish*() =
         printLn(" - " & year(getDateStr()),brightblack)
         print(fmtx(["<14"],"Elapsed    : "),yellowgreen)
         print(fmtx(["<",">5"],ff(epochtime() - cxstart,3)," secs"),goldenrod)
-        printLnBiCol("  Compiled on: " & $CompileDate & spaces(1) & $CompileTime & spaces(1) & cxTimeZone())
+        printLnBiCol("  Compiled on: " & $CompileDate & spaces(1) & $CompileTime & spaces(1) & "UTC in " & cxTimeZone())
         if detectOs(OpenSUSE) or detectOs(Parrot):  # some additional data if on openSuse or parrotOs systems
             let ux1 = uname().split("#")[0].split(" ")
             printLnBiCol("Kernel     :  " & ux1[2] & " | Computer: " & ux1[1] & " | Os: " & ux1[0] & " | CPU Cores: " & $(osproc.countProcessors()),yellowgreen,lightslategray,":",0,false,{})
@@ -1174,11 +1174,10 @@ proc doFinish*() =
             let rld4 = rld3[0] & spaces(2) & strip(rld3[1])
             printBiCol(rld4,yellowgreen,lightslategray,":",0,false,{})
             printLnBiCol(spaces(2) & "Release: " & strip((split(rld[3],":")[1])),yellowgreen,lightslategray,":",0,false,{})
-            echo()
-        
+            echo()       
         else:
-           let un = execCmdEx("uname -v")
-           printLnInfoMsg("uname -v ",un.output)
+            let un = execCmdEx("uname -v")
+            printLnInfoMsg("uname -v ",un.output)
         
         rmTmpFilenames()
         GC_fullCollect()  # just in case anything hangs around
@@ -1209,7 +1208,7 @@ proc handler*() {.noconv.} =
     cechoLn(yellowgreen,"Thank you for using        : " & getAppFilename())
     hlineLn()
     printLnBiCol(fmtx(["<","<11",">9"],"Last compilation on        : " , CompileDate , CompileTime),brightcyan,termwhite,":",0,false,{})
-    printLnBiCol(fmtx(["<","<11",">9"]," Exit handler invocation at : " , cxtoday , getClockStr()),pastelorange,termwhite,":",0,false,{})
+    printLnBiCol(fmtx(["<","<11",">9"],"Exit handler invocation at : " , cxtoday , getClockStr()),pastelorange,termwhite,":",0,false,{})
     hlineLn()
     echo()
     printInfoMsg("Nim Version ",NimVersion)
@@ -1248,7 +1247,7 @@ proc doCxEnd*() =
     echo() 
     doFinish()
 
-# putting decho here will put two blank lines before anyting else runs
+# putting decho here will put two blank lines before anything else runs
 decho(2)
 # putting this here we can stop most programs which use this lib and get the
 # automatic exit messages , it may not work in tight loops involving execCMD or
@@ -1258,8 +1257,8 @@ setControlCHook(handler)
 #uncomment following line to have global support for cxTrueCol inside cx if needed
 
 if getcxTrueColorSetFlag == true:   # defined in cxglobal
-   getcxTrueColorSet()       # preload the cxTrueCol seq in default mode if getcxTrueColorSetFlag == true  --> default == false
-checktruecolorsupport()      # comment out if above line uncommented
+   getcxTrueColorSet()        # preload the cxTrueCol seq in default mode if getcxTrueColorSetFlag == true  --> default == false
+#checktruecolorsupport()      # comment out if above line uncommented
 
 # this will reset any color changes in the terminal
 # so no need for this line in the calling prog

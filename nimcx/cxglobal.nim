@@ -10,9 +10,9 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-09-23 
+##     Latest      : 2018-10-15 
 ##
-##     Compiler    : Nim >= 0.18.x dev branch
+##     Compiler    : Nim >= 0.19.x dev branch
 ##
 ##     OS          : Linux
 ##
@@ -96,7 +96,14 @@ macro toEnum*(words: static[string]): untyped =
   result = newTree(nnkEnumTy, newEmptyNode())
   for w in splitWhitespace(words): result.add ident(w)          
           
-            
+macro cxgetType*(s: typed): untyped = 
+      ## cxgetType
+      ## 
+      ## answers what type is it question
+      ##  
+      result = getType(s)
+      
+                  
 proc tupleTypes*(atuple: tuple): seq[string] =
           ## tupletypes
           ## 
@@ -1177,14 +1184,31 @@ proc curMove*(up: int = 0,
          curfw(fw)
          curbk(bk)
 
+         
+         
+template curOn* = 
+     ## curOn
+     ## 
+     ## cursor on , mirrors function showCursor from terminal.nim
+     ## 
+     showCursor()
+
+template curOff* =
+     ## curOff
+     ## 
+     ## cursor off , mirrors function hideCursor from terminal.nim
+     ## 
+     hideCursor()
+         
+         
 
 proc stripper*(str: string): string =
           # stripper
           # strip controlcodes "\ba\x00b\n\rc\fd\xc3"
           result = ""
           for ac in str:
-                    if ord(ac) in 32..126:
-                              result.add ac
+              if ord(ac) in 32..126: result.add ac
+              
 
 template `<>`* (a, b: untyped): untyped =
           ## unequal operator 
@@ -1433,26 +1457,8 @@ template currentLine*() =
           ## 
           var pos: tuple[filename: string, line: int, column: int] = ("", -1,-1)
           pos = instantiationInfo()
-          printLnInfoMsg("File: " & pos.filename,"Line:" & $(pos.line) & " Column:" & $(pos.column), truetomato, xpos = 3)
-          echo()
-
-template currentLine*(xpos: int) =
-          ## currentLine
-          ## 
-          ## simple template to return line number , maybe usefull for debugging
-
-          var pos: tuple[filename: string, line: int, column: int] = ("", -1,-1)
-          pos = instantiationInfo()
-          var xpos = tw
-          # calc the total width of this msg so we aline it rightside of terminal if needed
-          var msgl = 6 + (pos.filename).len + 5 + ($(pos.line)).len + 8 + ($(pos.column)).len + 3
-          var tww = tw
-          #if tww - xpos < msgl: xpos = msgl - 1
-          xpos = tww - msgl - 5
-          printLnInfoMsg("File: " & pos.filename,"Line:" & $(pos.line) & " Column:" & $(pos.column), truetomato, pastelWhite,xpos)
-          echo()
-
-
+          printLnInfoMsg("CurrentLine"," File: " & pos.filename & "  Line:" & $(pos.line) & " Column:" & $(pos.column), truetomato, xpos = 1)
+          
 
 template hdx*(code: typed, frm: string = "+", width: int = tw,
                     nxpos: int = 0): typed =

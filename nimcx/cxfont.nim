@@ -471,16 +471,16 @@ template cxhyphen*(npos:int = 0,col:string=rndCol(),coltop:string = rndCol()) =
          printLn2(efb2 * 0 ,col,xpos=xpos)
          curup(6)    
        
-template cxgrid*(npos:int = 0,col:string=rndCol(),coltop:string = lime) =    
-         # for testing purpose
+template cxgrid*(npos:int = 0,col:string=rndCol,coltop:string = rndcol) =    
+         # for testing purpose only
          let xpos = npos + 5
          let xwd  = 9
          loopy2(0,xwd): 
-             print(efb3  ,coltop,xpos=xpos + xloopy)
+             print(efb3,coltop,xpos = xpos + xloopy)
          echo()
          loopy2(0,5):
                loopy2(0,xwd) :
-                  cxprint(efb2 ,colgreen,xpos=xpos + xloopy)
+                  print2(efb2,col,xpos = xpos + xloopy)
                echo()  
          curup(6)
  

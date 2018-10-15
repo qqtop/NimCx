@@ -404,14 +404,11 @@ proc print2*[T](astring:T,
     ##
     {.gcsafe.}:
         var npos = xpos
-        
         if centered == false:
-
             if npos > 0:  # the result of this is our screen position start with 1
                 setCursorXPos(npos)
 
             if ($astring).len + xpos >= tw:
-
                 if fitLine == true:
                     # force to write on same line within in terminal whatever the xpos says
                     npos = tw - ($astring).len
@@ -419,14 +416,14 @@ proc print2*[T](astring:T,
 
         else:
             # centered == true
-            npos = centerX() - ($astring).len div 2 - 1
+            npos = centerX() - (($astring).len div 2) - 1
             setCursorXPos(npos)
 
         if styled != {}:
-            var s = $astring            
+            let s = $astring            
             if substr.len > 0:
-                var rx = s.split(substr)
-                for x in rx.low.. rx.high:
+                let rx = s.split(substr)
+                for x in rx.low .. rx.high:
                     writestyled(rx[x],{})
                     if x != rx.high:
                         case fgr
@@ -449,8 +446,7 @@ proc print2*[T](astring:T,
         # reset to white/black 
         setForeGroundColor(fgWhite)
         setBackGroundColor(bgBlack)
-               
-    
+              
     
     
 proc printLn2*[T](astring:T,
@@ -535,7 +531,7 @@ proc rainbow*[T](s : T,
           print(astr[x],colorNames[c][1],bgblack,xpos = nxpos,fitLine)
        else:
           # need to calc the center here and increment by x
-          nxpos = centerX() - ($astr).len div 2 + x - 1
+          nxpos = centerX() - (($astr).len div 2) + (x - 1)
           print(astr[x],colorNames[c][1],bgblack,xpos=nxpos,fitLine)
        inc nxpos
 
@@ -1350,18 +1346,17 @@ proc printLnInfoMsg2*(info,atext:string = "",colLeft:string = lightslategray ,co
      printLnBiCol3(["[$1 ]" % info , spaces(1) , atext] , colLeft = colLeft ,colRight = colRight,sep= "]",xpos = xpos,false,{stylereverse})
      
       
-proc dprint*[T](s:T) = 
+template dprint*[T](s:T) = 
      ## dprint
      ## 
      ## debug print shows contents of s in repr mode
      ## 
-     ## usefull for debugging  (for some reason the line number maybe off sometimes)
+     ## usefull for debugging  
      ##
      echo()
-     print("** REPR OUTPTUT START ***",truetomato)
-     currentLine()
-     echo repr(s) 
-     printLn("** REPR OUTPTUT END   ***",truetomato)
+     printLn("*** REPR OUTPUT START ***",truetomato,xpos = 1)
+     printLn(repr(s) ,xpos = 1)
+     printLn("*** REPR OUTPUT END   ***",truetomato,xpos = 1)
      echo()
    
 macro pdebug*(n: varargs[typed]): untyped =

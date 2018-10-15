@@ -37,7 +37,7 @@ cxy	cxfont.html#cxy.t,int,string,string	cxfont: cxy(npos: int = 0; col: string =
 cxz	cxfont.html#cxz.t,int,string,string	cxfont: cxz(npos: int = 0; col: string = rndCol(); coltop: string = rndCol())	
 cxpoint	cxfont.html#cxpoint.t,int,string,string	cxfont: cxpoint(npos: int = 0; col: string = rndCol(); coltop: string = rndCol())	
 cxhyphen	cxfont.html#cxhyphen.t,int,string,string	cxfont: cxhyphen(npos: int = 0; col: string = rndCol(); coltop: string = rndCol())	
-cxgrid	cxfont.html#cxgrid.t,int,string,string	cxfont: cxgrid(npos: int = 0; col: string = rndCol(); coltop: string = lime)	
+cxgrid	cxfont.html#cxgrid.t,int,string,string	cxfont: cxgrid(npos: int = 0; col: string = rndCol; coltop: string = rndcol)	
 printFont	cxfont.html#printFont,string,string,string,int	cxfont: printFont(s: string; col: string = rndCol(); coltop: string = rndCol(); xpos: int = -10)	
 printFontFancy	cxfont.html#printFontFancy,string,int	cxfont: printFontFancy(s: string; coltop1 = rndcol(); xpos: int = -10)	
 printNimCx	cxfont.html#printNimCx,int	cxfont: printNimCx(npos: int = getTerminalWidth() div 2 - 30)	
