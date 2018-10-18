@@ -1,5 +1,5 @@
 import nimcx
-
+import strutils
 ## small rough demos repository for var. procs in cx.nim
 ## this file is imported by cxTest.nim to actually run the demos
 ## may and will change anytime and errors may happen anytime

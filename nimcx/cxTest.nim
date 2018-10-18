@@ -3,13 +3,14 @@
 ## 
 ## VERY rough testing for nimcx.nim errors may occur at times ...  
 ## 
-## Status : 2018-08-29  always WIP
+## Status : 2018-10-18  always WIP
 ## 
 ## best run in a large console window
 ## 
 
 
-import nimcx,cxDemo       
+import nimcx,cxDemo 
+     
 
 superHeader("nimCx Testing ")
 

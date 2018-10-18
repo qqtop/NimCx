@@ -163,7 +163,7 @@ proc getNextMonday*(adate:string):string =
             for x in 0..<7:
                 if validdate(ndatestr) == true:
                     z =  cxDayOfWeek(ndatestr)
-                if z.strip() != "Monday":
+                if strutils.strip(z) != "Monday":
                     ndatestr = plusDays(ndatestr,1)
                 else:
                     result = ndatestr
@@ -1139,7 +1139,7 @@ proc checkMemFull*(xpos:int = 2) =
        for aline in seqline:
                let zline = aline.split(":")
                try:
-                  printLnInfoMsg(cxpad(zline[0],n),fmtx([">15"],zline[1].strip()),yellowgreen,xpos = xpos)
+                  printLnInfoMsg(cxpad(zline[0],n),fmtx([">15"],strutils.strip(zline[1])),yellowgreen,xpos = xpos)
                except IndexError  as ex:
                   printLnErrorMsg(ex.msg)
                   discard
@@ -1159,7 +1159,7 @@ proc checkMem*(xpos:int=2) =
        for aline in seqline:
             if aline.startswith("Mem"):
                let zline = aline.split(":")
-               printLnInfoMsg2(cxpad(zline[0],n),fmtx([">15"],zline[1].strip()),yellowgreen,xpos = xpos)
+               printLnInfoMsg2(cxpad(zline[0],n),fmtx([">15"],strutils.strip(zline[1])),yellowgreen,xpos = xpos)
               
 
 proc fullgcstats*(xpos:int = 2):int {.discardable.} =

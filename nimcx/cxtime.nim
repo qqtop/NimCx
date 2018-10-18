@@ -9,7 +9,7 @@ import os,terminal,times,parseutils,strutils
 # 
 # 
 # 
-# Last : 2018-08-26
+# Last : 2018-10-18
 # 
 # 
 
@@ -506,7 +506,7 @@ proc showTimerResults*(aname:string) =
           printLnBiCol("Laptimes : ")
           if b.lap.len > 0:
              loopy2(0,b.lap.len):
-                if ($b.lap[xloopy]).strip() <> "":
+                if strutils.strip(($b.lap[xloopy])) <> "":
                     printLnBiCol(fmtx([">7","",""],$(xloopy + 1), " : " , $b.lap[xloopy]),xpos = 8)
                 else:
                     curup(1)
@@ -534,7 +534,7 @@ proc showTimerResults*() =
        printLnBiCol("Laptimes : ")
        if b.lap.len > 0:
              loopy2(0,b.lap.len):
-                if ($b.lap[xloopy]).strip() <> "":
+                if strutils.strip(($b.lap[xloopy])) <> "":
                     printLnBiCol(fmtx([">7","",""],$(xloopy + 1), " : " , $b.lap[xloopy]),xpos = 8)
                 else: # maybe not needed
                     curup(1)

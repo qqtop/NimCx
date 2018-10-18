@@ -17,7 +17,7 @@ import cxglobal,cxconsts,cxprint,terminal,strutils,random
 # in order to load cxTrueCol at compiletime use  -d:cxTrueCol   or load it anytime with a call to getCxTrueColorSet()
 #
 #
-# Last : 2018-08-22
+# Last : 2018-10-18
 # 
 type
   CXRGB* = tuple[R: int, G: int, B: int,cxCol:string]  # the idea for the cxCol field is to give interesting colors a name

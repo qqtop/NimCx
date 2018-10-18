@@ -6,7 +6,7 @@ import cxconsts,cxglobal,cxprint
 # Var. internet related procs and experiments
 # 
 # 
-# Last 2018-09-30
+# Last 2018-10-18
 # 
 
   
@@ -54,7 +54,7 @@ proc getIpInfo*(ip:string):JsonNode =
      ##
      ##
     
-     var zcli = newHttpClient()
+     var zcli = newHttpClient() 
      if ip != "":
         try: 
           result = parseJson(zcli.getContent("http://ip-api.com/json/" & ip))
@@ -101,8 +101,8 @@ proc localIp*():string =
    # returns current machine ip
    # 
 
-   var z = execCmdEx("ip route | grep src").output.split("src")[1].strip()
-   var zz = z.split(" ") # in case there is something after the ip
+   var z = strutils.strip(strutils.split(execCmdEx("ip route | grep src").output,"src")[1])
+   var zz = strutils.split(z," ") # in case there is something after the ip
    result = zz[0]
   
 proc localRouterIp*():string = 
@@ -132,9 +132,9 @@ proc pingy*(dest:string,pingcc:int = 3,col:string = termwhite) =
  
         let pingc = $pingcc
         let (outp,err) = execCmdEx("which ping")
-        let outp2 = quoteshellposix(strip(outp,true,true))
+        let outp2 = quoteshellposix(strutils.strip(outp,true,true))
         if err > 0:
-            printLnErrorMsg($err)
+            printLnErrorMsg($err) 
         else:        
             printLnBiCol("Pinging : " & dest,yellowgreen,truetomato,":",0,false,{})
             printLnBiCol("Expected: " & pingc & " pings")
@@ -260,9 +260,8 @@ proc showDig*(hostip:string = $"172.217.5.14") =
         printLnInfoMsg("HostIp ",hostip & spaces(10),xpos = 2)
         echo()
         for x in 0 ..< zz.len:
-          if zz[x].strip().len() > 0:
-            var zzz = zz[x].replace(";;","").replace(";","")
-            
+          if strutils.strip(zz[x]).len() > 0:
+            let zzz = zz[x].replace(";;","").replace(";","")
             printLnBiCol(fmtx(["<4","",""],$x," : ",zzz),xpos=2)
         decho(1)
         if zze > 0:
@@ -288,7 +287,7 @@ proc showDns*(hostdns:string = "google.com") =
         printLnInfoMsg("HostDns",hostdns & spaces(10),xpos = 2)
         echo()
         for x in 0 ..< hh.len:
-          if hh[x].strip().len() > 0:
+          if strutils.strip(hh[x]).len() > 0:
              printLnBiCol(fmtx(["<4","",""],$x," : ",hh[x]),xpos = 2)
         decho(1)
         if hhe > 0:

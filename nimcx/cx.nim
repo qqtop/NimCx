@@ -135,9 +135,9 @@ export os,osproc,times,random,strutils,strformat,strscans,parseutils,sequtils,pa
 export tables,sets,macros
 export posix,terminal,math,stats,json,streams,options,memfiles
 export httpclient,rawsockets,browsers,intsets,algorithm,net
-export unicode,typeinfo,typetraits,cpuinfo,colors,encodings,distros
+export typeinfo,typetraits,cpuinfo,colors,encodings,distros
 export rdstdin,sugar
-
+export unicode except strip,split,splitWhitespace
 
 # Profiling       
 #import nimprof  # nim c -r --profiler:on --stackTrace:on cx
@@ -338,7 +338,7 @@ proc nimcat*(curFile:string,countphrase : varargs[string,`$`] = "")=
             var line = ""
             var c = 1
             for line in memSlices(memfiles.open(ccurFile)):
-                    echo yellowgreen, align($c, 6),termwhite,":",spaces(1),wordwrap($line,maxLineWidth = tw - 8,splitLongWords = false,newLine = "\x0D\x0A" & spaces(8))
+                    echo yellowgreen, strutils.align($c, 6),termwhite,":",spaces(1),wordwrap($line,maxLineWidth = tw - 8,splitLongWords = false,newLine = "\x0D\x0A" & spaces(8))
                     if ($line).len > 0:
                       var lc = 0
                       for mc in 0..<countphrase.len:
@@ -1142,7 +1142,7 @@ template doByeBye*() =
   ## doByeBye
   ##
   ## a simple end program routine do give some feedback when exiting
-  ##  
+  ##  parseCxDatetime((datetime.datetime(2019,7,15,5,10,3,2345)))
   decho(2)
   rmTmpFilenames()
   print("Exiting now !  ",lime)
@@ -1171,9 +1171,9 @@ proc doFinish*() =
             printLnBiCol("Kernel     :  " & ux1[2] & " | Computer: " & ux1[1] & " | Os: " & ux1[0] & " | CPU Cores: " & $(osproc.countProcessors()),yellowgreen,lightslategray,":",0,false,{})
             let rld = release().splitLines()
             let rld3 = rld[2].splitty(":")
-            let rld4 = rld3[0] & spaces(2) & strip(rld3[1])
+            let rld4 = rld3[0] & spaces(2) & strutils.strip(rld3[1])
             printBiCol(rld4,yellowgreen,lightslategray,":",0,false,{})
-            printLnBiCol(spaces(2) & "Release: " & strip((split(rld[3],":")[1])),yellowgreen,lightslategray,":",0,false,{})
+            printLnBiCol(spaces(2) & "Release: " & strutils.strip((split(rld[3],":")[1])),yellowgreen,lightslategray,":",0,false,{})
             echo()       
         else:
             let un = execCmdEx("uname -v")

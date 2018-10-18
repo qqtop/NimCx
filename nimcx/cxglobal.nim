@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-10-15 
+##     Latest      : 2018-10-18 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -94,7 +94,7 @@ macro toEnum*(words: static[string]): untyped =
   ##      Color = toEnum("Red Green Blue Indigo")
   ##    
   result = newTree(nnkEnumTy, newEmptyNode())
-  for w in splitWhitespace(words): result.add ident(w)          
+  for w in strutils.splitWhitespace(words): result.add ident(w)          
           
 macro cxgetType*(s: typed): untyped = 
       ## cxgetType
@@ -329,7 +329,7 @@ proc isEmpty*(val: string): bool {.inline.} =
           ## 
           ## returns true if a string is empty if spaces are removed
           ##
-          return val.strip() == ""
+          return strutils.strip(val) == ""
 
 
 
@@ -508,7 +508,7 @@ proc ff22*(zz: int, n: int = 0): string =
                               inc sc
 
           if nz.startswith(",") == true:
-                    nz = strip(nz, true, false, {','})
+                    nz = strutils.strip(nz, true, false, {','})
           elif nz.startswith("-,") == true:
                     nz = nz.multiReplace(("-,", "-"))
 
@@ -694,7 +694,7 @@ proc fmtengine[T](a: string, astring: T): string =
                     # like 1,234.56  instead of 1234.56
                
                     # if df is nil we make it zero so no valueerror occurs
-                    if df.strip(true, true).len == 0: df = "0"
+                    if strutils.strip(df,true, true).len == 0: df = "0"
                     # in case of any edge cases throwing an error
                     try:
                               okstring = ff2(parseFloat(okstring), parseInt(
