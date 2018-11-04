@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-10-18 
+##     Latest      : 2018-11-04 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -1257,11 +1257,7 @@ proc printDotPos*(xpos:int,dotCol:string,blink:bool,dottype:string = widedot) =
       if blink == true: print(dottype,dotCol,styled = {styleBlink},substr = dottype)
       else: print(dottype,dotCol,styled = {},substr = dottype)
 
-           
-           
-           
-           
-           
+       
 # convenience functions for var. messages
 # for time/date related see cxtimes.nim      
       
@@ -1336,14 +1332,14 @@ proc printLnPassMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
 
 # printInfoMsg and printLnInfoMsg can take two strings for more generic use     
 proc printInfoMsg*(info,atext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
-     printBiCol3(["[$1 ]" % info , spaces(1) , atext] , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
+     printBiCol3(["[$1]" % info , spaces(1) , atext] , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
 
 proc printLnInfoMsg*(info,atext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[$1 ]" % info & spaces(1) & atext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
+     printLnBiCol("[$1]" % info & spaces(1) & atext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
 
 # experimental - use printLn2 so that we do not overwrite msg next to each other in case of blocks of printLnmsg2 statements
 proc printLnInfoMsg2*(info,atext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
-     printLnBiCol3(["[$1 ]" % info , spaces(1) , atext] , colLeft = colLeft ,colRight = colRight,sep= "]",xpos = xpos,false,{stylereverse})
+     printLnBiCol3(["[$1]" % info , spaces(1) , atext] , colLeft = colLeft ,colRight = colRight,sep= "]",xpos = xpos,false,{stylereverse})
      
       
 template dprint*[T](s:T) = 

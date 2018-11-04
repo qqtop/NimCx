@@ -12,7 +12,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-09-23
+##     Latest      : 2018-11-04
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
