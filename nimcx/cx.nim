@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-10-19
+##     Latest      : 2018-11-17
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -130,11 +130,11 @@ import
         httpclient, rawsockets, browsers, intsets, algorithm, net,
         unicode, typeinfo, typetraits, cpuinfo, colors, encodings, distros,
         rdstdin, sugar
-
+import strutils except align
 export
         cxconsts, cxglobal, cxtime, cxprint, cxhash, cxfont, cxtruecolor,
                 cxutils, cxnetwork, cxstats,
-        os, osproc, times, random, strutils, strformat, strscans, parseutils,
+        os, osproc, times, random, strformat, strscans, parseutils,
                 sequtils, parseopt,
         tables, sets, macros,
         posix, terminal, math, stats, json, streams, options, memfiles,
@@ -142,6 +142,7 @@ export
         typeinfo, typetraits, cpuinfo, colors, encodings, distros,
         rdstdin, sugar
 
+export strutils except align        
 export unicode except strip, split, splitWhitespace
 
 
@@ -241,7 +242,7 @@ proc newCxCounter*(): ref(Cxcounter) =
     ##
         result = (ref CxCounter)(value: 0)
 
-proc add*(co: ref Cxcounter) = inc co.value
+proc add*(co: ref Cxcounter) = inc co.value 
 proc dec*(co: ref Cxcounter) = dec co.value
 proc reset*(co: ref CxCounter) = co.value = 0
 

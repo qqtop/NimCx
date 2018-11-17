@@ -17,12 +17,11 @@
 ##
 ##     Description : provides most printing functions for the library
 ##     
-##     Note        : some parts are experimental, the aim in the future will be 
+##     Note        : some parts are experimental, the future aim will be 
 ##           
 ##                   one smart print function which handles any kind of demand for colors.
 ##                   
 ## 
-
 
 import cxconsts,cxglobal,terminal,strutils,sequtils,colors,macros
 
