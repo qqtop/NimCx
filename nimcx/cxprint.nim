@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-11-04 
+##     Latest      : 2018-12-02 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -320,13 +320,13 @@ proc printLn*[T](astring:T,
     ##    printLn(red & "What's up ? " & green & "Grub's up ! "
     ##    printLn("No need to reset the original color")
     ##    printLn("Nim does it again",peru,centered = true ,styled = {styleDim,styleUnderscore},substr = "i")
-    ##    decho(2)
+    ##    decho()
     ##
     ##    rainbow("what's up ?",centered = true)
     ##    echo()
     ##    loopy(0..10,printLn(newword(80,80),clrainbow,centered = true,styled={styleReverse}))
     ##    rainbow("Just asked!",centered = true)
-    ##    decho(2)
+    ##    decho()
     ##
     ##    loopy2(0,100,
     ##      block:
@@ -335,7 +335,7 @@ proc printLn*[T](astring:T,
     ##        var b = getRndInt(0,cxtruecol.len - 1)
     ##        printLn("Color Test rgb " & fmtx([">6","",">6","",">6"],r,",",g,",",b) & spaces(2) & efb2 * 30 & spaces(2) & cxpad($xloopy,6) ,
     ##                newColor(r,g,b),bgblue,styled = {styleReverse}))
-    ##    decho(2) 
+    ##    decho() 
     ##    
 
     print($(astring) & "\n",fgr,bgr,xpos,fitLine,centered,styled,substr)
@@ -611,10 +611,11 @@ proc dlineLn*(n:int = tw,
      writeLine(stdout,"")
 
 
-proc decho*(z:int = 1)  =
+proc decho*(z:int = 2)  =
     ## decho
     ##
     ## blank lines creator
+    ## default = 2 blank lines
     ##
     ##.. code-block:: nim
     ##    decho(10)
@@ -726,20 +727,20 @@ proc printLnBiCol*[T](s:varargs[T,`$`],
      ##    for x  in 0..<3:
      ##       # here our input is varargs so we need to specify all params
      ##        printLnBiCol("Test $1  : Ok " % $1,"this was $1 : what" % $x,23456.789,red,lime,":",0,false,{})
-     ##    decho(2)
+     ##    decho()
      ##    
      ##    for x  in 6..18:
      ##        # here we change the default colors
      ##        printLnBiCol("nice",123,":","check",@[x,x * 2,x * 3],cyan,lime,":",0,false,{})
      ##        
-     ##    decho(2)
+     ##    decho()
      ##    # usage with fmtx the build in format engine
      ##    printLnBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),yellow,randcol(),":",0,false,{})
      ##    printLnBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),colLeft = cyan)
      ##    printLnBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),colLeft=yellow,colRight=randcol())
      ##    printLnBiCol(fmtx(["","",">4"],"Good Idea : "," Number",50),123,colLeft = cyan,colRight=gold,sep=":",xpos=0,centered=false,styled={})
      ##  
-     ##    decho(2)  
+     ##    decho()  
      ##    printLnBicol(["TEST VARARGS : ","\n",lime,
      ##      $(createSeqint(20).sampleSeq(8,13)),newLine(2),hotpink,
      ##      $getRndInt(10000,12000),"\n",skyblue,

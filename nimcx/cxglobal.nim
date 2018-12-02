@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-10-18 
+##     Latest      : 2018-12-02 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -336,12 +336,11 @@ proc isEmpty*(val: string): bool {.inline.} =
 proc getRndInt*(mi: int = 0, ma: int = int.high): int {.noInit, inline.} =
           ## getRndInt
           ##
-          ## returns a random int between mi and < ma
+       #echo()
+#showAnyRowRange(ndf9,getRowRange(1,5)) # here first 5 rows   ## returns a random int between mi and < ma
           ## so for 0 or 1 we need rand(0..2)
           var maa = ma
-          if maa <= mi: # just take care of situation where ma <= mi provided
-                    maa = mi + 1
-          #echo(lightslategray, "[getRndint in cxglobal]\n" & red & "No reasonabale values for min and max random value provided.\nUsing : Min = " & $mi & " Max = " & $maa, termwhite)
+          if maa <= mi: maa = mi + 1
           result = rand(mi..maa)
 
 
@@ -1366,7 +1365,7 @@ template colPalette*(coltype: string, n: int): auto =
          ##.. code-block:: nim
          ##     import nimcx
          ##     cleanScreen()       
-         ##     decho(2)
+         ##     decho()
          ##     var mycol = "light"
          ##     mycol = mycol.lowerCase()
          ##     let somesample = aPaletteSample(mycol)

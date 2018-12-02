@@ -129,7 +129,7 @@ import
         posix, terminal, math, stats, json, streams, options, memfiles,
         httpclient, rawsockets, browsers, intsets, algorithm, net,
         unicode, typeinfo, typetraits, cpuinfo, colors, encodings, distros,
-        rdstdin, sugar
+        rdstdin, sugar , std/wordwrap
 import strutils except align
 export
         cxconsts, cxglobal, cxtime, cxprint, cxhash, cxfont, cxtruecolor,
@@ -140,7 +140,7 @@ export
         posix, terminal, math, stats, json, streams, options, memfiles,
         httpclient, rawsockets, browsers, intsets, algorithm, net,
         typeinfo, typetraits, cpuinfo, colors, encodings, distros,
-        rdstdin, sugar
+        rdstdin, sugar ,wordwrap
 
 export strutils except align        
 export unicode except strip, split, splitWhitespace
@@ -266,15 +266,15 @@ proc newColor*(r, g, b: int): string =
     ##   .. code-block:: nim
     ##     import nimcx
     ##     printLn("Test for rgb color 12345  " & efb2 * 10,newColor(27354,4763,1089))
-    ##     decho(2)
+    ##     decho()
     ##     printLn("Test for rgb color 12345  " & efb2 * 10,newColor(73547,4873,4888))
-    ##     decho(2)
+    ##     decho()
     ##     printLn("Test for rgb color 12345  " & efb2 * 10,newColor(990,483,38),bgblue)
-    ##     decho(2)
+    ##     decho()
     ##     cxPrintLn("Test cxprintln test 12345 " &  efb2 * 10,fontcolor = colBlue,bgr=newcolor(990,5483,38))
     ##     cxPrintLn("Test cxprintln test 12345 " &  efb2 * 10,fontcolor = colBlue,bgr=newcolor(9390,5483,38))
     ##     cxPrintLn("Test cxprintln test 12345 " &  efb2 * 10,fontcolor = colBlue,bgr=newcolor(93900,54830,3800))
-    ##     decho(2)
+    ##     decho()
     ##     # or save it
     ##     let mymystiquecolor = newColor2(93547,84873,77888)
     ##     printLn("Here we go",mymystiquecolor)
@@ -315,7 +315,7 @@ proc showColors*() =
                                 styleReverse}, substr = fmtx(["<23"],
                                 "  " & x[0]))
                 sleepy(0.01)
-        decho(2)
+        decho()
 
 
 # Misc. routines
@@ -347,7 +347,7 @@ proc nimcat*(curFile: string, countphrase: varargs[string, `$`] = "") =
                 echo()
                 discard
         else:
-                decho(2)
+                decho()
                 dlineLn()
                 echo()
                 var phraseinline = newSeqWith(countphrase.len, newSeq[int](0)) # holds the line numbers where a phrase to be counted was found
@@ -355,7 +355,7 @@ proc nimcat*(curFile: string, countphrase: varargs[string, `$`] = "") =
                 var c = 1
                 for line in memSlices(memfiles.open(ccurFile)):
                         echo yellowgreen, strutils.align($c, 6), termwhite,
-                                ":", spaces(1), wordwrap($line,
+                                ":", spaces(1), wrapWords($line,
                                         maxLineWidth = tw - 8, splitLongWords = false, newLine = "\x0D\x0A" & spaces(
                                         8))
                         if ($line).len > 0:
@@ -563,7 +563,7 @@ proc showBench*() =
                 printLn("Benchmark results emtpy. Nothing to show", red)
 
 
-proc showPalette*(coltype: string = "white") =
+proc showPalette*(coltype:string = "white" ) =
         ## ::
     ##   showPalette
     ##   
@@ -1257,7 +1257,7 @@ template doByeBye*() =
   ##
   ## a simple end program routine do give some feedback when exiting
   ##  parseCxDatetime((datetime.datetime(2019,7,15,5,10,3,2345)))
-        decho(2)
+        decho()
         rmTmpFilenames()
         print("Exiting now !  ", lime)
         printLn("Bye-Bye from " & extractFileName(getAppFilename()), red)
@@ -1276,7 +1276,7 @@ proc doFinish*() =
     ## and should be the last line of the application
     ##
         {.gcsafe.}:
-                decho(2)
+                decho()
                 infoLine()
                 printLn(" - " & year(getDateStr()), brightblack)
                 print(fmtx(["<14"], "Elapsed    : "), yellowgreen)
@@ -1347,7 +1347,7 @@ proc handler*() {.noconv.} =
         printInfoMsg("Elapsed secs ", fmtx(["<10.3"], epochTime() - cxstart),
                         xpos = 49)
         printLnInfoMsg("Info", " Have a Nice Day !", limegreen, xpos = 78) ## change or add custom messages as required
-        decho(2)
+        decho()
         system.addQuitProc(resetAttributes)
         quit(0)
 
@@ -1357,7 +1357,7 @@ proc doCxEnd*() =
     ## short testing routine if cx.nim is run as main
     ##
         clearup()
-        decho(2)
+        decho()
         doInfo()
         clearup()
         decho(3)
@@ -1365,7 +1365,7 @@ proc doCxEnd*() =
         let smm = "      import nimcx and your terminal comes alive with color...  "
         loopy2(0, 6):
                 cleanScreen()
-                decho(2)
+                decho()
                 printNimCx()
                 decho(8)
                 printMadeWithNim()
@@ -1380,7 +1380,7 @@ proc doCxEnd*() =
         doFinish()
 
 # putting decho here will put two blank lines before anything else runs
-decho(2)
+decho()
 # putting this here we can stop most programs which use this lib and get the
 # automatic exit messages , it may not work in tight loops involving execCMD or
 # waiting for readLine() inputs.

@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-10-01
+##     Latest      : 2018-12-02
 ##
 ##     OS          : Linux
 ##
@@ -48,7 +48,7 @@ proc pswwaux*() =
    let pswwaux = execCmdEx("ps -ww aux | sort -nk3 | tail ")
    printLn("ps -ww aux | sort -nk3 | tail ",yellowgreen)
    echo  pswwaux.output
-   decho(2)
+   decho()
                 
 proc cxCpuInfo*():string = 
    ## cxCpuInfo
@@ -749,7 +749,7 @@ proc newText*(textLen:int = 1000,textgen:string = "newWord"):string =
                        result = result & newline() & tres
                        tres = ""     
        else:
-            decho(2)
+            decho()
             printLnFailMsg("newText() ")
             printLnErrorMsg(textgen & " generator proc not available !")
             discard                
@@ -1047,10 +1047,10 @@ proc showSeq*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5,di
              inc c     
     
     if displayflag == true:
-      decho(2)      
+      decho()      
       let msg1 = "0 - " & $(z.len - 1) & spaces(3)
       printLnInfoMsg("Item Count ",cxpad($z.len,msg1.len),xpos = 3) 
-      decho(2)          
+      decho()          
  
 
        
@@ -1218,7 +1218,7 @@ proc distanceTo*(origin:(float,float),dest:(float,float)):float =
         ##  echo "Hongkong - London"
         ##  echo distanceto((114.109497,22.396427),(-0.126236,51.500153)) , " km"
         ##  echo distanceto((114.109497,22.396427),(-0.126236,51.500153)) / 1.609345 ," miles"
-        ##  decho(2)
+        ##  decho()
 
         let r = 6371.0    # mean Earth radius in kilometers  6371.0
         let lam_1 = degtorad(origin[0])

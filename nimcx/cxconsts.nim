@@ -12,7 +12,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-11-04
+##     Latest      : 2018-11-19
 ##
 ##     Compiler    : Nim >= 0.18.x dev branch
 ##
@@ -1140,6 +1140,9 @@ const
       sigma*           = "Σ"
       loopedsquare*    = "⌘"
       hand*            = "👋"
+      backspacebutton* = ""
+      tabbutton*       = ""
+      enterbutton*     = ""
 
 # emojis
 # mileage here may vary depending on whatever your system supports
