@@ -1178,7 +1178,7 @@ proc memCheck*(stats:bool = false) =
       ## memCheck shows memory before and after a GC_FullCollect run
       ## 
       ## set stats to true for full GC_getStatistics
-      ## 
+      ## @[1, 2, 4, 8, 16, 32]
       echo()
       if stats == true:
          printLnInfoMsg("MemCheck",cxpad("GC and System",30),skyblue,xpos = 2)

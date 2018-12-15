@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-12-02 
+##     Latest      : 2018-12-15 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -1184,14 +1184,6 @@ proc printCxLine*(aline:var Cxline) =
                         
             print("." & aline.newline,aline.dotrightcolor,xpos = aline.endpos - 1)
             
-
-       else:
-       
-           printLnErrorMsg("Wrong linetype specified ",xpos = 3)
-           quit(1)
-
-    
-
 
 proc doty*(d   :int,
            fgr :string = white,

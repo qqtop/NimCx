@@ -9,7 +9,7 @@ import os,terminal,times,parseutils,strutils
 # 
 # 
 # 
-# Last : 2018-10-18
+# Last : 2018-12-15
 # 
 # 
 
@@ -101,8 +101,7 @@ proc cxTimeZone*(amode:cxTz = long):string =
         result = "UTC" & $ltt[(($ltt).len - 6) ..< ($ltt).len] 
      of short:
         result = cxnow()[19 .. ^1]       
-     else:
-        discard        
+         
      
      
 proc toDateTime*(date:string = "2000-01-01"): DateTime =
@@ -467,6 +466,7 @@ proc lapTimer*(co:ref(CxTimer)):auto {.discardable.}  =
                var tdf = epochTime() - co.start
                co.lap.add(tdf)
                result = tdf
+               
 proc stopTimer*(co: ref(CxTimer))  = 
                 co.stop = epochTime()
                 saveTimerResults(co)
