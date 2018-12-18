@@ -3,7 +3,7 @@
 #{.passC: "-msse -msse2 -msse3 -mssse3 -march=native -mtune=native -flto".}
 #{.passL: "-msse -msse2 -msse3 -mssse3 -flto".}
 #{.deadCodeElim: on, checks: off, hints: off, warnings: off, optimization: size.}
-#  {.noforward: on.}   # future feature
+#{.noforward: on.}   # future feature
 ## ::
 ## 
 ##     Library     : nimcx.nim
@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-11-17
+##     Latest      : 2018-12-17
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -1115,7 +1115,7 @@ proc doInfo*() =
         printLnBiCol("Last compilation on           : " & CompileDate &
                         " at " & CompileTime & " UTC", yellowgreen, lightgrey, sep, 0, false, {})
         # this only makes sense for non executable files
-  #printLnBiCol("Last access time to file      : " & filename & " " & $(fromSeconds(int(getLastAccessTime(filename)))),yellowgreen,lightgrey,sep,0,false,{})
+        #printLnBiCol("Last access time to file      : " & filename & " " & $(fromSeconds(int(getLastAccessTime(filename)))),yellowgreen,lightgrey,sep,0,false,{})
         printLnBiCol("Last modificaton time of file : " & filename & " " &
                         $modTime, yellowgreen, lightgrey, sep, 0, false, {})
         printLnBiCol("Offset from UTC in hours      : " & cxTimeZone(),
@@ -1217,14 +1217,15 @@ proc infoLine*() =
         print(fmtx(["<14"], "Application:"), yellowgreen)
         print(extractFileName(getAppFilename()), skyblue)
         print(" | ", brightblack)
+        printBiCol("Pid : " & $getCurrentProcessId())
+        print("| ", brightblack)
         print("Nim : ", greenyellow)
         print(NimVersion & " | ", brightblack)
         print("nimcx : ", peru)
         print(CXLIBVERSION, brightblack)
         print(" | ", brightblack)
         print($someGcc & " | ", brightblack)
-        print("Size: " & brightblack & formatSize(getFileSize(getAppFilename())),
-                        peru)
+        print("Size: " & brightblack & formatSize(getFileSize(getAppFilename())), peru)
         print(" | ", brightblack)
         qqTop()
 
@@ -1234,8 +1235,7 @@ var unameRes, releaseRes: string
 
 template unameRelease(cmd, cache): untyped =
         if cache.len == 0:
-                cache = (when defined(nimscript): gorge(
-                                cmd) else: execProcess(cmd))
+                cache = (when defined(nimscript): gorge(cmd) else: execProcess(cmd))
         cache
 
 template uname*(): untyped = unameRelease("uname -a", unameRes)
@@ -1256,7 +1256,6 @@ template doByeBye*() =
         ## doByeBye
   ##
   ## a simple end program routine do give some feedback when exiting
-  ##  parseCxDatetime((datetime.datetime(2019,7,15,5,10,3,2345)))
         decho()
         rmTmpFilenames()
         print("Exiting now !  ", lime)
@@ -1264,7 +1263,7 @@ template doByeBye*() =
         printLn(yellowgreen & "Mem -> " & lightsteelblue & "Used : " & white &
                         ff2(getOccupiedMem()) & lightsteelblue & "  Free : " & white & ff2(getFreeMem(
                         )) & lightsteelblue & "  Total : " & white & ff2(getTotalMem()))
-        #doFinish()
+        
 
 proc doFinish*() =
         ## doFinish

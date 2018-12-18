@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-12-02
+##     Latest      : 2018-12-18
 ##
 ##     OS          : Linux
 ##
@@ -907,18 +907,26 @@ proc createSeqCJK*():seq[string] =
     
     var chzh = newSeq[string]()
     #for j in parsehexint("3400").. parsehexint("4DB5"): chzh.add($Rune(j))   # chars
-    for j in parsehexint("2E80").. parsehexint("2EFF"): chzh.add($Rune(j))   # CJK Radicals Supplement
-    for j in parsehexint("2F00").. parsehexint("2FDF"): chzh.add($Rune(j))   # Kangxi Radicals
-    for j in parsehexint("2FF0").. parsehexint("2FFF"): chzh.add($Rune(j))   # Ideographic Description Characters
-    for j in parsehexint("3000").. parsehexint("303F"): chzh.add($Rune(j))   # CJK Symbols and Punctuation
-    for j in parsehexint("31C0").. parsehexint("31EF"): chzh.add($Rune(j))   # CJK Strokes
-    for j in parsehexint("3200").. parsehexint("32FF"): chzh.add($Rune(j))   # Enclosed CJK Letters and Months
-    for j in parsehexint("3300").. parsehexint("33FF"): chzh.add($Rune(j))   # CJK Compatibility
-    for j in parsehexint("3400").. parsehexint("4DBF"): chzh.add($Rune(j))   # CJK Unified Ideographs Extension A
-    for j in parsehexint("4E00").. parsehexint("9FBF"): chzh.add($Rune(j))   # CJK Unified Ideographs
+    for j in parsehexint("2E80") .. parsehexint("2EFF"): chzh.add($Rune(j))   # CJK Radicals Supplement
+    for j in parsehexint("2F00") .. parsehexint("2FDF"): chzh.add($Rune(j))   # Kangxi Radicals
+    for j in parsehexint("2FF0") .. parsehexint("2FFF"): chzh.add($Rune(j))   # Ideographic Description Characters
+    for j in parsehexint("3000") .. parsehexint("303F"): chzh.add($Rune(j))   # CJK Symbols and Punctuation
+    for j in parsehexint("31C0") .. parsehexint("31EF"): chzh.add($Rune(j))   # CJK Strokes
+    for j in parsehexint("3200") .. parsehexint("32FF"): chzh.add($Rune(j))   # Enclosed CJK Letters and Months
+    for j in parsehexint("3300") .. parsehexint("33FF"): chzh.add($Rune(j))   # CJK Compatibility
+    for j in parsehexint("3400") .. parsehexint("4DBF"): chzh.add($Rune(j))   # CJK Unified Ideographs Extension A
+    for j in parsehexint("4E00") .. parsehexint("9FBF"): chzh.add($Rune(j))   # CJK Unified Ideographs
     #for j in parsehexint("F900").. parsehexint("FAFF"): chzh.add($Rune(j))   # CJK Compatibility Ideographs
     for j in parsehexint("FF00").. parsehexint("FF60"): chzh.add($Rune(j))   # Fullwidth Forms of Roman Letters
     result = chzh    
+    
+
+proc createSeqFractur*():seq[string] =
+    ## createSeqFracture
+    ## Fractur chars returned in a seq
+    var fra = newSeq[string]()
+    for j in parsehexint("1D56C") .. parsehexint("1D59F"): fra.add($Rune(j)) 
+    result = fra                 
 
 
 proc createSeqIching*():seq[string] =

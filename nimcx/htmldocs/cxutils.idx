@@ -36,6 +36,7 @@ createSeqGeoshapes	cxutils.html#createSeqGeoshapes,	cxutils: createSeqGeoshapes(
 createSeqHiragana	cxutils.html#createSeqHiragana,	cxutils: createSeqHiragana(): seq[string]	
 createSeqKatakana	cxutils.html#createSeqKatakana,	cxutils: createSeqKatakana(): seq[string]	
 createSeqCJK	cxutils.html#createSeqCJK,	cxutils: createSeqCJK(): seq[string]	
+createSeqFractur	cxutils.html#createSeqFractur,	cxutils: createSeqFractur(): seq[string]	
 createSeqIching	cxutils.html#createSeqIching,	cxutils: createSeqIching(): seq[string]	
 createSeqApl	cxutils.html#createSeqApl,	cxutils: createSeqApl(): seq[string]	
 createSeqBoxChars	cxutils.html#createSeqBoxChars,	cxutils: createSeqBoxChars(): seq[string]	
