@@ -106,15 +106,15 @@ const
       cright*   = "\x1b[C"      # ok
       cleft*    = "\x1b[D"      # ok
       cend*     = "\x1b[F"      # no effect
-      cpos1*    = "\x1b[H"      # ok moves cursor to screen position 0/0
+      cpos1*    = "\x1b[H"      # ok moves  to screen position 0/0
       cins*     = "\x1b[2~"     # no effect
       cdel*     = "\x1b[3~"     # no effect
       cpgup*    = "\x1b[5~"     # no effect
       cpgdn*    = "\x1b[6~"     # no effect
       csave*    = "\x1b[s"      # ok saves last xpos (but not ypos)
       crestore* = "\x1b[u"      # ok restores saved xpos
-      chide*    = "\x1b[?25l"   # ok hide cursor
-      cshow*    = "\x1b[?25h"   # ok show cursor
+      chide*    = "\x1b[?25l"   # ok hide 
+      cshow*    = "\x1b[?25h"   # ok show 
 
 const
       euro*   = "€"

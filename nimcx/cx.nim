@@ -121,10 +121,8 @@
 ##
 
 import
-        cxconsts, cxglobal, cxtime, cxprint, cxhash, cxfont, cxtruecolor,
-                cxutils, cxnetwork, cxstats,
-        os, osproc, times, random, strutils, strformat, strscans, parseutils,
-                sequtils, parseopt,
+        cxconsts, cxglobal, cxtime, cxprint, cxhash, cxfont, cxtruecolor, cxutils, cxnetwork, cxstats,
+        os, osproc, times, random, strutils, strformat, strscans, parseutils, sequtils, parseopt,
         tables, sets, macros,
         posix, terminal, math, stats, json, streams, options, memfiles,
         httpclient, rawsockets, browsers, intsets, algorithm, net,
@@ -132,10 +130,8 @@ import
         rdstdin, sugar , std/wordwrap
 import strutils except align
 export
-        cxconsts, cxglobal, cxtime, cxprint, cxhash, cxfont, cxtruecolor,
-                cxutils, cxnetwork, cxstats,
-        os, osproc, times, random, strformat, strscans, parseutils,
-                sequtils, parseopt,
+        cxconsts, cxglobal, cxtime, cxprint, cxhash, cxfont, cxtruecolor, cxutils, cxnetwork, cxstats,
+        os, osproc, times, random, strformat, strscans, parseutils, sequtils, parseopt,
         tables, sets, macros,
         posix, terminal, math, stats, json, streams, options, memfiles,
         httpclient, rawsockets, browsers, intsets, algorithm, net,
@@ -144,9 +140,6 @@ export
 
 export strutils except align        
 export unicode except strip, split, splitWhitespace
-
-
-
 
 # Profiling       
 #import nimprof  # nim c -r --profiler:on --stackTrace:on cx
@@ -1389,7 +1382,8 @@ setControlCHook(handler)
 
 if getcxTrueColorSetFlag == true: # defined in cxglobal
         getcxTrueColorSet() # preload the cxTrueCol seq in default mode if getcxTrueColorSetFlag == true  --> default == false
-#checktruecolorsupport()      # comment out if above line uncommented
+else:
+   checktruecolorsupport()      # comment out if above line uncommented
 
 # this will reset any color changes in the terminal
 # so no need for this line in the calling prog

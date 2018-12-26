@@ -294,7 +294,7 @@ proc getPointInSphere*():auto =
 proc randpos*():int =
     ## randpos
     ##
-    ## sets cursor to a rand position in the visible terminal window
+    ## sets  to a rand position in the visible terminal window
     ##
     ## returns x position
     ##

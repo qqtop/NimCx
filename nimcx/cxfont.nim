@@ -1133,7 +1133,7 @@ proc dotMatrixTyper*(s:string,xpos:int = 1,color:string = randcol()) =
   ## 
   ## no checking as to terminalwidth is done so adjust terminal width and char sizes accordingly
   ## 
-  ## cursor will be positioned at top right of last character
+  ##  will be positioned at top right of last character
   ## 
   ##.. code-block:: nim
   ##  # example for dotMatrixTyper and bracketMatrixTyper 
@@ -1260,7 +1260,7 @@ proc bracketMatrixTyper*(s:string,xpos:int = 1,color:string = randcol()) =
   ## 
   ## no checking as to terminalwidth is done so adjust terminal width and char sizes accordingly
   ## 
-  ## cursor will be positioned at top right of last character
+  ##  will be positioned at top right of last character
   ## 
 
   

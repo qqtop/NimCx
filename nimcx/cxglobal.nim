@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-12-02 
+##     Latest      : 2018-12-26 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -825,7 +825,7 @@ proc centerX*(): int = tw div 2 + 2
 proc centerPos*(astring: string) =
          ## centerpos
          ##
-         ## tries to move cursor so that string is centered when printing
+         ## tries to move  so that string is centered when printing
          ##
          ##.. code-block:: nim
          ##    var s = "Hello I am centered"
@@ -1116,28 +1116,28 @@ proc getAscii*(s: string): seq[int] =
 template curUp*(x: int = 1) =
          ## curUp
          ##
-         ## mirrors terminal cursorUp
+         ## mirrors terminal Up
          cursorUp(stdout, x)
 
 
 template curDn*(x: int = 1) =
          ## curDn
          ##
-         ## mirrors terminal cursorDown
+         ## mirrors terminal Down
          cursorDown(stdout, x)
 
 
 template curBk*(x: int = 1) =
          ## curBkn
          ##
-         ## mirrors terminal cursorBackward
+         ## mirrors terminal Backward
          cursorBackward(stdout, x)
 
 
 proc curFw*(x: int = 1): auto {.discardable.} =
          ## curFw
          ##
-         ## mirrors terminal cursorForward
+         ## mirrors terminal Forward
          cursorForward(stdout, x)
          result = " " * x
 
@@ -1172,11 +1172,11 @@ proc curMove*(up: int = 0,
               bk: int = 0) =
          ## curMove
          ##
-         ## conveniently move the cursor to where you need it
+         ## conveniently move the  to where you need it
          ##
          ## relative of current postion , which you app need to track itself
          ##
-         ## setting cursor off terminal will wrap output to next line
+         ## setting  off terminal will wrap output to next line
          ##
          curup(up)
          curdn(dn)
@@ -1188,14 +1188,14 @@ proc curMove*(up: int = 0,
 template curOn* = 
      ## curOn
      ## 
-     ## cursor on , mirrors function showCursor from terminal.nim
+     ##  on , mirrors function showCursor from terminal.nim
      ## 
      showCursor()
 
 template curOff* =
      ## curOff
      ## 
-     ## cursor off , mirrors function hideCursor from terminal.nim
+     ##  off , mirrors function hideCursor from terminal.nim
      ## 
      hideCursor()
          
