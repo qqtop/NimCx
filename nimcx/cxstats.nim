@@ -10,9 +10,9 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-09-26 
+##     Latest      : 2019-01-09 
 ##
-##     Compiler    : Nim >= 0.18.x dev branch
+##     Compiler    : Nim >= 0.19.x dev branch
 ##
 ##     OS          : Linux
 ##
@@ -21,12 +21,12 @@
 
 import cxconsts,cxglobal,cxprint,stats
   
-proc returnStat(x:Runningstat,stat : seq[string]):float =
-     ## returnStat
-     ## WIP
-     ## returns any of following from a runningstat instance
-     ## 
-     discard
+# proc returnStat(x:Runningstat,stat : seq[string]):float =
+#      ## returnStat
+#      ## WIP
+#      ## returns any of following from a runningstat instance
+#      ## 
+#      discard
 
 proc showStats*(x:Runningstat,n:int = 3,xpos:int = 1) =
      ## showStats

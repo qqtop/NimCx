@@ -43,6 +43,7 @@ tmpFilename	cx.html#tmpFilename,string	cx: tmpFilename(filename: string): string
 rmTmpFilenames	cx.html#rmTmpFilenames,	cx: rmTmpFilenames()	
 doInfo	cx.html#doInfo,	cx: doInfo()	
 infoLine	cx.html#infoLine,	cx: infoLine()	
+printTest	cx.html#printTest,string	cx: printTest(astring: string = &quot;&quot;)	
 uname	cx.html#uname.t,	cx: uname(): untyped	
 release	cx.html#release.t,	cx: release(): untyped	
 theEnd	cx.html#theEnd,	cx: theEnd()	

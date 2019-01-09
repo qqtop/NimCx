@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-12-18
+##     Latest      : 2019-01-09
 ##
 ##     OS          : Linux
 ##
@@ -56,7 +56,10 @@ proc cxCpuInfo*():string =
    ## executes a system command to get cpu information
    ## 
    var (output,error) = execCmdEx("cat /proc/cpuinfo | grep name |cut -f2 -d:")
-   result = output       
+   if error <> 0:
+     result = $error
+   else:  
+     result = output       
 
 proc cxVideoInfo*():string = 
    ## cxVideoInfo
@@ -65,7 +68,10 @@ proc cxVideoInfo*():string =
    ## may show warning on certain systems to run as super user
    ## 
    var (output,error) = execCmdEx("lshw -c video")
-   result = output   
+   if error <> 0:
+     result = $error
+   else:  
+     result = output   
    
 
 proc showCpuCores*() =
@@ -321,7 +327,7 @@ template getCard* :auto =
     ##    print(getCard(),randCol(),xpos = centerX())  # get card and print in random color at xpos
     ##    doFinish()
     ##
-    cards[rand(rxCards)]
+    cards[sample(rxCards)]
     
 
 proc showRandomCard*(xpos:int = centerX()) = 
@@ -549,7 +555,7 @@ proc newWordCJK*(minwl:int = 3 ,maxwl:int = 10):string =
       result = ""
       let c5 = toSeq(minwl..maxwl)
       let chc = toSeq(parsehexint("3400")..parsehexint("4DB5"))
-      for xx in 0..<rand(c5): result = result & $Rune(rand(chc))
+      for xx in 0..<sample(c5): result = result & $Rune(sample(chc))
 
 proc newWord*(minwl:int=3,maxwl:int = 10):string =
     ## newWord
@@ -566,10 +572,10 @@ proc newWord*(minwl:int=3,maxwl:int = 10):string =
         # words with length range 3 to maxwl
         let maxws = toSeq(minwl..maxwl)
         # get a random length for a new word
-        let nwl = rand(maxws)
+        let nwl = sample(maxws)
         let chc = toSeq(33..126)
         while nw.len < nwl:
-           var x = rand(chc)
+           var x = sample(chc)
            if char(x) in Letters:
               nw = nw & $char(x)
         result = normalize(nw)   # return in lower case , cleaned up
@@ -592,10 +598,10 @@ proc newWord2*(minwl:int=3,maxwl:int = 10 ):string =
         # words with length range 3 to maxwl
         let maxws = toSeq(minwl..maxwl)
         # get a random length for a new word
-        let nwl = rand(maxws)
+        let nwl = sample(maxws)
         let chc = toSeq(33..126)
         while nw.len < nwl:
-          var x = rand(chc)
+          var x = sample(chc)
           if char(x) in IdentChars:
               nw = nw & $char(x)
         result = normalize(nw)   # return in lower case , cleaned up
@@ -620,10 +626,10 @@ proc newWord3*(minwl:int=3,maxwl:int = 10 ,nflag:bool = true):string =
         # words with length range 3 to maxwl
         let maxws = toSeq(minwl..maxwl)
         # get a random length for a new word
-        let nwl = rand(maxws)
+        let nwl = sample(maxws)
         let chc = toSeq(33..126)
         while nw.len < nwl:
-          var x = rand(chc)
+          var x = sample(chc)
           if char(x) in AllChars:
               nw = nw & $char(x)
         if nflag == true:
@@ -647,9 +653,9 @@ proc newHiragana*(minwl:int=3,maxwl:int = 10 ):string =
     if minwl <= maxwl:
         result = ""
         var rhig = toSeq(12353..12436)  
-        var zz = rand(toSeq(minwl..maxwl))
+        var zz = sample(toSeq(minwl..maxwl))
         while result.len < zz:
-              var hig = rand(rhig)  
+              var hig = sample(rhig)  
               result = result & $Rune(hig)
        
     else:
@@ -668,8 +674,8 @@ proc newKatakana*(minwl:int=3,maxwl:int = 10 ):string =
     ##
     if minwl <= maxwl:
         result  = ""
-        while result.len < rand(toSeq(minwl..maxwl)):
-              result = result & $Rune(rand(toSeq(parsehexint("30A0")..parsehexint("30FF"))))  
+        while result.len < sample(toSeq(minwl..maxwl)):
+              result = result & $Rune(sample(toSeq(parsehexint("30A0")..parsehexint("30FF"))))  
     else:
         printLnErrorMsg("minimum word length larger than maximum word length")
         result = ""

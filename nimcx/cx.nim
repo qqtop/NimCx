@@ -18,9 +18,9 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-12-17
+##     Latest      : 2019-01-09
 ##
-##     Compiler    : Nim >= 0.19.x dev branch
+##     Compiler    : Nim >= 0.19.x devel branch
 ##
 ##     OS          : Linux
 ##
@@ -125,7 +125,7 @@ import
         os, osproc, times, random, strutils, strformat, strscans, parseutils, sequtils, parseopt,
         tables, sets, macros,
         posix, terminal, math, stats, json, streams, options, memfiles,
-        httpclient, rawsockets, browsers, intsets, algorithm, net,
+        httpclient, nativesockets, browsers, intsets, algorithm, net,
         unicode, typeinfo, typetraits, cpuinfo, colors, encodings, distros,
         rdstdin, sugar , std/wordwrap
 import strutils except align
@@ -134,7 +134,7 @@ export
         os, osproc, times, random, strformat, strscans, parseutils, sequtils, parseopt,
         tables, sets, macros,
         posix, terminal, math, stats, json, streams, options, memfiles,
-        httpclient, rawsockets, browsers, intsets, algorithm, net,
+        httpclient, nativesockets, browsers, intsets, algorithm, net,
         typeinfo, typetraits, cpuinfo, colors, encodings, distros,
         rdstdin, sugar ,wordwrap
 
@@ -794,13 +794,13 @@ proc remDir*(dirname: string): bool {.discardable.} =
 
 proc checkClip*(sel: string = "primary"): string =
         ## checkClip
-     ## 
-     ## returns the newest entry from the Clipboard
-     ## requires xclip to be installed
-     ## 
-     ##.. code-block:: nim
-     ##     printLnBiCol("Last Clipboard Entry : " & checkClip())
-     ##
+        ## 
+        ## returns the newest entry from the Clipboard
+        ## requires xclip to be installed
+        ## 
+        ##.. code-block:: nim
+        ##     printLnBiCol("Last Clipboard Entry : " & checkClip())
+        ##
         let (outp, errC) = execCmdEx("xclip -selection $1 -quiet -silent -o" %
                         $sel)
         var rx = ""
@@ -809,8 +809,7 @@ proc checkClip*(sel: string = "primary"): string =
                 for x in 0..<r.len:
                         rx = rx & " " & r[x]
         else:
-                rx = "xclip returned errorcode : " & $errC &
-                                ". Clipboard not accessed correctly"
+                rx = "xclip returned errorcode : " & $errC & ". Clipboard not accessed correctly"
         result = rx
 
 
@@ -828,23 +827,23 @@ proc toClip*[T](s: T) =
 
 
 proc getColorName*[T](sc: T): string =
-        ## getColorName
-   ## 
-   ## this functions returns the colorname based on a color escape sequence
-   ## 
-   ## usually used with randcol() to see what color was actually returned
-   ## 
-   ## 
-   ##.. code-block:: nim
-   ##  import nimcx
-   ##  for x in 0.. 10: 
-   ##     let acol = randcol()
-   ##     let acolname = getColorName(acol)         
-   ##     printLn(acolname,acol)  
-   ## 
-   ##
-        result = "unknown color"
-        for x in colornames:
+       ## getColorName
+       ## 
+       ## this functions returns the colorname based on a color escape sequence
+       ## 
+       ## usually used with randcol() to see what color was actually returned
+       ## 
+       ## 
+       ##.. code-block:: nim
+       ##  import nimcx
+       ##  for x in 0.. 10: 
+       ##     let acol = randcol()
+       ##     let acolname = getColorName(acol)         
+       ##     printLn(acolname,acol)  
+       ## 
+       ##
+       result = "unknown color"
+       for x in colornames:
                 if x[1] == sc:
                         result = x[0]
 
@@ -925,7 +924,7 @@ proc cxHelp*(s: openarray[string], xpos: int = 2) =
   ## 
   ##
   ##.. code-block:: nim
-  ##    cxHelp(["Help system for my application",
+  ##    cxHelp(["Help system for " & extractFileName(getAppFilename()),
   ##         "",
   ##        "1) Read the book",
   ##        "2) use more data",
@@ -1220,9 +1219,24 @@ proc infoLine*() =
         print($someGcc & " | ", brightblack)
         print("Size: " & brightblack & formatSize(getFileSize(getAppFilename())), peru)
         print(" | ", brightblack)
-        qqTop()
+        
 
+proc printTest*(astring:string="") =
+  ## printTest
+  ## 
+  ## prints TEST,the currenbtfilename and an optional string
+  ## 
 
+  println2("")
+  printLn2("""  ___  ___  __  ___ """,truetomato,styled={styleBright})
+  printLn2("""   |  |___ [__   |  """,lavender,styled={styleBright})
+  printLn2("""   |  |___ ___]  |  """,palegreen,styled={styleBright})
+  println2("")
+  println2("   " & extractFileName(getAppFilename()),truetomato)
+  if astring != "":
+      echo("  ",skyblue,rightarrow,white,astring)
+  decho(2)
+      
 # code below borrowed from distros.nim and made exportable
 var unameRes, releaseRes: string
 
@@ -1270,7 +1284,7 @@ proc doFinish*() =
         {.gcsafe.}:
                 decho()
                 infoLine()
-                printLn(" - " & year(getDateStr()), brightblack)
+                echo()
                 print(fmtx(["<14"], "Elapsed    : "), yellowgreen)
                 print(fmtx(["<", ">5"], ff(epochtime() - cxstart, 3), " secs"),
                                 goldenrod)
@@ -1292,6 +1306,9 @@ proc doFinish*() =
                         printLnBiCol(spaces(2) & "Release: " & strutils.strip((
                                         split(rld[3], ":")[1])), yellowgreen,
                                         lightslategray, ":", 0, false, {})
+                        printBiCol("Authored   : ")                
+                        qqTop()
+                        printLn(" - " & year(getDateStr()), lightslategray)
                         echo()
                 else:
                         let un = execCmdEx("uname -v")

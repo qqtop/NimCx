@@ -243,7 +243,7 @@ proc showCxTrueColorPalette*(min:int = 0,max:int = 888,step: int = 12,flag48:boo
                inc rgx
          #if rgx == 15167 and lcol > 7735106:      
                
-            let tcol  = color38(cxTrueCol)
+            #let tcol  = color38(cxTrueCol)
             let bcol  = color38(cxTrueCol)
             let dlcol = color38(cxTrueCol)
             let drcol = color38(cxTrueCol)
@@ -290,10 +290,10 @@ proc showCxTrueColorPalette2*() =
                        inc rgx
                  #if rgx == 15167 and lcol > 7735106:      
                        
-                    var tcol  = color38(cxTrueCol)
-                    var bcol  = color38(cxTrueCol)
-                    var dlcol = color38(cxTrueCol)
-                    var drcol = color38(cxTrueCol)
+                    #let tcol  = color38(cxTrueCol)
+                    let bcol  = color38(cxTrueCol)
+                    let dlcol = color38(cxTrueCol)
+                    let drcol = color38(cxTrueCol)
                     testLine.startpos = 5  
                     testLine.endpos = 150
                     testLine.linecolor        = cxTrueCol[lcol]

@@ -1,4 +1,4 @@
-import os,osproc,json,httpclient,strutils,strscans,posix,rawsockets,sets,terminal
+import os,osproc,json,httpclient,strutils,strscans,posix,net,nativesockets,sets,terminal
 import cxconsts,cxglobal,cxprint
 
 # cxnetwork.nim

@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-12-26 
+##     Latest      : 2019-01-09 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -38,7 +38,10 @@ import
           typeinfo,
           typetraits
 
-
+# needed for the cxIsDigit proc
+{.push debugger:off .} # the user does not want to trace a part of the standard library!
+include "system/inclrtl"
+{.pop.}
 
 # forward declarations
 proc ff*(zz: float, n: int = 5): string
@@ -100,9 +103,19 @@ macro cxgetType*(s: typed): untyped =
       ## cxgetType
       ## 
       ## answers what type is it question
-      ##  
+      ## in newer nim versions just use type(s)  
       result = getType(s)
       
+
+proc cxIsDigit*(c: char): bool {.noSideEffect, procvar, rtl, extern: "nsuIsDigitChar".} =
+  ## Checks whether or not `c` is a number.
+  ## this is the old deprecated isdigit proc from strutils prior to nim 0.20
+  ## This checks 0-9 ASCII characters only.
+  runnableExamples:
+    doAssert cxIsDigit('n') == false
+    doAssert cxIsDigit('8') == true
+  return c in Digits
+
                   
 proc tupleTypes*(atuple: tuple): seq[string] =
           ## tupletypes
@@ -279,7 +292,7 @@ proc rndRGB*(): auto =
           var cln = newSeq[int]()
           for x in 0..<colorNames.len: cln.add(x)
           try:
-             let argb = extractRgb(parsecolor(colorNames[rand(cln)][0])) #rndsample
+             let argb = extractRgb(parsecolor(colorNames[sample(cln)][0])) #rndsample
              let resrgb = rgb(argb.r, argb.g, argb.b)
              result = resrgb
           except ValueError:
@@ -663,16 +676,16 @@ proc fmtengine[T](a: string, astring: T): string =
 
           if a.startswith("<") or a.startswith(">"):
                     textflag = false
-          elif a.len > 0 and isDigit($a[0]):
+          elif a.len > 0 and cxIsDigit(a[0]):
                     textflag = false
           else: textflag = true
 
           for x in a:
 
-                    if isDigit(x) and dotflag == false:
+                    if cxisDigit(x) and dotflag == false:
                               dg = dg & $x
 
-                    elif isDigit(x) and dotflag == true:
+                    elif cxisDigit(x) and dotflag == true:
                               df = df & $x
 
                     elif $x == "<" or $x == ">":
@@ -845,7 +858,7 @@ template colPaletteName*(coltype: string, n: int): auto =
           ## see example at colPalette
           ##
           var ts = newseq[string]()
-          # build the custom palette ts
+          # build the custom palette tss
           for colx in 0..<colorNames.len:
              if colorNames[colx][0].startswith(coltype) or colorNames[colx][0].contains(coltype):
                 ts.add(colorNames[colx][0])
@@ -908,10 +921,10 @@ template randCol2*(coltype: string): auto =
                               ts.add(colorNames[x][1])
           if ts.len == 0: ts.add(colorNames[getRndInt(0, colorNames.len - 1)][
                               1]) # incase of no suitable string we return standard randcol
-          ts[rand(colPaletteIndexer(ts))] #rndsample
+          ts[sample(colPaletteIndexer(ts))] #rndsample
 
 
-template randCol*(): string = rand(colorNames)[1]
+template randCol*(): string = sample(colorNames)[1]
         ## randCol
         ##
         ## get a randcolor from colorNames , no filter is applied 

@@ -9,7 +9,7 @@ import os,terminal,times,parseutils,strutils
 # 
 # 
 # 
-# Last : 2018-12-15
+# Last : 2019-01-09
 # 
 # 
 
@@ -20,7 +20,7 @@ type
 
 # types used in cxtimer
 type
-    CxTimer* =  object {.packed.}
+    CxTimer* {.packed.} =  object 
             name* : string
             start*: float
             stop  : float
@@ -276,7 +276,7 @@ proc plusDays*(aDate:string,days:int):string =
    if validDate(aDate) == true:
       var rxs = ""
       let tifo = parse(aDate,"yyyy-MM-dd") # this returns a DateTime type
-      let myinterval = initInterval(days = days)
+      let myinterval =  initTimeInterval(days = days)
       rxs = fx(tifo + myinterval)
       result = rxs
    else:
@@ -297,7 +297,7 @@ proc minusDays*(aDate:string,days:int):string =
    if validDate(aDate) == true:
       var rxs = ""
       let tifo = parse(aDate,"yyyy-MM-dd") # this returns a DateTime type
-      let myinterval = initInterval(days = days)
+      let myinterval =  initTimeInterval(days = days)
       rxs = fx(tifo - myinterval)
       result = rxs
    else:

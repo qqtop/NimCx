@@ -1371,5 +1371,5 @@ macro pdebug*(n: varargs[typed]): untyped =
       # add newline
       result.add(newCall("writeLine", newIdentNode("stdout"), newStrLitNode("")))     
 
-      
+
 # end of cxprint.nim      
