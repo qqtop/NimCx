@@ -3,7 +3,6 @@ styledEchoPrint	cxglobal.html#styledEchoPrint.m,varargs[untyped]	cxglobal: style
 procName	cxglobal.html#procName.m,untyped	cxglobal: procName(x: untyped): untyped	
 toEnum	cxglobal.html#toEnum.m,static[string]	cxglobal: toEnum(words: static[string]): untyped	
 cxgetType	cxglobal.html#cxgetType.m,typed	cxglobal: cxgetType(s: typed): untyped	
-cxIsDigit	cxglobal.html#cxIsDigit,char	cxglobal: cxIsDigit(c: char): bool	
 tupleTypes	cxglobal.html#tupleTypes,	cxglobal: tupleTypes(atuple: tuple): seq[string]	
 unidecodeU	cxglobal.html#unidecodeU.t,untyped	cxglobal: unidecodeU(ustring: untyped): untyped	
 `*`	cxglobal.html#*.t,string,int	cxglobal: `*`(s: string; n: int): untyped	

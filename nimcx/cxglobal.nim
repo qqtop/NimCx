@@ -38,10 +38,6 @@ import
           typeinfo,
           typetraits
 
-# needed for the cxIsDigit proc
-{.push debugger:off .} # the user does not want to trace a part of the standard library!
-include "system/inclrtl"
-{.pop.}
 
 # forward declarations
 proc ff*(zz: float, n: int = 5): string
@@ -106,15 +102,6 @@ macro cxgetType*(s: typed): untyped =
       ## in newer nim versions just use type(s)  
       result = getType(s)
       
-
-proc cxIsDigit*(c: char): bool {.noSideEffect, procvar, rtl, extern: "nsuIsDigitChar".} =
-  ## Checks whether or not `c` is a number.
-  ## this is the old deprecated isdigit proc from strutils prior to nim 0.20
-  ## This checks 0-9 ASCII characters only.
-  runnableExamples:
-    doAssert cxIsDigit('n') == false
-    doAssert cxIsDigit('8') == true
-  return c in Digits
 
                   
 proc tupleTypes*(atuple: tuple): seq[string] =
@@ -676,16 +663,16 @@ proc fmtengine[T](a: string, astring: T): string =
 
           if a.startswith("<") or a.startswith(">"):
                     textflag = false
-          elif a.len > 0 and cxIsDigit(a[0]):
+          elif a.len > 0 and isDigit(a[0]):
                     textflag = false
           else: textflag = true
 
           for x in a:
 
-                    if cxisDigit(x) and dotflag == false:
+                    if isDigit(x) and dotflag == false:
                               dg = dg & $x
 
-                    elif cxisDigit(x) and dotflag == true:
+                    elif isDigit(x) and dotflag == true:
                               df = df & $x
 
                     elif $x == "<" or $x == ">":
