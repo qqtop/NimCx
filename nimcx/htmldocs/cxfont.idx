@@ -43,12 +43,14 @@ printFontFancy	cxfont.html#printFontFancy,string,int	cxfont: printFontFancy(s: s
 printNimCx	cxfont.html#printNimCx,int	cxfont: printNimCx(npos: int = getTerminalWidth() div 2 - 30)	
 printMadeWithNim	cxfont.html#printMadeWithNim,int	cxfont: printMadeWithNim(npos: int = getTerminalWidth() div 2 - 60)	
 printNim	cxfont.html#printNim,int	cxfont: printNim(npos: int = getTerminalWidth() div 2 - 60)	
+will shortly be deprecated use:  printSlim	cxfont.html#will-shortly-be-deprecated-usecolon-printslim	 will shortly be deprecated use:  printSlim	
 printSlimNumber	cxfont.html#printSlimNumber,string,string,BackgroundColor,int	cxfont: printSlimNumber(anumber: string; fgr: string = yellowgreen;\n                bgr: BackgroundColor = bgBlack; xpos: int = 1)	
 printSlim	cxfont.html#printSlim,string,string,int,string	cxfont: printSlim(ss: string = &quot;&quot;; frg: string = termwhite; xpos: int = 0; align: string = &quot;left&quot;)	
+slimL	cxfont.html#slimL,string,string,int,int	cxfont: slimL(astring: string; col: string = truetomato; xpos: int = 5; adjuster: int = 0)	
 printCxFontLetter	cxfont.html#printCxFontLetter,int,int,seq[seq[string]],string,int	cxfont: printCxFontLetter(n: int; xpos: int; cxfont: seq[seq[string]]; color: string;\n                  vertstepping: int)	
 printCxFontText	cxfont.html#printCxFontText,seq[int],int,seq[seq[string]],string,int,int	cxfont: printCxFontText(textseq: seq[int]; xpos: int = 2; cxfont: seq[seq[string]];\n                color: string = randcol(); vertstepping: int = 9; kerning: int = 19)	
 createCxFont	cxfont.html#createCxFont,string	cxfont: createCxFont(name: string): seq[seq[string]]	
 showCxFont	cxfont.html#showCxFont,string	cxfont: showCxFont(name: string)	
-dotMatrixFontTest	cxfont.html#dotMatrixFontTest,	cxfont: dotMatrixFontTest()	
+dotMatrixFontTest	cxfont.html#dotMatrixFontTest	cxfont: dotMatrixFontTest()	
 dotMatrixTyper	cxfont.html#dotMatrixTyper,string,int,string	cxfont: dotMatrixTyper(s: string; xpos: int = 1; color: string = randcol())	
 bracketMatrixTyper	cxfont.html#bracketMatrixTyper,string,int,string	cxfont: bracketMatrixTyper(s: string; xpos: int = 1; color: string = randcol())	

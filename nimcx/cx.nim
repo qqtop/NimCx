@@ -310,7 +310,43 @@ proc showColors*() =
                 sleepy(0.01)
         decho()
 
+proc makeColor*(r:int=getrndint(0,2550),g:int=getrndint(0,2550),b:int=getrndint(1000,2550),xpos:int=1) =
+     ## makeColor
+     ## 
+     ## a utility function to show random effect of rgb changes
+     ## see makeColorTest or makeGreyScaleTest for example use
+     ## 
+     let nc = newcolor(r,g,b)
+     print(cxlpad($r & " " & $g & " " & $b,15) & " " & efb2 * 20,nc,xpos=xpos)
+     decho(1)
 
+ 
+proc makeColorTest*() = 
+    loopy2(0,30):
+      makecolor()
+      curup(1)     
+      makecolor(xpos = 40)       
+      curup(1)
+      makecolor(xpos = 80)   
+      
+ 
+proc makeGreyScaleTest*(astart:int = 0, aend:int = 255 ,astep:int = 5) =
+    ## makeGreyScaleTest
+    ## 
+    ## shows a greyscale table with desired params 
+    ## 
+    ## 
+    decho(2)
+    var cad = 50
+    var cad2 = cad + 50
+    for x in countup(astart,aend - 100,astep):
+       makecolor(x,x,x)
+       curup(1)     
+       makecolor(x+cad,x+cad,x+cad,xpos = 40) 
+       curup(1)                        
+       makecolor(x+cad2,x+cad2,x+cad2,xpos = 80)
+     
+          
 # Misc. routines
 
 
@@ -1367,6 +1403,10 @@ proc doCxEnd*() =
     ##
         clearup()
         decho()
+        print(nimcxl,rndcol(),styled={styleBright}) 
+        print(spaces(13))
+        qqtop()
+        println("  -  " & year(getDateStr()))
         doInfo()
         clearup()
         decho(3)

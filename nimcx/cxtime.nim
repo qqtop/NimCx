@@ -85,6 +85,24 @@ template cxDateTime* : string = getDateStr() & " " & getClockStr()
      ## 
      ## eg : 2018-08-23 16:48:50
      ## 
+
+proc cxDuration*(tstart:int|float,tend:int|float):string =
+     ## cxDuration
+     ## 
+     ## expects tstart and tend to be seconds
+     ## 
+     ##.. code-block:: nim
+     ##    
+     ##   echo "Duration: " ,cxDuration(epochTime() - 201235.32,epochTime())
+     ##   echo "Duration: " ,cxDuration(0,567887)
+     ##   
+     ##   # output:
+     ##   # Duration: 2 days, 7 hours, 53 minutes, and 55 seconds
+     ##   # Duration: 6 days, 13 hours, 44 minutes, and 47 seconds
+     ##   
+     result = $(initduration(seconds = int(tend) - int(tstart)))
+    
+
  
 proc cxTimeZone*(amode:cxTz = long):string = 
    ## cxTimeZone

@@ -1267,5 +1267,7 @@ proc showEmojisSmall*() =
        ## 
        ## 
        showSeq(getEmojisSmall(),rndcol,maxitemwidth=4)      
+
+ 
           
 # END OF CXUTILS.NIM #

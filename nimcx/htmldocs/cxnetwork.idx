@@ -1,10 +1,10 @@
 parseIps	cxnetwork.html#parseIps.i,string	cxnetwork: parseIps(soup: string): string	
 getIpInfo	cxnetwork.html#getIpInfo,string	cxnetwork: getIpInfo(ip: string): JsonNode	
-getWanIp	cxnetwork.html#getWanIp,	cxnetwork: getWanIp(): string	
+getWanIp	cxnetwork.html#getWanIp	cxnetwork: getWanIp(): string	
 showIpInfo	cxnetwork.html#showIpInfo,string	cxnetwork: showIpInfo(ip: string)	
-localIp	cxnetwork.html#localIp,	cxnetwork: localIp(): string	
-localRouterIp	cxnetwork.html#localRouterIp,	cxnetwork: localRouterIp(): string	
-showLocalIpInfo	cxnetwork.html#showLocalIpInfo,	cxnetwork: showLocalIpInfo()	
+localIp	cxnetwork.html#localIp	cxnetwork: localIp(): string	
+localRouterIp	cxnetwork.html#localRouterIp	cxnetwork: localRouterIp(): string	
+showLocalIpInfo	cxnetwork.html#showLocalIpInfo	cxnetwork: showLocalIpInfo()	
 pingy	cxnetwork.html#pingy,string,int,string	cxnetwork: pingy(dest: string; pingcc: int = 3; col: string = termwhite)	
 cxPortCheck	cxnetwork.html#cxPortCheck,string	cxnetwork: cxPortCheck(cmd: string = &quot;lsof -i&quot;)	
 cxDig	cxnetwork.html#cxDig,string	cxnetwork: cxDig(ipadd: string): tuple	

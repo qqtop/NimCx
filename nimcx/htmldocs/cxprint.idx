@@ -1,6 +1,6 @@
 print	cxprint.html#print,T,string,BackgroundColor,int,bool,bool,set[Style],string	cxprint: print[T](astring: T; fgr: string = termwhite; bgr: BackgroundColor = bgBlack;\n         xpos: int = 0; fitLine: bool = false; centered: bool = false;\n         styled: set[Style] = {}; substr: string = &quot;&quot;)	
-rndCxFgrCol	cxprint.html#rndCxFgrCol.t,	cxprint: rndCxFgrCol(): untyped	
-rndCxBgrCol	cxprint.html#rndCxBgrCol.t,	cxprint: rndCxBgrCol(): untyped	
+rndCxFgrCol	cxprint.html#rndCxFgrCol.t	cxprint: rndCxFgrCol(): untyped	
+rndCxBgrCol	cxprint.html#rndCxBgrCol.t	cxprint: rndCxBgrCol(): untyped	
 cxPrint	cxprint.html#cxPrint,T,string,string,int,set[Style]	cxprint: cxPrint[T](ss: T; fontcolor: string = &quot;colWhite&quot;; bgr: string = black; xpos: int = 0;\n           styled: set[Style] = {styleReverse})	
 cxPrintLn	cxprint.html#cxPrintLn,T,string,string,int,set[Style]	cxprint: cxPrintLn[T](ss: T; fontcolor: string = &quot;colWhite&quot;; bgr: string = black; xpos: int = 0;\n             styled: set[Style] = {styleReverse})	
 cxPrint	cxprint.html#cxPrint,T,auto,string,int,set[Style]	cxprint: cxPrint[T](ss: T; fontcolor: auto = colWhite; bgr: string = black; xpos: int = 0;\n           styled: set[Style] = {styleReverse})	

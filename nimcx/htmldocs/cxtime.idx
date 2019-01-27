@@ -4,11 +4,12 @@ cxTz	cxtime.html#cxTz	cxtime: cxTz
 CxTimer	cxtime.html#CxTimer	cxtime: CxTimer	
 Cxtimerres	cxtime.html#Cxtimerres	cxtime: Cxtimerres	
 Cxcounter	cxtime.html#Cxcounter	cxtime: Cxcounter	
-cxLocal	cxtime.html#cxLocal.t,	cxtime: cxLocal(): string	
-cxNow	cxtime.html#cxNow.t,	cxtime: cxNow(): string	
-cxToday	cxtime.html#cxToday.t,	cxtime: cxToday(): string	
-cxTime	cxtime.html#cxTime.t,	cxtime: cxTime(): string	
-cxDateTime	cxtime.html#cxDateTime.t,	cxtime: cxDateTime(): string	
+cxLocal	cxtime.html#cxLocal.t	cxtime: cxLocal(): string	
+cxNow	cxtime.html#cxNow.t	cxtime: cxNow(): string	
+cxToday	cxtime.html#cxToday.t	cxtime: cxToday(): string	
+cxTime	cxtime.html#cxTime.t	cxtime: cxTime(): string	
+cxDateTime	cxtime.html#cxDateTime.t	cxtime: cxDateTime(): string	
+cxDuration	cxtime.html#cxDuration,,	cxtime: cxDuration(tstart: int | float; tend: int | float): string	
 cxTimeZone	cxtime.html#cxTimeZone,cxTz	cxtime: cxTimeZone(amode: cxTz = long): string	
 toDateTime	cxtime.html#toDateTime,string	cxtime: toDateTime(date: string = &quot;2000-01-01&quot;): DateTime	
 epochSecs	cxtime.html#epochSecs,string	cxtime: epochSecs(date: string = &quot;2000-01-01&quot;): auto	
@@ -38,6 +39,6 @@ stopTimer	cxtime.html#stopTimer,ref.	cxtime: stopTimer(co: ref (CxTimer))
 duration	cxtime.html#duration,ref.	cxtime: duration(co: ref (CxTimer)): float	
 saveTimerResults	cxtime.html#saveTimerResults,ref.	cxtime: saveTimerResults(b: ref (CxTimer))	
 showTimerResults	cxtime.html#showTimerResults,string	cxtime: showTimerResults(aname: string)	
-showTimerResults	cxtime.html#showTimerResults,	cxtime: showTimerResults()	
+showTimerResults	cxtime.html#showTimerResults	cxtime: showTimerResults()	
 clearTimerResults	cxtime.html#clearTimerResults,string,bool,int	cxtime: clearTimerResults(aname: string = &quot;&quot;; quiet: bool = true; xpos: int = 3)	
 clearAllTimerResults	cxtime.html#clearAllTimerResults,bool,int	cxtime: clearAllTimerResults(quiet: bool = true; xpos: int = 3)	

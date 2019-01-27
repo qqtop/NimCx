@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-01-09 
+##     Latest      : 2019-01-16 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -637,6 +637,8 @@ proc seqRight*[T](it: seq[T], n: int): seq[T] =
           ## seqRight
           ## 
           ## returns a new seq with n right end elements of the original seq
+          ## 
+          ## 
 
           try:
                 result = it
@@ -645,6 +647,22 @@ proc seqRight*[T](it: seq[T], n: int): seq[T] =
                 discard
 
 
+proc cxIsDigit*(s:string,sep:char = '.'):bool =
+   ## cxIsDigit
+   ## 
+   ## checks if a string consists of elements in a digitset 
+   ## that is numbers 0..9 and separators like '.' or ','
+   ## default sep = '.'
+   ## 
+   ## 
+   result = false
+   for x in 0..<s.len:
+      if s[x] in {'0','1','2','3','4','5','6','7','8','9',sep} :
+         result = true
+      else:
+         result = false
+         break 
+      
 
 proc fmtengine[T](a: string, astring: T): string =
           ## fmtengine - used internally
