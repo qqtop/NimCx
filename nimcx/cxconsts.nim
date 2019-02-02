@@ -1130,7 +1130,7 @@ const
       searrow*  = "\u2B0A"   # southeastarrow
       nwarrow*  = "\u2B09"   # northwestarrow
       nearrow*  = "\u2B08"   # northeastarrow
-      
+     
       
       # vars
       phone*           = "\u260E"
@@ -1142,7 +1142,9 @@ const
       backspacebutton* = ""
       tabbutton*       = ""
       enterbutton*     = ""
-
+      rslash*          = "\u005C"   # backslash 
+      
+      
 # emojis
 # mileage here may vary depending on whatever your system supports
 

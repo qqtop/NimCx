@@ -6,10 +6,15 @@ import strutils,terminal,sets
 #
 # Experimental font building  
 #
-# experimental font, slim numbers , swampfont , dotmatrix , bracketmatrix font and 
+# experimental font, slim numbers , swampfont , dotmatrix , bracketmatrix font 
+# 
+# and slimfont  
 # 
 # 
-# Last : 2019-01-27 
+# try : slimL("cxfont")
+# 
+# 
+# Last : 2019-02-01 
 # 
 
 # type used in slim number printing
@@ -337,7 +342,7 @@ template cxq*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) =
          printLn2(efb2 * 2 & spaces(4) & efb2 * 2,col,xpos=xpos)
          printLn2(efb2 * 2 & spaces(4) & efs2 * 2,col,xpos=xpos)
          printLn2(efb2 * 2 & spaces(3) & efs2 & efb2 * 2,col,xpos=xpos)
-         printLn2(spaces(2) & efb2 * 3 & efb2 & "\\",col,xpos=xpos)
+         printLn2(spaces(2) & efb2 * 3 & efb2 & rslash,col,xpos=xpos)
          curup(6) 
 
 template cxr*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
@@ -577,8 +582,7 @@ proc printFont*(s:string,col:string = rndCol() ,coltop:string = rndCol(), xpos:i
             else: discard 
 
             
-#proc printFontFancy*(s:string,col:string = rndcol(),coltop:string = rndcol(), xpos:int = -10) = 
-     
+    
 proc printFontFancy*(s:string, coltop1 = rndcol(),xpos:int = -10) = 
      ## printFontFancy
      ## 
@@ -871,20 +875,19 @@ proc printSlim* (ss:string = "", frg:string = termwhite,xpos:int = 0,align:strin
 
 
 # routines for slimL another attempt for slimfonts
-# experimental
-# TODO: starting pos adjustmnet not working as expected
+# EXPERIMENTAL:
+# TODO: starting pos adjustment not yet working as expected
    
-let slimletters = """   
-     __   __   ___  __   ___  ___  ___ _  _ _  _ _  _ _    _  _ _  _  __ 
-    |__| |__] |    |  \ |___ |___ | __ |__| |  | |_/  |    |\/| |\ | |  | 
-    |  | |__] |___ |__/ |___ |    |__] |  | | _| | \_ |___ |  | | \| |__| 
-                                                                          
-                                                                          
-     __   __   __   __  ___ _  _ _  _ _ _ _ _  _ _   _  __   
-    |__] |  | |__/ [__   |  |  | |  | | | |  \/   \_/    /  
-    |    |_\| |  \ ___]  |  |__|  \/  |_|_| _/\_   |    /__   
-                                                                                                                                            
-"""
+# let slimletters = """   
+#      __   __   ___  __   ___  ___  ___ _  _ _  _ _  _ _    _  _ _  _  __ 
+#     |__| |__] |    |  \ |___ |___ | __ |__| |  | |_/  |    |\/| |\ | |  | 
+#     |  | |__] |___ |__/ |___ |    |__] |  | | _| | \_ |___ |  | | \| |__| 
+#                                                                                   
+#      __   __   __   __  ___ _  _ _  _ _ _ _ _  _ _   _  __   
+#     |__] |  | |__/ [__   |  |  | |  | | | |  \/   \_/    /  
+#     |    |_\| |  \ ___]  |  |__|  \/  |_|_| _/\_   |    /__   
+#                                                                                                                                             
+# """
 
 var xpos = -101  # just initialize xpos as a global int 
  
@@ -903,160 +906,52 @@ proc slimL*(astring:string ,col:string = truetomato,xpos:int = 5,adjuster:int = 
     ## 
     ## 
     var slpos = xpos
+    var firstc:bool = true
     for x in astring.tolowerascii():
        case x 
-          of 'a' : 
-                   printSlimL(sla,col,xpos=slpos)
-                    
-          of 'b' : 
-                   printSlimL(slb,col,xpos=slpos)
-                             
-                   
-          of 'c' : 
-                   printSlimL(slc,col,xpos=slpos)
-                          
-                   
-          of 'd' : 
-                   printSlimL(sld,col,xpos=slpos)
-                             
-                   
-          of 'e' : 
-                   printSlimL(sle,col,xpos=slpos)
-                          
-                   
-          of 'f' : 
-                   printSlimL(slf,col,xpos=slpos)
-                          
-        
-          of 'g' : 
-                   printSlimL(slg,col,xpos=slpos)
-                          
-                   
-          of 'h' : 
-                   printSlimL(slh,col,xpos=slpos)
-                          
-                   
+          of 'a' : printSlimL(sla,col,xpos=slpos)
+          of 'b' : printSlimL(slb,col,xpos=slpos)
+          of 'c' : printSlimL(slc,col,xpos=slpos)
+          of 'd' : printSlimL(sld,col,xpos=slpos)
+          of 'e' : printSlimL(sle,col,xpos=slpos)
+          of 'f' : printSlimL(slf,col,xpos=slpos)
+          of 'g' : printSlimL(slg,col,xpos=slpos)
+          of 'h' : printSlimL(slh,col,xpos=slpos)
           of 'i' : 
                    printSlimL(sli,col,xpos=slpos)
-                     
                    slpos = slpos - 4     
-                   
           of 'j' : 
                    printSlimL(slj,col,xpos=slpos)
-                     
                    slpos = slpos - 2  
-                   
-          of 'k' : 
-                   printSlimL(slk,col,xpos=slpos)
-                                
-                                
-          of 'l' : 
-                   printSlimL(sll,col,xpos=slpos)
-                             
-                      
+          of 'k' : printSlimL(slk,col,xpos=slpos)      
+          of 'l' : printSlimL(sll,col,xpos=slpos)
           of 'm' : 
                    printSlimL(slm,col,xpos=slpos)
-                      
                    slpos = slpos + 1   
-                   
-          of 'n' : 
-                   printSlimL(sln,col,xpos=slpos)
-                                   
-                   
-          of 'o' : 
-                   printSlimL(slo,col,xpos=slpos)
-                        
-                   
-          of 'p' : 
-                   printSlimL(slp,col,xpos=slpos)
-                          
-                   
-          of 'q' : 
-                   printSlimL(slq,col,xpos=slpos)
-                          
-                   
-          of 'r' : 
-                   printSlimL(slr,col,xpos=slpos)
-                          
-                   
-          of 's' : 
-                   printSlimL(sls,col,xpos=slpos)
-                                
-               
-          of 't' : 
-                    
+          of 'n' : printSlimL(sln,col,xpos=slpos)
+          of 'o' : printSlimL(slo,col,xpos=slpos)
+          of 'p' : printSlimL(slp,col,xpos=slpos)
+          of 'q' : printSlimL(slq,col,xpos=slpos)
+          of 'r' : printSlimL(slr,col,xpos=slpos)
+          of 's' : printSlimL(sls,col,xpos=slpos)
+          of 't' :  
                    printSlimL(slt,col,xpos=slpos)
-                       
                    slpos = slpos - 1   
-                   
-          of 'u' : 
-                   printSlimL(slu,col,xpos=slpos)
-                          
-                   
-          of 'v' : 
-                   printSlimL(slv,col,xpos=slpos)
-                          
-                   
+          of 'u' : printSlimL(slu,col,xpos=slpos)
+          of 'v' : printSlimL(slv,col,xpos=slpos) 
           of 'w' : 
                    printSlimL(slw,col,xpos=slpos)
-                      
-                   slpos = slpos + 1     
-                   
-          of 'x' : 
-                   printSlimL(slx,col,xpos=slpos)
-                          
-                   
-          of 'y' : 
-                   printSlimL(sly,col,xpos=slpos)
-                          
-                   
-          of 'z' : 
-                   printSlimL(slz,col,xpos=slpos)
-                          
-                   
-          of '6' :                       
-                                
-                   printSlimL(sl6,col,xpos=slpos)
-                       
-                     
-          else :
-                  discard
+                   slpos = slpos + 1                  
+          of 'x' : printSlimL(slx,col,xpos=slpos)
+          of 'y' : printSlimL(sly,col,xpos=slpos)
+          of 'z' : printSlimL(slz,col,xpos=slpos)
+          # TODO: numbers
+          of '6' : printSlimL(sl6,col,xpos=slpos)
+
+          else   : discard
 
        slpos = xpos + slpos
 
-
-# # tests for slimL
-#   
-# slimL("abcdefghijklmno")
-# decho(6)
-# slimL("pqrstuvwxyz")
-# 
-# decho(6)
-# var mytext = "Kita tak perlu bingung"
-# var mytext2 = "lagi untuk memastikan"
-# var mytext3 = "asupan kabohidrat yang"
-# var mytext4 = "akan kita konsumsi"
-# var mytext5 = "demi kesehatan"
-# 
-# println2(nimcxl,randcol(),styled={styleBright})   
-# slimL(mytext,randcol,6)
-# decho(4)
-# slimL(mytext2,randcol,6)
-# decho(4)
-# slimL(mytext3,randcol,6)
-# decho(4)
-# slimL(mytext4,randcol,6)
-# decho(4)
-# slimL(mytext5,randcol,6)
-# decho(6)
-# 
-# slimL("chChat client",xpos=5)
-# decho(3)
-# slimL("cxChat server",xpos=5)
-# decho(6)
-#            
-
- 
         
 # routines for dotmatrix font
 # see dotmatrixraw in cxconsts
@@ -1148,9 +1043,6 @@ proc createCxFont*(name:string):seq[seq[string]] =
                     else:    
                        swseq.add(sw[x].replace("#",""))
                 result = swampfont                     
-                
-                
-                
                 
                 
 proc showCxFont*(name:string) =

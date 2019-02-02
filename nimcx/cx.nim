@@ -1062,7 +1062,6 @@ template infoProc*(code: untyped) =
                 discard
 
 
-proc `$`(T: typedesc): string = name(T)
 template checkLocals*() =
         ## checkLocals
   ## 
@@ -1071,15 +1070,15 @@ template checkLocals*() =
   ## best placed at bottom end of a proc to pick up all Variables
   ##
         echo()
-        dlineLn(100)
+        dlineLn(tw() - 1)
+        printLn("[checkLocals -->] ", gold)
         for name, value in fieldPairs(locals()):
-                print("[checkLocals -->] ", gold)
-                printLnBiCol(fmtx(["", "<20", "", "", "", "", "<25", "", "",
+               printLnBiCol(fmtx(["", "<20", "", "", "", "", "<25", "", "",
                                 "", "", ""], "Variable : ", $name, spaces(3),
                                 peru, "Type : ", termwhite, $type(value),
                                 spaces(1), aqua, "Value : ", termwhite,
                                 $value))
-
+        dlineLn(tw() - 1)
 
 proc qqTop*() =
         ## qqTop
@@ -1260,7 +1259,7 @@ proc infoLine*() =
 proc printTest*(astring:string="") =
   ## printTest
   ## 
-  ## prints TEST,the currenbtfilename and an optional string
+  ## prints TEST,the current filename and an optional string
   ## 
 
   println2("")
