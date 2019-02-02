@@ -4,11 +4,11 @@
 Example 3D effect achieved with Nim truecolor support in terminal
 
 
-![Image](http://qqtop.github.io/scrh5.png?raw=true)
-
+![Image](http://qqtop.github.io/greyshades.png?raw=true)
+Shades of rgb grey
 
 ![Image](http://qqtop.github.io/cxlineobject.png?raw=true)
-Example screenshots of cxlineobjectE1.nim
+Example screenshot of cxlineobjectE1.nim
 
  NIMCX - Color and Utilities for the Linux Terminal
 --------------------------------------------------------
