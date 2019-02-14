@@ -7,7 +7,7 @@ cxVideoInfo	cxutils.html#cxVideoInfo	cxutils: cxVideoInfo(): string
 showCpuCores	cxutils.html#showCpuCores	cxutils: showCpuCores()	
 getAmzDateString	cxutils.html#getAmzDateString	cxutils: getAmzDateString(): string	
 getUserName	cxutils.html#getUserName	cxutils: getUserName(): string	
-getPassword	cxutils.html#getPassword,int64	cxutils: getPassword(ahash: int64 = 0&#x27;i64): string	
+getPassword	cxutils.html#getPassword,int64	cxutils: getPassword(ahash: int64 = 0&apos;i64): string	
 cxDayOfWeek	cxutils.html#cxDayOfWeek,string	cxutils: cxDayOfWeek(datestr: string): string	
 getNextMonday	cxutils.html#getNextMonday,string	cxutils: getNextMonday(adate: string): string	
 getRandomPointInCircle	cxutils.html#getRandomPointInCircle,float	cxutils: getRandomPointInCircle(radius: float): seq[float]	
@@ -28,6 +28,8 @@ newWord3	cxutils.html#newWord3,int,int,bool	cxutils: newWord3(minwl: int = 3; ma
 newHiragana	cxutils.html#newHiragana,int,int	cxutils: newHiragana(minwl: int = 3; maxwl: int = 10): string	
 newKatakana	cxutils.html#newKatakana,int,int	cxutils: newKatakana(minwl: int = 3; maxwl: int = 10): string	
 newText	cxutils.html#newText,int,string	cxutils: newText(textLen: int = 1000; textgen: string = &quot;newWord&quot;): string	
+rndStr	cxutils.html#rndStr,int	cxutils: rndStr(n: int = 20): string	
+createRandomDataFile	cxutils.html#createRandomDataFile,string	cxutils: createRandomDataFile(filename: string = &quot;randomdata.dat&quot;)	
 drawRect	cxutils.html#drawRect,int,int,string,string,string,string,int,bool,string	cxutils: drawRect(h: int = 0; w: int = 3; frhLine: string = &quot;_&quot;; frVLine: string = &quot;|&quot;;\n         frCol: string = darkgreen; dotCol: string = truetomato; xpos: int = 1;\n         blink: bool = false; dottype: string = &quot;.&quot;)	
 cxBinomialCoeff	cxutils.html#cxBinomialCoeff,int,int	cxutils: cxBinomialCoeff(n, k: int): int	
 bitCheck	cxutils.html#bitCheck.t,untyped,untyped	cxutils: bitCheck(a, b: untyped): bool	

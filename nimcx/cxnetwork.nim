@@ -4,7 +4,7 @@ import cxconsts,cxglobal,cxprint
 # cxnetwork.nim
 # 
 # Var. internet related procs and experiments
-# 
+# no assumption are made whether nmap and friends are installed
 # 
 # Last 2018-10-18
 # 
@@ -128,7 +128,7 @@ proc pingy*(dest:string,pingcc:int = 3,col:string = termwhite) =
         ##.. code-block:: nim 
         ##    pingy("yahoo.com",4,dodgerblue)   # 4 pings and display progress in some color
         ##    pingy("google.com",8,aqua)
-        ## 
+        ##    pingy("ping.sunet.se",4,lime)
  
         let pingc = $pingcc
         let (outp,err) = execCmdEx("which ping")

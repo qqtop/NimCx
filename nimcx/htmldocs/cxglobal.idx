@@ -50,7 +50,7 @@ getRndFloat	cxglobal.html#getRndFloat,float,float	cxglobal: getRndFloat(mi: floa
 createSeqFloat	cxglobal.html#createSeqFloat,int,int	cxglobal: createSeqFloat(n: int = 10; prec: int = 3): seq[float]	
 seqLeft	cxglobal.html#seqLeft,seq[T],int	cxglobal: seqLeft[T](it: seq[T]; n: int): seq[T]	
 seqRight	cxglobal.html#seqRight,seq[T],int	cxglobal: seqRight[T](it: seq[T]; n: int): seq[T]	
-cxIsDigit	cxglobal.html#cxIsDigit,string,char	cxglobal: cxIsDigit(s: string; sep: char = &#x27;.&#x27;): bool	
+cxIsDigit	cxglobal.html#cxIsDigit,string,char	cxglobal: cxIsDigit(s: string; sep: char = &apos;.&apos;): bool	
 fmtx	cxglobal.html#fmtx,openArray[string],varargs[T,]	cxglobal: fmtx[T](fmts: openArray[string]; fstrings: varargs[T, `$`]): string	
 showRune	cxglobal.html#showRune,string	cxglobal: showRune(s: string): string	
 unquote	cxglobal.html#unquote,string	cxglobal: unquote(s: string): string	

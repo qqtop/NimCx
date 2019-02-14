@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-01-09
+##     Latest      : 2019-02-14
 ##
 ##     OS          : Linux
 ##
@@ -760,7 +760,31 @@ proc newText*(textLen:int = 1000,textgen:string = "newWord"):string =
             printLnErrorMsg(textgen & " generator proc not available !")
             discard                
                      
-                                  
+proc rndStr*(n:int = 20): string =
+  ## rndStr
+  ## 
+  ## random string with len n between 0 and hex 4DB5
+  ## 
+ 
+  for _ in 0 ..< n:
+    let s = sample([1,2,3])
+    case s 
+      of 1 : add(result, char(rand(int('0') ..< parsehexint("4DB5"))))
+      of 2 : add(result,newWordCJK(1,1))
+      of 3 : add(result, char(rand(int('0') ..< int('z'))))
+      else: add(result,'0')    
+      
+      
+
+proc createRandomDataFile*(filename:string = "randomdata.dat") =
+    ## createRandomDataFile
+    ## 
+    ## this will create a file with given filename and size 1 MB
+    ## filled with strong random data
+    ## 
+    discard  execCmd("dd if=/dev/urandom of=$1 bs=1M count=1" % filename)
+      
+                                    
                                   
 proc drawRect*(h     :int = 0,
               w      :int = 3,
@@ -827,8 +851,8 @@ proc cxBinomialCoeff*(n, k:int): int =
     # 
     result = 1
     var kk = k
-    if kk < 0 or kk  >  n:  result = 0
-    if kk == 0 or kk == n:  result = 1
+    if kk < 0 or kk  >  n: result = 0
+    if kk == 0 or kk == n: result = 1
     kk = min(kk, n - kk) 
     for i in 0..<kk: result = result * (n - i) div (i + 1)
  
