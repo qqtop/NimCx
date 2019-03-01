@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-02-14
+##     Latest      : 2019-03-01
 ##
 ##     Compiler    : Nim >= 0.19.x devel branch
 ##
@@ -123,8 +123,8 @@
 import
         cxconsts, cxglobal, cxtime, cxprint, cxhash, cxfont, cxtruecolor, cxutils, cxnetwork, cxstats,
         os, osproc, times, random, strutils, strformat, strscans, parseutils, sequtils, parseopt,
-        tables, sets, macros,
-        posix, terminal, math, stats, json, streams, options, memfiles,
+        tables, sets, macros,posix,
+        terminal, math, stats, json, streams, options, memfiles,
         httpclient, nativesockets, browsers, intsets, algorithm, net,
         unicode, typeinfo, typetraits, cpuinfo, colors, encodings, distros,
         rdstdin, sugar , std/wordwrap
@@ -132,8 +132,8 @@ import strutils except align
 export
         cxconsts, cxglobal, cxtime, cxprint, cxhash, cxfont, cxtruecolor, cxutils, cxnetwork, cxstats,
         os, osproc, times, random, strformat, strscans, parseutils, sequtils, parseopt,
-        tables, sets, macros,
-        posix, terminal, math, stats, json, streams, options, memfiles,
+        tables, sets, macros,posix,
+        terminal, math, stats, json, streams, options, memfiles,
         httpclient, nativesockets, browsers, intsets, algorithm, net,
         typeinfo, typetraits, cpuinfo, colors, encodings, distros,
         rdstdin, sugar ,wordwrap
@@ -546,43 +546,32 @@ proc showBench*() =
                                         "Cycles : $1" % x.repeats)
 
                         if parseInt(x.repeats) > 0:
-                                printLn(tit, sandybrown, styled = {
-                                                styleUnderScore},
-                                                substr = tit)
+                                printLn(tit, sandybrown, styled = {styleUnderScore},substr = tit)
                                 echo()
                         else:
-                                printLn(tit, red, styled = {styleUnderScore},
-                                                substr = tit)
+                                printLn(tit, red, styled = {styleUnderScore},substr = tit)
 
-                        let aa1 = spaces(
-                                        1) & gold & "[" & salmon & x.bname & gold & "]"
-                        let bb1 = cornflowerblue & "Epoch Time : " & oldlace &
-                                        x.epoch & " secs"
-                        let cc1 = cornflowerblue & "Cpu Time   : " & oldlace &
-                                        x.cpu & " secs"
+                        let aa1 = spaces(1) & gold & "[" & salmon & x.bname & gold & "]"
+                        let bb1 = cornflowerblue & "Epoch Time : " & oldlace & x.epoch & " secs"
+                        let cc1 = cornflowerblue & "Cpu Time   : " & oldlace & x.cpu & " secs"
                         var dd1 = ""
                         var ee1 = ""
 
                         if parseFloat(x.epoch) > 0.00:
-                                dd1 = "Cycles/sec : " & ff2(parsefloat(
-                                                x.repeats)/parsefloat(x.epoch))
+                                dd1 = "Cycles/sec : " & ff2(parsefloat(x.repeats)/parsefloat(x.epoch))
                         else:
                                 dd1 = "Cycles/sec : Inf"
 
                         if parseFloat(x.cpu) > 0.00:
-                                ee1 = "Cycles/sec : " & ff2(parsefloat(
-                                                x.repeats)/parsefloat(x.cpu))
+                                ee1 = "Cycles/sec : " & ff2(parsefloat(x.repeats)/parsefloat(x.cpu))
                         else:
                                 ee1 = "Cycles/sec : Inf"
 
-                        printLn(fmtx(["<$1" % $bnamesize, "", "<70", "<90"],
-                                        aa1, spaces(3), bb1, dd1))
-                        printLn(fmtx(["<$1" % $bnamesize, "", "<70", "<50"],
-                                        aa1, spaces(3), cc1, ee1))
+                        printLn(fmtx(["<$1" % $bnamesize, "", "<70", "<90"],aa1, spaces(3), bb1, dd1))
+                        printLn(fmtx(["<$1" % $bnamesize, "", "<70", "<50"],aa1, spaces(3), cc1, ee1))
 
                         if dd1.contains("Inf") or ee1.contains("Inf"):
-                                printLnInfoMsg("Inf",
-                                                "To measure something increase the loop count.")
+                                printLnInfoMsg("Inf","To measure something increase the loop count.")
 
                 echo()
                 benchmarkresults = @[]
@@ -602,9 +591,7 @@ proc showPalette*(coltype:string = "white" ) =
         echo()
         let z = colPaletteLen(coltype)
         for x in 0 ..< z:
-                printLn(fmtx([">3", ">4"], $x,
-                                rightarrow) & " ABCD 1234567890   " & colPaletteName(coltype, x), colPalette(
-                                coltype, x))
+            printLn(fmtx([">3", ">4"],$x,rightarrow) & " ABCD 1234567890   " & colPaletteName(coltype, x), colPalette(coltype, x))
         printLnBiCol("\n" & coltype & "Palette items count   : " & $z)
         echo()
 
@@ -755,17 +742,16 @@ proc spellFloat*(n: float64, currency: bool = false, sep: string = ".",
                                         0])) & sepname & spellInteger(parseInt(nss[1]))
 
 template currentFile*: string =
-        ## currentFile
+  ## currentFile
   ## 
   ## returns path and current filename
   ##
-        var pos = instantiationInfo()
-        pos.filename
+  var pos = instantiationInfo()
+  pos.filename
 
 
-template zipWith*[T1, T2](f: untyped; xs: openarray[T1],
-                ys: openarray[T2]): untyped =
-        ## zipWith
+template zipWith*[T1, T2](f: untyped; xs: openarray[T1], ys: openarray[T2]): untyped =
+  ## zipWith
   ## 
   ## 
   ##.. code-block:: nim
@@ -777,25 +763,24 @@ template zipWith*[T1, T2](f: untyped; xs: openarray[T1],
   ##    
   ## original code ex Nim Forum
   ##
-        let n = min(xs.len, ys.len)
-        var res = newSeq[type(f(xs[0], ys[0]))](n)
-        for i, value in res.mpairs: value = f(xs[i], ys[i])
-        res
+  let n = min(xs.len, ys.len)
+  var res = newSeq[type(f(xs[0], ys[0]))](n)
+  for i, value in res.mpairs: value = f(xs[i], ys[i])
+  res
 
 
 proc newDir*(dirname: string) =
-        ## newDir
+     ## newDir
      ##
      ## creates a new directory and provides some feedback
-
-        if not existsDir(dirname):
-                try:
-                        createDir(dirname)
-                        printLn("Directory " & dirname & " created ok", green)
-                except OSError:
-                        printLnErrorMsg(dirname & " creation failed. Check permissions.")
-        else:
-                printLnErrorMsg("Directory " & dirname & " already exists !")
+     if not existsDir(dirname):
+            try:
+                    createDir(dirname)
+                    printLn("Directory " & dirname & " created ok", green)
+            except OSError:
+                    printLnErrorMsg(dirname & " creation failed. Check permissions.")
+     else:
+            printLnErrorMsg("Directory " & dirname & " already exists !")
 
 proc remDir*(dirname: string): bool {.discardable.} =
         ## remDir
@@ -843,15 +828,15 @@ proc checkClip*(sel: string = "primary"): string =
 
 
 proc toClip*[T](s: T) =
-        ## toClip
+     ## toClip
      ##
      ## send a string to the Clipboard using xclip
      ## only error messages will shown if any.
      ## required xclip to be installed
      ## 
      ##
-        let res = execCmd("echo $1 | xclip " % $s)
-        if res <> 0: printLnErrorMsg("xclip output : " & $res & " but expected 0")
+     let res = execCmd("echo $1 | xclip " % $s)
+     if res <> 0: printLnErrorMsg("xclip output : " & $res & " but expected 0")
 
 
 proc getColorName*[T](sc: T): string =
@@ -895,7 +880,7 @@ proc getColorConst*[T](sc: T): string =
 
 
 proc showTerminalSize*() =
-        ## showTerminalSize
+      ## showTerminalSize
       ##
       ## displays current terminal dimensions
       ##
@@ -904,22 +889,22 @@ proc showTerminalSize*() =
       ## height is always available via th
       ##
       ##
-        printLnInfoMsg("Terminal Size", "W" & spaces(1) & $tw & " x" & " H" & spaces(1) & $th)
+      printLnInfoMsg("Terminal Size", "W" & spaces(1) & $tw & " x" & " H" & spaces(1) & $th)
 
 
 proc cxAlert*(xpos: int = 1) =
-        ## cxAlert
+     ## cxAlert
      ## 
      ## issues an alert 
      ## 
      ## also available printAlertMsg see cxprint.nim
      ## 
      ##
-        print(doflag(red, 6, "ALERT ", truetomato) & doflag(red, 6),xpos = xpos)
+     print(doflag(red, 6, "ALERT ", truetomato) & doflag(red, 6),xpos = xpos)
 
 
 proc cxAlertLn*(xpos: int = 1) =
-        ## cxAlertLn
+     ## cxAlertLn
      ## 
      ## issues an alert line
      ## 
@@ -937,7 +922,7 @@ proc cxAlertLn*(xpos: int = 1) =
      ##      sleepy(0.5)
      ##      
      ##
-        printLn(doflag(red, 6, "ALERT ", truetomato) & doflag(red, 6),xpos = xpos)
+     printLn(doflag(red, 6, "ALERT ", truetomato) & doflag(red, 6),xpos = xpos)
 
 
 proc cxHelp*(s: openarray[string], xpos: int = 2) =
@@ -1217,6 +1202,8 @@ proc printTest*(astring:string="") =
   decho(2)
       
 # code below borrowed from distros.nim and made exportable
+# there is now a new posix_utils module which also can give 
+# uname -a results
 var unameRes, releaseRes: string
 
 template unameRelease(cmd, cache): untyped =

@@ -331,7 +331,7 @@ proc getHosts*(dm:string):seq[string] =
           rx = @[]
     except:
            rx = @[]
-    var rxs = rx.toSet # removes doubles
+    var rxs = rx.toHashSet # removes doubles
     rx = @[]
     for x in rxs:
         rx.add(x)

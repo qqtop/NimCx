@@ -15,19 +15,19 @@ getTerminalWidth	cxglobal.html#getTerminalWidth	cxglobal: getTerminalWidth(): in
 tw	cxglobal.html#tw.t	cxglobal: tw(): int	
 getTerminalHeight	cxglobal.html#getTerminalHeight	cxglobal: getTerminalHeight(): int	
 th	cxglobal.html#th.t	cxglobal: th(): int	
-remapIntToFloat	cxglobal.html#remapIntToFloat,seq[int]	cxglobal: remapIntToFloat(s: seq[int]): seq[float]	
-remapFloatToInt	cxglobal.html#remapFloatToInt,seq[float]	cxglobal: remapFloatToInt(s: seq[float]): seq[int]	
-remapToString	cxglobal.html#remapToString,seq[T]	cxglobal: remapToString[T](s: seq[T]): seq[string]	
+remapIntToFloat	cxglobal.html#remapIntToFloat,seq[T][int]	cxglobal: remapIntToFloat(s: seq[int]): seq[float]	
+remapFloatToInt	cxglobal.html#remapFloatToInt,seq[T][float]	cxglobal: remapFloatToInt(s: seq[float]): seq[int]	
+remapToString	cxglobal.html#remapToString,seq[T][T]	cxglobal: remapToString[T](s: seq[T]): seq[string]	
 fastWrite	cxglobal.html#fastWrite,File,string	cxglobal: fastWrite(f: File; s: string)	
 cxpad	cxglobal.html#cxpad,string,int,string	cxglobal: cxpad(s: string; padlen: int; paddy: string = spaces(1)): string	
 cxpdx	cxglobal.html#cxpdx,int,string,string	cxglobal: cxpdx(padLen: int; s: string; paddy: string = spaces(1)): string	
 cxlpad	cxglobal.html#cxlpad,string,int,string	cxglobal: cxlpad(s: string; padlen: int; paddy: string = spaces(1)): string	
 cxlpdx	cxglobal.html#cxlpdx,int,string,string	cxglobal: cxlpdx(padLen: int; s: string; paddy: string = spaces(1)): string	
 waitOn	cxglobal.html#waitOn,int	cxglobal: waitOn(alen: int = 1)	
-rndSample	cxglobal.html#rndSample,seq[T]	cxglobal: rndSample[T](asq: seq[T]): T	
+rndSample	cxglobal.html#rndSample,seq[T][T]	cxglobal: rndSample[T](asq: seq[T]): T	
 rndRGB	cxglobal.html#rndRGB	cxglobal: rndRGB(): auto	
-sum	cxglobal.html#sum,seq[T]	cxglobal: sum[T](aseq: seq[T]): T	
-product	cxglobal.html#product,seq[T]	cxglobal: product[T](aseq: seq[T]): T	
+sum	cxglobal.html#sum,seq[T][T]	cxglobal: sum[T](aseq: seq[T]): T	
+product	cxglobal.html#product,seq[T][T]	cxglobal: product[T](aseq: seq[T]): T	
 doSomething	cxglobal.html#doSomething.t,int,untyped	cxglobal: doSomething(secs: int; body: untyped)	
 isBlank	cxglobal.html#isBlank,string	cxglobal: isBlank(val: string): bool	
 isEmpty	cxglobal.html#isEmpty,string	cxglobal: isEmpty(val: string): bool	
@@ -48,8 +48,8 @@ ff2	cxglobal.html#ff2,SomeNumber,int	cxglobal: ff2(zz: SomeNumber; n: int = 3): 
 getRandomFloat	cxglobal.html#getRandomFloat,float,float	cxglobal: getRandomFloat(mi: float = -1.0; ma: float = 1.0): float	
 getRndFloat	cxglobal.html#getRndFloat,float,float	cxglobal: getRndFloat(mi: float = -1.0; ma: float = 1.0): float	
 createSeqFloat	cxglobal.html#createSeqFloat,int,int	cxglobal: createSeqFloat(n: int = 10; prec: int = 3): seq[float]	
-seqLeft	cxglobal.html#seqLeft,seq[T],int	cxglobal: seqLeft[T](it: seq[T]; n: int): seq[T]	
-seqRight	cxglobal.html#seqRight,seq[T],int	cxglobal: seqRight[T](it: seq[T]; n: int): seq[T]	
+seqLeft	cxglobal.html#seqLeft,seq[T][T],int	cxglobal: seqLeft[T](it: seq[T]; n: int): seq[T]	
+seqRight	cxglobal.html#seqRight,seq[T][T],int	cxglobal: seqRight[T](it: seq[T]; n: int): seq[T]	
 cxIsDigit	cxglobal.html#cxIsDigit,string,char	cxglobal: cxIsDigit(s: string; sep: char = &apos;.&apos;): bool	
 fmtx	cxglobal.html#fmtx,openArray[string],varargs[T,]	cxglobal: fmtx[T](fmts: openArray[string]; fstrings: varargs[T, `$`]): string	
 showRune	cxglobal.html#showRune,string	cxglobal: showRune(s: string): string	
@@ -86,15 +86,15 @@ curOn	cxglobal.html#curOn.t	cxglobal: curOn()
 curOff	cxglobal.html#curOff.t	cxglobal: curOff()	
 stripper	cxglobal.html#stripper,string	cxglobal: stripper(str: string): string	
 `&lt;&gt;`	cxglobal.html#<>.t,untyped,untyped	cxglobal: `&lt;&gt;`(a, b: untyped): untyped	
-`[]`	cxglobal.html#[],seq[T],Slice[U]	cxglobal: `[]`[T; U](a: seq[T]; x: Slice[U]): seq[T]	
+`[]`	cxglobal.html#[],seq[T][T],Slice[U]	cxglobal: `[]`[T; U](a: seq[T]; x: Slice[U]): seq[T]	
 loopy	cxglobal.html#loopy.t,T,untyped	cxglobal: loopy[T](ite: T; st: untyped)	
 loopy2	cxglobal.html#loopy2.t,int,int,untyped	cxglobal: loopy2(mi: int = 0; ma: int = 5; st: untyped)	
 fromCString	cxglobal.html#fromCString,pointer,int	cxglobal: fromCString(p: pointer; len: int): string	
 streamFile	cxglobal.html#streamFile,string,FileMode	cxglobal: streamFile(filename: string; mode: FileMode): FileStream	
 uniform	cxglobal.html#uniform,float,float	cxglobal: uniform(a, b: float): float	
-sampleSeq	cxglobal.html#sampleSeq,seq[T],int,int	cxglobal: sampleSeq[T](x: seq[T]; a: int; b: int): seq[T]	
+sampleSeq	cxglobal.html#sampleSeq,seq[T][T],int,int	cxglobal: sampleSeq[T](x: seq[T]; a: int; b: int): seq[T]	
 tupleToStr	cxglobal.html#tupleToStr	cxglobal: tupleToStr(xs: tuple): string	
-colPaletteIndexer	cxglobal.html#colPaletteIndexer.t,seq[string]	cxglobal: colPaletteIndexer(colx: seq[string]): auto	
+colPaletteIndexer	cxglobal.html#colPaletteIndexer.t,seq[T][string]	cxglobal: colPaletteIndexer(colx: seq[string]): auto	
 colPaletteLen	cxglobal.html#colPaletteLen.t,string	cxglobal: colPaletteLen(coltype: string): auto	
 colPalette	cxglobal.html#colPalette.t,string,int	cxglobal: colPalette(coltype: string; n: int): auto	
 colorsPalette	cxglobal.html#colorsPalette.t,string	cxglobal: colorsPalette(coltype: string): auto	

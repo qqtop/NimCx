@@ -14,7 +14,7 @@ import strutils,terminal,sets
 # try : slimL("cxfont")
 # 
 # 
-# Last : 2019-02-01 
+# Last : 2019-03-01 
 # 
 
 # type used in slim number printing
@@ -906,7 +906,7 @@ proc slimL*(astring:string ,col:string = truetomato,xpos:int = 5,adjuster:int = 
     ## 
     ## 
     var slpos = xpos
-    var firstc:bool = true
+    
     for x in astring.tolowerascii():
        case x 
           of 'a' : printSlimL(sla,col,xpos=slpos)
@@ -956,7 +956,7 @@ proc slimL*(astring:string ,col:string = truetomato,xpos:int = 5,adjuster:int = 
 # routines for dotmatrix font
 # see dotmatrixraw in cxconsts
         
-let cxfonts = toSet(["dotmatrix","bracketmatrix","sideways","swamp"])
+let cxfonts = toHashSet(["dotmatrix","bracketmatrix","sideways","swamp"])
 
 proc printCxFontLetter*(n:int,xpos:int,cxfont:seq[seq[string]],color:string,vertstepping:int) =
   for y in 0 ..< cxfont[n].len:

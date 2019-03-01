@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-02-14
+##     Latest      : 2019-03-01
 ##
 ##     OS          : Linux
 ##
@@ -782,6 +782,19 @@ proc createRandomDataFile*(filename:string = "randomdata.dat") =
     ## this will create a file with given filename and size 1 MB
     ## filled with strong random data
     ## 
+    ## ..code-block:: nim
+    ##    
+    ##    createRandomDataFile("niip2.wsx")
+    ##    var bc = 0
+    ##    var b = @[100,200,300,700,800,3000]
+    ##    withFile(fs,"niip2.wsx",fmRead):
+    ##      var line =""
+    ##      while fs.readLine(line):
+    ##         inc bc
+    ##         if bc in b:
+    ##           printLn($bc & rightarrow & spaces(3) & wrapwords(line.replace(" ",""),(tw - 5)),yellowgreen)
+    ##    echo bc     
+    ##
     discard  execCmd("dd if=/dev/urandom of=$1 bs=1M count=1" % filename)
       
                                     
@@ -1293,5 +1306,60 @@ proc showEmojisSmall*() =
        showSeq(getEmojisSmall(),rndcol,maxitemwidth=4)      
 
  
-          
+proc genMacAddress*(): string =
+   ## generates a random MacAddress
+   ## 
+   ## ..code-block::
+   ##   loopy(1..10,echo genMacAddress())
+   ## 
+   randomize()
+   let m = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"]
+   [sample(m) & sample(m), sample(m) & sample(m), sample(m) & sample(m),sample(m) & sample(m), sample(m) & sample(m), sample(m) & sample(m)].join(":")
+
+proc quickPw*():string =   
+   ## quickPw
+   ## 
+   ## quick strong password generator
+   ##  
+   for i in 1..100: result.add(rand(33..128).char)
+
+proc quickLargeInt*():string =   
+   ## quickLargeInt
+   ## 
+   ## returns a random large int string
+   ## 
+   result =  repeat($rand(10_00_00_00_00_00_00_00_00.int..int.high), 2)   
+   
+proc quickBinaryString*(width:int=10):string =
+   ## quickBinaryString
+   ## 
+   ## returns a random binary string with desired width
+   ## 
+   for x in 0..<width: result.add($rand(0..1))
+   
+ 
+iterator span*(s: string; first: int, last: BackwardsIndex): char =
+   ## span
+   ## 
+   ## iterator for strings
+   ## 
+   ## ..code-block:: nim
+   ##   let s = ".something"
+   ##   for c in s.span(1, ^1):
+   ##       print c 
+   ##   echo()
+   ##       
+   for i in first..s.len - last.int: yield s[i]
+
+
+proc getGitHash*():string = 
+   ## getGitHash
+   ## to get the git hash during compile
+   const gitHash = strutils.strip(gorge("git log -n 1 --format=%H"))
+   if githash.startswith("fatal") : discard
+   else: result = githash    
+ 
+
+
+             
 # END OF CXUTILS.NIM #

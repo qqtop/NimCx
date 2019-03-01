@@ -46,9 +46,9 @@ boxy	cxutils.html#boxy,int,int,int	cxutils: boxy(w: int = 20; h: int = 5; fgr = 
 boxy2	cxutils.html#boxy2,int,int,int	cxutils: boxy2(w: int = 20; h: int = 5; fgr = randcol(); xpos: int = 1)	
 spiralBoxy	cxutils.html#spiralBoxy,int,int,int	cxutils: spiralBoxy(w: int = 20; h: int = 20; xpos: int = 1)	
 spiralBoxy2	cxutils.html#spiralBoxy2,int,int,int	cxutils: spiralBoxy2(w: int = 20; h: int = 20; xpos: int = 1)	
-showSeq	cxutils.html#showSeq,seq[T],string,int,int,bool	cxutils: showSeq[T](z: seq[T]; fgr: string = truetomato; cols = 6; maxitemwidth: int = 5;\n           displayflag: bool = true): string	
-seqHighLite	cxutils.html#seqHighLite,seq[T],seq[T],string	cxutils: seqHighLite[T](b: seq[T]; b1: seq[T]; col: string = gold)	
-shift	cxutils.html#shift,seq[T],Natural	cxutils: shift[T](x: var seq[T]; zz: Natural = 0): T	
+showSeq	cxutils.html#showSeq,seq[T][T],string,int,int,bool	cxutils: showSeq[T](z: seq[T]; fgr: string = truetomato; cols = 6; maxitemwidth: int = 5;\n           displayflag: bool = true): string	
+seqHighLite	cxutils.html#seqHighLite,seq[T][T],seq[T][T],string	cxutils: seqHighLite[T](b: seq[T]; b1: seq[T]; col: string = gold)	
+shift	cxutils.html#shift,seq[T][T],Natural	cxutils: shift[T](x: var seq[T]; zz: Natural = 0): T	
 reverseIter	cxutils.html#reverseIter.i,openArray[T]	cxutils: reverseIter[T](a: openArray[T]): T	
 withFile	cxutils.html#withFile.t,untyped,untyped,untyped,untyped	cxutils: withFile(f, fn, mode, actions: untyped): untyped	
 checkMemFull	cxutils.html#checkMemFull,int	cxutils: checkMemFull(xpos: int = 2)	
@@ -58,3 +58,9 @@ memCheck	cxutils.html#memCheck,bool	cxutils: memCheck(stats: bool = false)
 distanceTo	cxutils.html#distanceTo,,	cxutils: distanceTo(origin: (float, float); dest: (float, float)): float	
 getEmojisSmall	cxutils.html#getEmojisSmall	cxutils: getEmojisSmall(): seq[string]	
 showEmojisSmall	cxutils.html#showEmojisSmall	cxutils: showEmojisSmall()	
+genMacAddress	cxutils.html#genMacAddress	cxutils: genMacAddress(): string	
+quickPw	cxutils.html#quickPw	cxutils: quickPw(): string	
+quickLargeInt	cxutils.html#quickLargeInt	cxutils: quickLargeInt(): string	
+quickBinaryString	cxutils.html#quickBinaryString,int	cxutils: quickBinaryString(width: int = 10): string	
+span	cxutils.html#span.i,string,int,BackwardsIndex	cxutils: span(s: string; first: int; last: BackwardsIndex): char	
+getGitHash	cxutils.html#getGitHash	cxutils: getGitHash(): string	
