@@ -1309,7 +1309,7 @@ proc showEmojisSmall*() =
 proc genMacAddress*(): string =
    ## generates a random MacAddress
    ## 
-   ## ..code-block::
+   ##.. code-block:: nim
    ##   loopy(1..10,echo genMacAddress())
    ## 
    randomize()
@@ -1343,7 +1343,8 @@ iterator span*(s: string; first: int, last: BackwardsIndex): char =
    ## 
    ## iterator for strings
    ## 
-   ## ..code-block:: nim
+   ##.. code-block:: nim 
+   ##
    ##   let s = ".something"
    ##   for c in s.span(1, ^1):
    ##       print c 
@@ -1355,6 +1356,7 @@ iterator span*(s: string; first: int, last: BackwardsIndex): char =
 proc getGitHash*():string = 
    ## getGitHash
    ## to get the git hash during compile
+   ## 
    const gitHash = strutils.strip(gorge("git log -n 1 --format=%H"))
    if githash.startswith("fatal") : discard
    else: result = githash    

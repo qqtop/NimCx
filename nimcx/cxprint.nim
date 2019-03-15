@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2018-12-15 
+##     Latest      : 2019-03-01 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -1255,7 +1255,6 @@ proc printDotPos*(xpos:int,dotCol:string,blink:bool,dottype:string = widedot) =
       
 proc printErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printBiCol("[Error ] " & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
-
  
 proc printBErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printLnBiCol("[      ] " & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})    
@@ -1283,7 +1282,6 @@ proc printBAlertMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      
 proc printLnBAlertMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printLnBiCol("[      ] " & atext , colLeft = truetomato ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})        
-     
      
 proc printOKMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printBiCol("[OK    ]" & spaces(1) & atext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})

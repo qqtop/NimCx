@@ -10,16 +10,16 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-01-09 
+##     Latest      : 2019-03-15 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
 ##     OS          : Linux
 ##
-##     Description : provides functions pertaining to statistcs and calculations
+##     Description : provides some functions pertaining to statistcs and calculations
 ## 
 
-import cxconsts,cxglobal,cxprint,stats
+import cxconsts,cxglobal,cxprint,stats,math
   
 # proc returnStat(x:Runningstat,stat : seq[string]):float =
 #      ## returnStat
@@ -135,6 +135,121 @@ proc zscore*(data:seq[SomeNumber]):seq[float] {.inline.} =
     rsa.push(okdata)
     for x in 0..<okdata.len:
          result.add((okdata[x] - rsa.mean) / rsa.standardDeviation )  # z-score
+
+
+# 
+# rolling_zscore is used to identify trends in data
+# 
+# http://stackoverflow.com/questions/787496/what-is-the-best-way-to-compute-trending-topics-or-tags/826509#826509
+# http://vincent.is/finding-trending-things/
+# http://sayrohan.blogspot.com/2013/06/finding-trending-topics-and-trending.html
+# 
+# (based on an old python implementation)
+#  
+# Added 2019-03-15
+# 
+# 
+
+proc add_to_history(point:float , average:float, sq_average:float,decay:float):(float,float) =
+        let average = average * decay + point * (1 - decay)  
+        let sq_average = sq_average * decay + (point ^ 2) * (1 - decay)
+        return (average, sq_average)
+    
+proc calculate_zscore(average:float, sq_average:float, value:float,avg:float):float =
+        let std = round(sqrt(sq_average - avg ^ 2))
+        if std == 0:
+            return value - average
+        return (value - average) / std
+
+proc rolling_zscore*(data:seq[float],observed_window:seq[float],decay:float = 0.9):float =
+    #
+    # The lowest the decay, the more important the new points
+    # Decay is there to ensure that new data is worth more than old data
+    # in terms of trendiness
+    #
+ 
+    # Set the average to the first value of the history to start with
+    var avg = data[0]
+    var squared_average = data[0] ^ 2
+    
+    for apoint in 1 ..< data.len:
+        let point = data[apoint]
+        (avg, squared_average) = add_to_history(point, avg, squared_average,decay)
+
+    var trends = newSeq[float]()
+    # We recalculate the averages for each new point added to increase accuracy
+    for point in observed_window:
+        trends.add(calculate_zscore(avg, squared_average, point,avg))
+        (avg, squared_average) = add_to_history(point, avg, squared_average,decay)
+
+    # Close enough way to find a trend in the window
+    
+    if len(trends) != 0:
+        return sum(trends) / float(len(trends))  
+    else :
+        return 0.0
+
+# 
+# # rolling_zscore and zscore testing
+#  
+# var data = newSeq[float]()
+# data = @[0.0, 0.0, 3.0, 5.0, 4.0, 3.0, 6.0, 0.0, 2.0, 6.0, 8.0, 9.0, 0.0, 1.0, 3.0, 7.0, 5.0, 6.0, 4.0, 5.0, 0.0, 1.0, 3.0, 5.0, 0.0, 6, 4, 2, 3, 1]
+# let window_not_trending = @[3.0, 4, 3, 0, 1, 4, 5]
+# let window_trending = @[5.0, 8, 10, 12, 15, 17, 20]
+# 
+# printLn("Test 1")
+# printLn(rolling_zscore(data, window_not_trending))
+# # -0.02257907513690587
+# # 
+# printLn("Test 2")
+# printLn(rolling_zscore(data, window_trending))
+# # 2.185948961553206
+# 
+# # And now with different decay, not linear relation
+# printLn("Test 3")
+# printLn(rolling_zscore(data, window_trending, decay=0.5))
+# # 1.857409885787915 
+# 
+# printLn("Test 4")
+# printLn(rolling_zscore(data, window_trending, decay=0.1))
+# # 2.934068545987708
+# 
+# printLn("Test 5")
+# printLn(rolling_zscore(@[20.0, 20, 20, 20, 20, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], @[20.0]))
+# # 2.03674495278704
+# 
+# printLn("Test 6")
+# printLn(rolling_zscore(@[0.0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 20, 20, 20, 20, 20], @[20.0]))
+# # 1.062882
+# 
+# printLn("Test 7")
+# printLn(rolling_zscore(@[1.0, 1, 1, 1, 1, 1, 9, 9, 9, 9, 9, 9],window_not_trending))
+# # -0.3688909393729522
+# 
+# printLn("Test 8")
+# printLn(rolling_zscore(@[2.0, 4, 4, 4, 5, 5, 7, 9],@[11.0]))
+# # 3.5163469
+# 
+# printLn("Test 9")
+# printLn(rolling_zscore(@[1.0, 2, 0, 3, 1, 3, 1, 2, 9, 8, 7, 10, 9, 5, 2, 4, 1, 1, 0],@[8.69]))
+# # 1.65463766240478
+# 
+# # zscore tests
+# printLn("Test 10")
+# echo()
+# var dataf = @[1.0, 2, 0, 3, 1, 3, 1, 2, 9, 8, 7, 10, 9, 5, 2, 4, 1, 1, 0]
+# var datai = @[1, 2, 0, 3, 1, 3, 1, 2, 9, 8, 7, 10, 9, 5, 2, 4, 1, 1, 0]
+# printLn("DATA SERIES FLOAT",yellowgreen,xpos=2) 
+# showSeq(dataf,maxitemwidth=8) 
+# printLn("ZSCORE",salmon,xpos=2) 
+# showSeq(zscore(dataf),maxitemwidth=8) 
+# decho(3)
+# printLn("DATA SERIES INTEGER",yellowgreen,xpos=2) 
+# showSeq(datai,maxitemwidth=8) 
+# printLn("ZSCORE",salmon,xpos=2) 
+# showSeq(zscore(datai),maxitemwidth=8) 
+# 
+
          
          
 # end of cxstats.nim         

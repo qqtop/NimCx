@@ -10,3 +10,10 @@ license       = "MIT"
 
 Requires : "nim >= 0.19.0"
 
+
+[Checks]
+import distros
+task setup, "Setup started":
+  if detectOs(Windows):
+    echo "Linux only. Windows is not supported"
+quit()

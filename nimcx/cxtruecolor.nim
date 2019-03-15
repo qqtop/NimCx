@@ -14,10 +14,11 @@ import cxglobal,cxconsts,cxprint,terminal,strutils,random
 # Note you will need konsole or similar terminal to see colors
 # the standard gnome terminal etc may or may not be able to show colors above the standard terminal colors
 # 
-# in order to load cxTrueCol at compiletime use  -d:cxTrueCol   or load it anytime with a call to getCxTrueColorSet()
+# in order to load cxTrueCol at compiletime use  -d:cxTrueCol  or load it anytime in your own modles 
+# with a call to getCxTrueColorSet()
 #
 #
-# Last : 2018-10-18
+# Last : 2019-03-09
 # 
 type
   CXRGB* = tuple[R: int, G: int, B: int,cxCol:string]  # the idea for the cxCol field is to give interesting colors a name
@@ -142,7 +143,6 @@ proc getCxTrueColorSet*(min:int = 0,max:int = 888,step:int = 12,flag48:bool = fa
             {.hint    : "\x1b[38;2;154;205;50m \u2691 NimCx :" & "\x1b[38;2;255;100;0m cxTrueCol not loaded, Compile with -d:cxTrueCol to preload.  \xE2\x9A\xAB" & " " & "\xE2\x9A\xAB" & spaces(2) & "\x1b[38;2;154;205;50m \u2691" & spaces(1) .} 
             cxTrueCol = @[]
          echo()
-          
          #printLnBiCol("cxTrueCol Length : " & $cxtruecol.len)
          result = true
      else:
@@ -295,19 +295,18 @@ proc showCxTrueColorPalette2*() =
                     let dlcol = color38(cxTrueCol)
                     let drcol = color38(cxTrueCol)
                     testLine.startpos = 5  
-                    testLine.endpos = 150
+                    testLine.endpos = 132
                     testLine.linecolor        = cxTrueCol[lcol]
                     testLine.dotleftcolor     = cxTrueCol[dlcol]
                     testLine.dotrightcolor    = cxTrueCol[drcol]
-                    
-                    
-                    testLine.cxlinetext.textpos = 8
+                                        
+                    testLine.cxlinetext.textpos = 5
                     testLine.cxlinetext.textbracketcolor = cxTrueCol[bcol]
                     testLine.cxlinetext.text = fmtx(["<20","<14",">8",""], "Testing" ,"cxTruecolor : " ,$lcol," of " & cxtlen & spaces(1))
                     testLine.cxlinetext.textcolor = cxTrueCol[lcol]  # change this to tcol to have text in a random truecolor
                     testLine.cxlinetext.textstyle = {styleReverse}
                     
-                    testLine.cxlinetext2.textpos = 80
+                    testLine.cxlinetext2.textpos = 70
                     testLine.cxlinetext2.textbracketcolor = cxTrueCol[bcol]
                     testLine.cxlinetext2.text = fmtx(["<55"], "RGX " & $cxrgb[lcol])
                     testLine.cxlinetext2.textcolor = cxTrueCol[lcol]  # change this to tcol to have text in a random truecolor
@@ -325,8 +324,20 @@ proc showCxTrueColorPalette2*() =
       else:        
               echo()
               printLnInfoMsg("Palette Entries " , ff2(cxTruecol.len),xpos = msgxpos)   
-              printLnInfoMsg("Note            " , cxpad("cxTrueCol is not loaded.",96),xpos = msgxpos)
-              printLnInfoMsg("                " , cxPad("Run getcxTrueColorSet() in your code or compile with -d:cxTrueCol",96),xpos = msgxpos)   
+              printLnInfoMsg("Note            " , cxpad("cxTrueCol is not loaded. ",96),xpos = msgxpos)
+              printLnInfoMsg("                " , cxPad("compile with -d:cxTrueCol",96),xpos = msgxpos)   
               decho(2) 
-      
+
+
+when isMainModule: 
+    import nimcx
+    # Note: this needs to be run in konsole (the KDE terminal) , other terminals will
+    #       most likely not show the correct colors 
+    #       
+    getcxTrueColorSet() # needed here maybe due to module import or compile order
+    showCxTrueColorPalette2()
+    echo()
+    cxprint.cxprintLn("Test finished !",fontcolor = colLime,bgr = cxTruecol[419872],xpos = 5)
+    cxprint.printLn2("Bye Bye  ",fgr = cxTruecol[121870],xpos = 5)   
+    cxprint.decho(2)
 #  end experimental truecolors     

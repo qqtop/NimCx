@@ -18,7 +18,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-03-01
+##     Latest      : 2019-03-07 
 ##
 ##     Compiler    : Nim >= 0.19.x devel branch
 ##
@@ -123,7 +123,7 @@
 import
         cxconsts, cxglobal, cxtime, cxprint, cxhash, cxfont, cxtruecolor, cxutils, cxnetwork, cxstats,
         os, osproc, times, random, strutils, strformat, strscans, parseutils, sequtils, parseopt,
-        tables, sets, macros,posix,
+        tables, sets, macros,posix,posix_utils,
         terminal, math, stats, json, streams, options, memfiles,
         httpclient, nativesockets, browsers, intsets, algorithm, net,
         unicode, typeinfo, typetraits, cpuinfo, colors, encodings, distros,
@@ -132,7 +132,7 @@ import strutils except align
 export
         cxconsts, cxglobal, cxtime, cxprint, cxhash, cxfont, cxtruecolor, cxutils, cxnetwork, cxstats,
         os, osproc, times, random, strformat, strscans, parseutils, sequtils, parseopt,
-        tables, sets, macros,posix,
+        tables, sets, macros,posix, posix_utils,
         terminal, math, stats, json, streams, options, memfiles,
         httpclient, nativesockets, browsers, intsets, algorithm, net,
         typeinfo, typetraits, cpuinfo, colors, encodings, distros,
@@ -184,31 +184,29 @@ when defined(posix):
         {.hint: "\x1b[38;2;154;205;50m \u2691  Compiling        :" &
                         "\x1b[38;2;255;100;0m Please wait , Nim will be right back ! \xE2\x9A\xAB" &
                         " " & "\xE2\x9A\xAB" & spaces(2) & "\x1b[38;2;154;205;50m \u2691".}
-        {.hints: off.}        # turn on off as per requirement
+        {.hints: off.}  # turn on off as per requirement
 
 
 let cxstart* = epochTime() # simple execution timing with one line see doFinish()
-randomize()                   # seed rand number generator
+randomize()                # seed rand number generator
 
 type
         NimCxError* = object of Exception
                 cxerrormsg: string
         # experimental    
-     # to be used like so , but not in use yet
-     # raise newException(NimCxError, "didn't do stuff")
-     #
-     # or something like this
-     # 
-     # proc checkoktype[T](a: T) =
-     #   when (T is ref or T is ptr or T is cstring):
-     #     raise newException(NimCxError, "This type not supported here")
-     #     # or exit during compile already
-     #     #  {.fatal: "This type not supported here".}
-     #   else:
-     #     discard
-     # 
-
-
+        # not in use yet
+        # raise newException(NimCxError, "didn't do stuff")
+        #
+        # or something like this
+        # 
+        # proc checkoktype[T](a: T) =
+        #   when (T is ref or T is ptr or T is cstring):
+        #     raise newException(NimCxError, "This type not supported here")
+        #     # or exit during compile already
+        #     #  {.fatal: "This type not supported here".}
+        #   else:
+        #     discard
+        # 
 
 # type used in Benchmark
 type
@@ -278,37 +276,33 @@ proc newColor*(r, g, b: int): string =
 
 
 proc newColor2*(r, g, b: int): string = "\x1b[48;2;$1;$2;$3m" % [$r, $g, $b]
-        ##   newColor2
-    ##   
-    ##   creates a new color string from r,g,b values passed in with styleReverse effect for text
-    ##   best used as foregroundcolor in print, printLn routines
-    ##
+     ##   newColor2
+     ##   
+     ##   creates a new color string from r,g,b values passed in with styleReverse effect for text
+     ##   best used as foregroundcolor in print, printLn routines
+     ##
 
 proc checkColor*(colname: string): bool =
-        ## checkColor
+     ## checkColor
      ##
      ## returns true if colname is a known color name in colorNames constants.nim 
      ## 
      ##
-        result = false
-        for x in colorNames:
-                if x[0] == colname or x[1] == colname:
-                        result = true
+     result = false
+     for x in colorNames:
+        if x[0] == colname or x[1] == colname:
+           result = true
 
 proc showColors*() =
-        ## showColors
-  ##
-  ## display all colorNames in color !
-  ##
-        for x in colorNames:
-                print(fmtx(["<22"], x[0]) & spaces(2) & "▒".repeat(
-                                10) & spaces(2) & "⌘".repeat(10) & spaces(
-                                2) & "ABCD abcd 1234567890 --> " & " Nim Colors  ", x[1], bgBlack, xpos = 3)
-                printLn(fmtx(["<23"], spaces(2) & x[0]), x[1], styled = {
-                                styleReverse}, substr = fmtx(["<23"],
-                                "  " & x[0]))
-                sleepy(0.01)
-        decho()
+     ## showColors
+     ##
+     ## display all colorNames in color !
+     ##
+     for x in colorNames:
+           print(fmtx(["<22"], x[0]) & spaces(2) & "▒".repeat(10) & spaces(2) & "⌘".repeat(10) & spaces(2) & "ABCD abcd 1234567890 --> " & " Nim Colors  ", x[1], bgBlack, xpos = 3)
+           printLn(fmtx(["<23"], spaces(2) & x[0]), x[1], styled = {styleReverse}, substr = fmtx(["<23"],spaces(2) & x[0]))
+           sleepy(0.01)
+     decho()
 
 proc makeColor*(r:int=getrndint(0,2550),g:int=getrndint(0,2550),b:int=getrndint(1000,2550),xpos:int=1) =
      ## makeColor
@@ -351,7 +345,7 @@ proc makeGreyScaleTest*(astart:int = 0, aend:int = 255 ,astep:int = 5) =
 
 
 proc nimcat*(curFile: string, countphrase: varargs[string, `$`] = "") =
-        ## nimcat
+    ## nimcat
     ## 
     ## A simple file lister which shows all rows and some stats.
     ## It also allows counting of tokens.
@@ -366,96 +360,87 @@ proc nimcat*(curFile: string, countphrase: varargs[string, `$`] = "") =
     ##   nimcat("bigdatafile.csv")
     ##   nimcat("/data5/notes.txt",countphrase = "nice" , "hanya", 88) # also count how often a token appears in the file
     ##
-        var ccurFile = curFile
-        let (dir, name, ext) = splitFile(ccurFile)
-        if ext == "": ccurFile = ccurFile & ".nim"
-        if not fileExists(ccurfile):
-                echo()
-                printLnErrorMsg(ccurfile & " not found !")
-                printLn(spaces(8) & " Check path and filename")
-                echo()
-                discard
-        else:
-                decho()
-                dlineLn()
-                echo()
-                var phraseinline = newSeqWith(countphrase.len, newSeq[int](0)) # holds the line numbers where a phrase to be counted was found
-                #var line = ""
-                var c = 1
-                for line in memSlices(memfiles.open(ccurFile)):
-                        echo yellowgreen, strutils.align($c, 6), termwhite,
-                                ":", spaces(1), wrapWords($line,
-                                        maxLineWidth = tw - 8, splitLongWords = false, newLine = "\x0D\x0A" & spaces(
-                                        8))
-                        if ($line).len > 0:
-                                var lc = 0
-                                for mc in 0..<countphrase.len:
-                                        lc = ($line).count(countphrase[mc])
-                                        if lc > 0: phraseinline[mc].add(c)
-                        inc c
+    var ccurFile = curFile
+    let (dir, name, ext) = splitFile(ccurFile)
+    if ext == "": ccurFile = ccurFile & ".nim"
+    if not fileExists(ccurfile):
+            echo()
+            printLnErrorMsg(ccurfile & " not found !")
+            printLn(spaces(8) & " Check path and filename")
+            echo()
+            discard
+    else:
+            decho()
+            dlineLn()
+            echo()
+            var phraseinline = newSeqWith(countphrase.len, newSeq[int](0)) # holds the line numbers where a phrase to be counted was found
+            #var line = ""
+            var c = 1
+            for line in memSlices(memfiles.open(ccurFile)):
+                echo yellowgreen, strutils.align($c, 6), termwhite,":", spaces(1), wrapWords($line, maxLineWidth = tw - 8, splitLongWords = false, newLine = "\x0D\x0A" & spaces(8))
+                if ($line).len > 0:
+                        var lc = 0
+                        for mc in 0..<countphrase.len:
+                                lc = ($line).count(countphrase[mc])
+                                if lc > 0: phraseinline[mc].add(c)
+                inc c
 
-                echo()
-                printLnBiCol("File       : " & ccurFile)
-                printLnBiCol("Lines Shown: " & ff2(c - 1))
-                var maxphrasewidth = 0
-                for x in countphrase:
-                        if x.len > maxphrasewidth: maxphrasewidth = x.len
-                if countphrase.len > 0:
-                        println("\nPhraseCount stats :    \n", gold, styled = {
-                                        styleUnderScore})
-                        for x in 0..<countphrase.len:
-                                printLnBiCol(fmtx(["<" & $maxphrasewidth, "",
-                                                ""], countphrase[x],
-                                                " : " & rightarrow & " Count: ", phraseinline[x].len), xpos = 4)
-                                printLnBiCol("Occurence : Line No.",
-                                                colLeft = truetomato, colRight = yellow, sep = ":", 4, false, {})
-                                showseq(phraseinline[x])
+            echo()
+            printLnBiCol("File       : " & ccurFile)
+            printLnBiCol("Lines Shown: " & ff2(c - 1))
+            var maxphrasewidth = 0
+            for x in countphrase:
+                if x.len > maxphrasewidth: maxphrasewidth = x.len
+            if countphrase.len > 0:
+                println("\nPhraseCount stats :    \n", gold, styled = {styleUnderScore})
+                for x in 0..<countphrase.len:
+                    printLnBiCol(fmtx(["<" & $maxphrasewidth, "",""], countphrase[x]," : " & rightarrow & " Count: ", phraseinline[x].len), xpos = 4)
+                    printLnBiCol("Occurence : Line No.", colLeft = truetomato, colRight = yellow, sep = ":", 4, false, {})
+                    showseq(phraseinline[x])
 
 
 template repeats(count: int, statements: untyped) =
         for i in 0..<count:
-                statements
+            statements
 
 
 template benchmark*(benchmarkName: string, repeatcount: int = 1, code: typed) =
         ## benchmark
-  ## 
-  ## a quick benchmark template showing cpu and epoch times with repeat looping param
-  ## suitable for quick in-program timing of procs 
-  ## for in depth benchmarking use the nimbench module available via nimble
-  ## 
-  ## 
-  ##.. code-block:: nim
-  ##    benchmark("whatever",1000):
-  ##        printLn("Kami makan tiga kali setiap hari.",randcol())
-  ##
-  ##
-  ##.. code-block:: nim
-  ##          import nimcx,algorithm
-  ##
-  ##          proc doit() =
-  ##              var s = createSeqFloat(10,9)
-  ##              var c = 0
-  ##              s.sort(system.cmp,order = Descending)
-  ##              for x in s:
-  ##                  inc c 
-  ##                  printLnBiCol(fmtx([">4","<6","<f15.7"],$c," :",$x))
-  ##
-  ##          template cxcounter(bx:int):int =
-  ##                  inc bx
-  ##                  bx
-  ##
-  ##          var x = 0
-  ##          benchmark("doit",10000):
-  ##                  doit()
-  ##                  hline(30)
-  ##                  printLn( " " & uparrow & " Run " & $cxcounter(x),greenyellow)
-  ##                  echo()
-  ##                  
-  ##          showBench() 
-  ##  
-  ##    
-  ##
+        ## 
+        ## a quick benchmark template showing cpu and epoch times with repeat looping param
+        ## suitable for quick in-program timing of procs 
+        ## for in depth benchmarking use the nimbench module available via nimble
+        ## 
+        ## 
+        ##.. code-block:: nim
+        ##    benchmark("whatever",1000):
+        ##        printLn("Kami makan tiga kali setiap hari.",randcol())
+        ##
+        ##
+        ##.. code-block:: nim
+        ##          import nimcx,algorithm
+        ##
+        ##          proc doit() =
+        ##              var s = createSeqFloat(10,9)
+        ##              var c = 0
+        ##              s.sort(system.cmp,order = Descending)
+        ##              for x in s:
+        ##                  inc c 
+        ##                  printLnBiCol(fmtx([">4","<6","<f15.7"],$c," :",$x))
+        ##
+        ##          template cxcounter(bx:int):int =
+        ##                  inc bx
+        ##                  bx
+        ##
+        ##          var x = 0
+        ##          benchmark("doit",10000):
+        ##                  doit()
+        ##                  hline(30)
+        ##                  printLn( " " & uparrow & " Run " & $cxcounter(x),greenyellow)
+        ##                  echo()
+        ##                  
+        ##          showBench() 
+        ##
 
         var zbres: Benchmarkres
         let t0 = epochTime()
@@ -473,36 +458,35 @@ template benchmark*(benchmarkName: string, repeatcount: int = 1, code: typed) =
 
 template benchmark*(benchmarkName: string, code: typed) =
         ## benchmark
-  ## 
-  ## a quick benchmark template showing cpu and epoch times without repeat
-  ## 
-  ##.. code-block:: nim
-  ##    benchmark("whatever"):
-  ##      let z = 0.. 1000
-  ##      loopy(z,printLn("Kami makan tiga kali setiap hari.",randcol()))
-  ##
-  ##
-  ##.. code-block:: nim
-  ##
-  ##   proc doit() =
-  ##      var s = createSeqFloat(10,9)
-  ##      var c = 0
-  ##      s.sort(system.cmp,order = Descending)
-  ##      for x in s:
-  ##           inc c 
-  ##           printLnBiCol(fmtx([">4","<6","<f15.7"],$c," :",$x))
-  ##
-  ##    benchmark("doit"):
-  ##      for x in 0.. 100:
-  ##          doit()
-  ##          hline(30)
-  ##          printLn(" " & $x,randcol())
-  ##          echo()
-  ##          
-  ##    showBench() 
-  ##    
-  ##
-
+        ## 
+        ## a quick benchmark template showing cpu and epoch times without repeat
+        ## 
+        ##.. code-block:: nim
+        ##    benchmark("whatever"):
+        ##      let z = 0.. 1000
+        ##      loopy(z,printLn("Kami makan tiga kali setiap hari.",randcol()))
+        ##
+        ##
+        ##.. code-block:: nim
+        ##
+        ##   proc doit() =
+        ##      var s = createSeqFloat(10,9)
+        ##      var c = 0
+        ##      s.sort(system.cmp,order = Descending)
+        ##      for x in s:
+        ##           inc c 
+        ##           printLnBiCol(fmtx([">4","<6","<f15.7"],$c," :",$x))
+        ##
+        ##    benchmark("doit"):
+        ##      for x in 0.. 100:
+        ##          doit()
+        ##          hline(30)
+        ##          printLn(" " & $x,randcol())
+        ##          echo()
+        ##          
+        ##    showBench() 
+        ##    
+        
         var zbres: Benchmarkres
         let t0 = epochTime()
         let t1 = cpuTime()
@@ -520,58 +504,56 @@ template benchmark*(benchmarkName: string, code: typed) =
 
 proc showBench*() =
         ## showBench
- ## 
- ## Displays results of all benchmarks
+        ## 
+        ## Displays results of all benchmarks
 
         var bnamesize = 0
         var epochsize = 0
         var cpusize = 0
         var repeatsize = 0
         for x in benchmarkresults:
-                var aa11 = spaces(1) & dodgerblue & "[" & salmon & x.bname &
-                                dodgerblue & "]"
-                if len(aa11) > bnamesize: bnamesize = len(aa11)
-                if bnamesize < 13: bnamesize = 13
-                if len(x.epoch) > epochsize: epochsize = len(
-                                x.epoch) - bnamesize + 50
-                if len(x.cpu) > cpusize: cpusize = len(x.cpu) + 26
-                if len(x.repeats) > repeatsize: repeatsize = len(x.repeats)
+            var aa11 = spaces(1) & dodgerblue & "[" & salmon & x.bname & dodgerblue & "]"
+            if len(aa11) > bnamesize: bnamesize = len(aa11)
+            if bnamesize < 13: bnamesize = 13
+            if len(x.epoch) > epochsize: epochsize = len(x.epoch) - bnamesize + 50
+            if len(x.cpu) > cpusize: cpusize = len(x.cpu) + 26
+            if len(x.repeats) > repeatsize: repeatsize = len(x.repeats)
 
         if benchmarkresults.len > 0:
                 for x in benchmarkresults:
-                        echo()
-                        let tit = fmtx(["",
-                                        "<$1" % $(bnamesize - len(gold) * 3), "", "<28", "<19"], spaces(2),
-                                        "BenchMark", spaces(4), "Timing",
-                                        "Cycles : $1" % x.repeats)
+                    echo()
+                    let tit = fmtx(["",
+                                    "<$1" % $(bnamesize - len(gold) * 3), "", "<28", "<19"], spaces(2),
+                                    "BenchMark", spaces(4), "Timing",
+                                    "Cycles : $1" % x.repeats)
 
-                        if parseInt(x.repeats) > 0:
-                                printLn(tit, sandybrown, styled = {styleUnderScore},substr = tit)
-                                echo()
-                        else:
-                                printLn(tit, red, styled = {styleUnderScore},substr = tit)
+                    if parseInt(x.repeats) > 0:
+                            printLn(tit, sandybrown, styled = {styleUnderScore},substr = tit)
+                            echo()
+                    else:
+                            printLn(tit, red, styled = {styleUnderScore},substr = tit)
 
-                        let aa1 = spaces(1) & gold & "[" & salmon & x.bname & gold & "]"
-                        let bb1 = cornflowerblue & "Epoch Time : " & oldlace & x.epoch & " secs"
-                        let cc1 = cornflowerblue & "Cpu Time   : " & oldlace & x.cpu & " secs"
-                        var dd1 = ""
-                        var ee1 = ""
+                    let aa1 = spaces(1) & gold & "[" & salmon & x.bname & gold & "]"
+                    let bb1 = cornflowerblue & "Epoch Time : " & oldlace & x.epoch & " secs"
+                    let cc1 = cornflowerblue & "Cpu Time   : " & oldlace & x.cpu & " secs"
+                    var dd1 = ""
+                    var ee1 = ""
 
-                        if parseFloat(x.epoch) > 0.00:
-                                dd1 = "Cycles/sec : " & ff2(parsefloat(x.repeats)/parsefloat(x.epoch))
-                        else:
-                                dd1 = "Cycles/sec : Inf"
+                    if parseFloat(x.epoch) > 0.00:
+                            dd1 = "Cycles/sec : " & ff2(parsefloat(x.repeats)/parsefloat(x.epoch))
+                    else:
+                            dd1 = "Cycles/sec : Inf"
 
-                        if parseFloat(x.cpu) > 0.00:
-                                ee1 = "Cycles/sec : " & ff2(parsefloat(x.repeats)/parsefloat(x.cpu))
-                        else:
-                                ee1 = "Cycles/sec : Inf"
+                    if parseFloat(x.cpu) > 0.00:
+                            ee1 = "Cycles/sec : " & ff2(parsefloat(x.repeats)/parsefloat(x.cpu))
+                    else:
+                            ee1 = "Cycles/sec : Inf"
 
-                        printLn(fmtx(["<$1" % $bnamesize, "", "<70", "<90"],aa1, spaces(3), bb1, dd1))
-                        printLn(fmtx(["<$1" % $bnamesize, "", "<70", "<50"],aa1, spaces(3), cc1, ee1))
+                    printLn(fmtx(["<$1" % $bnamesize, "", "<70", "<90"],aa1, spaces(3), bb1, dd1))
+                    printLn(fmtx(["<$1" % $bnamesize, "", "<70", "<50"],aa1, spaces(3), cc1, ee1))
 
-                        if dd1.contains("Inf") or ee1.contains("Inf"):
-                                printLnInfoMsg("Inf","To measure something increase the loop count.")
+                    if dd1.contains("Inf") or ee1.contains("Inf"):
+                            printLnInfoMsg("Inf","To measure something increase the loop count.")
 
                 echo()
                 benchmarkresults = @[]
@@ -582,41 +564,41 @@ proc showBench*() =
 
 
 proc showPalette*(coltype:string = "white" ) =
-        ## ::
-    ##   showPalette
-    ##   
-    ##   Displays palette with all coltype as found in colorNames
-    ##   coltype examples : "red","blue","medium","dark","light","pastel" etc..
-    ##
-        echo()
-        let z = colPaletteLen(coltype)
-        for x in 0 ..< z:
-            printLn(fmtx([">3", ">4"],$x,rightarrow) & " ABCD 1234567890   " & colPaletteName(coltype, x), colPalette(coltype, x))
-        printLnBiCol("\n" & coltype & "Palette items count   : " & $z)
-        echo()
+     ## ::
+     ##   showPalette
+     ##   
+     ##   Displays palette with all coltype as found in colorNames
+     ##   coltype examples : "red","blue","medium","dark","light","pastel" etc..
+     ##
+     echo()
+     let z = colPaletteLen(coltype)
+     for x in 0 ..< z:
+        printLn(fmtx([">3", ">4"],$x,rightarrow) & " ABCD 1234567890   " & colPaletteName(coltype, x), colPalette(coltype, x))
+     printLnBiCol("\n" & coltype & "Palette items count   : " & $z)
+     echo()
 
 
 proc colorio*() =
-        ## colorio
+    ## colorio
     ## 
     ## Displays name,hex code and rgb of colors available in cx.nim
     ##
-        printLn(fmtx(["<20", "", "<20", "", ">5", "", ">5", "", ">5"],
-                        "ColorName in cx", spaces(2), "HEX Code", spaces(2),
-                        "R", spaces(1), "G", spaces(1), "B"), zippi)
-        echo()
-        for x in 0..<colorNames.len:
-                try:
-                        let zr = extractRgb(parsecolor(colorNames[x][0]))
-                        printLn(fmtx(["<20", "", "<20", "", ">5", "", ">5",
-                                        "", ">5"], colorNames[x][0], spaces(2), $(
-                                        parsecolor(colorNames[x][0])), spaces(
-                                        2), zr[0], spaces(1), zr[1], spaces(1),
-                                        zr[2]), fgr = colorNames[x][1])
-                except ValueError:
-                        printLn(fmtx(["<20", "", "<20"], colorNames[x][0],
-                                        spaces(2), "NIMCX CUSTOM COLOR "),
-                                        fgr = colorNames[x][1])
+    printLn(fmtx(["<20", "", "<20", "", ">5", "", ">5", "", ">5"],
+                    "ColorName in cx", spaces(2), "HEX Code", spaces(2),
+                    "R", spaces(1), "G", spaces(1), "B"), zippi)
+    echo()
+    for x in 0..<colorNames.len:
+            try:
+                    let zr = extractRgb(parsecolor(colorNames[x][0]))
+                    printLn(fmtx(["<20", "", "<20", "", ">5", "", ">5",
+                                    "", ">5"], colorNames[x][0], spaces(2), $(
+                                    parsecolor(colorNames[x][0])), spaces(
+                                    2), zr[0], spaces(1), zr[1], spaces(1),
+                                    zr[2]), fgr = colorNames[x][1])
+            except ValueError:
+                    printLn(fmtx(["<20", "", "<20"], colorNames[x][0],
+                                    spaces(2), "NIMCX CUSTOM COLOR "),
+                                    fgr = colorNames[x][1])
 
 
 # spellInteger
@@ -700,24 +682,23 @@ proc spellInteger2*(n: string): string =
                                         1)
 
 
-proc spellFloat*(n: float64, currency: bool = false, sep: string = ".",
-                sepname: string = " dot "): string =
+proc spellFloat*(n: float64, currency: bool = false, sep: string = ".", sepname: string = " dot "): string =
         ## spellFloat
-  ## 
-  ## writes out a float number in english with up to 14 positions after the dot
-  ## currency denotes spelling of an amount
-  ## sep and sepname can be adjusted as needed
-  ## default sep = "."
-  ## default sepname = " dot "
-  ## 
-  ##.. code-block:: nim
-  ##  import nimcx
-  ##  printLn spellFloat(0.00)
-  ##  printLn spellFloat(234)
-  ##  printLn spellFloat(-2311.345)
-  ##  println spellFloat(5212311.00).replace("dot","and") & "hundreds"
-  ##  printLn spellFloat(122311.34,true).replace("dot","dollars and") & " cents"
-  ##
+        ## 
+        ## writes out a float number in english with up to 14 positions after the dot
+        ## currency denotes spelling of an amount
+        ## sep and sepname can be adjusted as needed
+        ## default sep = "."
+        ## default sepname = " dot "
+        ## 
+        ##.. code-block:: nim
+        ##  import nimcx
+        ##  printLn spellFloat(0.00)
+        ##  printLn spellFloat(234)
+        ##  printLn spellFloat(-2311.345)
+        ##  println spellFloat(5212311.00).replace("dot","and") & "hundreds"
+        ##  printLn spellFloat(122311.34,true).replace("dot","dollars and") & " cents"
+        ##
 
         if n == 0.00:
                 result = spellInteger(0)
@@ -742,31 +723,31 @@ proc spellFloat*(n: float64, currency: bool = false, sep: string = ".",
                                         0])) & sepname & spellInteger(parseInt(nss[1]))
 
 template currentFile*: string =
-  ## currentFile
-  ## 
-  ## returns path and current filename
-  ##
-  var pos = instantiationInfo()
-  pos.filename
+      ## currentFile
+      ## 
+      ## returns path and current filename
+      ##
+      var pos = instantiationInfo()
+      pos.filename
 
 
 template zipWith*[T1, T2](f: untyped; xs: openarray[T1], ys: openarray[T2]): untyped =
-  ## zipWith
-  ## 
-  ## 
-  ##.. code-block:: nim
-  ##    var s1 = createSeqInt(5)
-  ##    var s2 = createSeqInt(5)
-  ##    var zs = zipWith(`/`,s1,s2)   # try with +,-,*,/,div...
-  ##    echo zs
-  ##    
-  ##    
-  ## original code ex Nim Forum
-  ##
-  let n = min(xs.len, ys.len)
-  var res = newSeq[type(f(xs[0], ys[0]))](n)
-  for i, value in res.mpairs: value = f(xs[i], ys[i])
-  res
+      ## zipWith
+      ## 
+      ## 
+      ##.. code-block:: nim
+      ##    var s1 = createSeqInt(5)
+      ##    var s2 = createSeqInt(5)
+      ##    var zs = zipWith(`/`,s1,s2)   # try with +,-,*,/,div...
+      ##    echo zs
+      ##    
+      ##    
+      ## original code ex Nim Forum
+      ##
+      let n = min(xs.len, ys.len)
+      var res = newSeq[type(f(xs[0], ys[0]))](n)
+      for i, value in res.mpairs: value = f(xs[i], ys[i])
+      res
 
 
 proc newDir*(dirname: string) =
@@ -784,13 +765,13 @@ proc newDir*(dirname: string) =
 
 proc remDir*(dirname: string): bool {.discardable.} =
         ## remDir
-     ##
-     ## deletes an existing directory , all subdirectories and files  and provides some feedback
-     ##
-     ## root and home directory removal is disallowed 
-     ## 
-     ## this obviously is a dangerous proc handle with care !!
-     ##
+        ##
+        ## deletes an existing directory , all subdirectories and files  and provides some feedback
+        ##
+        ## root and home directory removal is disallowed 
+        ## 
+        ## this obviously is a dangerous proc handle with care !!
+        ##
 
         if dirname == "/home" or dirname == "/":
                 printLn("Directory " & dirname & " removal not allowed !",brightred)
@@ -840,43 +821,43 @@ proc toClip*[T](s: T) =
 
 
 proc getColorName*[T](sc: T): string =
-       ## getColorName
-       ## 
-       ## this functions returns the colorname based on a color escape sequence
-       ## 
-       ## usually used with randcol() to see what color was actually returned
-       ## 
-       ## 
-       ##.. code-block:: nim
-       ##  import nimcx
-       ##  for x in 0.. 10: 
-       ##     let acol = randcol()
-       ##     let acolname = getColorName(acol)         
-       ##     printLn(acolname,acol)  
-       ## 
-       ##
-       result = "unknown color"
-       for x in colornames:
-                if x[1] == sc: result = x[0]
+     ## getColorName
+     ## 
+     ## this functions returns the colorname based on a color escape sequence
+     ## 
+     ## usually used with randcol() to see what color was actually returned
+     ## 
+     ## 
+     ##.. code-block:: nim
+     ##  import nimcx
+     ##  for x in 0.. 10: 
+     ##     let acol = randcol()
+     ##     let acolname = getColorName(acol)         
+     ##     printLn(acolname,acol)  
+     ## 
+     ##
+     result = "unknown color"
+     for x in colornames:
+        if x[1] == sc: result = x[0]
 
 proc getColorConst*[T](sc: T): string =
-        ## getColorConst
-   ## 
-   ## this functions returns the colorname constant color escape sequence based on a colorname
-   ## ready to be used in print routines , it is the reverse of the getColorName function.
-   ## usefull if we have colorname strings read in from a file or a sequence
-   ## 
-   ##.. code-block:: nim
-   ##  import nimcx
-   ##  var astringseq = split("lightgrey,pastelgreen,pastelpink,lightblue,goldenrod,truetomato,truetomato,white",sep=',')          
-   ##  for acolor in astringseq:          
-   ##      printLn("good color " & acolor , getColorConst(acolor))    
-   ## 
-   ##
-        result = "unknown color"
-        for x in colornames:
-                if x[0] == sc:
-                        result = x[1]
+     ## getColorConst
+     ## 
+     ## this functions returns the colorname constant color escape sequence based on a colorname
+     ## ready to be used in print routines , it is the reverse of the getColorName function.
+     ## usefull if we have colorname strings read in from a file or a sequence
+     ## 
+     ##.. code-block:: nim
+     ##  import nimcx
+     ##  var astringseq = split("lightgrey,pastelgreen,pastelpink,lightblue,goldenrod,truetomato,truetomato,white",sep=',')          
+     ##  for acolor in astringseq:          
+     ##      printLn("good color " & acolor , getColorConst(acolor))    
+     ## 
+     ##
+     result = "unknown color"
+     for x in colornames:
+           if x[0] == sc:
+              result = x[1]
 
 
 proc showTerminalSize*() =
@@ -926,51 +907,50 @@ proc cxAlertLn*(xpos: int = 1) =
 
 
 proc cxHelp*(s: openarray[string], xpos: int = 2) =
-        ## cxHelp
-  ## 
-  ## a help generator which can easily be called from within or on app start  
-  ## with ability to include code blocks
-  ## 
-  ##
-  ##.. code-block:: nim
-  ##    cxHelp(["Help system for " & extractFileName(getAppFilename()),
-  ##         "",
-  ##        "1) Read the book",
-  ##        "2) use more data",
-  ##        "3) have a beer",
-  ##        cxcodestart,
-  ##        "Example 1",
-  ##        "",
-  ##        "let abc = @[1,2,3]",
-  ##        "    ",
-  ##        "var xfg = mysupergenerator(abc,3)",
-  ##        cxcodeend,
-  ##        "this should be help style again",
-  ##        cxcodestart,
-  ##        "Example 2  ",
-  ##        "",
-  ##        "for x in 0..<n:",
-  ##        """   printLn("Something Nice  ",blue)"""",
-  ##        cxcodeend,
-  ##        "Have a nice day"])
+      ## cxHelp
+      ## 
+      ## a help generator which can easily be called from within or on app start  
+      ## with ability to include code blocks
+      ## 
+      ##
+      ##.. code-block:: nim
+      ##    cxHelp(["Help system for " & extractFileName(getAppFilename()),
+      ##         "",
+      ##        "1) Read the book",
+      ##        "2) use more data",
+      ##        "3) have a beer",
+      ##        cxcodestart,
+      ##        "Example 1",
+      ##        "",
+      ##        "let abc = @[1,2,3]",
+      ##        "    ",
+      ##        "var xfg = mysupergenerator(abc,3)",
+      ##        cxcodeend,
+      ##        "this should be help style again",
+      ##        cxcodestart,
+      ##        "Example 2  ",
+      ##        "",
+      ##        "for x in 0..<n:",
+      ##        """   printLn("Something Nice  ",blue)"""",
+      ##        cxcodeend,
+      ##        "Have a nice day"])
 
-        var maxlen = 0
-        for ss in 0..<s.len:
-                # scan for max len which will be the max width of the help
-    # but need to limit it to within tw
-                if maxlen < s[ss].len:
-                        maxlen = s[ss].len
+      var maxlen = 0
+      for ss in 0..<s.len:
+           # scan for max len which will be the max width of the help
+           # but need to limit it to within tw
+           if maxlen < s[ss].len:  maxlen = s[ss].len
 
-        if maxlen > tw - 10:
+      if maxlen > tw - 10:
                 cxAlertLn(2)
                 showTerminalSize()
                 printLnErrorMsg("Terminal Size to small for help line width", xpos = xpos)
                 cxAlertLn(2)
                 echo()
 
-        var cxcodeflag = false
-        var cxcodeendflag = false
-        for ss in 0..<s.len:
+      var cxcodeflag = false
+      var cxcodeendflag = false
+      for ss in 0..<s.len:
                 var sss = s[ss]
                 if sss.len < maxlen: sss = sss & spaces(max(0,  maxlen - sss.len))
                 # we can embed a code which is set off from the help msg style
@@ -993,52 +973,52 @@ proc cxHelp*(s: openarray[string], xpos: int = 2) =
                 else:
                         if cxcodeendflag == false and ss > 0:
                                 printLnBelpMsg(sss, xpos = xpos)
-        echo()
+      echo()
 
 
 template infoProc*(code: untyped) =
-        ## infoProc
-  ## 
-  ## shows from where a specific function has been called and combined with checkLocals gives
-  ## a nice formatted output for debugging
-  ##
-  ##.. code-block:: nim
-  ##    proc test1[T](ff:varargs[T,`$`]) =
-  ##      let yu1 = @["test"]
-  ##      var yu2 = "sdfsdf"
-  ##      var yu3 = parseInt(ff[1]) * 3  # ff[1] has been converted to string we change it back to int and multiply
-  ##      print("test output    : ",lime)
-  ##      for x in ff: print(x & spaces(1)) # print the passed in varargs
-  ##      checklocals()
-  ##      
-  ##    proc test2(s:string,b:int) : string =   
-  ##       var bb = b * getRndInt(10,200)
-  ##       result = s & $bb
-  ##       checklocals()
-  ##      
-  ##    infoproc(test1("zz",1234,789.88))
-  ##    infoproc:
-  ##        printLnBiCol(fmtx(["","",""],"Test2 output  : ",rightarrow & spaces(1),test2("nice",2000)),colLeft = cyan,colRight=gold,":",0,false,{})
-  ##    doFinish()
-  ##
-  ##
-  ##
-        try:
-                let pos = instantiationInfo()
-                code
-                printLnInfoMsg("infoproc", " $1 Line: $2 with: '$3'" % [pos.filename, $pos.line, astToStr(code)])
-        except:
-                printLnErrorMsg("Checking instantiationInfo ")
-                discard
+      ## infoProc
+      ## 
+      ## shows from where a specific function has been called and combined with checkLocals gives
+      ## a nice formatted output for debugging
+      ##
+      ##.. code-block:: nim
+      ##    proc test1[T](ff:varargs[T,`$`]) =
+      ##      let yu1 = @["test"]
+      ##      var yu2 = "sdfsdf"
+      ##      var yu3 = parseInt(ff[1]) * 3  # ff[1] has been converted to string we change it back to int and multiply
+      ##      print("test output    : ",lime)
+      ##      for x in ff: print(x & spaces(1)) # print the passed in varargs
+      ##      checklocals()
+      ##      
+      ##    proc test2(s:string,b:int) : string =   
+      ##       var bb = b * getRndInt(10,200)
+      ##       result = s & $bb
+      ##       checklocals()
+      ##      
+      ##    infoproc(test1("zz",1234,789.88))
+      ##    infoproc:
+      ##        printLnBiCol(fmtx(["","",""],"Test2 output  : ",rightarrow & spaces(1),test2("nice",2000)),colLeft = cyan,colRight=gold,":",0,false,{})
+      ##    doFinish()
+      ##
+      ##
+      ##
+      try:
+          let pos = instantiationInfo()
+          code
+          printLnInfoMsg("infoproc", " $1 Line: $2 with: '$3'" % [pos.filename, $pos.line, astToStr(code)])
+      except:
+          printLnErrorMsg("Checking instantiationInfo ")
+          discard
 
 
 template checkLocals*() =
         ## checkLocals
-  ## 
-  ## check name,type and value of local variables
-  ## needs to be called inside a proc calling from toplevel has no effect
-  ## best placed at bottom end of a proc to pick up all Variables
-  ##
+        ## 
+        ## check name,type and value of local variables
+        ## needs to be called inside a proc calling from toplevel has no effect
+        ## best placed at bottom end of a proc to pick up all Variables
+        ##
         echo()
         dlineLn(tw() - 1)
         printLn("[checkLocals -->] ", gold)
@@ -1051,11 +1031,11 @@ template checkLocals*() =
         dlineLn(tw() - 1)
 
 proc qqTop*() =
-  ## qqTop
-  ##
-  ## prints qqTop in custom color
-  ##
-  print(cyan & "qq" & greenyellow & "T" & brightred & "o" & gold & "p")
+      ## qqTop
+      ##
+      ## prints qqTop in custom color
+      ##
+      print(cyan & "qq" & greenyellow & "T" & brightred & "o" & gold & "p")
 
 
 proc tmpFilename*(): string =
@@ -1072,117 +1052,117 @@ proc tmpFilename*(): string =
 
 
 proc tmpFilename*(filename: string): string =
-  # tmpFilename
-  # 
-  # creates a new tmpfilename with a specified name
-  # a file eventually created with this name will be automatically 
-  # erased upon exit if doFinish() , doByeBye() are called or upon exit via Ctrl-C  .
-  # a filename will look like so: /tmp/filename.tmp  
-  #
-  let tfn = getTempDir() & $epochTime() & "-" & filename & ".tmp"
-  cxTmpFileNames.add(tfn) # add filename to seq
-  result = tfn
+      # tmpFilename
+      # 
+      # creates a new tmpfilename with a specified name
+      # a file eventually created with this name will be automatically 
+      # erased upon exit if doFinish() , doByeBye() are called or upon exit via Ctrl-C  .
+      # a filename will look like so: /tmp/filename.tmp  
+      #
+      let tfn = getTempDir() & $epochTime() & "-" & filename & ".tmp"
+      cxTmpFileNames.add(tfn) # add filename to seq
+      result = tfn
 
 
 
 proc rmTmpFilenames*() =
-        # rmTmpFilenames
+    # rmTmpFilenames
     # 
     # this will remove all temporary files created with the tmpFilename function
     # and is automatically called by exit handlers doFinish(),doByeBye() and if Ctrl-C
     # is pressed . 
     #
-        for fn in cxTmpFileNames:
-                try:
-                        removeFile(fn)
-                except:
-                        printLnAlertMsg(fn & "could not be deleted.")
+    for fn in cxTmpFileNames:
+         try:
+             removeFile(fn)
+         except:
+             printLnAlertMsg(fn & "could not be deleted.")
 
 proc doInfo*() =
-        ## doInfo
-  ##
-  ## A more than you want to know information proc
-  ##
-  ##
-        let filename = extractFileName(getAppFilename())
-        let modTime = getLastModificationTime(filename)
-        let sep = ":"
-        superHeader("Information for file " & filename & " and System " & spaces(22))
-        printLnBiCol("Last compilation on           : " & CompileDate & " at " & CompileTime & " UTC", yellowgreen, lightgrey, sep, 0, false, {})
-        # this only makes sense for non executable files
-        #printLnBiCol("Last access time of file     : " & filename & " " & $(fromSeconds(int(getLastAccessTime(filename)))),yellowgreen,lightgrey,sep,0,false,{})
-        printLnBiCol("Last modificaton time of file : " & filename & " " & $modTime, yellowgreen, lightgrey, sep, 0, false, {})
-        printLnBiCol("Offset from UTC in hours      : " & cxTimeZone(), yellowgreen, lightgrey, sep, 0, false, {})
-        printLnBiCol("UTC Time                      : " & $now().utc, yellowgreen, lightgrey, sep, 0, false, {})
-        printLnBiCol("Local Time                    : " & $now().local,yellowgreen, lightgrey, sep, 0, false, {})
-        printLnBiCol("Environment Info              : " & os.getEnv("HOME"),yellowgreen, lightgrey, sep, 0, false, {})
-        printLnBiCol("TrueColor                     : " & $checktruecolorsupport(), goldenrod, lightgrey, sep, 0, false, {})
-        printLnBiCol("File exists                   : " & $(existsFile filename), yellowgreen, lightgrey, sep, 0, false, {})
-        printLnBiCol("Dir exists                    : " & $(existsDir "/"),yellowgreen, lightgrey, sep, 0, false, {})
-        printLnBiCol("AppDir                        : " & getAppDir(),yellowgreen, lightgrey, sep, 0, false, {})
-        printLnBiCol("App File Name                 : " & getAppFilename(),yellowgreen, lightgrey, sep, 0, false, {})
-        printLnBiCol("User home  dir                : " & os.getHomeDir(),yellowgreen, lightgrey, sep, 0, false, {})
-        printLnBiCol("Config Dir                    : " & os.getConfigDir(), yellowgreen, lightgrey, sep, 0, false, {})
-        printLnBiCol("Current Dir                   : " & os.getCurrentDir(), yellowgreen, lightgrey, sep, 0, false, {})
-        let fi = getFileInfo(filename)
-        printLnBiCol("File Id                       : " & $(fi.id.device), yellowgreen, lightgrey, sep, 0, false, {})
-        printLnBiCol("File No.                      : " & $(fi.id.file), yellowgreen, lightgrey, sep, 0, false, {})
-        printLnBiCol("Kind                          : " & $(fi.kind),yellowgreen, lightgrey, sep, 0, false, {})
-        printLnBiCol("Size                          : " & $(float(fi.size) / float(1000)) & " kb", yellowgreen, lightgrey, sep, 0, false, {})
-        printLnBiCol("File Permissions              : ", yellowgreen, lightgrey, sep, 0, false, {})
-        for pp in fi.permissions:
-                printLnBiCol("                              : " & $pp, yellowgreen, lightgrey, sep, 0, false, {})
-        printLnBiCol("Link Count                    : " & $(fi.linkCount), yellowgreen, lightgrey, sep, 0, false, {})
-        # these only make sense for non executable files
-        printLnBiCol("Last Access                   : " & $(fi.lastAccessTime), yellowgreen, lightgrey, sep, 0, false, {})
-        printLnBiCol("Last Write                    : " & $(fi.lastWriteTime), yellowgreen, lightgrey, sep, 0, false, {})
-        printLnBiCol("Creation                      : " & $(fi.creationTime), yellowgreen, lightgrey, sep, 0, false, {})
+    ## doInfo
+    ##
+    ## A more than you want to know information proc
+    ##
+    ##
+    let filename = extractFileName(getAppFilename())
+    let modTime = getLastModificationTime(filename)
+    let sep = ":"
+    superHeader("Information for file " & filename & " and System " & spaces(22))
+    printLnBiCol("Last compilation on           : " & CompileDate & " at " & CompileTime & " UTC", yellowgreen, lightgrey, sep, 0, false, {})
+    # this only makes sense for non executable files
+    #printLnBiCol("Last access time of file     : " & filename & " " & $(fromSeconds(int(getLastAccessTime(filename)))),yellowgreen,lightgrey,sep,0,false,{})
+    printLnBiCol("Last modificaton time of file : " & filename & " " & $modTime, yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Offset from UTC in hours      : " & cxTimeZone(), yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("UTC Time                      : " & $now().utc, yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Local Time                    : " & $now().local,yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Environment Info              : " & os.getEnv("HOME"),yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("TrueColor                     : " & $checktruecolorsupport(), goldenrod, lightgrey, sep, 0, false, {})
+    printLnBiCol("File exists                   : " & $(existsFile filename), yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Dir exists                    : " & $(existsDir "/"),yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("AppDir                        : " & getAppDir(),yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("App File Name                 : " & getAppFilename(),yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("User home  dir                : " & os.getHomeDir(),yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Config Dir                    : " & os.getConfigDir(), yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Current Dir                   : " & os.getCurrentDir(), yellowgreen, lightgrey, sep, 0, false, {})
+    let fi = getFileInfo(filename)
+    printLnBiCol("File Id                       : " & $(fi.id.device), yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("File No.                      : " & $(fi.id.file), yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Kind                          : " & $(fi.kind),yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Size                          : " & $(float(fi.size) / float(1000)) & " kb", yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("File Permissions              : ", yellowgreen, lightgrey, sep, 0, false, {})
+    for pp in fi.permissions:
+            printLnBiCol("                              : " & $pp, yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Link Count                    : " & $(fi.linkCount), yellowgreen, lightgrey, sep, 0, false, {})
+    # these only make sense for non executable files
+    printLnBiCol("Last Access                   : " & $(fi.lastAccessTime), yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Last Write                    : " & $(fi.lastWriteTime), yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Creation                      : " & $(fi.creationTime), yellowgreen, lightgrey, sep, 0, false, {})
 
-        when defined windows:
-                printLnBiCol("System                        : Windows..... Really ??", red, lightgrey, sep, 0, false, {})
-        elif defined linux:
-                printLnBiCol("System                        : Running on Linux", brightcyan, yellowgreen, sep, 0, false, {})
-        else:
-                printLnBiCol("System                        : Interesting Choice", yellowgreen, lightgrey, sep, 0, false, {})
+    when defined windows:
+            printLnBiCol("System                        : Windows..... Really ??", red, lightgrey, sep, 0, false, {})
+    elif defined linux:
+            printLnBiCol("System                        : Running on Linux", brightcyan, yellowgreen, sep, 0, false, {})
+    else:
+            printLnBiCol("System                        : Interesting Choice", yellowgreen, lightgrey, sep, 0, false, {})
 
-        when defined x86:
-                printLnBiCol("Code specifics                : x86", yellowgreen, lightgrey, sep, 0, false, {})
+    when defined x86:
+            printLnBiCol("Code specifics                : x86", yellowgreen, lightgrey, sep, 0, false, {})
 
-        elif defined amd64:
-                printLnBiCol("Code specifics                : amd86",yellowgreen, lightgrey, sep, 0, false, {})
-        else:
-                printLnBiCol("Code specifics                : generic",yellowgreen, lightgrey, sep, 0, false, {})
+    elif defined amd64:
+            printLnBiCol("Code specifics                : amd86",yellowgreen, lightgrey, sep, 0, false, {})
+    else:
+            printLnBiCol("Code specifics                : generic",yellowgreen, lightgrey, sep, 0, false, {})
 
-        printLnBiCol("Nim Version                   : " & $NimMajor & "." & $NimMinor & "." & $NimPatch, yellowgreen, lightgrey, sep, 0, false, {})
-        printLnBiCol("Processor count               : " & $cpuInfo.countProcessors(), yellowgreen, lightgrey, sep, 0, false, {})
-        printBiCol("OS                            : " & hostOS, yellowgreen,lightgrey, sep, 0, false, {})  
-        printBiCol(" | CPU: " & hostCPU, yellowgreen, lightgrey, sep, 0,false, {})
-        printLnBiCol(" | cpuEndian: " & $cpuEndian, yellowgreen, lightgrey, sep, 0, false, {})
-        printLnBiCol("CPU Cores                     : " & $cpuInfo.countProcessors())
-        printLnBiCol("Current pid                   : " & $getpid(), yellowgreen, lightgrey, sep, 0, false, {})
-        printLnBiCol("Terminal encoding             : " & $getCurrentEncoding())
+    printLnBiCol("Nim Version                   : " & $NimMajor & "." & $NimMinor & "." & $NimPatch, yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Processor count               : " & $cpuInfo.countProcessors(), yellowgreen, lightgrey, sep, 0, false, {})
+    printBiCol("OS                            : " & hostOS, yellowgreen,lightgrey, sep, 0, false, {})  
+    printBiCol(" | CPU: " & hostCPU, yellowgreen, lightgrey, sep, 0,false, {})
+    printLnBiCol(" | cpuEndian: " & $cpuEndian, yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("CPU Cores                     : " & $cpuInfo.countProcessors())
+    printLnBiCol("Current pid                   : " & $getpid(), yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Terminal encoding             : " & $getCurrentEncoding())
 
 
 proc infoLine*() =
-        ## infoLine
+    ## infoLine
     ##
     ## prints some info for current application
     ##
-        hlineLn()
-        echo()
-        print(fmtx(["<14"], "Application:"), yellowgreen)
-        print(extractFileName(getAppFilename()), skyblue)
-        print(" | ", brightblack)
-        printBiCol("Pid : " & $getCurrentProcessId())
-        print("| ", brightblack)
-        print("Nim : ", greenyellow)
-        print(NimVersion & " | ", brightblack)
-        print("nimcx : ", peru)
-        print(CXLIBVERSION, brightblack)
-        print(" | ", brightblack)
-        print($someGcc & " | ", brightblack)
-        print("Size: " & brightblack & formatSize(getFileSize(getAppFilename())), peru)
-        print(" | ", brightblack)
+    hlineLn()
+    echo()
+    print(fmtx(["<14"], "Application:"), yellowgreen)
+    print(extractFileName(getAppFilename()), skyblue)
+    print(" | ", brightblack)
+    printBiCol("Pid : " & $getCurrentProcessId())
+    print("| ", brightblack)
+    print("Nim : ", greenyellow)
+    print(NimVersion & " | ", brightblack)
+    print("nimcx : ", peru)
+    print(CXLIBVERSION, brightblack)
+    print(" | ", brightblack)
+    print($someGcc & " | ", brightblack)
+    print("Size: " & brightblack & formatSize(getFileSize(getAppFilename())), peru)
+    print(" | ", brightblack)
         
 
 proc printTest*(astring:string="") =
@@ -1308,11 +1288,9 @@ proc handler*() {.noconv.} =
         cechoLn(yellowgreen, "Thank you for using        : " & getAppFilename())
         hlineLn()
         printLnBiCol(fmtx(["<", "<11", ">9",""], "Last compilation on        : ",
-                        CompileDate, CompileTime," UTC"), brightcyan, termwhite, ":",
-                        0, false, {})
+                        CompileDate, CompileTime," UTC"), brightcyan, termwhite, ":", 0, false, {})
         printLnBiCol(fmtx(["<", "<11", ">9"], "Exit handler invocation at : ",
-                        cxtoday, getClockStr()), pastelorange, termwhite, ":",
-                        0, false, {})
+                        cxtoday, getClockStr()), pastelorange, termwhite, ":", 0, false, {})
         hlineLn()
         echo()
         printInfoMsg("Nim Version ", NimVersion)
@@ -1326,9 +1304,9 @@ proc handler*() {.noconv.} =
 
 proc doCxEnd*() =
         ## doCxEnd
-    ## 
-    ## short testing routine if cx.nim is run as main
-    ##
+        ## 
+        ## short testing routine if cx.nim is run as main
+        ##
         clearup()
         decho()
         print(nimcxl,rndcol(),styled={styleBright}) 
@@ -1363,9 +1341,8 @@ decho()
 setControlCHook(handler)
 
 #uncomment following line to have global support for cxTrueCol inside cx if needed
-
 if getcxTrueColorSetFlag == true: # defined in cxglobal
-        getcxTrueColorSet() # preload the cxTrueCol seq in default mode if getcxTrueColorSetFlag == true  --> default == false
+   getcxTrueColorSet() # preload the cxTrueCol seq in default mode if getcxTrueColorSetFlag == true 
 else:
    checktruecolorsupport()      # comment out if above line uncommented
 
