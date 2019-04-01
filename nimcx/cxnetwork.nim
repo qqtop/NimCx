@@ -4,9 +4,10 @@ import cxconsts,cxglobal,cxprint
 # cxnetwork.nim
 # 
 # Var. internet related procs and experiments
-# no assumption are made whether nmap and friends are installed
+# nmap , ss needs to be installed if relevant procs to be used.
 # 
-# Last 2018-10-18
+# 
+# Last 2019-03-18
 # 
 
   
@@ -68,7 +69,7 @@ proc getWanIp*() : string =
     ## 
     var cxip = newhttpclient()
     try:
-       var eresult =  parseJson(cxip.getcontent("https://api.ipify.org?format=json"))
+       var eresult = parseJson(cxip.getcontent("https://api.ipify.org?format=json"))
        result = eresult["ip"].getStr
     except:
        result = "Ip could not be retrieved . Check firewall or permissions."
@@ -100,24 +101,20 @@ proc localIp*():string =
    # 
    # returns current machine ip
    # 
-
-   var z = strutils.strip(strutils.split(execCmdEx("ip route | grep src").output,"src")[1])
-   var zz = strutils.split(z," ") # in case there is something after the ip
-   result = zz[0]
+   result = (strip(split(execCmdEx("ip route | grep src").output,"src")[1])).split(spaces(1))[0]
   
 proc localRouterIp*():string = 
    # localRouterIp
    # 
    # returns current router ip
    # 
-   let res = execCmdEx("ip route list | awk ' /^default/ {print $3}'")
-   result = $res[0]
+   result = (execCmdEx("ip route list | awk ' /^default/ {print $3}'")[0])
    
 
 proc showLocalIpInfo*() =
      printLnInfoMsg("Machine " , localIp())
-     printLnInfoMsg("Router  " , localRouterIp())
-   
+     printLnInfoMsg("Router  " , strip(localRouterIp()))
+     echo()
 
 
 proc pingy*(dest:string,pingcc:int = 3,col:string = termwhite) = 
@@ -203,7 +200,6 @@ proc cxPortCheck*(cmd:string = "lsof -i") =
                elif pclt[xx].contains("root") :
                   print(pclt[xx],darkred,styled={styleReverse})
                   print(spaces(1))   
-                  
                else:
                   print(pclt[xx],pastelpink)
                   print(spaces(1))
@@ -359,6 +355,16 @@ proc showHosts*(dm:string) =
        for x in z:
          printLn(x)    
          
+
+proc ssService*():seq[string] = 
+   ## ssService
+   ## 
+   ## WIP to provide color formated output to ss commands
+   ## like : ss --query=tcp -r
+   ## 
+   ## 
+   let (ss,err) = execCmdEx("ss --options --extended --memory --processes --info")
+   result = ss.splitLines()
          
          
 # end of cxnetwork.nim          

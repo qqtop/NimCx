@@ -19,7 +19,7 @@
 ##     Description : provides some functions pertaining to statistcs and calculations
 ## 
 
-import cxconsts,cxglobal,cxprint,stats,math
+import cxconsts,cxglobal,cxprint,stats,math,algorithm
   
 # proc returnStat(x:Runningstat,stat : seq[string]):float =
 #      ## returnStat
@@ -250,7 +250,15 @@ proc rolling_zscore*(data:seq[float],observed_window:seq[float],decay:float = 0.
 # showSeq(zscore(datai),maxitemwidth=8) 
 # 
 
-         
+    
+proc median*(xs: seq[float]): float =
+  # median
+  # 
+  # ex rosetta code receipe
+  # 
+  var ys = xs
+  sort(ys, system.cmp[float])
+  0.5 * (ys[ys.high div 2] + ys[ys.len div 2])          
          
 # end of cxstats.nim         
          

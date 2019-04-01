@@ -13,3 +13,4 @@ showDig	cxnetwork.html#showDig,string	cxnetwork: showDig(hostip: string = $&quot
 showDns	cxnetwork.html#showDns,string	cxnetwork: showDns(hostdns: string = &quot;google.com&quot;)	
 getHosts	cxnetwork.html#getHosts,string	cxnetwork: getHosts(dm: string): seq[string]	
 showHosts	cxnetwork.html#showHosts,string	cxnetwork: showHosts(dm: string)	
+ssService	cxnetwork.html#ssService	cxnetwork: ssService(): seq[string]	

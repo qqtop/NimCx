@@ -14,11 +14,11 @@ import cxglobal,cxconsts,cxprint,terminal,strutils,random
 # Note you will need konsole or similar terminal to see colors
 # the standard gnome terminal etc may or may not be able to show colors above the standard terminal colors
 # 
-# in order to load cxTrueCol at compiletime use  -d:cxTrueCol  or load it anytime in your own modles 
-# with a call to getCxTrueColorSet()
+# in order to load cxTrueCol at compiletime use  -d:cxTrueCol (recommended)
+# or load it anytime in your own modles with a call to getCxTrueColorSet()  (which may or may not work
 #
 #
-# Last : 2019-03-09
+# Last : 2019-03-24
 # 
 type
   CXRGB* = tuple[R: int, G: int, B: int,cxCol:string]  # the idea for the cxCol field is to give interesting colors a name
@@ -31,13 +31,13 @@ var colorNumber48* = 1             # used as a temp storage of a random truecolo
 
 
 proc cxRGBCol*(acol:CXRGB) : string = 
-   ## cxRGBcol  
-   ## 
-   ## returns a color build from rgb values passed in via CXRGB type tuple 
-   ## 
-   ## Note the colCol string value of the cxRGB type is not used here
-   ## 
-   result = "\x1b[38;2;" & "$1;$2;$3m" % [$acol[0],$acol[1],$acol[2]]
+     ## cxRGBcol  
+     ## 
+     ## returns a color build from rgb values passed in via CXRGB type tuple 
+     ## 
+     ## Note the colCol string value of the cxRGB type is not used here
+     ## 
+     result = "\x1b[38;2;" & "$1;$2;$3m" % [$acol[0],$acol[1],$acol[2]]
        
 proc cxRndRGB*():string = 
      ## cxRndRGB
@@ -51,8 +51,6 @@ proc cxRndRGB*():string =
      ## use rndCol() or randCol() instead.
      ##
      ## 
-     ##
-      
      result = cxRGBCol((getrndint(0,25000),getrndint(0,25000),getrndint(0,25000),""))
 
 proc checkTrueColorSupport*(): bool  {.discardable.} = 
@@ -141,7 +139,7 @@ proc getCxTrueColorSet*(min:int = 0,max:int = 888,step:int = 12,flag48:bool = fa
          else:
             #{.hints: off.}  
             {.hint    : "\x1b[38;2;154;205;50m \u2691 NimCx :" & "\x1b[38;2;255;100;0m cxTrueCol not loaded, Compile with -d:cxTrueCol to preload.  \xE2\x9A\xAB" & " " & "\xE2\x9A\xAB" & spaces(2) & "\x1b[38;2;154;205;50m \u2691" & spaces(1) .} 
-            cxTrueCol = @[]
+            #cxTrueCol = @[]
          echo()
          #printLnBiCol("cxTrueCol Length : " & $cxtruecol.len)
          result = true
@@ -334,10 +332,15 @@ when isMainModule:
     # Note: this needs to be run in konsole (the KDE terminal) , other terminals will
     #       most likely not show the correct colors 
     #       
-    getcxTrueColorSet() # needed here maybe due to module import or compile order
+    getcxTrueColorSet() # needed here maybe due to module import or compile order worked before , now need to compile  -d:cxTrueColwith 
+    
     showCxTrueColorPalette2()
     echo()
-    cxprint.cxprintLn("Test finished !",fontcolor = colLime,bgr = cxTruecol[419872],xpos = 5)
-    cxprint.printLn2("Bye Bye  ",fgr = cxTruecol[121870],xpos = 5)   
-    cxprint.decho(2)
+    try:
+      cxprint.cxprintLn("Test finished !",fontcolor = colLime,bgr = cxTruecol[41456],xpos = 5)
+      cxprint.printLn2("Bye Bye  ",fgr = cxTruecol[121870],xpos = 5)   
+      cxprint.decho(2)
+    except IndexError:
+      echo("Error  ","Compile with  -d:cxTrueCol ")  
+      echo("Test finished !")  
 #  end experimental truecolors     

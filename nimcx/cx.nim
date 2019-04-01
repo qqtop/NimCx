@@ -107,7 +107,7 @@
 ##                                      
 ##                                      
 ##     Latest      : Restructuring and cleanup to adjust to the newest nim release.
-##                  
+##                   Deprecating/removing unused or unnecessary code due to improvements in stdlib
 ##
 ##     Funding     : Here are three excellent reasons :
 ##     
@@ -168,7 +168,7 @@ elif defined(cpp): someGcc = "c++ target"
 else: someGcc = "undefined"
 
 const CXLIBVERSION* = "0.9.9"
-
+discard setLocale(LC_ALL, "") # init utf8 
 
 when defined(macosx):
         {.warning: " \u2691 nimCx is only tested on Linux ! Your mileage may vary".}
@@ -189,24 +189,6 @@ when defined(posix):
 
 let cxstart* = epochTime() # simple execution timing with one line see doFinish()
 randomize()                # seed rand number generator
-
-type
-        NimCxError* = object of Exception
-                cxerrormsg: string
-        # experimental    
-        # not in use yet
-        # raise newException(NimCxError, "didn't do stuff")
-        #
-        # or something like this
-        # 
-        # proc checkoktype[T](a: T) =
-        #   when (T is ref or T is ptr or T is cstring):
-        #     raise newException(NimCxError, "This type not supported here")
-        #     # or exit during compile already
-        #     #  {.fatal: "This type not supported here".}
-        #   else:
-        #     discard
-        # 
 
 # type used in Benchmark
 type
