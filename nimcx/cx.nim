@@ -2,6 +2,7 @@
 {.deadCodeElim: on, optimization: speed.}
 #{.passC: "-msse -msse2 -msse3 -mssse3 -march=native -mtune=native -flto".}
 #{.passL: "-msse -msse2 -msse3 -mssse3 -flto".}
+#{.passC: "-march-native -O3"}
 #{.deadCodeElim: on, checks: off, hints: off, warnings: off, optimization: size.}
 #{.noforward: on.}   # future feature
 ## ::
@@ -11,14 +12,14 @@
 ##     Module      : cx.nim
 ##
 ##     Status      : stable
-##
+##     
 ##     License     : MIT opensource
 ##
 ##     Version     : 0.9.9
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-03-07 
+##     Latest      : 2019-04-04 
 ##
 ##     Compiler    : Nim >= 0.19.x devel branch
 ##
@@ -226,6 +227,16 @@ proc doFinish*() # forward declaration
 # char converters
 converter toInt*(x: char): int = result = ord(x)
 converter toChar*(x: int): char = result = chr(x)
+
+# convenience templates 
+template cxflat*:untyped       = pastelorange & "→" & termwhite 
+template cxSingleUp*:untyped   = greenyellow & "↑" & termwhite
+template cxSingleDown*:untyped = truetomato & "↓" & termwhite
+template cxDoubleUp*:untyped   = lime & "↑↑" & termwhite
+template cxDoubleDown*:untyped = red & "↓↓" & termwhite
+template cx45Up*:untyped       = cyan & "→↑" & termwhite
+template cx45Down*:untyped     = yellow & "→↓" & termwhite
+
 
 
 proc newColor*(r, g, b: int): string =
@@ -959,39 +970,39 @@ proc cxHelp*(s: openarray[string], xpos: int = 2) =
 
 
 template infoProc*(code: untyped) =
-      ## infoProc
-      ## 
-      ## shows from where a specific function has been called and combined with checkLocals gives
-      ## a nice formatted output for debugging
-      ##
-      ##.. code-block:: nim
-      ##    proc test1[T](ff:varargs[T,`$`]) =
-      ##      let yu1 = @["test"]
-      ##      var yu2 = "sdfsdf"
-      ##      var yu3 = parseInt(ff[1]) * 3  # ff[1] has been converted to string we change it back to int and multiply
-      ##      print("test output    : ",lime)
-      ##      for x in ff: print(x & spaces(1)) # print the passed in varargs
-      ##      checklocals()
-      ##      
-      ##    proc test2(s:string,b:int) : string =   
-      ##       var bb = b * getRndInt(10,200)
-      ##       result = s & $bb
-      ##       checklocals()
-      ##      
-      ##    infoproc(test1("zz",1234,789.88))
-      ##    infoproc:
-      ##        printLnBiCol(fmtx(["","",""],"Test2 output  : ",rightarrow & spaces(1),test2("nice",2000)),colLeft = cyan,colRight=gold,":",0,false,{})
-      ##    doFinish()
-      ##
-      ##
-      ##
-      try:
-          let pos = instantiationInfo()
-          code
-          printLnInfoMsg("infoproc", " $1 Line: $2 with: '$3'" % [pos.filename, $pos.line, astToStr(code)])
-      except:
-          printLnErrorMsg("Checking instantiationInfo ")
-          discard
+          ## infoProc
+          ## 
+          ## shows from where a specific function has been called and combined with checkLocals gives
+          ## a nice formatted output for debugging
+          ##
+          ##.. code-block:: nim
+          ##    proc test1[T](ff:varargs[T,`$`]) =
+          ##      let yu1 = @["test"]
+          ##      var yu2 = "sdfsdf"
+          ##      var yu3 = parseInt(ff[1]) * 3  # ff[1] has been converted to string we change it back to int and multiply
+          ##      print("test output    : ",lime)
+          ##      for x in ff: print(x & spaces(1)) # print the passed in varargs
+          ##      checklocals()
+          ##      
+          ##    proc test2(s:string,b:int) : string =   
+          ##       var bb = b * getRndInt(10,200)
+          ##       result = s & $bb
+          ##       checklocals()
+          ##      
+          ##    infoproc(test1("zz",1234,789.88))
+          ##    infoproc:
+          ##        printLnBiCol(fmtx(["","",""],"Test2 output  : ",rightarrow & spaces(1),test2("nice",2000)),colLeft = cyan,colRight=gold,":",0,false,{})
+          ##    doFinish()
+          ##
+          ##
+          ##
+          try:
+              let pos = instantiationInfo()
+              code
+              printLnInfoMsg("infoproc", " $1 Line: $2 with: '$3'" % [pos.filename, $pos.line, astToStr(code)])
+          except:
+              printLnErrorMsg("Checking instantiationInfo ")
+              discard
 
 
 template checkLocals*() =
@@ -1013,52 +1024,52 @@ template checkLocals*() =
         dlineLn(tw() - 1)
 
 proc qqTop*() =
-      ## qqTop
-      ##
-      ## prints qqTop in custom color
-      ##
-      print(cyan & "qq" & greenyellow & "T" & brightred & "o" & gold & "p")
+     ## qqTop
+     ##
+     ## prints qqTop in custom color
+     ##
+     print(cyan & "qq" & greenyellow & "T" & brightred & "o" & gold & "p")
 
 
 proc tmpFilename*(): string =
-  # tmpFilename
-  # 
-  # creates a new tmpfilename
-  # a file eventually created with this name will be automatically 
-  # erased upon exit if doFinish() , doByeBye() are called or upon exit via Ctrl-C  .
-  # a filename will look like so: /tmp/1520316200.579602-qcvcglawvo.tmp  
-  #
-  let tfn = getTempDir() & $epochTime() & "-" & newword(5) & ".tmp"
-  cxTmpFileNames.add(tfn) # add filename to seq
-  result = tfn
+     # tmpFilename
+     # 
+     # creates a new tmpfilename
+     # a file eventually created with this name will be automatically 
+     # erased upon exit if doFinish() , doByeBye() are called or upon exit via Ctrl-C  .
+     # a filename will look like so: /tmp/1520316200.579602-qcvcglawvo.tmp  
+     #
+     let tfn = getTempDir() & $epochTime() & "-" & newword(5) & ".tmp"
+     cxTmpFileNames.add(tfn) # add filename to seq
+     result = tfn
 
 
 proc tmpFilename*(filename: string): string =
-      # tmpFilename
-      # 
-      # creates a new tmpfilename with a specified name
-      # a file eventually created with this name will be automatically 
-      # erased upon exit if doFinish() , doByeBye() are called or upon exit via Ctrl-C  .
-      # a filename will look like so: /tmp/filename.tmp  
-      #
-      let tfn = getTempDir() & $epochTime() & "-" & filename & ".tmp"
-      cxTmpFileNames.add(tfn) # add filename to seq
-      result = tfn
+     # tmpFilename
+     # 
+     # creates a new tmpfilename with a specified name
+     # a file eventually created with this name will be automatically 
+     # erased upon exit if doFinish() , doByeBye() are called or upon exit via Ctrl-C  .
+     # a filename will look like so: /tmp/filename.tmp  
+     #
+     let tfn = getTempDir() & $epochTime() & "-" & filename & ".tmp"
+     cxTmpFileNames.add(tfn) # add filename to seq
+     result = tfn
 
 
 
 proc rmTmpFilenames*() =
-    # rmTmpFilenames
-    # 
-    # this will remove all temporary files created with the tmpFilename function
-    # and is automatically called by exit handlers doFinish(),doByeBye() and if Ctrl-C
-    # is pressed . 
-    #
-    for fn in cxTmpFileNames:
-         try:
-             removeFile(fn)
-         except:
-             printLnAlertMsg(fn & "could not be deleted.")
+     # rmTmpFilenames
+     # 
+     # this will remove all temporary files created with the tmpFilename function
+     # and is automatically called by exit handlers doFinish(),doByeBye() and if Ctrl-C
+     # is pressed . 
+     #
+     for fn in cxTmpFileNames:
+          try:
+              removeFile(fn)
+          except:
+              printLnAlertMsg(fn & "could not be deleted.")
 
 proc doInfo*() =
     ## doInfo
@@ -1126,42 +1137,42 @@ proc doInfo*() =
 
 
 proc infoLine*() =
-    ## infoLine
-    ##
-    ## prints some info for current application
-    ##
-    hlineLn()
-    echo()
-    print(fmtx(["<14"], "Application:"), yellowgreen)
-    print(extractFileName(getAppFilename()), skyblue)
-    print(" | ", brightblack)
-    printBiCol("Pid : " & $getCurrentProcessId())
-    print("| ", brightblack)
-    print("Nim : ", greenyellow)
-    print(NimVersion & " | ", brightblack)
-    print("nimcx : ", peru)
-    print(CXLIBVERSION, brightblack)
-    print(" | ", brightblack)
-    print($someGcc & " | ", brightblack)
-    print("Size: " & brightblack & formatSize(getFileSize(getAppFilename())), peru)
-    print(" | ", brightblack)
+     ## infoLine
+     ##
+     ## prints some info for current application
+     ##
+     hlineLn()
+     echo()
+     print(fmtx(["<14"], "Application:"), yellowgreen)
+     print(extractFileName(getAppFilename()), skyblue)
+     print(" | ", brightblack)
+     printBiCol("Pid : " & $getCurrentProcessId())
+     print("| ", brightblack)
+     print("Nim : ", greenyellow)
+     print(NimVersion & " | ", brightblack)
+     print("nimcx : ", peru)
+     print(CXLIBVERSION, brightblack)
+     print(" | ", brightblack)
+     print($someGcc & " | ", brightblack)
+     print("Size: " & brightblack & formatSize(getFileSize(getAppFilename())), peru)
+     print(" | ", brightblack)
         
 
 proc printTest*(astring:string="") =
-  ## printTest
-  ## 
-  ## prints TEST,the current filename and an optional string
-  ## 
+     ## printTest
+     ## 
+     ## prints TEST,the current filename and an optional string
+     ## 
 
-  println2("")
-  printLn2("""  ___  ___  __  ___ """,truetomato,styled={styleBright})
-  printLn2("""   |  |___ [__   |  """,lavender,styled={styleBright})
-  printLn2("""   |  |___ ___]  |  """,palegreen,styled={styleBright})
-  println2("")
-  println2("   " & extractFileName(getAppFilename()),truetomato)
-  if astring != "":
-      echo("  ",skyblue,rightarrow,white,astring)
-  decho(2)
+     println2("")
+     printLn2("""  ___  ___  __  ___ """,truetomato,styled={styleBright})
+     printLn2("""   |  |___ [__   |  """,lavender,styled={styleBright})
+     printLn2("""   |  |___ ___]  |  """,palegreen,styled={styleBright})
+     println2("")
+     println2("   " & extractFileName(getAppFilename()),truetomato)
+     if astring != "":
+         echo("  ",skyblue,rightarrow,white,astring)
+     decho(2)
       
 # code below borrowed from distros.nim and made exportable
 # there is now a new posix_utils module which also can give 
@@ -1202,13 +1213,13 @@ template doByeBye*() =
 
 proc doFinish*() =
         ## doFinish
-    ##
-    ## a end of program routine which displays some information
-    ##
-    ## can be changed to anything desired
-    ##
-    ## and should be the last line of the application
-    ##
+        ##
+        ## a end of program routine which displays some information
+        ##
+        ## can be changed to anything desired
+        ##
+        ## and should be the last line of the application
+        ##
         {.gcsafe.}:
                 decho()
                 infoLine()
@@ -1321,12 +1332,6 @@ decho()
 # automatic exit messages , it may not work in tight loops involving execCMD or
 # waiting for readLine() inputs.
 setControlCHook(handler)
-
-#uncomment following line to have global support for cxTrueCol inside cx if needed
-if getcxTrueColorSetFlag == true: # defined in cxglobal
-   getcxTrueColorSet() # preload the cxTrueCol seq in default mode if getcxTrueColorSetFlag == true 
-else:
-   checktruecolorsupport()      # comment out if above line uncommented
 
 # this will reset any color changes in the terminal
 # so no need for this line in the calling prog

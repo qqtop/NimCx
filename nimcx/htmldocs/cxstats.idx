@@ -1,0 +1,6 @@
+showStats	cxstats.html#showStats,RunningStat,int,int	cxstats: showStats(x: RunningStat; n: int = 3; xpos: int = 1)	
+showRegression	cxstats.html#showRegression,seq[T][],seq[T][],int,int	cxstats: showRegression(x, y: seq[float | int]; n: int = 5; xpos: int = 1)	
+showRegression	cxstats.html#showRegression,RunningRegress,int,int	cxstats: showRegression(rr: RunningRegress; n: int = 5; xpos: int = 1)	
+zscore	cxstats.html#zscore,seq[T][SomeNumber]	cxstats: zscore(data: seq[SomeNumber]): seq[float]	
+rolling_zscore	cxstats.html#rolling_zscore,seq[T][float],seq[T][float],float	cxstats: rolling_zscore(data: seq[float]; observed_window: seq[float]; decay: float = 0.9): float	
+median	cxstats.html#median,seq[T][float]	cxstats: median(xs: seq[float]): float	

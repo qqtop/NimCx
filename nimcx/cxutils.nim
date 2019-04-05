@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-03-01
+##     Latest      : 2019-04-05
 ##
 ##     OS          : Linux
 ##
@@ -1331,36 +1331,67 @@ proc quickLargeInt*():string =
    result =  repeat($rand(10_00_00_00_00_00_00_00_00.int..int.high), 2)   
    
 proc quickBinaryString*(width:int=10):string =
-   ## quickBinaryString
-   ## 
-   ## returns a random binary string with desired width
-   ## 
-   for x in 0..<width: result.add($rand(0..1))
+     ## quickBinaryString
+     ## 
+     ## returns a random binary string with desired width
+     ## 
+     for x in 0..<width: result.add($rand(0..1))
    
  
 iterator span*(s: string; first: int, last: BackwardsIndex): char =
-   ## span
-   ## 
-   ## iterator for strings
-   ## 
-   ##.. code-block:: nim 
-   ##
-   ##   let s = ".something"
-   ##   for c in s.span(1, ^1):
-   ##       print c 
-   ##   echo()
-   ##       
-   for i in first..s.len - last.int: yield s[i]
+     ## span
+     ## 
+     ## iterator for strings
+     ## 
+     ##.. code-block:: nim 
+     ##
+     ##   let s = ".something"
+     ##   for c in s.span(1, ^1):
+     ##       print c 
+     ##   echo()
+     ##       
+     for i in first..s.len - last.int: yield s[i]
 
 
-proc getGitHash*():string = 
-   ## getGitHash
-   ## to get the git hash during compile
-   ## 
-   const gitHash = strutils.strip(gorge("git log -n 1 --format=%H"))
-   if githash.startswith("fatal") : discard
-   else: result = githash    
- 
+proc checkPrime*(a: int): bool =
+     ## checkPrime
+     ## 
+     ## within maxinteger range
+     ## 
+     ## checks an int for primeness and returns true or false
+     ## 
+     if a == 2: return true
+     if a < 2 or a mod 2 == 0: return false
+     for i in countup(3, sqrt(a.float).int, 2):
+       if a mod i == 0:
+         return false
+     return true
+  
+iterator primey*(s:int = 0,e:int):int =
+     ## primey
+     ## 
+     ## yields prime numbers from s to e within maxinteger range
+     ## 
+     ##.. code-block:: nim
+     ##   var cp = 0
+     ##   for xxx in primey(s=100_000_000,e=100_005_000):
+     ##      inc cp 
+     ##      echo xxx
+     ##   echo cp," primes found" 
+     ## 
+     for i in s .. e: 
+        if checkprime(i): yield i 
+  
+proc getPrimeSeq*(x,y:int):seq[int]=
+     ## getPrimeSeq
+     ## 
+     ## returns all primes from x to y in a seq[int]
+     ## 
+     ##.. code-block:: nim
+     ## showSeq(getPrimeSeq(5000,10000))
+     ## 
+     ## 
+     for p in primey(x,y): result.add(p)  
 
 
              

@@ -1,0 +1,60 @@
+print	cxprint.html#print,T,string,BackgroundColor,int,bool,bool,set[Style],string	cxprint: print[T](astring: T; fgr: string = termwhite; bgr: BackgroundColor = bgBlack;\n         xpos: int = 0; fitLine: bool = false; centered: bool = false;\n         styled: set[Style] = {}; substr: string = &quot;&quot;)	
+rndCxFgrCol	cxprint.html#rndCxFgrCol.t	cxprint: rndCxFgrCol(): untyped	
+rndCxBgrCol	cxprint.html#rndCxBgrCol.t	cxprint: rndCxBgrCol(): untyped	
+cxPrint	cxprint.html#cxPrint,T,string,string,int,set[Style]	cxprint: cxPrint[T](ss: T; fontcolor: string = &quot;colWhite&quot;; bgr: string = black; xpos: int = 0;\n           styled: set[Style] = {styleReverse})	
+cxPrintLn	cxprint.html#cxPrintLn,T,string,string,int,set[Style]	cxprint: cxPrintLn[T](ss: T; fontcolor: string = &quot;colWhite&quot;; bgr: string = black; xpos: int = 0;\n             styled: set[Style] = {styleReverse})	
+cxPrint	cxprint.html#cxPrint,T,auto,string,int,set[Style]	cxprint: cxPrint[T](ss: T; fontcolor: auto = colWhite; bgr: string = black; xpos: int = 0;\n           styled: set[Style] = {styleReverse})	
+cxPrintLn	cxprint.html#cxPrintLn,T,auto,string,int,set[Style]	cxprint: cxPrintLn[T](ss: T; fontcolor: auto = colWhite; bgr: string = &quot;colBlack&quot;; xpos: int = 0;\n             styled: set[Style] = {styleReverse})	
+printLn	cxprint.html#printLn,T,string,BackgroundColor,int,bool,bool,set[Style],string	cxprint: printLn[T](astring: T; fgr: string = termwhite; bgr: BackgroundColor = bgBlack;\n           xpos: int = 0; fitLine: bool = false; centered: bool = false;\n           styled: set[Style] = {}; substr: string = &quot;&quot;)	
+print2	cxprint.html#print2,T,string,int,bool,bool,set[Style],string	cxprint: print2[T](astring: T; fgr: string = termwhite; xpos: int = 0; fitLine: bool = false;\n          centered: bool = false; styled: set[Style] = {}; substr: string = &quot;&quot;)	
+printLn2	cxprint.html#printLn2,T,string,int,bool,bool,set[Style],string	cxprint: printLn2[T](astring: T; fgr: string = termwhite; xpos: int = 0; fitLine: bool = false;\n            centered: bool = false; styled: set[Style] = {}; substr: string = &quot;&quot;)	
+printy	cxprint.html#printy,varargs[T,]	cxprint: printy[T](astring: varargs[T, `$`])	
+rainbow	cxprint.html#rainbow,T,int,bool,bool	cxprint: rainbow[T](s: T; xpos: int = 1; fitLine: bool = false; centered: bool = false)	
+hline	cxprint.html#hline,int,string,int,string	cxprint: hline(n: int = tw; col: string = white; xpos: int = 0; lt: string = &quot;-&quot;): string	
+hlineLn	cxprint.html#hlineLn,int,string,int,string	cxprint: hlineLn(n: int = tw; col: string = white; xpos: int = 0; lt: string = &quot;-&quot;): string	
+dline	cxprint.html#dline,int,string,string	cxprint: dline(n: int = tw; lt: string = &quot;-&quot;; col: string = termwhite)	
+dlineLn	cxprint.html#dlineLn,int,string,string	cxprint: dlineLn(n: int = tw; lt: string = &quot;-&quot;; col: string = termwhite)	
+decho	cxprint.html#decho,int	cxprint: decho(z: int = 2)	
+printRainbow	cxprint.html#printRainbow,string,set[Style]	cxprint: printRainbow(astr: string; styled: set[Style] = {})	
+printLnRainbow	cxprint.html#printLnRainbow,T,set[Style]	cxprint: printLnRainbow[T](s: T; styled: set[Style] = {})	
+printBiCol	cxprint.html#printBiCol,varargs[T,],string,string,string,int,bool,set[Style]	cxprint: printBiCol[T](s: varargs[T, `$`]; colLeft: string = yellowgreen;\n              colRight: string = termwhite; sep: string = &quot;:&quot;; xpos: int = 0;\n              centered: bool = false; styled: set[Style] = {})	
+printLnBiCol	cxprint.html#printLnBiCol,varargs[T,],string,string,string,int,bool,set[Style]	cxprint: printLnBiCol[T](s: varargs[T, `$`]; colLeft: string = yellowgreen;\n                colRight: string = termwhite; sep: string = &quot;:&quot;; xpos: int = 0;\n                centered: bool = false; styled: set[Style] = {})	
+printBiCol2	cxprint.html#printBiCol2,varargs[T,],string,string,string,int,bool,set[Style]	cxprint: printBiCol2[T](s: varargs[T, `$`]; colLeft: string = yellowgreen;\n               colRight: string = termwhite; sep: string = &quot;:&quot;; xpos: int = 0;\n               centered: bool = false; styled: set[Style] = {})	
+printLnBiCol2	cxprint.html#printLnBiCol2,varargs[T,],string,string,string,int,bool,set[Style]	cxprint: printLnBiCol2[T](s: varargs[T, `$`]; colLeft: string = yellowgreen;\n                 colRight: string = termwhite; sep: string = &quot;:&quot;; xpos: int = 0;\n                 centered: bool = false; styled: set[Style] = {})	
+printBiCol3	cxprint.html#printBiCol3,openArray[T],string,string,string,int,bool,set[Style]	cxprint: printBiCol3[T](s: openArray[T]; colLeft: string = yellowgreen;\n               colRight: string = termwhite; sep: string = &quot;:&quot;; xpos: int = 0;\n               centered: bool = false; styled: set[Style] = {})	
+printLnBiCol3	cxprint.html#printLnBiCol3,openArray[T],string,string,string,int,bool,set[Style]	cxprint: printLnBiCol3[T](s: openArray[T]; colLeft: string = yellowgreen;\n                 colRight: string = termwhite; sep: string = &quot;:&quot;; xpos: int = 0;\n                 centered: bool = false; styled: set[Style] = {})	
+printHL	cxprint.html#printHL,string,string,string	cxprint: printHL(s: string; substr: string; col: string = termwhite)	
+printLnHL	cxprint.html#printLnHL,string,string,string	cxprint: printLnHL(s: string; substr: string; col: string = lightcyan)	
+cecho	cxprint.html#cecho,string,varargs[string,]	cxprint: cecho(col: string; ggg: varargs[string, `$`] = @[&quot;&quot;])	
+cechoLn	cxprint.html#cechoLn,string,varargs[string,]	cxprint: cechoLn(col: string; astring: varargs[string, `$`] = @[&quot;&quot;])	
+printCxLine	cxprint.html#printCxLine,Cxline	cxprint: printCxLine(aline: var Cxline)	
+doty	cxprint.html#doty,int,string,BackgroundColor,int	cxprint: doty(d: int; fgr: string = white; bgr: BackgroundColor = bgBlack; xpos: int = 1)	
+dotyLn	cxprint.html#dotyLn,int,string,BackgroundColor,int	cxprint: dotyLn(d: int; fgr: string = white; bgr: BackgroundColor = bgBlack; xpos: int = 1)	
+printDotPos	cxprint.html#printDotPos,int,string,bool,string	cxprint: printDotPos(xpos: int; dotCol: string; blink: bool; dottype: string = widedot)	
+printErrorMsg	cxprint.html#printErrorMsg,string,int	cxprint: printErrorMsg(atext: string = &quot;&quot;; xpos: int = 1): string	
+printBErrorMsg	cxprint.html#printBErrorMsg,string,int	cxprint: printBErrorMsg(atext: string = &quot;&quot;; xpos: int = 1): string	
+printLnErrorMsg	cxprint.html#printLnErrorMsg,string,int	cxprint: printLnErrorMsg(atext: string = &quot;&quot;; xpos: int = 1): string	
+printLnBErrorMsg	cxprint.html#printLnBErrorMsg,string,int	cxprint: printLnBErrorMsg(atext: string = &quot;&quot;; xpos: int = 1): string	
+printFailMsg	cxprint.html#printFailMsg,string,int	cxprint: printFailMsg(atext: string = &quot;&quot;; xpos: int = 1): string	
+printLnFailMsg	cxprint.html#printLnFailMsg,string,int	cxprint: printLnFailMsg(atext: string = &quot;&quot;; xpos: int = 1): string	
+printAlertMsg	cxprint.html#printAlertMsg,string,int	cxprint: printAlertMsg(atext: string = &quot;&quot;; xpos: int = 1): string	
+printLnAlertMsg	cxprint.html#printLnAlertMsg,string,int	cxprint: printLnAlertMsg(atext: string = &quot;&quot;; xpos: int = 1): string	
+printBAlertMsg	cxprint.html#printBAlertMsg,string,int	cxprint: printBAlertMsg(atext: string = &quot;&quot;; xpos: int = 1): string	
+printLnBAlertMsg	cxprint.html#printLnBAlertMsg,string,int	cxprint: printLnBAlertMsg(atext: string = &quot;&quot;; xpos: int = 1): string	
+printOKMsg	cxprint.html#printOKMsg,string,int	cxprint: printOKMsg(atext: string = &quot;&quot;; xpos: int = 1): string	
+printLnOkMsg	cxprint.html#printLnOkMsg,string,int	cxprint: printLnOkMsg(atext: string = &quot;&quot;; xpos: int = 1): string	
+printStatusMsg	cxprint.html#printStatusMsg,string,int	cxprint: printStatusMsg(atext: string = &quot;&quot;; xpos: int = 1; colLeft = lightseagreen): string	
+printLnStatusMsg	cxprint.html#printLnStatusMsg,string,int	cxprint: printLnStatusMsg(atext: string = &quot;&quot;; xpos: int = 1; colLeft = lightseagreen): string	
+printHelpMsg	cxprint.html#printHelpMsg,string,int	cxprint: printHelpMsg(atext: string = &quot;&quot;; xpos: int = 1): string	
+printLnHelpMsg	cxprint.html#printLnHelpMsg,string,int	cxprint: printLnHelpMsg(atext: string = &quot;&quot;; xpos: int = 1): string	
+printBelpMsg	cxprint.html#printBelpMsg,string,int	cxprint: printBelpMsg(atext: string = &quot;&quot;; xpos: int = 1): string	
+printLnBelpMsg	cxprint.html#printLnBelpMsg,string,int	cxprint: printLnBelpMsg(atext: string = &quot;&quot;; xpos: int = 1): string	
+printCodeMsg	cxprint.html#printCodeMsg,string,int	cxprint: printCodeMsg(atext: string = &quot;&quot;; xpos: int = 1): string	
+printLnCodeMsg	cxprint.html#printLnCodeMsg,string,int	cxprint: printLnCodeMsg(atext: string = &quot;&quot;; xpos: int = 1): string	
+printPassMsg	cxprint.html#printPassMsg,string,int	cxprint: printPassMsg(atext: string = &quot;&quot;; xpos: int = 1): string	
+printLnPassMsg	cxprint.html#printLnPassMsg,string,int	cxprint: printLnPassMsg(atext: string = &quot;&quot;; xpos: int = 1): string	
+printInfoMsg	cxprint.html#printInfoMsg,string,string,string,string,int	cxprint: printInfoMsg(info, atext: string = &quot;&quot;; colLeft: string = lightslategray;\n             colRight: string = pastelWhite; xpos: int = 1): string	
+printLnInfoMsg	cxprint.html#printLnInfoMsg,string,string,string,string,int	cxprint: printLnInfoMsg(info, atext: string = &quot;&quot;; colLeft: string = lightslategray;\n               colRight: string = pastelWhite; xpos: int = 1): string	
+printLnInfoMsg2	cxprint.html#printLnInfoMsg2,string,string,string,string,int	cxprint: printLnInfoMsg2(info, atext: string = &quot;&quot;; colLeft: string = lightslategray;\n                colRight: string = pastelWhite; xpos: int = 1): string	
+dprint	cxprint.html#dprint.t,T	cxprint: dprint[T](s: T)	
+pdebug	cxprint.html#pdebug.m,varargs[typed]	cxprint: pdebug(n: varargs[typed]): untyped	

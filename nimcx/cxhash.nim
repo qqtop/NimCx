@@ -1,10 +1,10 @@
-import cxprint,hashes
+import cxprint,hashes,strutils
 
 ## cxhashes.nim
 ## 
 ## convenience functions for hashes 
 ## 
-## Last 2018-02-27
+## Last 2019-04-05
 ## 
 
 export hashes
@@ -46,3 +46,15 @@ proc createHash*(kata:string):auto =
     ##    
     ##    
     result = hash(kata)   
+
+
+proc getGitHash*():string = 
+   ## getGitHash
+   ## to get the git hash during compile
+   ## 
+   const gitHash = strutils.strip(gorge("git log -n 1 --format=%H"))
+   if githash.startswith("fatal") : discard
+   else: result = githash    
+   
+   
+# end of cxhash.nim   

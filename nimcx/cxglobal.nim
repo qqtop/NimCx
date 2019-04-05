@@ -50,8 +50,6 @@ proc styledEchoProcessArg(style: set[Style]) = setStyle style
 proc styledEchoProcessArg(color: ForegroundColor) = setForegroundColor color
 proc styledEchoProcessArg(color: BackgroundColor) = setBackgroundColor color
 
-var getcxTrueColorSetFlag*: bool = true # set to true so cxtruecolor default set preloaded at compile time 
-
 # macros
 
 macro styledEchoPrint*(m: varargs[untyped]): typed =
@@ -843,7 +841,7 @@ proc centerX*(): int = tw div 2 + 2
 proc centerPos*(astring: string) =
          ## centerpos
          ##
-         ## tries to move  so that string is centered when printing
+         ## tries to move so that string is centered when printing
          ##
          ##.. code-block:: nim
          ##    var s = "Hello I am centered"
