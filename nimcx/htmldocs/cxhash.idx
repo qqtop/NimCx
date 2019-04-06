@@ -1,4 +1,0 @@
-checkHash	cxhash.html#checkHash,string,T	cxhash: checkHash[T](kata: string; hsx: T)	
-verifyHash	cxhash.html#verifyHash,string,T	cxhash: verifyHash[T](kata: string; hsx: T): bool	
-createHash	cxhash.html#createHash,string	cxhash: createHash(kata: string): auto	
-getGitHash	cxhash.html#getGitHash	cxhash: getGitHash(): string	
