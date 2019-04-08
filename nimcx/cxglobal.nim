@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-01-16 
+##     Latest      : 2019-04-08 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -41,7 +41,7 @@ import
 
 # forward declarations
 proc ff*(zz: float, n: int = 5): string
-proc ff2*(zz: SomeNumber, n: int = 3): string
+proc ff2*(zz: float|int, n: int = 3): string
 
 # procs lifted from an early version of terminal.nim
 proc styledEchoProcessArg(s: string) = write stdout, s
@@ -511,12 +511,18 @@ proc ff22*(zz: int, n: int = 0): string =
 
           result = nz
 
-proc typeTest33*[T](x: T): string = $ type(x)
-proc ff2*(zz: SomeNumber, n: int = 3): string =
+template typeTest33*[T](x: T): untyped = 
+         name(type(x))
+         
+         
+proc ff2*(zz: float|int, n: int = 3): string =
           ## ff2
           ## 
-          ## formats a float into form 12,345,678.234 that is thousands separators are shown
-          ## 
+          ## formats a float to string 12,345,678.234 that is thousands separators are shown
+          ## formats a int   to string 12,345,678.000 that is thousands separators are shown
+          ## and desired decimals n as 0
+          ## for integers the minimum decimals will be xxx.0 if not required just 
+          ## split it off or use ff22
           ## 
           ## precision is after comma given by n with default set to 3
           ## 
@@ -530,28 +536,22 @@ proc ff2*(zz: SomeNumber, n: int = 3): string =
           ##       printLnBiCol(fmtx(["",">6","",">20"],"NZ ",$x," : ",ff2(z)))
           ##  
           ##
-
-          if typetest33(zz).startswith("int") == true:
-                    result = ff22(parseInt($zz), n)
-          elif typetest33(zz).startswith("float") == true:
-                    if abs(zz) < 1000 == true: #  number less than 1000 so no 1000 seps needed
-                              result = ff(float(zz), n)
-
-                    else:
-                              let c = rpartition($zz, ".")
-                              var cnew = ""
-                              for d in c[2]:
-                                        if cnew.len < n:
-                                                  cnew = cnew & d
-                              # if still not enough
-                              while cnew.len < n:
-                                        cnew = cnew & "0"
-
-                              result = ff22(parseInt(c[0])) & c[1] & cnew
-          else:
-                    result = $zz
-
-
+          result = $zz 
+          let c = rpartition($zz, ".")
+          var cnew = ""
+          for d in c[2]:
+                    if d in ['0','1','2','3','4','5','6','7','8','9']:
+                       cnew = cnew & d
+                    else:  
+                       if c[2].len < n: 
+                         cnew = cnew & "0"
+                    if cnew.len == n:
+                       break
+          while cnew.len < n : # needed in case an integer was passed in with n > 0
+                cnew = cnew & "0"         
+          echo "cnew: " ,cnew.len
+          result = ff22(parseInt(c[0])) & c[1] & cnew
+         
 
 
 proc getRandomFloat*(mi: float = -1.0, ma: float = 1.0): float =

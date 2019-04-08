@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-03-01 
+##     Latest      : 2019-04-08 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -22,7 +22,6 @@
 ##                   one smart print function which handles any kind of demand for colors.
 ##                   
 ## 
-
 import cxconsts,cxglobal,terminal,strutils,sequtils,colors,macros
 
 proc rainbow*[T](s : T,xpos:int = 1,fitLine:bool = false ,centered:bool = false)  ## forward declaration
@@ -181,7 +180,7 @@ template rndCxBgrCol*():untyped =
            
 
            
-proc cxPrint*[T](ss    :T,
+proc cxPrint*[T](ss    : T,
              fontcolor : string = "colWhite",
              bgr       : string = black,
              xpos      : int = 0,
@@ -255,7 +254,7 @@ proc cxPrint*[T](ss       : T,
       ## 
            
       setBackgroundColor fontcolor
-      print($ss,fgr = bgr,xpos = xpos,styled=styled)  
+      print($ss,fgr = bgr,xpos = xpos,styled = styled)  
       
 proc cxPrintLn*[T](ss       : T,
                    fontcolor: auto = colWhite,
@@ -283,7 +282,7 @@ proc printLn*[T](astring:T,
                 xpos:int = 0,
                 fitLine:bool = false,
                 centered:bool = false,
-                styled : set[Style]= {},
+                styled : set[Style] = {},
                 substr:string = "") =
     ## :: 
     ##   printLn
@@ -620,7 +619,7 @@ proc decho*(z:int = 2)  =
     ##.. code-block:: nim
     ##    decho(10)
     ## to create 10 blank lines
-    for x in 0..<z: writeLine(stdout,"")
+    for x in 0 ..< z: writeLine(stdout,"")
 
 
 proc printRainbow*(astr : string,styled:set[Style] = {}) =
@@ -676,13 +675,13 @@ proc printBiCol*[T](s:varargs[T,`$`],
      {.gcsafe.}:
         var nosepflag:bool = false
         var zz = ""
-        for ss in 0..<s.len:
+        for ss in 0 ..< s.len:
             zz = zz & s[ss] & spaces(1)
             
         var z = zz.splitty(sep)  # using splitty we retain the sep on the left side
         # in case sep occures multiple time we only consider the first one
         if z.len > 1:
-           for x in 2..<z.len:
+           for x in 2 ..< z.len:
               # this now should contain the right part to be colored differently
               z[1] = z[1] & z[x]
 
@@ -755,13 +754,13 @@ proc printLnBiCol*[T](s:varargs[T,`$`],
      {.gcsafe.}:
         var nosepflag:bool = false
         var zz =""
-        for ss in 0..<s.len:
+        for ss in 0 ..< s.len:
             zz = zz & s[ss] & spaces(1)
            
         var z = zz.splitty(sep)  # using splitty we retain the sep on the left side
         # in case sep occures multiple time we only consider the first one
         if z.len > 1:
-          for x in 2..<z.len:
+          for x in 2 ..< z.len:
              z[1] = z[1] & z[x]
         else:
             # when the separator is not found
@@ -918,7 +917,7 @@ proc printBiCol3*[T](s:openarray[T],
         var z = zz.splitty(sep)  # using splitty we retain the sep on the left side
         # in case sep occures multiple time we only consider the first one
         if z.len > 1:
-           for x in 2..<z.len:
+           for x in 2 ..< z.len:
               # this now should contain the right part to be colored differently
               z[1] = z[1] & z[x]
 
@@ -982,7 +981,7 @@ proc printLnBiCol3*[T](s:openarray[T],
         var z = zz.splitty(sep)  # using splitty we retain the sep on the left side
         # in case sep occures multiple time we only consider the first one
         if z.len > 1:
-          for x in 2..<z.len:
+          for x in 2 ..< z.len:
              z[1] = z[1] & z[x]
         else:
             # when the separator is not found
@@ -1026,7 +1025,7 @@ proc printHL*(s     : string,
       ##
 
       let rx = s.split(substr)
-      for x in rx.low.. rx.high:
+      for x in rx.low .. rx.high:
           print(rx[x])
           if x != rx.high:
              print(substr,col)
@@ -1076,8 +1075,7 @@ proc cecho*(col: string,
       write(stdout,termwhite)
 
 
-proc cechoLn*(col    : string,
-              astring: varargs[string, `$`] = @[""] )  =
+proc cechoLn*(col    : string, astring: varargs[string, `$`] = @[""] )  =
               
       ## cechoLn
       ##
@@ -1327,7 +1325,7 @@ proc printInfoMsg*(info,atext:string = "",colLeft:string = lightslategray ,colRi
 proc printLnInfoMsg*(info,atext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
      printLnBiCol("[$1]" % info & spaces(1) & atext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
 
-# experimental - use printLn2 so that we do not overwrite msg next to each other in case of blocks of printLnmsg2 statements
+# experimental - use printLn3 so that we do not overwrite msg next to each other in case of blocks of printLnmsg2 statements
 proc printLnInfoMsg2*(info,atext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
      printLnBiCol3(["[$1]" % info , spaces(1) , atext] , colLeft = colLeft ,colRight = colRight,sep= "]",xpos = xpos,false,{stylereverse})
      
