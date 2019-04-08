@@ -41,7 +41,7 @@ import
 
 # forward declarations
 proc ff*(zz: float, n: int = 5): string
-proc ff2*(zz: float|int, n: int = 3): string
+proc ff2*(zz: float, n: int = 3): string
 
 # procs lifted from an early version of terminal.nim
 proc styledEchoProcessArg(s: string) = write stdout, s
@@ -462,18 +462,16 @@ proc ff*(zz: float, n: int = 5): string =
           result = $formatFloat(zz, ffDecimal, precision = n)
 
 
-proc ff22*(zz: int, n: int = 0): string =
+proc ff22*(zz: int): string =
           ## ff22
           ## 
           ## formats a integer into form 12,345,678 with thousands separators shown
           ## 
-          ## precision is after comma given by n with default set to 0
-          ## in context of integer this means display format could even show 
-          ## a 0 after comma part if needed
+          ## to format an integer with decimals use ff2(float(myint)) 
           ## 
-          ## ff2i(12345,0)  ==> 12,345     # display an integer with thousands seperator as we know it
-          ## ff2i(12345,1)  ==> 12,345.0   # display an integer but like a float with 1 after comma pos
-          ## ff2i(12345,2)  ==> 12,345.00  # display an integer but like a float with 2 after comma pos
+          ## ff2(12345,0)  ==> 12,345     # display an integer with thousands seperator as we know it
+          ## ff2(12345,1)  ==> 12,345.0   # display an integer but like a float with 1 after comma pos
+          ## ff2(12345,2)  ==> 12,345.00  # display an integer but like a float with 2 after comma pos
           ## 
           ## 
           ##.. code-block:: nim
@@ -515,14 +513,12 @@ template typeTest33*[T](x: T): untyped =
          name(type(x))
          
          
-proc ff2*(zz: float|int, n: int = 3): string =
+proc ff2*(zz: float, n: int = 3): string =
           ## ff2
           ## 
           ## formats a float to string 12,345,678.234 that is thousands separators are shown
           ## formats a int   to string 12,345,678.000 that is thousands separators are shown
           ## and desired decimals n as 0
-          ## for integers the minimum decimals will be xxx.0 if not required just 
-          ## split it off or use ff22
           ## 
           ## precision is after comma given by n with default set to 3
           ## 
@@ -539,6 +535,7 @@ proc ff2*(zz: float|int, n: int = 3): string =
           result = $zz 
           let c = rpartition($zz, ".")
           var cnew = ""
+          
           for d in c[2]:
                     if d in ['0','1','2','3','4','5','6','7','8','9']:
                        cnew = cnew & d
@@ -548,9 +545,12 @@ proc ff2*(zz: float|int, n: int = 3): string =
                     if cnew.len == n:
                        break
           while cnew.len < n : # needed in case an integer was passed in with n > 0
-                cnew = cnew & "0"         
-          echo "cnew: " ,cnew.len
-          result = ff22(parseInt(c[0])) & c[1] & cnew
+                cnew = cnew & "0" 
+                        
+          if n == 0:
+              result = ff22(parseInt(c[0]))
+          else:
+              result = ff22(parseInt(c[0])) & c[1] & cnew
          
 
 

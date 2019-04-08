@@ -246,10 +246,10 @@ proc showCxTrueColorPalette*() =
               printLnInfoMsg("                " , cxpad("""as backgroundcolor : cxprintLn("say something  ",fontcolor = colWhite,bgr = cxTruecol[421873])""",96),xpos=msgxpos)
               printLnInfoMsg("                " , cxpad("""as foregroundcolor : printLn2("say something  ",fgr = cxTruecol[421874])""",96),xpos = msgxpos)
               echo()
-              printLnInfoMsg("Palette Entries " , ff2(cxTruecol.len),xpos = msgxpos)   
+              printLnInfoMsg("Palette Entries " , ff22(cxTruecol.len),xpos = msgxpos)   
      else:        
               echo()
-              printLnInfoMsg("Palette Entries " , ff2(cxTruecol.len),xpos = msgxpos)   
+              printLnInfoMsg("Palette Entries " , ff22(cxTruecol.len),xpos = msgxpos)   
               printLnInfoMsg("Note            " , cxpad("cxTrueCol is not loaded. ",96),xpos = msgxpos)
               printLnInfoMsg("                " , cxPad("compile with -d:cxTrueCol",96),xpos = msgxpos)   
               decho(2) 
