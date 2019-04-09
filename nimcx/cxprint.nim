@@ -127,7 +127,6 @@ proc print*[T](astring :T,
             npos = centerX() - ($astring).len div 2 - 1
             setCursorXPos(npos)
 
-
         if styled != {}:
             var s = $astring
             if substr.len > 0:
@@ -160,7 +159,7 @@ proc print*[T](astring :T,
 
            
 
-template rndCxFgrCol*():untyped =  cxColorNames[rndSample(txcol)][0]
+template rndCxFgrCol*():untyped = cxColorNames[rndSample(txcol)][0]
     ## rndCxFgrCol
     ## 
     ## returns a random foreground color for cxPrint or cxPrintLn procs
@@ -178,7 +177,6 @@ template rndCxBgrCol*():untyped =
     colornumber48 = color48(cxTrueCol)
     cxTrueCol[colornumber48]
            
-
            
 proc cxPrint*[T](ss    : T,
              fontcolor : string = "colWhite",

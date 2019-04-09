@@ -102,8 +102,7 @@ proc getPassword*(ahash:int64 = 0i64):string =
      ## from a security database or other source
      ## 
      #  using a hash to confirm the password
-     #  this is a skeleton password function 
-        
+     #  this is a skeleton password function        
      result = ""
      curfw(1)
      let zz = readPasswordFromStdin("Enter Password : ")

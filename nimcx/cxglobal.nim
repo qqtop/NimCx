@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-04-08 
+##     Latest      : 2019-04-09 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -41,7 +41,7 @@ import
 
 # forward declarations
 proc ff*(zz: float, n: int = 5): string
-proc ff2*(zz: float, n: int = 3): string
+proc ff2*(zz: SomeNumber, n: int = 3): string
 
 # procs lifted from an early version of terminal.nim
 proc styledEchoProcessArg(s: string) = write stdout, s
@@ -334,8 +334,6 @@ proc isEmpty*(val: string): bool {.inline.} =
 proc getRndInt*(mi: int = 0, ma: int = int.high): int {.noInit, inline.} =
           ## getRndInt
           ##
-       #echo()
-#showAnyRowRange(ndf9,getRowRange(1,5)) # here first 5 rows   ## returns a random int between mi and < ma
           ## so for 0 or 1 we need rand(0..2)
           var maa = ma
           if maa <= mi: maa = mi + 1
@@ -462,28 +460,16 @@ proc ff*(zz: float, n: int = 5): string =
           result = $formatFloat(zz, ffDecimal, precision = n)
 
 
-proc ff22*(zz: int): string =
+proc ff22(zz: int): string =
           ## ff22
           ## 
-          ## formats a integer into form 12,345,678 with thousands separators shown
+          ## formats a number real or integer into string form 12,345,678 with thousands separators shown
           ## 
-          ## to format an integer with decimals use ff2(float(myint)) 
+          ## to format an integer with decimals use ff2(myint) 
           ## 
-          ## ff2(12345,0)  ==> 12,345     # display an integer with thousands seperator as we know it
-          ## ff2(12345,1)  ==> 12,345.0   # display an integer but like a float with 1 after comma pos
-          ## ff2(12345,2)  ==> 12,345.00  # display an integer but like a float with 2 after comma pos
-          ## 
-          ## 
-          ##.. code-block:: nim
-          ##    import nimcx
+          ## this is mainly used by ff2  
           ##    
-          ##    # int example
-          ##    for x in 1.. 20:
-          ##       # generate some positve and negative rand integer
-          ##       var z = getRndInt(50000,100000000) * getRandomSignI()
-          ##       printLnBiCol(fmtx(["",">6","",">20.0"],"NIM ",$x," : ",z))
-          ##       
-          ##
+          
 
           var sc = 0
           var nz = ""
@@ -509,16 +495,18 @@ proc ff22*(zz: int): string =
 
           result = nz
 
-template typeTest33*[T](x: T): untyped = 
-         name(type(x))
+       
          
-         
-proc ff2*(zz: float, n: int = 3): string =
+proc ff2*(zz: SomeNumber, n: int = 3):string =
           ## ff2
           ## 
-          ## formats a float to string 12,345,678.234 that is thousands separators are shown
-          ## formats a int   to string 12,345,678.000 that is thousands separators are shown
-          ## and desired decimals n as 0
+          ## format int or float to string showing thousand separator and desired decimal places
+          ## 
+          ## ff2(12345,0)   ==> 12,345     # display an integer with thousands seperator as we know it
+          ## ff2(12345,1)   ==> 12,345.0   # display an integer but like a float with 1 decimal place
+          ## ff2(12345,2)   ==> 12,345.00  # display an integer but like a float with 2 decimal places
+          ## ff2(12.6789,2) ==> 12.67      # displays the float with decimal places
+          ## ff2(12.3,4)    ==> 12.3000    # displkays the float with 4 decimal places
           ## 
           ## precision is after comma given by n with default set to 3
           ## 
@@ -532,27 +520,35 @@ proc ff2*(zz: float, n: int = 3): string =
           ##       printLnBiCol(fmtx(["",">6","",">20"],"NZ ",$x," : ",ff2(z)))
           ##  
           ##
+     
           result = $zz 
-          let c = rpartition($zz, ".")
-          var cnew = ""
-          
-          for d in c[2]:
-                    if d in ['0','1','2','3','4','5','6','7','8','9']:
-                       cnew = cnew & d
-                    else:  
-                       if c[2].len < n: 
-                         cnew = cnew & "0"
-                    if cnew.len == n:
-                       break
-          while cnew.len < n : # needed in case an integer was passed in with n > 0
-                cnew = cnew & "0" 
+          when zz is SomeSignedInt:
+                  let rresult = ff22(zz)     
+                  if n == 0:
+                       result = rresult 
+                  if n > 0 :
+                       result = rresult & "." & "0" * n
+                      
+          else:   # so must be some float
+                  let c = rpartition($zz, ".")
+                  var cnew = ""
+                  
+                  for d in c[2]:
+                            if d in ['0','1','2','3','4','5','6','7','8','9']:
+                               cnew = cnew & d
+                            else:  
+                               if c[2].len < n: 
+                                 cnew = cnew & "0"
+                            if cnew.len == n:
+                               break
+                  while cnew.len < n : # needed in case an integer was passed in with n > 0
+                        cnew = cnew & "0" 
+            
+                  if n == 0:
+                        result = ff22(parseInt(c[0]))
+                  else:
+                        result = ff22(parseInt(c[0])) & c[1] & cnew
                         
-          if n == 0:
-              result = ff22(parseInt(c[0]))
-          else:
-              result = ff22(parseInt(c[0])) & c[1] & cnew
-         
-
 
 proc getRandomFloat*(mi: float = -1.0, ma: float = 1.0): float =
           ## getRandomFloat
@@ -572,7 +568,6 @@ proc getRndFloat*(mi: float = -1.0, ma: float = 1.0): float {.noInit,inline.} = 
           ## getRndFloat
           ##
           ## same as getrandFloat()
-          ##
 
 proc createSeqFloat*(n: int = 10, prec: int = 3): seq[float] =
           ## createSeqFloat
@@ -607,8 +602,7 @@ proc createSeqFloat*(n: int = 10, prec: int = 3): seq[float] =
                               let afloat = parseFloat(ff2(getRndFloat(), prec))
                               if ($afloat).len > prec + 2:
                                         x = x - 1
-                                        if x < 0:
-                                              x = 0
+                                        if x < 0: x = 0
                               else:
                                         inc x
                                         result.add(afloat)
@@ -617,8 +611,8 @@ proc createSeqFloat*(n: int = 10, prec: int = 3): seq[float] =
 
                     if result.len == n: break
 
-
-
+         
+   
 
 proc seqLeft*[T](it: seq[T], n: int): seq[T] =
           ## seqLeft

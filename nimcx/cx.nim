@@ -380,7 +380,7 @@ proc nimcat*(curFile: string, countphrase: varargs[string, `$`] = "") =
 
             echo()
             printLnBiCol("File       : " & ccurFile)
-            printLnBiCol("Lines Shown: " & ff22(c - 1))
+            printLnBiCol("Lines Shown: " & ff2(c - 1))
             var maxphrasewidth = 0
             for x in countphrase:
                 if x.len > maxphrasewidth: maxphrasewidth = x.len
