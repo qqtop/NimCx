@@ -70,15 +70,15 @@ proc checkTrueColorSupport*(): bool {.discardable.} =
 # truecolors support exceeding colors available from stdlib   
 # the generated cxtruecolor numbers are only valid within the context of
 # the parameters set in cxTrueColorSet , a call with different params
-# will give different color numbers    ## now all cxtruecolor stuff needs a call to
-# 
+# will give different color numbers   
+# Call
 # getCxTrueColorSet()
 # and
 # compilation with -d:cxTrueCol 
 # then it will work like expected
 # 
 # overall still needs a better way to select desired colors or colorsets
-# also larger pallettes while possible need lots of memory and increased compilation time
+# also larger pallettes while possible need lots of memory if preloaded and increased compilation time
 # 
 
 
@@ -120,30 +120,26 @@ proc getCxTrueColorSet*(min:int = 0,max:int = 888,step:int = 12,flag48:bool = fa
      ## getcxTrueColorSet
      ## 
      ## this function fills the global cxTrueCol seq with truecolor values
-     ## and needs to be run once if truecolor functiona   ## now all cxtruecolor stuff needs a call to
-     ## 
+     ## now all cxtruecolor stuff needs a call to
      ## getCxTrueColorSet()
      ## and
      ## compilation with -d:cxTrueCol 
-     ## then it will work like expectedlity exceeding stdlib support required
-     ## see cx.nim if it is currently enabled for this version of the library
+     ## then it will work like expected
      ##  
      result = false
      if checktruecolorsupport() == true:
-         
-         when defined(cxTrueCol):
-            {.hints: on.}
-            {.hint    : "\x1b[38;2;154;205;50m \u2691 NimCx loading :" & "\x1b[38;2;255;100;0m cxTrueCol  \xE2\x9A\xAB" & " " & "\xE2\x9A\xAB" & spaces(2) & "\x1b[38;2;154;205;50m \u2691" & spaces(1) .} 
-            {.hints: off.}
-            cxTrueCol = cxTrueColorSet(min,max,step,flag48)
-            printLnBiCol("cxTrueCol Length : " & $cxtruecol.len)
-         else:
-            #{.hints: off.}  
-            {.hint    : "\x1b[38;2;154;205;50m \u2691 NimCx :" & "\x1b[38;2;255;100;0m cxTrueCol not loaded, Compile with -d:cxTrueCol to preload.  \xE2\x9A\xAB" & " " & "\xE2\x9A\xAB" & spaces(2) & "\x1b[38;2;154;205;50m \u2691" & spaces(1) .} 
-            #cxTrueCol = @[]
-         echo()
-         
-         result = true
+           when defined(cxTrueCol):
+              {.hints: on.}
+              {.hint    : "\x1b[38;2;154;205;50m \u2691 NimCx loading :" & "\x1b[38;2;255;100;0m cxTrueCol  \xE2\x9A\xAB" & " " & "\xE2\x9A\xAB" & spaces(2) & "\x1b[38;2;154;205;50m \u2691" & spaces(1) .} 
+              {.hints: off.}
+              cxTrueCol = cxTrueColorSet(min,max,step,flag48)
+              printLnBiCol("cxTrueCol Length : " & $cxtruecol.len)
+           else:
+              #{.hints: off.}  
+              {.hint    : "\x1b[38;2;154;205;50m \u2691 NimCx :" & "\x1b[38;2;255;100;0m cxTrueCol not loaded, Compile with -d:cxTrueCol to preload.  \xE2\x9A\xAB" & " " & "\xE2\x9A\xAB" & spaces(2) & "\x1b[38;2;154;205;50m \u2691" & spaces(1) .} 
+              #cxTrueCol = @[]
+           echo()
+           result = true
      else:
            result = false
            printLnErrorMsg("cxTrueCol truecolor scheme can not be used on this terminal/konsole")
@@ -194,7 +190,6 @@ proc rndTrueColFull*() : auto {.inline.} =
      ## 
      colornumber38 = color3848(cxTrueCol)
      result = cxTrueCol[colornumber38]     
-
      
 proc checkCxTrueColor*(n:int):int =
      ## checkCxTrueColor
@@ -215,7 +210,7 @@ proc showCxTrueColorPalette*() =
               var testLine = newcxline()
               var rgx = 0
               for lcol in countup(0,cxTruecol.len - 1,2): # note step size 2 so we only select 38 type colors
-                    if lcol mod 255 == 0 :  inc rgx
+                    if lcol mod 255 == 0 : inc rgx
                  
                     let bcol  = color38(cxTrueCol)
                     let dlcol = color38(cxTrueCol)
@@ -253,6 +248,5 @@ proc showCxTrueColorPalette*() =
               printLnInfoMsg("Note            " , cxpad("cxTrueCol is not loaded. ",96),xpos = msgxpos)
               printLnInfoMsg("                " , cxPad("compile with -d:cxTrueCol",96),xpos = msgxpos)   
               decho(2) 
-
       
 #  end experimental cxtruecolors     

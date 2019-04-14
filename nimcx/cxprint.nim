@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-04-08 
+##     Latest      : 2019-04-14 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -35,7 +35,14 @@ proc hlineLn*(n:int = tw,col:string = white,xpos:int = 0,lt:string = "-") : stri
 proc printErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} 
 proc printLnErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} 
 
- 
+proc printf*(formatStr: cstring) {.importc, header: "<stdio.h>", varargs.}
+     ## printf
+     ## 
+     ## make C printf function available
+     ##  
+     ##.. code-block:: nim
+     ##   printf("This works %s and this %d,too ", "as expected" ,2)
+     ##   
 
 proc print*[T](astring :T,
                fgr     : string     = termwhite,
@@ -131,7 +138,7 @@ proc print*[T](astring :T,
             var s = $astring
             if substr.len > 0:
                 var rx = s.split(substr)
-                for x in rx.low.. rx.high:
+                for x in rx.low .. rx.high:
                     writestyled(rx[x],{})
                     if x != rx.high:
                         case fgr
@@ -353,7 +360,7 @@ proc print2*[T](astring:T,
     ## 
     ##   the old print routine with backgroundcolor set to black only  ,
     ##   
-    ##   required by printfont() , printBiCol2 and printLnBiCol2
+    ##   required by printfont ,printLn2 , printBiCol2 and printLnBiCol2
     ##
     ##   basically similar to terminal.nim styledWriteLine with more functionality
     ##   
@@ -568,9 +575,6 @@ proc hlineLn*(n:int = tw,
      let res = hline(n,col,xpos,lt) 
      result = res & newLine()
      
-     
-
-
 
 proc dline*(n:int = tw,
             lt:string = "-",
@@ -1081,7 +1085,7 @@ proc cechoLn*(col    : string, astring: varargs[string, `$`] = @[""] )  =
       ##
       ## so it is easy to color your output by just replacing
       ##
-      ## echo something  with   cechoLn yellowgreen,something
+      ## echo something with   cechoLn yellowgreen,something
       ##
       ## in your exisiting projects.
       ##
@@ -1094,9 +1098,6 @@ proc cechoLn*(col    : string, astring: varargs[string, `$`] = @[""] )  =
       for x in astring: z = $(x)
       z = z & "\L"
       cecho(col ,z)
-
-
- 
       
       
 proc printCxLine*(aline:var Cxline) =

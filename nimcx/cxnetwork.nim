@@ -364,7 +364,10 @@ proc ssService*():seq[string] =
    ## 
    ## 
    let (ss,err) = execCmdEx("ss --options --extended --memory --processes --info")
-   result = ss.splitLines()
+   if err <> 0:
+       result = @["Error occured in ss execution"]
+   else:    
+       result = ss.splitLines()
          
          
 # end of cxnetwork.nim          

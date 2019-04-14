@@ -889,7 +889,7 @@ proc printSlim* (ss:string = "", frg:string = termwhite,xpos:int = 0,align:strin
 #                                                                                                                                             
 # """
 
-var xpos = -101  # just initialize xpos as a global int 
+#var xpos = -101  # just initialize xpos as a global int # maybe not needed 
  
 proc printSlimL(sl:seq[string],col:string = dodgerblue,xpos:int = 1,adjuster:int = 0) =
  ## printslimL

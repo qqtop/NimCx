@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-04-09 
+##     Latest      : 2019-04-14 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -37,7 +37,7 @@ import
           streams,
           typeinfo,
           typetraits
-
+from times import getTime, toUnix, nanosecond 
 
 # forward declarations
 proc ff*(zz: float, n: int = 5): string
@@ -57,8 +57,7 @@ macro styledEchoPrint*(m: varargs[untyped]): typed =
           ## improvements suggested by araq to avoid the now deprecated callsite()
 
           result = newNimNode(nnkStmtList)
-          for i in countup(0, m.len - 1):
-                    result.add(newCall(bindSym"styledEchoProcessArg", m[i]))
+          for i in countup(0, m.len - 1): result.add(newCall(bindSym"styledEchoProcessArg", m[i]))
           result.add(newCall(bindSym"write", bindSym"stdout", newStrLitNode("")))
           result.add(newCall(bindSym"resetAttributes"))
 
@@ -100,7 +99,6 @@ macro cxgetType*(s: typed): untyped =
       ## in newer nim versions just use type(s)  
       result = getType(s)
       
-
                   
 proc tupleTypes*(atuple: tuple): seq[string] =
           ## tupletypes
@@ -109,7 +107,7 @@ proc tupleTypes*(atuple: tuple): seq[string] =
           ##
           result = newSeq[string]()
           for field in fields(atuple):
-                    result.add($ type(field))
+                    result.add($type(field))
 
 template unidecodeU*(ustring: untyped): untyped =
          ## unidecodeU
@@ -219,6 +217,13 @@ proc fastWrite*(f: File, s: string) =
   ## good for logging or vast file writes
   ## 
   ## based on code ex https://hookrace.net/blog/writing-an-async-logger-in-nim/
+  ## 
+  ##.. code-block:: nim
+  ##  var fft:File
+  ##  discard open(fft,"fast.txt",fmReadWrite)
+  ##  fastWrite(fft,"test " * 100)
+  ##  fft.close()  
+  ## 
   ## 
   if fwriteUnlocked(cstring(s), 1, s.len, f) != s.len:
       raise newException(IOError, "cannot write string to file" )  
@@ -456,7 +461,8 @@ proc ff*(zz: float, n: int = 5): string =
           ## ff
           ##
           ## formats a float to string with n decimals
-          ##
+          ## if thousands seperators are requirewd use f2
+          ## 
           result = $formatFloat(zz, ffDecimal, precision = n)
 
 
@@ -467,7 +473,7 @@ proc ff22(zz: int): string =
           ## 
           ## to format an integer with decimals use ff2(myint) 
           ## 
-          ## this is mainly used by ff2  
+          ## this proc is mainly used by ff2  
           ##    
           
 
@@ -547,24 +553,22 @@ proc ff2*(zz: SomeNumber, n: int = 3):string =
                   if n == 0:
                         result = ff22(parseInt(c[0]))
                   else:
-                        result = ff22(parseInt(c[0])) & c[1] & cnew
-                        
+                        try:
+                           result = ff22(parseInt(c[0])) & c[1] & cnew
+                        except:  # if there is nil ? we might get here
+                            discard
 
-proc getRandomFloat*(mi: float = -1.0, ma: float = 1.0): float =
+proc getRandomFloat*():float = rand(1.0) * getRandomSignF()
           ## getRandomFloat
           ##
           ## convenience proc so we do not need to import rand in calling prog
           ##
           ## to get positive or negative rand floats multiply with getRandomSignF
           ## 
-          ## Note: changed so to get positive and or negative floats
-          ## 
-          ##.. code-block:: nim
-          ##    echo  getRandomFloat() * 10000.00 * getRandomSignF()
-          ##
-          result = rand(-1.0..float(1.0))
+               
 
-proc getRndFloat*(mi: float = -1.0, ma: float = 1.0): float {.noInit,inline.} = rand(mi..ma)
+proc getRndFloat*():float = rand(1.0) * getRandomSignF()
+                   
           ## getRndFloat
           ##
           ## same as getrandFloat()

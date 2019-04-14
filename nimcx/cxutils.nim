@@ -174,7 +174,7 @@ proc getNextMonday*(adate:string):string =
                     result = ndatestr
 
    
-proc getRandomPointInCircle*(radius:float) : seq[float] =
+proc getRandomPointInCircle*(radius:float = 1.0) : seq[float] =
     ## getRandomPointInCircle
     ##
     ## based on answers found in
@@ -196,10 +196,10 @@ proc getRandomPointInCircle*(radius:float) : seq[float] =
     ##            printLnBiCol(fmtx([">25","<6",">10"],ff2(k[0])," :",ff2(k[1])),colLeft=red,colRight=red)
     ##
     ##
-    var r = radius * sqrt(getrndfloat(0,1))        # polar
-    var theta = getrndfloat(0,1) * 2 * math.Pi     # polar
-    var x = r * cos(theta)                         # cartesian
-    var y = r * sin(theta)                         # cartesian
+    let r = radius * sqrt(abs(getrndfloat()))      # polar
+    let theta = getrndfloat() * 2 * math.Pi        # polar
+    let x = r * cos(theta)                         # cartesian
+    let y = r * sin(theta)                         # cartesian
     var z = newSeq[float]()   
     z.add(x)
     z.add(y)
@@ -906,7 +906,6 @@ proc createSeqHiragana*():seq[string] =
     ##
     ## returns a seq containing hiragana unicode chars
     var hir = newSeq[string]()
-    # 12353..12436 hiragana
     for j in 12353..12436: hir.add($Rune(j)) 
     result = hir
     
@@ -1143,8 +1142,7 @@ iterator reverseIter*[T](a: openArray[T]): T =
       ##   let a = createseqfloat(10)
       ##   for b in reverse(a): echo b
       ##
-      for i in countdown(a.high,0):
-         yield a[i] 
+      for i in countdown(a.high,0): yield a[i] 
      
 template withFile*(f,fn, mode, actions: untyped): untyped =
       ## withFile
@@ -1212,7 +1210,7 @@ proc checkMem*(xpos:int=2) =
                printLnInfoMsg2(cxpad(zline[0],n),fmtx([">15"],strutils.strip(zline[1])),yellowgreen,xpos = xpos)
               
 
-proc fullgcstats*(xpos:int = 2):int {.discardable.} =
+proc fullGcStats*(xpos:int = 2):int {.discardable.} =
      let gcs = GC_getStatistics()
      let gcsl = gcs.splitlines()
      for agcl in gcsl:
@@ -1349,7 +1347,7 @@ iterator span*(s: string; first: int, last: BackwardsIndex): char =
      ##       print c 
      ##   echo()
      ##       
-     for i in first..s.len - last.int: yield s[i]
+     for i in first .. s.len - last.int: yield s[i]
 
 
 proc checkPrime*(a: int): bool =

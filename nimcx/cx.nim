@@ -123,7 +123,7 @@
 
 import
         cxconsts, cxglobal, cxtime, cxprint, cxhash, cxfont, cxtruecolor, cxutils, cxnetwork, cxstats,
-        os, osproc, times, random, strutils, strformat, strscans, parseutils, sequtils, parseopt,
+        os, osproc, times, random, strutils,strmisc, strformat, strscans, parseutils, sequtils, parseopt,
         tables, sets, macros,posix,posix_utils,
         terminal, math, stats, json, streams, options, memfiles,
         httpclient, nativesockets, browsers, intsets, algorithm, net,
@@ -132,7 +132,7 @@ import
 import strutils except align
 export
         cxconsts, cxglobal, cxtime, cxprint, cxhash, cxfont, cxtruecolor, cxutils, cxnetwork, cxstats,
-        os, osproc, times, random, strformat, strscans, parseutils, sequtils, parseopt,
+        os, osproc, times, random, strmisc,strformat, strscans, parseutils, sequtils, parseopt,
         tables, sets, macros,posix, posix_utils,
         terminal, math, stats, json, streams, options, memfiles,
         httpclient, nativesockets, browsers, intsets, algorithm, net,
@@ -201,7 +201,7 @@ var benchmarkresults* = newSeq[Benchmarkres]()
 var cxtmpfilenames* = newSeq[string]()
 
 proc newCxCounter*(): ref(Cxcounter) =
-        ## newCxcounter
+    ## newCxcounter
     ## 
     ## set up a new cxcounter
     ## 
@@ -214,12 +214,11 @@ proc newCxCounter*(): ref(Cxcounter) =
     ## counter1.reset # set to 0
     ## echo counter1.value # show current value
     ##
-        result = (ref CxCounter)(value: 0)
+    result = (ref CxCounter)(value: 0)
 
 proc add*(co: ref Cxcounter) = inc co.value 
 proc dec*(co: ref Cxcounter) = dec co.value
 proc reset*(co: ref CxCounter) = co.value = 0
-
 
 proc spellInteger*(n: int64): string # forward declaration
 proc doFinish*() # forward declaration
@@ -310,11 +309,11 @@ proc makeColor*(r:int=getrndint(0,2550),g:int=getrndint(0,2550),b:int=getrndint(
  
 proc makeColorTest*() = 
     loopy2(0,30):
-      makecolor()
-      curup(1)     
-      makecolor(xpos = 40)       
-      curup(1)
-      makecolor(xpos = 80)   
+          makecolor()
+          curup(1)     
+          makecolor(xpos = 40)       
+          curup(1)
+          makecolor(xpos = 80)   
       
  
 proc makeGreyScaleTest*(astart:int = 0, aend:int = 255 ,astep:int = 5) =
@@ -324,14 +323,12 @@ proc makeGreyScaleTest*(astart:int = 0, aend:int = 255 ,astep:int = 5) =
     ## 
     ## 
     decho(2)
-    var cad = 50
-    var cad2 = cad + 50
     for x in countup(astart,aend - 100,astep):
        makecolor(x,x,x)
        curup(1)     
-       makecolor(x+cad,x+cad,x+cad,xpos = 40) 
+       makecolor(x+50,x+50,x+50,xpos = 40) 
        curup(1)                        
-       makecolor(x+cad2,x+cad2,x+cad2,xpos = 80)
+       makecolor(x+100,x+100,x+100,xpos = 80)
      
           
 # Misc. routines
@@ -668,11 +665,10 @@ proc spellInteger2*(n: string): string =
         result = ""
         var nn = n
         for x in nn:
-                if x == '0':
-                        result = result & "zero" & spaces(1)
-                else:
-                        result = result & spellInteger(parseInt($x)) & spaces(
-                                        1)
+            if x == '0':
+                  result = result & "zero" & spaces(1)
+            else:
+                  result = result & spellInteger(parseInt($x)) & spaces(1)
 
 
 proc spellFloat*(n: float64, currency: bool = false, sep: string = ".", sepname: string = " dot "): string =
@@ -749,10 +745,10 @@ proc newDir*(dirname: string) =
      ## creates a new directory and provides some feedback
      if not existsDir(dirname):
             try:
-                    createDir(dirname)
-                    printLn("Directory " & dirname & " created ok", green)
+                createDir(dirname)
+                printLn("Directory " & dirname & " created ok", green)
             except OSError:
-                    printLnErrorMsg(dirname & " creation failed. Check permissions.")
+                printLnErrorMsg(dirname & " creation failed. Check permissions.")
      else:
             printLnErrorMsg("Directory " & dirname & " already exists !")
 
@@ -767,19 +763,19 @@ proc remDir*(dirname: string): bool {.discardable.} =
         ##
 
         if dirname == "/home" or dirname == "/":
-                printLn("Directory " & dirname & " removal not allowed !",brightred)
+            printLn("Directory " & dirname & " removal not allowed !",brightred)
         else:
-                if existsDir(dirname):
-                        try:
-                                removeDir(dirname)
-                                printLnOkMsg("Directory " & dirname & " deleted")
-                                result = true
-                        except OSError:
-                                printLnErrorMsg("Directory " & dirname & " deletion failed")
-                                result = false
-                else:
-                        printLnErrorMsg("Directory " & dirname & " does not exists !")
+            if existsDir(dirname):
+                try:
+                        removeDir(dirname)
+                        printLnOkMsg("Directory " & dirname & " deleted")
+                        result = true
+                except OSError:
+                        printLnErrorMsg("Directory " & dirname & " deletion failed")
                         result = false
+            else:
+                printLnErrorMsg("Directory " & dirname & " does not exists !")
+                result = false
 
 
 proc checkClip*(sel: string = "primary"): string =
@@ -1019,8 +1015,7 @@ template checkLocals*() =
                printLnBiCol(fmtx(["", "<20", "", "", "", "", "<25", "", "",
                                 "", "", ""], "Variable : ", $name, spaces(3),
                                 peru, "Type : ", termwhite, $type(value),
-                                spaces(1), aqua, "Value : ", termwhite,
-                                $value))
+                                spaces(1), aqua, "Value : ", termwhite,$value))
         dlineLn(tw() - 1)
 
 proc qqTop*() =
@@ -1055,7 +1050,6 @@ proc tmpFilename*(filename: string): string =
      let tfn = getTempDir() & $epochTime() & "-" & filename & ".tmp"
      cxTmpFileNames.add(tfn) # add filename to seq
      result = tfn
-
 
 
 proc rmTmpFilenames*() =
@@ -1181,7 +1175,7 @@ var unameRes, releaseRes: string
 
 template unameRelease(cmd, cache): untyped =
         if cache.len == 0:
-                cache = (when defined(nimscript): gorge(cmd) else: execProcess(cmd))
+             cache = (when defined(nimscript): gorge(cmd) else: execProcess(cmd))
         cache
 
 template uname*(): untyped = unameRelease("uname -a", unameRes)
@@ -1191,10 +1185,10 @@ template release*(): untyped = unameRelease("lsb_release -a", releaseRes)
 proc theEnd*() =
         # animated the end
         loopy2(0, 2):
-                loopy2(-10, 30):
-                        printFontFancy("THE END", xpos = xloopy)
-                        sleepy(0.02)
-                        cleanScreen()
+            loopy2(-10, 30):
+                printFontFancy("THE END", xpos = xloopy)
+                sleepy(0.02)
+                cleanScreen()
         printfontfancy("qqtop", coltop1 = red, xpos = tw div 3 - 20)
         decho(10)
 
@@ -1225,33 +1219,26 @@ proc doFinish*() =
                 infoLine()
                 echo()
                 print(fmtx(["<14"], "Elapsed    : "), yellowgreen)
-                print(fmtx(["<", ">5"], ff(epochtime() - cxstart, 3), " secs"),
-                                goldenrod)
+                print(fmtx(["<", ">5"], ff(epochtime() - cxstart, 3), " secs"), goldenrod)
                 printLnBiCol("  Compiled on: " & $CompileDate & spaces(1) & $CompileTime & spaces(1) & "UTC in " & cxTimeZone())
                 if detectOs(OpenSUSE) or detectOs(Parrot): # some additional data if on openSuse or parrotOs systems
-                        let ux1 = uname().split("#")[0].split(" ")
-                        printLnBiCol("Kernel     :  " & ux1[
-                                        2] & " | Computer: " & ux1[1] & " | Os: " & ux1[0] & " | CPU Cores: " & $(
-                                        osproc.countProcessors()),
-                                        yellowgreen, lightslategray, ":", 0,
-                                        false, {})
-                        let rld = release().splitLines()
-                        let rld3 = rld[2].splitty(":")
-                        let rld4 = rld3[0] & spaces(2) & strutils.strip(rld3[
-                                        1])
-                        printBiCol(rld4, yellowgreen, lightslategray, ":", 0,
-                                        false, {})
-                        printLnBiCol(spaces(2) & "Release: " & strutils.strip((
-                                        split(rld[3], ":")[1])), yellowgreen,
-                                        lightslategray, ":", 0, false, {})
-                        printBiCol("Authored   : ")                
-                        qqTop()
-                        printLn(" - " & year(getDateStr()), lightslategray)
-                        echo()
+                    let ux1 = uname().split("#")[0].split(" ")
+                    printLnBiCol("Kernel     :  " & ux1[2] & " | Computer: " & ux1[1] & " | Os: " & ux1[0] & " | CPU Cores: " & $(
+                                    osproc.countProcessors()), yellowgreen, lightslategray, ":", 0, false, {})
+                    let rld = release().splitLines()
+                    let rld3 = rld[2].splitty(":")
+                    let rld4 = rld3[0] & spaces(2) & strutils.strip(rld3[1])
+                    printBiCol(rld4, yellowgreen, lightslategray, ":", 0,false, {})
+                    printLnBiCol(spaces(2) & "Release: " & strutils.strip((
+                                    split(rld[3], ":")[1])), yellowgreen,
+                                    lightslategray, ":", 0, false, {})
+                    printBiCol("Authored   : ")                
+                    qqTop()
+                    printLn(" - " & year(getDateStr()), lightslategray)
+                    echo()
                 else:
-                        let un = execCmdEx("uname -v")
-                        printLnInfoMsg("uname -v ", un.output)
-
+                    let un = execCmdEx("uname -v")
+                    printLnInfoMsg("uname -v ", un.output)
                 rmTmpFilenames()
                 GC_fullCollect() # just in case anything hangs around
                 quit(0)
@@ -1259,7 +1246,7 @@ proc doFinish*() =
 
 
 proc handler*() {.noconv.} =
-        ## handler
+    ## handler
     ##
     ## exit handler this runs if ctrl-c is pressed
     ##
@@ -1274,57 +1261,57 @@ proc handler*() {.noconv.} =
     ## or under some circumstances like being called during readLineFromStdin
     ##
     ##
-        eraseScreen()
-        rmTmpFilenames()      # clean up if possible
-        echo()
-        hlineLn()
-        cechoLn(yellowgreen, "Thank you for using        : " & getAppFilename())
-        hlineLn()
-        printLnBiCol(fmtx(["<", "<11", ">9",""], "Last compilation on        : ",
-                        CompileDate, CompileTime," UTC"), brightcyan, termwhite, ":", 0, false, {})
-        printLnBiCol(fmtx(["<", "<11", ">9"], "Exit handler invocation at : ",
-                        cxtoday, getClockStr()), pastelorange, termwhite, ":", 0, false, {})
-        hlineLn()
-        echo()
-        printInfoMsg("Nim Version ", NimVersion)
-        print(" | ", brightblack)
-        printInfoMsg("NimCx Version", CXLIBVERSION, xpos = 25)
-        printInfoMsg("Elapsed secs ", fmtx(["<10.3"], epochTime() - cxstart), xpos = 49)
-        printLnInfoMsg("Info", " Have a Nice Day !", limegreen, xpos = 78) ## change or add custom messages as required
-        decho()
-        system.addQuitProc(resetAttributes)
-        quit(0)
+    eraseScreen()
+    rmTmpFilenames()      # clean up if possible
+    echo()
+    hlineLn()
+    cechoLn(yellowgreen, "Thank you for using        : " & getAppFilename())
+    hlineLn()
+    printLnBiCol(fmtx(["<", "<11", ">9",""], "Last compilation on        : ",
+                    CompileDate, CompileTime," UTC"), brightcyan, termwhite, ":", 0, false, {})
+    printLnBiCol(fmtx(["<", "<11", ">9"], "Exit handler invocation at : ",
+                    cxtoday, getClockStr()), pastelorange, termwhite, ":", 0, false, {})
+    hlineLn()
+    echo()
+    printInfoMsg("Nim Version ", NimVersion)
+    print(" | ", brightblack)
+    printInfoMsg("NimCx Version", CXLIBVERSION, xpos = 25)
+    printInfoMsg("Elapsed secs ", fmtx(["<10.3"], epochTime() - cxstart), xpos = 49)
+    printLnInfoMsg("Info", " Have a Nice Day !", limegreen, xpos = 78) ## change or add custom messages as required
+    decho()
+    system.addQuitProc(resetAttributes)
+    quit(0)
 
 proc doCxEnd*() =
-        ## doCxEnd
-        ## 
-        ## short testing routine if cx.nim is run as main
-        ##
-        clearup()
-        decho()
-        print(nimcxl,rndcol(),styled={styleBright}) 
-        print(spaces(13))
-        qqtop()
-        println("  -  " & year(getDateStr()))
-        doInfo()
-        clearup()
-        decho(3)
-        colorio()
-        let smm = "      import nimcx and your terminal comes alive with color...  "
-        loopy2(0, 6):
-                cleanScreen()
-                decho()
-                printNimCx()
-                decho(8)
-                printMadeWithNim()
-                decho(8)
-                print(innocent, truetomato)
-                for x in 0..<(tw - 4) div runeLen(innocent) div 2: print(innocent, rndCol())
-                print(innocent, truetomato)
-                sleepy(0.15)
-                curup(1)
-        echo()
-        doFinish()
+    ## doCxEnd
+    ## 
+    ## short testing routine if cx.nim is run as main
+    ##
+    clearup()
+    decho()
+    print(nimcxl,rndcol(),styled={styleBright}) 
+    print(spaces(13))
+    qqtop()
+    println("  -  " & year(getDateStr()))
+    doInfo()
+    clearup()
+    decho(3)
+    colorio()
+    let smm = "      import nimcx and your terminal comes alive with color...  "
+    loopy2(0, 6):
+            cleanScreen()
+            decho()
+            printNimCx()
+            decho(8)
+            printMadeWithNim()
+            decho(8)
+            print(innocent, truetomato)
+            for x in 0..<(tw - 4) div runeLen(innocent) div 2: print(innocent, rndCol())
+            print(innocent, truetomato)
+            sleepy(0.15)
+            curup(1)
+    echo()
+    doFinish()
 
 # putting decho here will put two blank lines before anything else runs
 decho()
