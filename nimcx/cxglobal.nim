@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-04-14 
+##     Latest      : 2019-06-12 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -80,24 +80,24 @@ macro procName*(x: untyped): untyped =
           result = x
 
 macro toEnum*(words: static[string]): untyped =
-  ## toEnum
-  ## 
-  ## lifted from nim-blog
-  ##  
-  ## Example 
-  ##.. code-block:: nim 
-  ##   type
-  ##      Color = toEnum("Red Green Blue Indigo")
-  ##    
-  result = newTree(nnkEnumTy, newEmptyNode())
-  for w in strutils.splitWhitespace(words): result.add ident(w)          
+      ## toEnum
+      ## 
+      ## lifted from nim-blog
+      ##  
+      ## Example 
+      ##.. code-block:: nim 
+      ##   type
+      ##      Color = toEnum("Red Green Blue Indigo")
+      ##    
+      result = newTree(nnkEnumTy, newEmptyNode())
+      for w in strutils.splitWhitespace(words): result.add ident(w)          
           
 macro cxgetType*(s: typed): untyped = 
-      ## cxgetType
-      ## 
-      ## answers what type is it question
-      ## in newer nim versions just use type(s)  
-      result = getType(s)
+          ## cxgetType
+          ## 
+          ## answers what type is it question
+          ## in newer nim versions just use type(s)  
+          result = getType(s)
       
                   
 proc tupleTypes*(atuple: tuple): seq[string] =
@@ -195,19 +195,19 @@ proc getTerminalHeight*(): int =
 template th*: int = getTerminalheight() ## th , a global where latest terminal height is always available
 
 proc remapIntToFloat*(s: seq[int]): seq[float] =
-  ## remapIntToFloat
-  ## 
-  s.map do (x: int) -> float: x.float
+     ## remapIntToFloat
+     ## 
+     s.map do (x: int) -> float: x.float
 
 proc remapFloatToInt*(s: seq[float]): seq[int] =
-  ## remapFloatToInt
-  ## 
-  s.map do (x: float) -> int: round(x).int    
+     ## remapFloatToInt
+     ## 
+     s.map do (x: float) -> int: round(x).int    
     
 proc remapToString*[T](s: seq[T]): seq[string] =
-  ## remapToString
-  ## 
-  s.map do (x: T) -> string: $x    
+     ## remapToString
+     ## 
+     s.map do (x: T) -> string: $x    
   
   
 proc fwriteUnlocked(buf: pointer, size, n: int, f: File): int {.importc: "fwrite_unlocked", noDecl.}
@@ -236,7 +236,7 @@ func cxpad*(s: string, padlen: int, paddy: string = spaces(1)): string =
           ##
           result = s
           if s.len < padlen:
-                    result = s & (paddy * (max(0, padlen - s.len)))
+              result = s & (paddy * (max(0, padlen - s.len)))
 
 func cxpdx*(padLen: int, s: string, paddy: string = spaces(1)): string =
           ## pdx 
@@ -251,7 +251,7 @@ func cxlpad*(s: string, padlen: int, paddy: string = spaces(1)): string =
           ##
           result = s
           if s.len < padlen:
-                    result = (paddy * (max(0, padlen - s.len))) & s
+              result = (paddy * (max(0, padlen - s.len))) & s
 
 func cxlpdx*(padLen: int, s: string, paddy: string = spaces(1)): string =
           ## cxlpdx 
@@ -388,11 +388,10 @@ proc reverseMe*[T](xs: openarray[T]): seq[T] =
 
 proc reverseText*(text: string): string =
           ## reverseText
-  ## 
-  ## reverses words in a sentence
-  ##
-          for line in text.splitLines: result = line.split(" ").reversed.join(
-                              " ")
+          ## 
+          ## reverses words in a sentence
+          ##
+          for line in text.splitLines: result = line.split(" ").reversed.join(spaces(1))
 
 proc reverseString*(text: string): string =
           ## reverseString
@@ -431,8 +430,8 @@ proc createSeqBinary*(n: int = 10): seq[int] {.inline.} =
           result = newSeq[int]()
           let b = createSeqBool(n)
           for x in b:
-                    if $x == "false": result.add(0)
-                    if $x == "true": result.add(1)
+                if $x == "false": result.add(0)
+                if $x == "true": result.add(1)
 
 
 proc createSeqInt*(n: int = 10, mi: int = 0, ma: int = 1000): seq[int] {.inline.} =
@@ -452,9 +451,8 @@ proc createSeqInt*(n: int = 10, mi: int = 0, ma: int = 1000): seq[int] {.inline.
           result = newSeq[int]() # faster
           # as we do not want any print commands in this module we change
           case mi <= ma
-                    of true: result.add(newSeqWith(n, getRndInt(mi, ma)))
-                    else:
-                              result.add(newSeqWith(n, getRndInt(mi, mi)))
+             of true: result.add(newSeqWith(n, getRndInt(mi, ma)))
+             else: result.add(newSeqWith(n, getRndInt(mi, mi)))
 
 
 proc ff*(zz: float, n: int = 5): string =
@@ -473,10 +471,8 @@ proc ff22(zz: int): string =
           ## 
           ## to format an integer with decimals use ff2(myint) 
           ## 
-          ## this proc is mainly used by ff2  
+          ## internal proc used by ff2  
           ##    
-          
-
           var sc = 0
           var nz = ""
           var zrs = ""
@@ -511,8 +507,8 @@ proc ff2*(zz: SomeNumber, n: int = 3):string =
           ## ff2(12345,0)   ==> 12,345     # display an integer with thousands seperator as we know it
           ## ff2(12345,1)   ==> 12,345.0   # display an integer but like a float with 1 decimal place
           ## ff2(12345,2)   ==> 12,345.00  # display an integer but like a float with 2 decimal places
-          ## ff2(12.6789,2) ==> 12.67      # displays the float with decimal places
-          ## ff2(12.3,4)    ==> 12.3000    # displkays the float with 4 decimal places
+          ## ff2(12.6789,2) ==> 12.67      # display the float with decimal places
+          ## ff2(12.3,4)    ==> 12.3000    # display the float with 4 decimal places
           ## 
           ## precision is after comma given by n with default set to 3
           ## 
@@ -567,8 +563,7 @@ proc getRandomFloat*():float = rand(1.0) * getRandomSignF()
           ## 
                
 
-proc getRndFloat*():float = rand(1.0) * getRandomSignF()
-                   
+proc getRndFloat*():float = rand(1.0) * getRandomSignF()                
           ## getRndFloat
           ##
           ## same as getrandFloat()
@@ -1216,17 +1211,17 @@ template curOff* =
          
 
 proc stripper*(str: string): string =
-          # stripper
-          # strip controlcodes "\ba\x00b\n\rc\fd\xc3"
-          result = ""
-          for ac in str:
-              if ord(ac) in 32..126: result.add ac
-              
+     # stripper
+     # strip controlcodes "\ba\x00b\n\rc\fd\xc3"
+     result = ""
+     for ac in str:
+         if ord(ac) in 32..126: result.add ac
+          
 
 template `<>`* (a, b: untyped): untyped =
-          ## unequal operator 
-          ##
-          not (a == b)
+      ## unequal operator 
+      ##
+      not (a == b)
 
 
 proc `[]`*[T; U](a: seq[T], x: Slice[U]): seq[T] =
@@ -1447,9 +1442,6 @@ template randPastelCol*: string = rand(pastelset)
          ##    loopy(0..5,printLn("Hello Random Color",randPastelCol()))
          ##
          ##
-     
-     
-
 
 template upperCase*(s: string): string = toUpperAscii(s)
          ## upperCase

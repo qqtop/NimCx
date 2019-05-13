@@ -19,7 +19,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-04-08 
+##     Latest      : 2019-05-12 
 ##
 ##     Compiler    : Nim >= 0.19.x devel branch
 ##
@@ -237,9 +237,8 @@ template cx45Up*:untyped       = cyan & "→↑" & termwhite
 template cx45Down*:untyped     = yellow & "→↓" & termwhite
 
 
-
 proc newColor*(r, g, b: int): string =
-        ##   newColor
+    ##   newColor
     ##   
     ##   creates a new color string from r,g,b values. Passed in colors can be used as 
     ##   foregroundcolor in print,printLn routines and as bgr in cxPrint,cxPrintLn .
@@ -264,50 +263,54 @@ proc newColor*(r, g, b: int): string =
     ##     doFinish()
     ##
     ##
-        result = "\x1b[38;2;$1;$2;$3m" % [$r, $g, $b]
+    result = "\x1b[38;2;$1;$2;$3m" % [$r, $g, $b]
 
 
 proc newColor2*(r, g, b: int): string = "\x1b[48;2;$1;$2;$3m" % [$r, $g, $b]
-     ##   newColor2
-     ##   
-     ##   creates a new color string from r,g,b values passed in with styleReverse effect for text
-     ##   best used as foregroundcolor in print, printLn routines
-     ##
+    ##   newColor2
+    ##   
+    ##   creates a new color string from r,g,b values passed in with styleReverse effect for text
+    ##   best used as foregroundcolor in print, printLn routines
+    ##
 
 proc checkColor*(colname: string): bool =
-     ## checkColor
-     ##
-     ## returns true if colname is a known color name in colorNames constants.nim 
-     ## 
-     ##
-     result = false
-     for x in colorNames:
+    ## checkColor
+    ##
+    ## returns true if colname is a known color name in colorNames constants.nim 
+    ## 
+    ##
+    result = false
+    for x in colorNames:
         if x[0] == colname or x[1] == colname:
            result = true
 
 proc showColors*() =
-     ## showColors
-     ##
-     ## display all colorNames in color !
-     ##
-     for x in colorNames:
-           print(fmtx(["<22"], x[0]) & spaces(2) & "▒".repeat(10) & spaces(2) & "⌘".repeat(10) & spaces(2) & "ABCD abcd 1234567890 --> " & " Nim Colors  ", x[1], bgBlack, xpos = 3)
-           printLn(fmtx(["<23"], spaces(2) & x[0]), x[1], styled = {styleReverse}, substr = fmtx(["<23"],spaces(2) & x[0]))
-           sleepy(0.01)
-     decho()
+    ## showColors
+    ##
+    ## display all colorNames in color !
+    ##
+    for x in colorNames:
+          print(fmtx(["<22"], x[0]) & spaces(2) & "▒".repeat(10) & spaces(2) & "⌘".repeat(10) & spaces(2) & "ABCD abcd 1234567890 --> " & " Nim Colors  ", x[1], bgBlack, xpos = 3)
+          printLn(fmtx(["<23"], spaces(2) & x[0]), x[1], styled = {styleReverse}, substr = fmtx(["<23"],spaces(2) & x[0]))
+          sleepy(0.01)
+    decho()
 
 proc makeColor*(r:int=getrndint(0,2550),g:int=getrndint(0,2550),b:int=getrndint(1000,2550),xpos:int=1) =
-     ## makeColor
-     ## 
-     ## a utility function to show random effect of rgb changes
-     ## see makeColorTest or makeGreyScaleTest for example use
-     ## 
-     let nc = newcolor(r,g,b)
-     print(cxlpad($r & " " & $g & " " & $b,15) & " " & efb2 * 20,nc,xpos=xpos)
-     decho(1)
+    ## makeColor
+    ## 
+    ## a utility function to show random effect of rgb changes
+    ## see makeColorTest or makeGreyScaleTest for example use
+    ## 
+    let nc = newcolor(r,g,b)
+    print(cxlpad($r & " " & $g & " " & $b,15) & " " & efb2 * 20,nc,xpos=xpos)
+    decho(1)
 
  
 proc makeColorTest*() = 
+    ## makeColorTest
+    ## 
+    ## testing makeColor proc
+    ## 
     loopy2(0,30):
           makecolor()
           curup(1)     
@@ -390,6 +393,7 @@ proc nimcat*(curFile: string, countphrase: varargs[string, `$`] = "") =
 
 
 template repeats(count: int, statements: untyped) =
+        # used by benchmark
         for i in 0..<count:
             statements
 
@@ -753,60 +757,60 @@ proc newDir*(dirname: string) =
             printLnErrorMsg("Directory " & dirname & " already exists !")
 
 proc remDir*(dirname: string): bool {.discardable.} =
-        ## remDir
-        ##
-        ## deletes an existing directory , all subdirectories and files  and provides some feedback
-        ##
-        ## root and home directory removal is disallowed 
-        ## 
-        ## this obviously is a dangerous proc handle with care !!
-        ##
+    ## remDir
+    ##
+    ## deletes an existing directory , all subdirectories and files  and provides some feedback
+    ##
+    ## root and home directory removal is disallowed 
+    ## 
+    ## this obviously is a dangerous proc handle with care !!
+    ##
 
-        if dirname == "/home" or dirname == "/":
-            printLn("Directory " & dirname & " removal not allowed !",brightred)
+    if dirname == "/home" or dirname == "/":
+        printLn("Directory " & dirname & " removal not allowed !",brightred)
+    else:
+        if existsDir(dirname):
+            try:
+                    removeDir(dirname)
+                    printLnOkMsg("Directory " & dirname & " deleted")
+                    result = true
+            except OSError:
+                    printLnErrorMsg("Directory " & dirname & " deletion failed")
+                    result = false
         else:
-            if existsDir(dirname):
-                try:
-                        removeDir(dirname)
-                        printLnOkMsg("Directory " & dirname & " deleted")
-                        result = true
-                except OSError:
-                        printLnErrorMsg("Directory " & dirname & " deletion failed")
-                        result = false
-            else:
-                printLnErrorMsg("Directory " & dirname & " does not exists !")
-                result = false
+            printLnErrorMsg("Directory " & dirname & " does not exists !")
+            result = false
 
 
 proc checkClip*(sel: string = "primary"): string =
-        ## checkClip
-        ## 
-        ## returns the newest entry from the Clipboard
-        ## requires xclip to be installed
-        ## 
-        ##.. code-block:: nim
-        ##     printLnBiCol("Last Clipboard Entry : " & checkClip())
-        ##
-        let (outp, errC) = execCmdEx("xclip -selection $1 -quiet -silent -o" % $sel)
-        var rx = ""
-        if errC == 0:
-                let r = split($outp, " ")
-                for x in 0..<r.len: rx = rx & " " & r[x]
-        else:
-                rx = "xclip returned errorcode : " & $errC & ". Clipboard not accessed correctly"
-        result = rx
+    ## checkClip
+    ## 
+    ## returns the newest entry from the Clipboard
+    ## requires xclip to be installed
+    ## 
+    ##.. code-block:: nim
+    ##     printLnBiCol("Last Clipboard Entry : " & checkClip())
+    ##
+    let (outp, errC) = execCmdEx("xclip -selection $1 -quiet -silent -o" % $sel)
+    var rx = ""
+    if errC == 0:
+            let r = split($outp, " ")
+            for x in 0..<r.len: rx = rx & " " & r[x]
+    else:
+            rx = "xclip returned errorcode : " & $errC & ". Clipboard not accessed correctly."
+    result = rx
 
 
 proc toClip*[T](s: T) =
-     ## toClip
-     ##
-     ## send a string to the Clipboard using xclip
-     ## only error messages will shown if any.
-     ## required xclip to be installed
-     ## 
-     ##
-     let res = execCmd("echo $1 | xclip " % $s)
-     if res <> 0: printLnErrorMsg("xclip output : " & $res & " but expected 0")
+    ## toClip
+    ##
+    ## send a string to the Clipboard using xclip
+    ## only error messages will shown if any.
+    ## required xclip to be installed
+    ## 
+    ##
+    let res = execCmd("echo $1 | xclip " % $s)
+    if res <> 0: printLnErrorMsg("xclip output : " & $res & " but expected 0")
 
 
 proc getColorName*[T](sc: T): string =
