@@ -40,7 +40,7 @@ proc showStats*(x:Runningstat,n:int = 3,xpos:int = 1) =
      ##     
      ##     var rsa:Runningstat
      ##     var rsb:Runningstat
-     ##     for x in 1.. 100:
+     ##     for x in 1 .. 100:
      ##        cleanscreen()
      ##        decho(2)
      ##        rsa.clear

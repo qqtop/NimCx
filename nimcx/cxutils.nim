@@ -695,7 +695,7 @@ proc newText*(textLen:int = 1000,textgen:string = "newWord"):string =
      ##  newKatakana
      ##  newWordCJK
      ##  
-     ##..code-block:: nim
+     ##.. code-block:: nim
      ##  printLn(newText(10000,"newHiragana"),rndcol)
      ##    
      ##  
@@ -781,7 +781,7 @@ proc createRandomDataFile*(filename:string = "randomdata.dat") =
     ## this will create a file with given filename and size 1 MB
     ## filled with strong random data
     ## 
-    ## ..code-block:: nim
+    ## .. code-block:: nim
     ##    
     ##    createRandomDataFile("niip2.wsx")
     ##    var bc = 0
@@ -834,7 +834,7 @@ proc drawRect*(h     :int = 0,
       ##    curup(12)
       ##    drawRect(9,20,frhLine = "=",frvLine = wideDot , frCol = randCol(),xpos = 35,blink = true)
       ##    curup(10)
-      ##    drawRect(6,14,frhLine = "~",frvLine = "$" , frCol = randCol(),xpos = 70,blink = true)
+      ##    drawRect(6,14,frhLine = "~",frvLine = "$" , frCol = randCol(),xpos = 60,blink = true)
       ##    decho(5)
       ##    doFinish()
       ##

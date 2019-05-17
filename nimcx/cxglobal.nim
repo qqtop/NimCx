@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-06-12 
+##     Latest      : 2019-05-17 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -505,12 +505,16 @@ proc ff2*(zz: SomeNumber, n: int = 3):string =
           ## format int or float to string showing thousand separator and desired decimal places
           ## 
           ## ff2(12345,0)   ==> 12,345     # display an integer with thousands seperator as we know it
+          ## 
           ## ff2(12345,1)   ==> 12,345.0   # display an integer but like a float with 1 decimal place
+          ## 
           ## ff2(12345,2)   ==> 12,345.00  # display an integer but like a float with 2 decimal places
+          ## 
           ## ff2(12.6789,2) ==> 12.67      # display the float with decimal places
+          ## 
           ## ff2(12.3,4)    ==> 12.3000    # display the float with 4 decimal places
           ## 
-          ## precision is after comma given by n with default set to 3
+          ## precision after comma is given by n with default set to 3
           ## 
           ##.. code-block:: nim
           ##    import nimcx
@@ -765,7 +769,7 @@ proc fmtx*[T](fmts: openarray[string], fstrings: varargs[T, `$`]): string =
          ##
          ##.. code-block:: nim
          ##    import nimcx
-         ##    echo fmtx(["","","<8.3",""," High : ","<8","","","","","","","",""],lime,"Open : ",unquote("1234.5986"),yellow,"",3456.67,red,showRune("FFEC"),white," Change:",unquote("-1.34 - 0.45%"),"  Range : ",lime,@[123,456,789])
+         ##    echo fmtx(["","","<8.3",""," High : ","<8","","","","","","","",""],lime,"Open : ",unquote("1234.5986"),yellow,"",3456.67,red,downarrow,white," Change:",unquote("-1.34 - 0.45%"),"  Range : ",lime,@[123,456,789])
          ##    echo fmtx(["","<18",":",">15","","",">8.2"],salmon,"nice something",steelblue,123,spaces(5),yellow,456.12345676)
          ##    echo()
          ##    showRuler()
@@ -796,9 +800,9 @@ proc showRune*(s: string): string {.discardable.} =
          ## Example
          ## 
          ##.. code-block :: nim
-         ##      for x in 10.. 55203: printLnBiCol($x & " : " & showRune(toHex(x)))
-         ##      print(showRune("FFEA"),lime)
-         ##      print(showRune("FFEC"),red)
+         ##      for x in 10 .. 55203: printLnBiCol($x & " : " & showRune(toHex(x)))
+         ##      print(showRune("2191"),lime)
+         ##      print(showRune("2193"),red)
          ##
          ##
          result = $Rune(parseHexInt(s))

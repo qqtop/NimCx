@@ -1236,8 +1236,8 @@ proc doFinish*() =
                     printLnBiCol(spaces(2) & "Release: " & strutils.strip((
                                     split(rld[3], ":")[1])), yellowgreen,
                                     lightslategray, ":", 0, false, {})
-                    printBiCol("Authored   : ")                
-                    qqTop()
+                    printBiCol("NimCx by   : ")                
+                    qqTop()  # put your own name/linelogo here
                     printLn(" - " & year(getDateStr()), lightslategray)
                     echo()
                 else:
