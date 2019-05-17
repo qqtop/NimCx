@@ -1,4 +1,4 @@
-import cxglobal,cxconsts,cxprint,cxutils,terminal,strutils,random
+import cxglobal,cxconsts,cxprint2,cxutils,terminal,strutils,random
 
 # cxtruecolor.nim   
 #
@@ -21,7 +21,7 @@ import cxglobal,cxconsts,cxprint,cxutils,terminal,strutils,random
 # eg. nim c -r -d:cxTruecol cxtruecolor.nim
 # then it will work like expected
 #
-# Last : 2019-04-05
+# Last : 2019-05-17
 # 
 # 
 type

@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-03-15 
+##     Latest      : 2019-05-17 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -19,7 +19,7 @@
 ##     Description : provides some functions pertaining to statistcs and calculations
 ## 
 
-import cxconsts,cxglobal,cxprint,stats,math,algorithm
+import cxconsts,cxglobal,cxprint2,stats,math,algorithm
   
 # proc returnStat(x:Runningstat,stat : seq[string]):float =
 #      ## returnStat

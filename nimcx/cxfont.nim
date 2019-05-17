@@ -1,5 +1,5 @@
 {.deadCodeElim: on , optimization: speed.}
-import cxglobal,cxconsts,cxprint,cxtruecolor
+import cxglobal,cxconsts,cxprint2,cxtruecolor
 import strutils,terminal,sets
 
 # cxfont.nim
@@ -728,7 +728,7 @@ proc printNim*(npos:int = tw div 2 - 60) =
 
 # printing of slimfonts related routine
 
-proc printSlimNumber*(anumber:string,fgr:string = yellowgreen ,bgr:BackgroundColor = bgBlack,xpos:int = 1) =
+proc printSlimNumber*(anumber:string,fgr:string = yellowgreen ,bgr:BackgroundColor = bgDefault,xpos:int = 1) =
     ## printSlimNumber
     ##
     ## # will shortly be deprecated use:  printSlim

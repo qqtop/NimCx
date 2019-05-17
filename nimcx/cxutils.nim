@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-04-08
+##     Latest      : 2019-05-17
 ##
 ##     OS          : Linux
 ##
@@ -23,7 +23,7 @@
 
 import os,osproc,math,stats,cpuinfo,httpclient,browsers,typeinfo,typetraits,rdstdin
 import terminal,strutils,times,random,sequtils,unicode,streams
-import cxconsts,cxglobal,cxprint,cxtime,cxhash,macros
+import cxconsts,cxglobal,cxprint2,cxtime,cxhash,macros
 
 # type used in getRandomPoint
 type
@@ -337,7 +337,7 @@ proc showRandomCard*(xpos:int = centerX()) =
     print(getCard(),randCol(),xpos = xpos)
 
 
-proc showRuler* (xpos:int=0,xposE:int=0,ypos:int = 0,fgr:string = white,bgr:BackgroundColor = bgBlack, vert:bool = false) =
+proc showRuler* (xpos:int=0,xposE:int=0,ypos:int = 0,fgr:string = white,bgr:BackgroundColor = bgDefault, vert:bool = false) =
      ## ruler
      ##
      ## simple terminal ruler indicating dot x positions starts with position 1
@@ -457,11 +457,11 @@ proc superHeader*(bstring:string) =
       # really want a terminal color checker to avoid invisible lines
       echo()
       printLn(pdl,yellowgreen)
+      print(cleareol)
       print(spaces(1))
       printLn(astring,dodgerblue)
       printLn(pdl,yellowgreen)
       echo()
-
 
 proc superHeader*(bstring:string,strcol:string,frmcol:string) =
         ## superheader

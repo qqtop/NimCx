@@ -1,4 +1,4 @@
-import cxglobal,cxprint,cxconsts
+import cxglobal,cxprint2,cxconsts
 import os,terminal,times,parseutils,strutils
 
 # cxtime.nim
@@ -9,7 +9,7 @@ import os,terminal,times,parseutils,strutils
 # 
 # 
 # 
-# Last : 2019-01-09
+# Last : 2019-05-17
 # 
 # 
 

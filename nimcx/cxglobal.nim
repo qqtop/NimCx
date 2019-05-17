@@ -958,17 +958,17 @@ type
 
 
           CxlineText* = object
-                    text*: string # text                                default none
-                    textcolor*: string # text color                     default termwhite
+                    text*: string # text                               default none
+                    textcolor*: string # text color                    default termwhite
                     textstyle*: set[Style] # text styled
-                    textpos*: int # position of text from startpos      default 3
-                    textbracketopen*: string # open bracket surounding the text    default [
+                    textpos*: int # position of text from startpos     default 3
+                    textbracketopen*: string # open bracket surounding the text     default [
                     textbracketclose*: string # close bracket surrounding the text  default ]
                     textbracketcolor*: string # color of the open,close bracket     default dodgerblue
 
 
-          Cxline* {.inheritable.} = object # a line type object startpos= = leftdot, endpos == rightdor
-                    startpos*: int # xpos leftdot                        default 1
+          Cxline* {.inheritable.} = object # a line type object startpos= = leftdot, endpos == rightdot
+                    startpos*: int # xpos leftdot                      default 1
                     endpos*: int # xpos rightdot == width of cxline    default 2
                     toppos*: int # ypos of top dot                     default 1
                     botpos*: int # ypos of bottom dot                  default 1
@@ -984,12 +984,12 @@ type
                     cxlinetext10*: CxlineText # cxlinetext object
                     cxLinetext11*: CxlineText # cxlinetext object
                     cxlinetext12*: CxlineText # cxlinetext object
-                    showbrackets*: bool # showbrackets trye or false          default true
-                    linecolor*: string # color of the line char              default aqua
-                    linechar*: string # line char                           default efs2    # see cxconsts.nim
-                    dotleftcolor*: string # color of left dot                   default yellow
-                    dotrightcolor*: string # color of right dot                  default magenta
-                    linetype*: CxLineType # cxHorizontal,cxVertical,cxS         default cxHorizontal
+                    showbrackets*: bool # showbrackets trye or false       default true
+                    linecolor*: string # color of the line char            default aqua
+                    linechar*: string # line char                          default efs2    # see cxconsts.nim
+                    dotleftcolor*: string # color of left dot              default yellow
+                    dotrightcolor*: string # color of right dot            default magenta
+                    linetype*: CxLineType # cxHorizontal,cxVertical,cxS    default cxHorizontal
                     newline*: string # new line char                       default \L
 
 proc newCxlineText*(): CxlineText =
@@ -1200,6 +1200,7 @@ template curOn* =
      ##  on , mirrors function showCursor from terminal.nim
      ## 
      showCursor()
+     
 
 template curOff* =
      ## curOff
@@ -1207,8 +1208,7 @@ template curOff* =
      ##  off , mirrors function hideCursor from terminal.nim
      ## 
      hideCursor()
-         
-         
+                
 
 proc stripper*(str: string): string =
      # stripper

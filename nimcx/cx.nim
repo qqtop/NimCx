@@ -19,7 +19,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-05-12 
+##     Latest      : 2019-05-17 
 ##
 ##     Compiler    : Nim >= 0.19.x devel branch
 ##
@@ -122,7 +122,7 @@
 ##
 
 import
-        cxconsts, cxglobal, cxtime, cxprint, cxhash, cxfont, cxtruecolor, cxutils, cxnetwork, cxstats,
+        cxconsts, cxglobal, cxtime, cxprint2, cxhash, cxfont, cxtruecolor, cxutils, cxnetwork, cxstats,
         os, osproc, times, random, strutils,strmisc, strformat, strscans, parseutils, sequtils, parseopt,
         tables, sets, macros,posix,posix_utils,
         terminal, math, stats, json, streams, options, memfiles,
@@ -131,7 +131,7 @@ import
         rdstdin, sugar , std/wordwrap
 import strutils except align
 export
-        cxconsts, cxglobal, cxtime, cxprint, cxhash, cxfont, cxtruecolor, cxutils, cxnetwork, cxstats,
+        cxconsts, cxglobal, cxtime, cxprint2, cxhash, cxfont, cxtruecolor, cxutils, cxnetwork, cxstats,
         os, osproc, times, random, strmisc,strformat, strscans, parseutils, sequtils, parseopt,
         tables, sets, macros,posix, posix_utils,
         terminal, math, stats, json, streams, options, memfiles,
@@ -290,7 +290,7 @@ proc showColors*() =
     ## display all colorNames in color !
     ##
     for x in colorNames:
-          print(fmtx(["<22"], x[0]) & spaces(2) & "▒".repeat(10) & spaces(2) & "⌘".repeat(10) & spaces(2) & "ABCD abcd 1234567890 --> " & " Nim Colors  ", x[1], bgBlack, xpos = 3)
+          print(fmtx(["<22"], x[0]) & spaces(2) & "▒".repeat(10) & spaces(2) & "⌘".repeat(10) & spaces(2) & "ABCD abcd 1234567890 --> " & " Nim Colors  ", x[1], bgDefault, xpos = 3)
           printLn(fmtx(["<23"], spaces(2) & x[0]), x[1], styled = {styleReverse}, substr = fmtx(["<23"],spaces(2) & x[0]))
           sleepy(0.01)
     decho()
