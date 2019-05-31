@@ -3,13 +3,13 @@
 ## 
 ##     Library     : nimcx.nim
 ##     
-##     Module      : cpcx.nim2.nim
+##     Module      : cprint.nim
 ##
 ##     Status      : stable
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-05-29 
+##     Latest      : 2019-05-31 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -194,105 +194,7 @@ template rndCxBgrCol*():untyped =
     ## 
     colornumber48 = color48(cxTrueCol)
     cxTrueCol[colornumber48]
-           
-#  deprecating this          
-# proc cxPrint*[T](ss    : T,
-#              fontcolor : string = "colWhite",
-#              bgr       : string = black,
-#              xpos      : int = 0,
-#              styled    : set[Style] = {styleReverse})  =
-#              
-#       ## cxPrint     
-#       ## 
-#       ## Experimental and may be removed as fontcolor do not always work
-#       ## depending system changes or terminals used
-#       ## 
-#       ## note the module base name and function name is the same
-#       ## 
-#       ## truecolor print function
-#       ## 
-#       ## see cxtruecolorE1.nim  for example usage
-#       ## 
-#       ## Fontcolors can be drawn from cxColorNames , a seq specified in cxconsts.nim
-#       ## Example to specify a fontcolor:
-#       ## 
-#       ##  a) a random color as string   :  fontcolor = cxcolornames[rndSample(txcol)][0]
-#       ##  b) a random color as constant :  fontcolor = cxcolornames[rndSample(txcol)][1]
-#       ##  c) directly named as string   :  fontcolor = "coldarkslategray"    # a color in cxColorNames string field
-#       ##  d) directly named as const    :  fontcolor = coldarkslategray      # a color in cxColorNames constant field
-#       ## 
-#       ## Backgroundcolors can be drawn from cxTrueColor palette which can be enabled with a call
-#       ## to getcxTrueColorSet() which generates 421,875 colors
-#       ## larger color palettes can also be generated with getcxTrueColorSet() 
-#       ## all palette colors in cxTrueColorSet can be shown with showCxTrueColorPalette()  
-#       ## Backgroundcolors can also be drawn from the colorNames seq  specified in cxconsts.nim
-#       ## 
-#       ## Example to specify a Backgroundcolor :
-#       ##  
-#       ##  a) a random background color from cxTrueColor palette :  bgr = rndCxBgrCol() 
-#       ##  b) a color from the cxTrueColor palette               :  bgr = cxTrueCol[65451])
-#       ##  c) a specified color from colorNames seq              :  bgr = darkgreen
-#              
-#       for xbgr in  0 ..< txCol.len:
-#           if cxcolornames[xbgr][0] == toLowerAscii(fontcolor):   # as we are doing styleReverse we set it as backgroundcolor 
-#              setBackgroundColor cxcolornames[xbgr][1]
-#       print($ss,fgr = bgr,xpos = xpos,styled=styled) 
-#       
-# proc cxPrintLn*[T](ss       : T,
-#                    fontcolor: string = "colWhite",
-#                    bgr      : string = black,
-#                    xpos     : int = 0,
-#                    styled   : set[Style] = {styleReverse}) =
-#       ## cxPrintLn
-#       ## 
-#       ## truecolor printLn function
-#       ##           
-#       ## see cxtruecolorE1.nim  for example usage
-#       ## 
-#             
-#       for xbgr in  0..<txCol.len:
-#          if cxcolornames[xbgr][0] == toLowerAscii(fontcolor):
-#             setBackgroundColor cxcolornames[xbgr][1]
-#       printLn($ss,fgr = bgr,xpos = xpos,styled=styled) 
-#       
-#  
-# proc cxPrint*[T](ss       : T,
-#                  fontcolor: auto = colWhite,
-#                  bgr      : string = black,
-#                  xpos     : int = 0,
-#                  styled   : set[Style] = {styleReverse}) =
-#       ## cxPrint
-#       ## 
-#       ## Experimental
-#       ## 
-#       ## truecolor print function
-#       ##             
-#       ## see cxtruecolorE1.nim  for example usage
-#       ## 
-#            
-#       setBackgroundColor fontcolor
-#       print($ss,fgr = bgr,xpos = xpos,styled = styled)  
-#       
-# proc cxPrintLn*[T](ss       : T,
-#                    fontcolor: auto = colWhite,
-#                    bgr      : string = "colBlack",
-#                    xpos     : int = 0,
-#                    styled   : set[Style] = {styleReverse}) =
-# 
-#       ## cxPrintLn
-#       ##
-#       ## 
-#       ## Experimental
-#       ## 
-#       ## truecolor printLn function
-#       ##     
-#       ## see cxtruecolorE1.nim  for example usage
-#       ## 
-#            
-#       setBackgroundColor fontcolor
-#       printLn($ss,fgr = bgr,xpos = xpos,styled=styled)  
-    
-     
+      
 proc printLn*[T](astring:T,
                 fgr:string = termwhite,
                 bgr:string,    #  BackgroundColor,
@@ -355,150 +257,7 @@ proc printLn*[T](astring:T,
 
     print($(astring) & "\n",fgr,bgr,xpos,fitLine,centered,styled)
     print cleareol
-
-    
-
-proc print2*[T](astring:T,
-               fgr:string = termwhite,
-               xpos:int = 0,
-               fitLine:bool = false,
-               centered:bool = false,
-               styled : set[Style]= {},
-               substr:string = "") =
- 
-    ## ::
-    ##   print2
-    ## 
-    ##   the old print routine with backgroundcolor set to black or default only  ,
-    ##   
-    ##   required by printfont ,printLn2 , printBiCol2 and printLnBiCol2
-    ##
-    ##   basically similar to terminal.nim styledWriteLine with more functionality
-    ##   
-    ##   fgr foreground colors can be set
-    ##  
-    ##   xpos allows positioning on x-axis
-    ##  
-    ##   fitLine = true will try to write the text into the current line irrespective of xpos
-    ##  
-    ##   centered = true will try to center and disregard xpos
-    ##   
-    ##   styled allows style parameters to be set 
-    ##         
-    ##   available styles :
-    ##  
-    ##   styleBrightbgDefault = 1,            # bright text
-    ##  
-    ##   styleDim,                   # dim text
-    ##  
-    ##   styleUnknown,               # unknown
-    ##  
-    ##   styleUnderscore = 4,        # underscored text
-    ##  
-    ##   styleBlink,                 # blinking/bold text
-    ##  
-    ##   styleReverse = 7,           # reverses currentforground and backgroundcolor
-    ##  
-    ##   styleHidden                 # hidden text
-    ##  
-    ##   styleItalic                 # italic
-    ##   
-    ##   styleStrikethrough          # strikethrough
-    ##     
-    ##   for extended colorset background colors use styleReverse
-    ##  
-    ##   or use 2 or more print statements for the desired effect
-    ##
-    ## Example
-    ##
-    ##.. code-block:: nim
-    ##    # To achieve colored text with styleReverse try:
-    ##    setBackgroundColor(bgRed)
-    ##    print2("The end never comes on time ! ",pastelBlue,styled = {styleReverse})
-    ##
-    {.gcsafe.}:
-        var npos = xpos
-        if centered == false:
-            if npos > 0:  # the result of this is our screen position start with 1
-                setCursorXPos(npos)
-
-            if ($astring).len + xpos >= tw:
-                if fitLine == true:
-                    # force to write on same line within in terminal whatever the xpos says
-                    npos = tw - ($astring).len
-                    setCursorXPos(npos)
-
-        else:
-            # centered == true
-            npos = centerX() - (($astring).len div 2) - 1
-            setCursorXPos(npos)
-
-        if styled != {}:
-            let s = $astring            
-            if substr.len > 0:
-                let rx = s.split(substr)
-                for x in rx.low .. rx.high:
-                    writestyled(rx[x],{})
-                    if x != rx.high:
-                        case fgr
-                        of clrainbow   : printRainbow(substr,styled)
-                        else: styledEchoPrint(fgr,styled,substr,bgDefault)
-            else:
-                case fgr
-                        of clrainbow   : printRainbow($s,styled)
-                        else: styledEchoPrint(fgr,styled,s,bgDefault)
-        else:
-            case fgr
-            of clrainbow: rainbow(spaces(1) & $astring,npos)
-            else: 
-                setBackGroundColor(bgDefault)
-                try:
-                   styledEchoPrint(fgr,{},$astring,bgDefault)
-                except:
-                   echo astring
-
-        # reset to white/black 
-        setForeGroundColor(fgWhite)
-        setBackGroundColor(bgDefault)
-              
-    
-    
-proc printLn2*[T](astring:T,
-              fgr     : string = termwhite,
-              xpos    : int = 0,
-              fitLine : bool = false,
-              centered: bool = false,
-              styled  : set[Style] = {},
-              substr  : string = "") =  
-    ## 
-    ## ::
-    ##   printLn2
-    ## 
-    ##  
-    ##   foregroundcolor
-    ##   best on black backgroundcolor
-    ##   position
-    ##   fitLine
-    ##   centered
-    ##   styled
-    ##  
-    ## Examples
-    ##
-    ##.. code-block:: nim
-    ##    printLn2("Yes ,  we made it.",clrainbow) 
-    ##    printLn2("Yes ,  we made it.",green)
-    ##    # or use it as a replacement of echo
-    ##    printLn2(red & "What's up ? " & green & "Grub's up ! ")
-    ##    printLn2("No need to reset the original color")
-    ##    printLn2("Nim does it again",peru,centered = true ,styled = {styleDim,styleUnderscore},substr = "i")
-    ##    # To achieve colored text with styleReverse try:
-    ##    loopy2(0,30):
-    ##        printLn2("The end never comes on time ! ",randcol(),styled = {styleReverse})
-    ##        print cleareol
-    ##        sleepy(0.1)
-    ##
-    print2($(astring) & "\n",fgr,xpos,fitLine,centered,styled,substr)
-    
+  
 
 
 proc printy*[T](astring:varargs[T,`$`],xpos:int=0) =  
@@ -513,7 +272,6 @@ proc printy*[T](astring:varargs[T,`$`],xpos:int=0) =
     for x in astring:write(stdout,x)
     setForeGroundColor(fgWhite)
     setBackGroundColor(bgDefault)
-    
   
  
 proc rainbow*[T](s : T,
@@ -895,23 +653,7 @@ proc printCxLine*(aline:var Cxline) =
      ## 
      
      case aline.linetype 
-       of cxVertical :
-#             # not ok yet  difficult to implement due to pos and terminal height considerations
-#             # needs to be rethought , maybe create the line horizontal and then print
-#             # in required colors vertically or something
-#             # 
-#             var xpos = aline.startpos
-#             var rdotpos = xpos   # this will become the end position if 
-#             aline.endpos = aline.startpos + aline.endpos
-#              # maybe we should prebuild as horizontal line and then just print downwards
-#             var vline = "." # top dot
-#             vline = hline(aline.endpos - aline.startpos - 1,lt = aline.linechar)
-#             vline = vline & "."
-#             # at this point we have a line but no text , so we need to find a better way to 
-#             # add text into the line within the top/bottom vals and later print it in desired colors
-#             # from startpos down to bottom pos
-              discard
-                               
+                              
        of cxHorizontal :
             # ok
             var xpos = aline.startpos
@@ -962,9 +704,11 @@ proc printCxLine*(aline:var Cxline) =
             if aline.cxlinetext11.text.len > 0: cxhline(aline,aline.cxlinetext11)     
             # printing the 12th of max 12 cxlinetext object   
             if aline.cxlinetext12.text.len > 0: cxhline(aline,aline.cxlinetext12)
-                        
+                   
             print("." & aline.newline,aline.dotrightcolor,xpos = aline.endpos - 1)
-            
+       
+       else:
+              discard
 
 proc doty*(d   :int,
            fgr :string = white,
@@ -1135,4 +879,4 @@ macro pdebug*(n: varargs[typed]): untyped =
       result.add(newCall("writeLine", newIdentNode("stdout"), newStrLitNode("")))     
 
 
-# end of cxprint2.nim      
+# end of cxprint.nim      
