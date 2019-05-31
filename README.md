@@ -7,17 +7,15 @@ Example 3D effect achieved with Nim truecolor support in terminal
 ![Image](http://qqtop.github.io/greyshades.png?raw=true)
 Shades of rgb grey
 
-![Image](http://qqtop.github.io/cxlineobject.png?raw=true)
-Example screenshot of cxlineobjectE1.nim
 
  NIMCX - Color and Utilities for the Linux Terminal
 --------------------------------------------------------
 
 
 
-| Code           | Demoslib         | Demos & Tests    |
+| Code  Modules  | Demoslib         | Demos & Tests    |
 |----------------|------------------|------------------|
-| cx.nim         | cxDemo.nim       | cxTest.nim       |
+| cx.nim         |                  |                  |
 | cxconsts.nim   |                  |                  |
 | cxglobal.nim   |                  |                  |
 | cxprint.nim    |                  |                  |
@@ -83,12 +81,6 @@ Example usage of print procs
 ![Image](http://qqtop.github.io/nimblues.png?raw=true)
 
 
-![Image](http://qqtop.github.io/nimification.png?raw=true)
-
-![Image](http://qqtop.github.io/nimcxmatrix.png?raw=true)
-Screenshot from cxmatrixfontE1.nim
-
-
 ```nimrod         
 
 import nimcx
@@ -106,8 +98,6 @@ doFinish()
 ![Image](http://qqtop.github.io/nimcolors35.png?raw=true)
 
 ![Image](http://qqtop.github.io/nimcolors36.png?raw=true)
-
-![Image](http://qqtop.github.io/nimbox.png?raw=true)
 
  
     Brought to you by :

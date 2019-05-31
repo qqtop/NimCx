@@ -52,10 +52,10 @@ proc styledEchoProcessArg(color: BackgroundColor) = setBackgroundColor color
 
 # macros
 
-macro styledEchoPrint*(m: varargs[untyped]): typed =
+macro styledEchoPrint*(m: varargs[untyped]): untyped =
           ## partially lifted from an earler macro in terminal.nim and removed new line 
           ## improvements suggested by araq to avoid the now deprecated callsite()
-
+          ## maybe fails again ??? 2019-05-26  args not processed as before ???
           result = newNimNode(nnkStmtList)
           for i in countup(0, m.len - 1): result.add(newCall(bindSym"styledEchoProcessArg", m[i]))
           result.add(newCall(bindSym"write", bindSym"stdout", newStrLitNode("")))
@@ -952,7 +952,7 @@ template rndCol*(r: int = getRndInt(0, 254), g: int = getRndInt(0, 254),b: int =
     
 # cxLine is a line creation object with several properties 
 # up to 12 CxlineText objects can be placed into a cxline
-# also see printCxLine in cxprint.nim for possible usage
+# also see printCxLine in cxprint.nim.nim for possible usage
 
 type
 
@@ -1469,8 +1469,7 @@ template currentLine*() =
           printLnInfoMsg("CurrentLine"," File: " & pos.filename & "  Line:" & $(pos.line) & " Column:" & $(pos.column), truetomato, xpos = 1)
           
 
-template hdx*(code: typed, frm: string = "+", width: int = tw,
-                    nxpos: int = 0): typed =
+template hdx*(code: typed, frm: string = "+", width: int = tw, nxpos: int = 0): void =
           ## hdx
           ##
           ## a simple sandwich frame made with + default or any string passed in

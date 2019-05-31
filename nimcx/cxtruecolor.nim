@@ -1,4 +1,4 @@
-import cxglobal,cxconsts,cxprint2,cxutils,terminal,strutils,random
+import cxglobal,cxconsts,cxprint,cxutils,terminal,strutils,random
 
 # cxtruecolor.nim   
 #
@@ -21,7 +21,7 @@ import cxglobal,cxconsts,cxprint2,cxutils,terminal,strutils,random
 # eg. nim c -r -d:cxTruecol cxtruecolor.nim
 # then it will work like expected
 #
-# Last : 2019-05-17
+# Last : 2019-05-31
 # 
 # 
 type
@@ -66,7 +66,8 @@ proc checkTrueColorSupport*(): bool {.discardable.} =
      result = true
 
 # 
-# experimental  section
+# experimental  section  will be removed
+# 
 # truecolors support exceeding colors available from stdlib   
 # the generated cxtruecolor numbers are only valid within the context of
 # the parameters set in cxTrueColorSet , a call with different params
@@ -99,11 +100,7 @@ proc cxTrueColorSet(min:int = 0 ,max:int = 888 , step: int = 12,flag48:bool = fa
    ## with certain truecolors now directly availabe in Nim stdlib the best usage
    ## for extended truecolors is something like so 
    ## 
-   ##.. code-block:: nim
-   ##      cxprintLn("Color me with truecolors ",fontcolor = colWhite,bgr = rndtruecol2(), styled = {styleReverse}) 
-   ## 
-   ## here there fgr color is drawn from cxColorNames and the background color from the cxTruecolor set
-   ## 
+  
    # could be mixed up anywhich way to create interesting palettes rgb,bgr etc
    result = @[]
    cxRGB = @[]
@@ -142,7 +139,7 @@ proc getCxTrueColorSet*(min:int = 0,max:int = 888,step:int = 12,flag48:bool = fa
            result = true
      else:
            result = false
-           printLnErrorMsg("cxTrueCol truecolor scheme can not be used on this terminal/konsole")
+           cxprintln(2,white,bgred,"cxTrueCol truecolor scheme can not be used on this terminal/konsole")
            #doFinish() 
    
 proc color38*(cxTrueCol:seq[string]) : int {.inline.} =
@@ -237,16 +234,15 @@ proc showCxTrueColorPalette*() =
                     printCxLine(testLine)
               
               decho(2)
-              printLnInfoMsg("Note            " , cxpad("cxTrueColor Value can be used like so ",96),xpos = msgxpos)
-              printLnInfoMsg("                " , cxpad("""as backgroundcolor : cxprintLn("say something  ",fontcolor = colWhite,bgr = cxTruecol[421873])""",96),xpos=msgxpos)
-              printLnInfoMsg("                " , cxpad("""as foregroundcolor : printLn2("say something  ",fgr = cxTruecol[421874])""",96),xpos = msgxpos)
+              #printLnInfoMsg("Note            " , cxpad("cxTrueColor Value can be used like so ",96),xpos = msgxpos)
+              #printLnInfoMsg("                " , cxpad("""as foregroundcolor : printLn2("say something  ",fgr = cxTruecol[421874])""",96),xpos = msgxpos)
               echo()
-              printLnInfoMsg("Palette Entries " , ff2(cxTruecol.len),xpos = msgxpos)   
+              #printLnInfoMsg("Palette Entries " , ff2(cxTruecol.len),xpos = msgxpos)   
      else:        
               echo()
-              printLnInfoMsg("Palette Entries " , ff2(cxTruecol.len),xpos = msgxpos)   
-              printLnInfoMsg("Note            " , cxpad("cxTrueCol is not loaded. ",96),xpos = msgxpos)
-              printLnInfoMsg("                " , cxPad("compile with -d:cxTrueCol",96),xpos = msgxpos)   
+              #printLnInfoMsg("Palette Entries " , ff2(cxTruecol.len),xpos = msgxpos)   
+              #printLnInfoMsg("Note            " , cxpad("cxTrueCol is not loaded. ",96),xpos = msgxpos)
+              #printLnInfoMsg("                " , cxPad("compile with -d:cxTrueCol",96),xpos = msgxpos)   
               decho(2) 
       
 #  end experimental cxtruecolors     

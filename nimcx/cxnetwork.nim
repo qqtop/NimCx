@@ -1,6 +1,5 @@
 import os,osproc,json,httpclient,strutils,strscans,posix,net,nativesockets,sets,terminal
-import cxconsts,cxglobal,cxprint2
-
+import cxconsts,cxglobal,cxprint
 # cxnetwork.nim
 # 
 # Var. internet related procs and experiments
@@ -112,8 +111,8 @@ proc localRouterIp*():string =
    
 
 proc showLocalIpInfo*() =
-     printLnInfoMsg("Machine " , localIp())
-     printLnInfoMsg("Router  " , strip(localRouterIp()))
+     cxprintln(2,white,yellowgreenbg,"Machine " ,styleReverse, localIp())
+     cxprintln(2,white,yellowgreenbg,"Router  " ,stylereverse, strip(localRouterIp()))
      echo()
 
 
@@ -131,7 +130,7 @@ proc pingy*(dest:string,pingcc:int = 3,col:string = termwhite) =
         let (outp,err) = execCmdEx("which ping")
         let outp2 = quoteshellposix(strutils.strip(outp,true,true))
         if err > 0:
-            printLnErrorMsg($err) 
+            cxprintln(2,white,bgred,$err) 
         else:        
             printLnBiCol("Pinging : " & dest,yellowgreen,truetomato,":",0,false,{})
             printLnBiCol("Expected: " & pingc & " pings")
@@ -148,10 +147,10 @@ proc cxPortCheck*(cmd:string = "lsof -i") =
      ##
      ## if no or partial output at all run your program with sudo 
      ## 
-     printLnStatusMsg("cxPortCheck")
+     cxprintln(2,yellowgreen,pastelwhitebg,stylereverse,"cxPortCheck")
      if not cmd.startsWith("lsof") :  # do not allow any old command here
         printLnBiCol("cxPortCheck Error: Wrong command --> $1" % cmd,colLeft=red)
-        printLnStatusMsg("Exiting now ...")
+        printLn("Exiting now ...")
         quit 0
      let pc = execCmdEx(cmd)  
      let pcl = pc[0].splitLines()
@@ -213,7 +212,7 @@ proc cxPortCheck*(cmd:string = "lsof -i") =
         else:
            echo()
            discard
-     printLnStatusMsg("cxPortCheck Finished.")      
+     cxprintln(2,white,yellowgreenbg,"cxPortCheck Finished.")      
      
      
      
@@ -253,15 +252,15 @@ proc showDig*(hostip:string = $"172.217.5.14") =
         var z = cxDig(hostip)
         var zz = z.output.splitLines()
         var zze = z.exitCode
-        printLnInfoMsg("HostIp ",hostip & spaces(10),xpos = 2)
+        cxprintLn(2,white,yellowgreenbg,"HostIp ",hostip & spaces(10))
         echo()
         for x in 0 ..< zz.len:
           if strutils.strip(zz[x]).len() > 0:
             let zzz = zz[x].replace(";;","").replace(";","")
-            printLnBiCol(fmtx(["<4","",""],$x," : ",zzz),xpos=2)
+            cxprintLn(2,white,yellowgreenbg,(fmtx(["<4","",""],$x," : ",zzz)))
         decho(1)
         if zze > 0:
-            printLnInfoMsg("Exitcode   ",fmtx(["<8"],$zze),xpos=8)
+            cxprintLn(8,white,yellowgreenbg,"Exitcode   ",fmtx(["<8"],$zze))
 
 
 proc showDns*(hostdns:string = "google.com") =   
@@ -280,14 +279,14 @@ proc showDns*(hostdns:string = "google.com") =
         var hh = h.output.splitlines()
         var hhe = h.exitCode
 
-        printLnInfoMsg("HostDns",hostdns & spaces(10),xpos = 2)
+        cxprintLn(2,white,yellowgreenbg,"HostDns",hostdns & spaces(10))
         echo()
         for x in 0 ..< hh.len:
           if strutils.strip(hh[x]).len() > 0:
              printLnBiCol(fmtx(["<4","",""],$x," : ",hh[x]),xpos = 2)
         decho(1)
         if hhe > 0:
-             printLnInfoMsg("Exitcode   ",fmtx(["<8"],$hhe),xpos=8)
+            cxprintLn(8,white,yellowgreenbg,"Exitcode   ",fmtx(["<8"],$hhe))
     
 proc getHosts*(dm:string):seq[string] =
     ## getHosts

@@ -3,13 +3,13 @@
 ## 
 ##     Library     : nimcx.nim
 ##     
-##     Module      : cxprint.nim
+##     Module      : cpcx.nim2.nim
 ##
 ##     Status      : stable
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-04-14 
+##     Latest      : 2019-05-29 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -22,18 +22,57 @@
 ##                   one smart print function which handles any kind of demand for colors.
 ##                   
 ## 
+##                   cpcx.nim2.nim has backgroundcolor set to bgDefault
+## 
 import cxconsts,cxglobal,terminal,strutils,sequtils,colors,macros
 
+
 proc rainbow*[T](s : T,xpos:int = 1,fitLine:bool = false ,centered:bool = false)  ## forward declaration
-proc print*[T](astring:T,fgr:string = termwhite ,bgr:BackgroundColor = bgBlack,xpos:int = 0,fitLine:bool = false ,centered:bool = false,styled : set[Style]= {},substr:string = "")
-proc printLn*[T](astring:T,fgr:string = termwhite , bgr:BackgroundColor = bgBlack,xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {},substr:string = "")
+proc print*[T](astring:T,fgr:string = termwhite ,bgr     : string     = getBg(bgDefault),xpos:int = 0,fitLine:bool = false ,centered:bool = false,styled : set[Style]= {})
+proc printLn*[T](astring:T,fgr:string = termwhite , bgr:string = getBg(bgDefault),xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {})
 proc printBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) 
 proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) 
 proc printRainbow*(astr : string,styled:set[Style] = {})     ## forward declaration
 proc hline*(n:int = tw,col:string = white,xpos:int = 0,lt:string = "-") : string {.discardable.} ## forward declaration
 proc hlineLn*(n:int = tw,col:string = white,xpos:int = 0,lt:string = "-") : string {.discardable.}## forward declaration
-proc printErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} 
-proc printLnErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} 
+#proc printErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} 
+#proc printLnErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} 
+
+
+template cxprint*(xpos:int,args:varargs[untyped]) =
+    ## cxprint
+    ## xpos : position  
+    ## Calls styledWrite with args given
+    ##    
+    ## Backgroundcolors defined in cxconsts.nim colorNames can be used , that is 
+    ## any color ending with xxxxxxbg  like pastelpinkbg
+    ##    
+    setCursorXPos(xpos)
+    stdout.styledWrite(args)  
+       
+       
+template cxprintLn*(xpos:int, args: varargs[untyped]) =
+    ## cxprintLn
+    ## 
+    ## xpos : position  
+    ## Calls styledEcho with args given
+    ## 
+    ## Backgroundcolors defined in cxconsts.nim colorNames can be used , that is 
+    ## any color ending with xxxxxxbg  like pastelpinkbg
+    ## 
+    ## remember that first item must be xpos
+    ##
+    ##.. code-block:: nim
+    ##   cxprintLn(5,yaleblue,pastelbluebg,"this is a test  ",trueblue,pastelpinkbg,styleReverse,stylebright," needed somme color change"
+    ##   cxprintln(0,trueblue,bgwhite," Yes ! ",
+    ##             yaleblue,truetomatobg," No ! ",
+    ##             trueblue,bgwhite,styleReverse," Yes ! ",
+    ##             truetomato,bgwhite,styleBlink,styleBright," Oooh, it blinks too  ! ")
+    ##   
+    setCursorXPos(xpos)
+    styledEcho(args)
+
+
 
 proc printf*(formatStr: cstring) {.importc, header: "<stdio.h>", varargs.}
      ## printf
@@ -46,12 +85,12 @@ proc printf*(formatStr: cstring) {.importc, header: "<stdio.h>", varargs.}
 
 proc print*[T](astring :T,
                fgr     : string     = termwhite,
-               bgr     : BackgroundColor,
+               bgr     : string     = getBg(bgDefault),  #BackgroundColor,
                xpos    : int        = 0,
                fitLine : bool       = false,
                centered: bool       = false,
-               styled  : set[Style] = {},
-               substr  : string     = "") =
+               styled  : set[Style] = {}) =
+               
  
     ## ::
     ##   print
@@ -116,53 +155,25 @@ proc print*[T](astring :T,
     ##
     {.gcsafe.}:
         var npos = xpos
-        
         if centered == false:
-
             if npos > 0:  # the result of this is our screen position start with 1
                 setCursorXPos(npos)
-
             if ($astring).len + xpos >= tw:
-
                 if fitLine == true:
                     # force to write on same line within in terminal whatever the xpos says
                     npos = tw - ($astring).len
                     setCursorXPos(npos)
-
         else:
             # centered == true
             npos = centerX() - ($astring).len div 2 - 1
             setCursorXPos(npos)
 
-        if styled != {}:
-            var s = $astring
-            if substr.len > 0:
-                var rx = s.split(substr)
-                for x in rx.low .. rx.high:
-                    writestyled(rx[x],{})
-                    if x != rx.high:
-                        case fgr
-                        of clrainbow   : printRainbow(substr,styled)
-                        else: styledEchoPrint(fgr,styled,substr,bgr)
-            else:
-                case fgr
-                        of clrainbow   : printRainbow($s,styled)
-                        else: styledEchoPrint(fgr,styled,s,bgr)
-        else:
-        
-            case fgr
-              of clrainbow: rainbow(spaces(1) & $astring,npos)
-              else: 
-                setBackGroundColor(bgr)
-                try:
-                    write(stdout,fgr & $astring)
-                except:
-                    echo astring
+        stdout.styledwrite(fgr,bgr,styled,$astring)
 
         # reset to white/black only if any changes
-        if fgr != $fgWhite or bgr != bgBlack:
+        if fgr != $fgWhite or bgr != getBg(bgDefault):
            setForeGroundColor(fgWhite)
-           setBackGroundColor(bgBlack)
+           setBackGroundColor(bgDefault)
 
            
 
@@ -184,111 +195,111 @@ template rndCxBgrCol*():untyped =
     colornumber48 = color48(cxTrueCol)
     cxTrueCol[colornumber48]
            
-           
-proc cxPrint*[T](ss    : T,
-             fontcolor : string = "colWhite",
-             bgr       : string = black,
-             xpos      : int = 0,
-             styled    : set[Style] = {styleReverse})  =
-             
-      ## cxPrint     
-      ## 
-      ## Experimental
-      ## 
-      ## note the module base name and function name is the same
-      ## 
-      ## truecolor print function
-      ## 
-      ## see cxtruecolorE1.nim  for example usage
-      ## 
-      ## Fontcolors can be drawn from cxColorNames , a seq specified in cxconsts.nim
-      ## Example to specify a fontcolor:
-      ## 
-      ##  a) a random color as string   :  fontcolor = cxcolornames[rndSample(txcol)][0]
-      ##  b) a random color as constant :  fontcolor = cxcolornames[rndSample(txcol)][1]
-      ##  c) directly named as string   :  fontcolor = "coldarkslategray"    # a color in cxColorNames string field
-      ##  d) directly named as const    :  fontcolor = coldarkslategray      # a color in cxColorNames constant field
-      ## 
-      ## Backgroundcolors can be drawn from cxTrueColor palette which can be enabled with a call
-      ## to getcxTrueColorSet() which generates 421,875 colors
-      ## larger color palettes can also be generated with getcxTrueColorSet() 
-      ## all palette colors in cxTrueColorSet can be shown with showCxTrueColorPalette()  
-      ## Backgroundcolors can also be drawn from the colorNames seq  specified in cxconsts.nim
-      ## 
-      ## Example to specify a Backgroundcolor :
-      ##  
-      ##  a) a random background color from cxTrueColor palette :  bgr = rndCxBgrCol() 
-      ##  b) a color from the cxTrueColor palette               :  bgr = cxTrueCol[65451])
-      ##  c) a specified color from colorNames seq              :  bgr = darkgreen
-             
-      for xbgr in  0..<txCol.len:
-          if cxcolornames[xbgr][0] == toLowerAscii(fontcolor):   # as we are doing styleReverse we set it as backgroundcolor 
-             setBackgroundColor cxcolornames[xbgr][1]
-      print($ss,fgr = bgr,xpos = xpos,styled=styled) 
-      
-proc cxPrintLn*[T](ss       : T,
-                   fontcolor: string = "colWhite",
-                   bgr      : string = black,
-                   xpos     : int = 0,
-                   styled   : set[Style] = {styleReverse}) =
-      ## cxPrintLn
-      ## 
-      ## truecolor printLn function
-      ##           
-      ## see cxtruecolorE1.nim  for example usage
-      ## 
-            
-      for xbgr in  0..<txCol.len:
-         if cxcolornames[xbgr][0] == toLowerAscii(fontcolor):
-            setBackgroundColor cxcolornames[xbgr][1]
-      printLn($ss,fgr = bgr,xpos = xpos,styled=styled) 
-      
- 
-proc cxPrint*[T](ss       : T,
-                 fontcolor: auto = colWhite,
-                 bgr      : string = black,
-                 xpos     : int = 0,
-                 styled   : set[Style] = {styleReverse}) =
-      ## cxPrint
-      ## 
-      ## Experimental
-      ## 
-      ## truecolor print function
-      ##             
-      ## see cxtruecolorE1.nim  for example usage
-      ## 
-           
-      setBackgroundColor fontcolor
-      print($ss,fgr = bgr,xpos = xpos,styled = styled)  
-      
-proc cxPrintLn*[T](ss       : T,
-                   fontcolor: auto = colWhite,
-                   bgr      : string = "colBlack",
-                   xpos     : int = 0,
-                   styled   : set[Style] = {styleReverse}) =
-
-      ## cxPrintLn
-      ##
-      ## 
-      ## Experimental
-      ## 
-      ## truecolor printLn function
-      ##     
-      ## see cxtruecolorE1.nim  for example usage
-      ## 
-           
-      setBackgroundColor fontcolor
-      printLn($ss,fgr = bgr,xpos = xpos,styled=styled)  
+#  deprecating this          
+# proc cxPrint*[T](ss    : T,
+#              fontcolor : string = "colWhite",
+#              bgr       : string = black,
+#              xpos      : int = 0,
+#              styled    : set[Style] = {styleReverse})  =
+#              
+#       ## cxPrint     
+#       ## 
+#       ## Experimental and may be removed as fontcolor do not always work
+#       ## depending system changes or terminals used
+#       ## 
+#       ## note the module base name and function name is the same
+#       ## 
+#       ## truecolor print function
+#       ## 
+#       ## see cxtruecolorE1.nim  for example usage
+#       ## 
+#       ## Fontcolors can be drawn from cxColorNames , a seq specified in cxconsts.nim
+#       ## Example to specify a fontcolor:
+#       ## 
+#       ##  a) a random color as string   :  fontcolor = cxcolornames[rndSample(txcol)][0]
+#       ##  b) a random color as constant :  fontcolor = cxcolornames[rndSample(txcol)][1]
+#       ##  c) directly named as string   :  fontcolor = "coldarkslategray"    # a color in cxColorNames string field
+#       ##  d) directly named as const    :  fontcolor = coldarkslategray      # a color in cxColorNames constant field
+#       ## 
+#       ## Backgroundcolors can be drawn from cxTrueColor palette which can be enabled with a call
+#       ## to getcxTrueColorSet() which generates 421,875 colors
+#       ## larger color palettes can also be generated with getcxTrueColorSet() 
+#       ## all palette colors in cxTrueColorSet can be shown with showCxTrueColorPalette()  
+#       ## Backgroundcolors can also be drawn from the colorNames seq  specified in cxconsts.nim
+#       ## 
+#       ## Example to specify a Backgroundcolor :
+#       ##  
+#       ##  a) a random background color from cxTrueColor palette :  bgr = rndCxBgrCol() 
+#       ##  b) a color from the cxTrueColor palette               :  bgr = cxTrueCol[65451])
+#       ##  c) a specified color from colorNames seq              :  bgr = darkgreen
+#              
+#       for xbgr in  0 ..< txCol.len:
+#           if cxcolornames[xbgr][0] == toLowerAscii(fontcolor):   # as we are doing styleReverse we set it as backgroundcolor 
+#              setBackgroundColor cxcolornames[xbgr][1]
+#       print($ss,fgr = bgr,xpos = xpos,styled=styled) 
+#       
+# proc cxPrintLn*[T](ss       : T,
+#                    fontcolor: string = "colWhite",
+#                    bgr      : string = black,
+#                    xpos     : int = 0,
+#                    styled   : set[Style] = {styleReverse}) =
+#       ## cxPrintLn
+#       ## 
+#       ## truecolor printLn function
+#       ##           
+#       ## see cxtruecolorE1.nim  for example usage
+#       ## 
+#             
+#       for xbgr in  0..<txCol.len:
+#          if cxcolornames[xbgr][0] == toLowerAscii(fontcolor):
+#             setBackgroundColor cxcolornames[xbgr][1]
+#       printLn($ss,fgr = bgr,xpos = xpos,styled=styled) 
+#       
+#  
+# proc cxPrint*[T](ss       : T,
+#                  fontcolor: auto = colWhite,
+#                  bgr      : string = black,
+#                  xpos     : int = 0,
+#                  styled   : set[Style] = {styleReverse}) =
+#       ## cxPrint
+#       ## 
+#       ## Experimental
+#       ## 
+#       ## truecolor print function
+#       ##             
+#       ## see cxtruecolorE1.nim  for example usage
+#       ## 
+#            
+#       setBackgroundColor fontcolor
+#       print($ss,fgr = bgr,xpos = xpos,styled = styled)  
+#       
+# proc cxPrintLn*[T](ss       : T,
+#                    fontcolor: auto = colWhite,
+#                    bgr      : string = "colBlack",
+#                    xpos     : int = 0,
+#                    styled   : set[Style] = {styleReverse}) =
+# 
+#       ## cxPrintLn
+#       ##
+#       ## 
+#       ## Experimental
+#       ## 
+#       ## truecolor printLn function
+#       ##     
+#       ## see cxtruecolorE1.nim  for example usage
+#       ## 
+#            
+#       setBackgroundColor fontcolor
+#       printLn($ss,fgr = bgr,xpos = xpos,styled=styled)  
     
      
 proc printLn*[T](astring:T,
                 fgr:string = termwhite,
-                bgr:BackgroundColor,
+                bgr:string,    #  BackgroundColor,
                 xpos:int = 0,
                 fitLine:bool = false,
                 centered:bool = false,
-                styled : set[Style] = {},
-                substr:string = "") =
+                styled : set[Style] = {}) =
     ## :: 
     ##   printLn
     ## 
@@ -334,7 +345,7 @@ proc printLn*[T](astring:T,
     ##
     ##    loopy2(0,100,
     ##      block:
-    ##        var r = getRndint(0,cxtruecol.len - 1)
+    ##        var r bgDefault= getRndint(0,cxtruecol.len - 1)
     ##        var g = getRndint(0,cxtruecol.len - 1)
     ##        var b = getRndInt(0,cxtruecol.len - 1)
     ##        printLn("Color Test rgb " & fmtx([">6","",">6","",">6"],r,",",g,",",b) & spaces(2) & efb2 * 30 & spaces(2) & cxpad($xloopy,6) ,
@@ -342,7 +353,7 @@ proc printLn*[T](astring:T,
     ##    decho() 
     ##    
 
-    print($(astring) & "\n",fgr,bgr,xpos,fitLine,centered,styled,substr)
+    print($(astring) & "\n",fgr,bgr,xpos,fitLine,centered,styled)
     print cleareol
 
     
@@ -358,7 +369,7 @@ proc print2*[T](astring:T,
     ## ::
     ##   print2
     ## 
-    ##   the old print routine with backgroundcolor set to black only  ,
+    ##   the old print routine with backgroundcolor set to black or default only  ,
     ##   
     ##   required by printfont ,printLn2 , printBiCol2 and printLnBiCol2
     ##
@@ -376,7 +387,7 @@ proc print2*[T](astring:T,
     ##         
     ##   available styles :
     ##  
-    ##   styleBright = 1,            # bright text
+    ##   styleBrightbgDefault = 1,            # bright text
     ##  
     ##   styleDim,                   # dim text
     ##  
@@ -431,24 +442,24 @@ proc print2*[T](astring:T,
                     if x != rx.high:
                         case fgr
                         of clrainbow   : printRainbow(substr,styled)
-                        else: styledEchoPrint(fgr,styled,substr,bgBlack)
+                        else: styledEchoPrint(fgr,styled,substr,bgDefault)
             else:
                 case fgr
                         of clrainbow   : printRainbow($s,styled)
-                        else: styledEchoPrint(fgr,styled,s,bgBlack)
+                        else: styledEchoPrint(fgr,styled,s,bgDefault)
         else:
             case fgr
             of clrainbow: rainbow(spaces(1) & $astring,npos)
             else: 
-                setBackGroundColor(bgBlack)
+                setBackGroundColor(bgDefault)
                 try:
-                   styledEchoPrint(fgr,{},$astring,bgBlack)
+                   styledEchoPrint(fgr,{},$astring,bgDefault)
                 except:
                    echo astring
 
         # reset to white/black 
         setForeGroundColor(fgWhite)
-        setBackGroundColor(bgBlack)
+        setBackGroundColor(bgDefault)
               
     
     
@@ -490,17 +501,18 @@ proc printLn2*[T](astring:T,
     
 
 
-proc printy*[T](astring:varargs[T,`$`]) =  
+proc printy*[T](astring:varargs[T,`$`],xpos:int=0) =  
     ## printy
     ##
     ## similar to echo but does not issue new line
     ##
     ##..code-block:: nim
-    ##    printy "this is : " ,yellowgreen,1,bgreen,5,bblue," ʈəɽɭάɧɨɽ ʂəɱρʊɽɲά(άɲάʂʈάʂɣά)"
+    ##    printy("this is : " ,yellowgreen,1,bgreen,5,bblue," ʈəɽɭάɧɨɽ ʂəɱρʊɽɲά(άɲάʂʈάʂɣά)",10)
     ##
-    for x in astring: write(stdout,x & spaces(1))
+    curSetx(xpos)
+    for x in astring:write(stdout,x)
     setForeGroundColor(fgWhite)
-    setBackGroundColor(bgBlack)
+    setBackGroundColor(bgDefault)
     
   
  
@@ -531,11 +543,11 @@ proc rainbow*[T](s : T,
     for x in 0..<astr.len:
        c = aseq[getRndInt(ma=aseq.len - 1)]
        if centered == false:
-          print(astr[x],colorNames[c][1],bgblack,xpos = nxpos,fitLine)
+          print(astr[x],colorNames[c][1],getBg(bgDefault),xpos = nxpos,fitLine)
        else:
           # need to calc the center here and increment by x
           nxpos = centerX() - (($astr).len div 2) + (x - 1)
-          print(astr[x],colorNames[c][1],bgblack,xpos=nxpos,fitLine)
+          print(astr[x],colorNames[c][1],getBg(bgDefault),xpos=nxpos,fitLine)
        inc nxpos
 
 
@@ -696,12 +708,12 @@ proc printBiCol*[T](s:varargs[T,`$`],
         if nosepflag == false:
 
                 if centered == false:
-                    print(z[0],fgr = colLeft,bgr = bgblack,xpos = xpos,styled = styled)
-                    print(z[1],fgr = colRight,bgr = bgblack,styled = styled)
+                    print(z[0],fgr = colLeft,bgr = getBg(bgDefault),xpos = xpos,styled = styled)
+                    print(z[1],fgr = colRight,bgr = getBg(bgDefault),styled = styled)
                 else:  # centered == true
                     let npos = centerX() - (zz).len div 2 - 1
-                    print(z[0],fgr = colLeft,bgr = bgblack,xpos = npos,styled = styled)
-                    print(z[1],fgr = colRight,bgr = bgblack,styled = styled)
+                    print(z[0],fgr = colLeft,bgr = getBg(bgDefault),xpos = npos,styled = styled)
+                    print(z[1],fgr = colRight,bgr = getBg(bgDefault),styled = styled)
 
 
 
@@ -773,241 +785,19 @@ proc printLnBiCol*[T](s:varargs[T,`$`],
         if nosepflag == false:
 
             if centered == false:
-                print(z[0],fgr = colLeft,bgr = bgBlack,xpos = xpos,styled = styled)
+                print(z[0],fgr = colLeft,bgr = getBg(bgDefault),xpos = xpos,styled = styled)
                 if colRight == clrainbow:   # we currently do this as rainbow implementation has changed
-                        printLn(z[1],fgr = randcol(),bgr = bgBlack,styled = styled)
+                        printLn(z[1],fgr = randcol(),bgr = getBg(bgDefault),styled = styled)
                 else:
-                        printLn(z[1],fgr = colRight,bgr = bgBlack,styled = styled)
+                        printLn(z[1],fgr = colRight,bgr = getBg(bgDefault),styled = styled)
 
             else:  # centered == true
                 let npos = centerX() - zz.len div 2 - 1
-                print(z[0],fgr = colLeft,bgr = bgBlack,xpos = npos)
+                print(z[0],fgr = colLeft,bgr = getBg(bgDefault),xpos = npos)
                 if colRight == clrainbow:   
-                        printLn(z[1],fgr = randcol(),bgr = bgBlack,styled = styled)
+                        printLn(z[1],fgr = randcol(),bgr = getBg(bgDefault),styled = styled)
                 else:
-                        printLn(z[1],fgr = colRight,bgr = bgBlack,styled = styled)
-
-
-proc printBiCol2*[T](s:varargs[T,`$`],
-                    colLeft:string = yellowgreen,
-                    colRight:string = termwhite,
-                    sep:string = ":",
-                    xpos:int = 0,
-                    centered:bool = false,
-                    styled : set[Style]= {}) =
-                    
-     ## printBiCol2
-     ##
-     ## Notes see printLnBiCol2
-     ##
-     
-     {.gcsafe.}:
-        var nosepflag:bool = false
-        var zz = ""
-        for ss in 0..<s.len:
-            zz = zz & s[ss] & spaces(1)
-            
-        var z = zz.splitty(sep)  # using splitty we retain the sep on the left side
-        # in case sep occures multiple time we only consider the first one
-        if z.len > 1:
-           for x in 2..<z.len:
-              # this now should contain the right part to be colored differently
-              z[1] = z[1] & z[x]
-
-        else:
-            # when the separator is not found
-            nosepflag = true
-            # no separator so we just execute print with left color
-            print2(zz,fgr=colLeft,xpos=xpos,centered=centered,styled = styled)
-
-        if nosepflag == false:
-
-                if centered == false:
-                    print2(z[0],fgr = colLeft,xpos = xpos,styled = styled)
-                    print2(z[1],fgr = colRight,styled = styled)
-                else:  # centered == true
-                    let npos = centerX() - (zz).len div 2 - 1
-                    print2(z[0],fgr = colLeft,xpos = npos,styled = styled)
-                    print2(z[1],fgr = colRight,styled = styled)
-
-
-proc printLnBiCol2*[T](s:varargs[T,`$`],
-                   colLeft : string = yellowgreen,
-                   colRight: string = termwhite,
-                   sep     : string = ":",
-                   xpos    : int = 0,
-                   centered: bool = false,
-                   styled  : set[Style]= {}) =
-                   
-                        
-     ## printLnBiCol2    
-     ##
-     ## this version calls print2 and printLn2 which is suitable when printing multiple columns side by side  
-     ## 
-     ## default seperator = ":"  if not found we execute printLn with available params
-     ##
-     ##.. code-block:: nim
-     ##    import nimcx
-     ##
-     ##    for x  in 0..<3:
-     ##       # here our input is varargs so we need to specify all params
-     ##        printLnBiCol("Test $1  : Ok " % $1,"this was $1 : what" % $2,23456.789,red,lime,":",0,false,{})
-     ##    for x  in 4..<6:
-     ##        # here we change the default colors
-     ##        printLnBiCol("nice",123,":","check",@[1,2,3],cyan,lime,":",0,false,{})
-     ##
-     ##    # usage with fmtx 
-     ##    printLnBiCol2(fmtx(["","",">4"],"Good Idea : "," Number",50),yellow,randcol(),":",0,false,{})
-     ##    printLnBiCol2(fmtx(["","",">4"],"Good Idea : "," Number",50),colLeft = cyan)
-     ##    printLnBiCol2(fmtx(["","",">4"],"Good Idea : "," Number",50),colLeft=yellow,colRight=randcol())
-     ##    printLnBiCol2(fmtx(["","",">4"],"Good Idea : "," Number",50),123,colLeft = cyan,colRight=gold,sep=":",xpos=0,centered=false,styled={})
-     ##    
-     {.gcsafe.}:
-        var nosepflag:bool = false
-        var zz =""
-        for ss in 0..<s.len:
-            zz = zz & s[ss] & spaces(1)
-           
-        var z = zz.splitty(sep)  # using splitty we retain the sep on the left side
-        # in case sep occures multiple time we only consider the first one
-        if z.len > 1:
-          for x in 2..<z.len:
-             z[1] = z[1] & z[x]
-        else:
-            # when the separator is not found
-            nosepflag = true
-            # no separator so we just execute printLn with left color
-            printLn2(zz,fgr=colLeft,xpos=xpos,centered=centered,styled = styled)
-
-        if nosepflag == false:
-
-            if centered == false:
-                print2(z[0],fgr = colLeft,xpos = xpos,styled = styled)
-                if colRight == clrainbow:   # we currently do this as rainbow implementation has changed
-                        printLn2(z[1],fgr = randcol(),styled = styled)
-                else:
-                        printLn2(z[1],fgr = colRight,styled = styled)
-
-            else:  # centered == true
-                let npos = centerX() - zz.len div 2 - 1
-                print2(z[0],fgr = colLeft,xpos = npos)
-                if colRight == clrainbow:   
-                        printLn2(z[1],fgr = randcol(),styled = styled)
-                else:
-                        printLn2(z[1],fgr = colRight,styled = styled)
-
-
-proc printBiCol3*[T](s:openarray[T],
-                    colLeft:string = yellowgreen,
-                    colRight:string = termwhite,
-                    sep:string = ":",
-                    xpos:int = 0,
-                    centered:bool = false,
-                    styled : set[Style]= {}) =
-                    
-     ## printBiCol3
-     ##
-     ## Notes see printLnBiCol3
-     ##
-     
-     {.gcsafe.}:
-        var nosepflag:bool = false
-        var zz = ""
-        for ss in 0..<s.len:
-            zz = zz & $s[ss] & spaces(1)   #  <---- converting to strings here
-            
-        var z = zz.splitty(sep)  # using splitty we retain the sep on the left side
-        # in case sep occures multiple time we only consider the first one
-        if z.len > 1:
-           for x in 2 ..< z.len:
-              # this now should contain the right part to be colored differently
-              z[1] = z[1] & z[x]
-
-        else:
-            # when the separator is not found
-            nosepflag = true
-            # no separator so we just execute print with left color
-            print(zz,fgr=colLeft,xpos=xpos,centered=centered,styled = styled)
-
-        if nosepflag == false:
-
-                if centered == false:
-                    print(z[0],fgr = colLeft,bgr = bgblack,xpos = xpos,styled = styled)
-                    print(z[1],fgr = colRight,bgr = bgblack,styled = styled)
-                else:  # centered == true
-                    let npos = centerX() - (zz).len div 2 - 1
-                    print(z[0],fgr = colLeft,bgr = bgblack,xpos = npos,styled = styled)
-                    print(z[1],fgr = colRight,bgr = bgblack,styled = styled)
-
-
-
-proc printLnBiCol3*[T](s:openarray[T],
-                   colLeft : string = yellowgreen,
-                   colRight: string = termwhite,
-                   sep     : string = ":",
-                   xpos    : int = 0,
-                   centered: bool = false,
-                   styled  : set[Style]= {}) =
-                   
-     ## printLnBiCol3
-     ##
-     ## WIP still in testing
-     ##
-     ## changes to prev. versions:
-     ## using an openarray to pass in the data rather than a varargs in first position has the effect 
-     ## of not needing to write all the other params if not needed , the cost is writing
-     ## 2 more brackets for the array ... so most likely the sane version
-     ## sep moved to behind colors in parameter ordering
-     ## and input can be varargs which gives much better flexibility
-     ## if varargs are to be printed all parameters need to be specified.
-     ##
-     ## default seperator = ":"  if not found we execute printLn with available params
-     ##
-     ##.. code-block:: nim
-     ##    import nimcx
-     ##
-     ##    for x  in 1..30:
-     ##       # here our input is an array so we do not need to specify all params unless required
-     ##       # and we can make nice tables quickly
-     ##        printLnBiCol(["TestA  ", fmtx([">3"],ff2(x)) , ":", fmtx([">10"],ff2(1000.001)),"  ",
-     ##                      "TestB  ", ":", fmtx([">13"],ff2(1000.001 * float(x * x),4))],red,lime)
-     ##    
-      
-     {.gcsafe.}:
-        
-        var nosepflag:bool = false
-        var zz = ""
-        for ss in 0..<s.len:
-            zz = zz & $s[ss] & spaces(1)   # <--- converting to strings here
-           
-        var z = zz.splitty(sep)  # using splitty we retain the sep on the left side
-        # in case sep occures multiple time we only consider the first one
-        if z.len > 1:
-          for x in 2 ..< z.len:
-             z[1] = z[1] & z[x]
-        else:
-            # when the separator is not found
-            nosepflag = true
-            # no separator so we just execute printLn with left color
-            printLn(zz,fgr=colLeft,xpos=xpos,centered=centered,styled = styled)
-
-        if nosepflag == false:
-
-            if centered == false:
-                print(z[0],fgr = colLeft,bgr = bgBlack,xpos = xpos,styled = styled)
-                if colRight == clrainbow:   # we currently do this as rainbow implementation has changed
-                        printLn(z[1],fgr = randcol(),bgr = bgBlack,styled = styled)
-                else:
-                        printLn(z[1],fgr = colRight,bgr = bgBlack,styled = styled)
-
-            else:  # centered == true
-                let npos = centerX() - zz.len div 2 - 1
-                print(z[0],fgr = colLeft,bgr = bgBlack,xpos = npos)
-                if colRight == clrainbow:   
-                        printLn(z[1],fgr = randcol(),bgr = bgBlack,styled = styled)
-                else:
-                        printLn(z[1],fgr = colRight,bgr = bgBlack,styled = styled)
-                                     
+                        printLn(z[1],fgr = colRight,bgr = getBg(bgDefault),styled = styled)
                         
                         
 proc printHL*(s     : string,
@@ -1031,7 +821,6 @@ proc printHL*(s     : string,
           print(rx[x])
           if x != rx.high:
              print(substr,col)
-
 
 proc printLnHL*(s      : string,
                 substr : string,
@@ -1067,13 +856,8 @@ proc cecho*(col: string,
       ##     echo(salmon,"{:<10} : {} ==> {} --> {}".fmt("this ", "zzz ",123 ," color is something else"))
       ##     echo("ok")  # still salmon
 
-      case col
-       of clrainbow :
-                for x in ggg:  rainbow(x)
-       else:
-         write(stdout)
-         write(stdout,ggg)
-         
+      write(stdout)
+      write(stdout,ggg)
       write(stdout,termwhite)
 
 
@@ -1184,7 +968,7 @@ proc printCxLine*(aline:var Cxline) =
 
 proc doty*(d   :int,
            fgr :string = white,
-           bgr :BackgroundColor = bgBlack,
+           bgr :string = black, 
            xpos:int = 1) =
            
      ## doty
@@ -1200,18 +984,16 @@ proc doty*(d   :int,
      ##      printLnBiCol("Test for  :  doty\n",truetomato,lime,":",0,false,{})
      ##      dotyLn(22 ,lime)
      ##      dotyLn(18 ,salmon,bgBlue)
-     ##      dotyLn(centerX(),red)  # full widedotted line
+     ##      dotyLn(18 ,salmon,truetomato,xpos=10)         # using a foregroundcolor as backgroundcolor will color the dots itself
+     ##      dotyLn(18 ,yaleblue,truetomatobg,xpos=10)     # backgroundcolor with xxxxbg colors background and dots will be in foregroundcolor
      ##
-     ## color clrainbow is not supported and will be in white
-     ##
-
      let astr = $(wideDot.repeat(d))
-     print(astring = astr,fgr,bgr,xpos)
+     cxprint(xpos,fgr,bgr,astr)
 
 
 proc dotyLn*(d    :int,
              fgr  :string = white,
-             bgr  :BackgroundColor = bgBlack,
+             bgr  :string = black, 
              xpos :int = 1) =
              
      ## dotyLn
@@ -1221,35 +1003,19 @@ proc dotyLn*(d    :int,
      ## may not be available on all systems
      ##
      ## each dot is of char length 4
-
      ##.. code-block:: nim
      ##      import nimcx
-     ##      loopy(0.. 100,loopy(1.. tw div 2, dotyLn(1,randcol(),xpos = rand(tw - 1))))
-     ##      printLnBiCol("coloredSnow","d",greenyellow,salmon)
-
+     ##      dotyLn(18 ,salmon,white,10)
+     ##      loopy(0.. 100,loopy(1 .. tw div 2, doty(1,randcol(),rndcol(),xpos = rand(tw - 1))))
      ##
-     ## color clrainbow is not supported and will be in white
-     ##
-     ##
-     doty(d,fgr,bgr,xpos)
+     doty(d=d,fgr=fgr,bgr=bgr,xpos=xpos)
      writeLine(stdout,"")
-
-
-
-proc printDotPos*(xpos:int,dotCol:string,blink:bool,dottype:string = widedot) =
-      ## printDotPos
-      ##
-      ## prints a widedot at xpos in col dotCol and may blink...
-      ##
-
-      curSetx(xpos)
-      if blink == true: print(dottype,dotCol,styled = {styleBlink},substr = dottype)
-      else: print(dottype,dotCol,styled = {},substr = dottype)
 
        
 # convenience functions for var. messages
-# for time/date related see cxtimes.nim      
-      
+# for time/date related see cxtimes.nim 
+# WIP all functions will be eventually be changed to cxprintln      
+#       
 proc printErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printBiCol("[Error ] " & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
  
@@ -1257,8 +1023,8 @@ proc printBErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printLnBiCol("[      ] " & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})    
      
 proc printLnErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[Error ] " & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
-     
+      printLnBiCol("[Error ] " & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
+#      
 proc printLnBErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printLnBiCol("[      ] " & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
      
@@ -1268,12 +1034,18 @@ proc printFailMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
 proc printLnFailMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printLnBiCol("[Fail  ] " & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})     
    
-proc printAlertMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printBiCol("[Alert   ] " & atext , colLeft = truetomato ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})
-     
-proc printLnAlertMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[Alert ] " & atext , colLeft = truetomato ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})        
+# proc printAlertMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
+#      printBiCol("[Alert   ] " & atext , colLeft = truetomato ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})
+# 
+proc printAlertMsg*(s:string,xpos:int=2) =
+      cxprint(xpos,white,truetomatobg,"[Alert]" , truebluebg, s)
 
+proc printLnAlertMsg*(s:string,xpos:int=2) =
+      cxprintln(xpos,white,truetomatobg,"[Alert]" , truebluebg, s)
+     
+# proc printLnAlertMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
+#      printLnBiCol("[Alert ] " & atext , colLeft = truetomato ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})        
+# 
 proc printBAlertMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printBiCol("[        ] " & atext , colLeft = truetomato ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})
      
@@ -1281,17 +1053,17 @@ proc printLnBAlertMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printLnBiCol("[      ] " & atext , colLeft = truetomato ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})        
      
 proc printOKMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printBiCol("[OK    ]" & spaces(1) & atext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
-     
+      printBiCol("[OK    ]" & spaces(1) & atext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
+#      
 proc printLnOkMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[OK    ]" & spaces(1) & atext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})    
-    
-proc printStatusMsg*(atext:string = "",xpos:int = 1,colLeft=lightseagreen):string {.discardable.} =
-     printBiCol3(["[Status]" , spaces(1) , atext] , colLeft = colleft ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
-     
-proc printLnStatusMsg*(atext:string = "",xpos:int = 1,colLeft=lightseagreen):string {.discardable.} =
-     printLnBiCol3(["[Status]" , spaces(1) , atext] , colLeft = colLeft ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})    
-     
+      printLnBiCol("[OK    ]" & spaces(1) & atext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})    
+#     
+proc printStatusMsg*(atext:string = "",xpos:int = 1,colLeft=lightseagreen) =
+      cxprint(xpos,colLeft,styleReverse,"[Status]",snow,stylereverse,spaces(3) & atext & spaces(1))
+#      
+proc printLnStatusMsg*(atext:string = "",xpos:int = 1,colLeft=lightseagreen) =
+      cxprintln(xpos,colLeft,styleReverse,"[Status]",snow,stylereverse,spaces(3) & atext & spaces(1))
+        
 proc printHelpMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printBiCol("[Help  ]" & spaces(1) & atext , colLeft = thistle ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
      
@@ -1317,17 +1089,13 @@ proc printPassMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
 proc printLnPassMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printLnBiCol("[Pass  ]" & spaces(1) & atext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
 
-# printInfoMsg and printLnInfoMsg can take two strings for more generic use     
+# # printInfoMsg and printLnInfoMsg can take two strings for more generic use     
 proc printInfoMsg*(info,atext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
-     printBiCol3(["[$1]" % info , spaces(1) , atext] , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
-
+      printBiCol(["[$1]" % info , spaces(1) , atext] , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
+# 
 proc printLnInfoMsg*(info,atext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[$1]" % info & spaces(1) & atext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
-
-# experimental - use printLn3 so that we do not overwrite msg next to each other in case of blocks of printLnmsg2 statements
-proc printLnInfoMsg2*(info,atext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
-     printLnBiCol3(["[$1]" % info , spaces(1) , atext] , colLeft = colLeft ,colRight = colRight,sep= "]",xpos = xpos,false,{stylereverse})
-     
+      printLnBiCol("[$1]" % info & spaces(1) & atext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
+   
       
 template dprint*[T](s:T) = 
      ## dprint
@@ -1367,4 +1135,4 @@ macro pdebug*(n: varargs[typed]): untyped =
       result.add(newCall("writeLine", newIdentNode("stdout"), newStrLitNode("")))     
 
 
-# end of cxprint.nim      
+# end of cxprint2.nim      

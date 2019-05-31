@@ -23,7 +23,7 @@
 
 import os,osproc,math,stats,cpuinfo,httpclient,browsers,typeinfo,typetraits,rdstdin
 import terminal,strutils,times,random,sequtils,unicode,streams
-import cxconsts,cxglobal,cxprint2,cxtime,cxhash,macros
+import cxconsts,cxglobal,cxprint,cxtime,cxhash,macros
 
 # type used in getRandomPoint
 type
@@ -110,14 +110,14 @@ proc getPassword*(ahash:int64 = 0i64):string =
            curup(1)
            print(cleareol)
            # following could also be send to a logger
-           printLnOkMsg("Access granted at : " & cxnow)
+           cxprint(1,white,yellowgreenbg,"Access granted at : " , trueblue,pastelwhitebg, cxnow)
            echo()
            result = zz
      else:
            echo()
            let dn = "Access denied at : " & cxnow
-           printLnFailMsg(dn)
-           printLnErrorMsg(cxpad("Exiting now . Bye Bye.",dn.len))
+           cxprintln(1,white,bgred,dn)
+           cxprintln(1,trueblue,pastelWhite,cxpad("Exiting now . Bye Bye.",dn.len))
            quit(1)
     
   
@@ -134,7 +134,7 @@ proc cxDayOfWeek*(datestr:string):string =
     if datestr.len==10:
        result = $(getDayOfWeek(parseInt(day(datestr)),parseInt(month(datestr)).Month,parseInt(year(datestr))))      
     else:
-       printLnErrorMsg("Invalid date received . Required format is yyyy-MM-dd. --> cxUtils : cxDayOfWeek")
+       cxprintln(5,white,bgred,"Invalid date received . Required format is yyyy-MM-dd. --> cxUtils : cxDayOfWeek")
        result=""
        
 
@@ -156,7 +156,7 @@ proc getNextMonday*(adate:string):string =
         
     var ndatestr = ""
     if adate == "" :
-        printErrorMsg("Received an invalid date.")
+        cxprintln(2,red,pastelwhitebg,"Received an invalid date.")
     else:
         if validdate(adate) == true:
             var z = cxdayofweek(adate)
@@ -337,7 +337,7 @@ proc showRandomCard*(xpos:int = centerX()) =
     print(getCard(),randCol(),xpos = xpos)
 
 
-proc showRuler* (xpos:int=0,xposE:int=0,ypos:int = 0,fgr:string = white,bgr:BackgroundColor = bgDefault, vert:bool = false) =
+proc showRuler* (xpos:int=0,xposE:int=0,ypos:int = 0,fgr:string = white,bgr:string = getBg(bgDefault), vert:bool = false) =
      ## ruler
      ##
      ## simple terminal ruler indicating dot x positions starts with position 1
@@ -579,7 +579,7 @@ proc newWord*(minwl:int=3,maxwl:int = 10):string =
               nw = nw & $char(x)
         result = normalize(nw)   # return in lower case , cleaned up
     else:
-         printLnErrorMsg("minimum word length larger than maximum word length")
+         cxprintln(2,red,pastelwhitebg,"Error : minimum word length larger than maximum word length")
          result = ""
 
 
@@ -605,7 +605,7 @@ proc newWord2*(minwl:int=3,maxwl:int = 10 ):string =
               nw = nw & $char(x)
         result = normalize(nw)   # return in lower case , cleaned up
     else:
-         printLnErrorMsg("minimum word length larger than maximum word length")
+         cxprintln(2,red,pastelwhitebg,"Error : minimum word length larger than maximum word length")
          result = ""
 
 
@@ -636,7 +636,7 @@ proc newWord3*(minwl:int=3,maxwl:int = 10 ,nflag:bool = true):string =
         else :
            result = nw
     else:
-         printLnErrorMsg("minimum word length larger than maximum word length")
+         cxprintln(2,red,pastelwhitebg,"Error : minimum word length larger than maximum word length")
          result = ""
 
 
@@ -658,7 +658,7 @@ proc newHiragana*(minwl:int=3,maxwl:int = 10 ):string =
               result = result & $Rune(hig)
        
     else:
-         printLnErrorMsg("minimum word length larger than maximum word length")
+         cxprintln(2,red,pastelwhitebg,"Error : minimum word length larger than maximum word length")
          result = ""
 
 
@@ -676,7 +676,7 @@ proc newKatakana*(minwl:int=3,maxwl:int = 10 ):string =
         while result.len < sample(toSeq(minwl..maxwl)):
               result = result & $Rune(sample(toSeq(parsehexint("30A0")..parsehexint("30FF"))))  
     else:
-        printLnErrorMsg("minimum word length larger than maximum word length")
+        cxprintln(2,red,pastelwhitebg,"Error : minimum word length larger than maximum word length")
         result = ""
 
 proc newText*(textLen:int = 1000,textgen:string = "newWord"):string = 
@@ -755,8 +755,8 @@ proc newText*(textLen:int = 1000,textgen:string = "newWord"):string =
                        tres = ""     
        else:
             decho()
-            printLnFailMsg("newText() ")
-            printLnErrorMsg(textgen & " generator proc not available !")
+            cxprintLn(2,truetomato,pastelwhitebg,"newText() ")
+            cxprintLn(2,red,pastelwhitebg,"Error : " & textgen & " generator proc not available !")
             discard                
                      
 proc rndStr*(n:int = 20): string =
@@ -797,65 +797,6 @@ proc createRandomDataFile*(filename:string = "randomdata.dat") =
     discard  execCmd("dd if=/dev/urandom of=$1 bs=1M count=1" % filename)
       
                                     
-                                  
-proc drawRect*(h     :int = 0,
-              w      :int = 3,
-              frhLine:string = "_",
-              frVLine:string = "|",
-              frCol  :string = darkgreen,
-              dotCol :string = truetomato,
-              xpos   :int = 1,
-              blink  :bool = false,
-              dottype:string = ".") =
-               
-      ## drawRect
-      ##
-      ## a simple proc to draw a rectangle with corners marked with widedots.
-      ## widedots are of len 4.
-      ##
-      ##
-      ## h  height
-      ## w  width
-      ## frhLine framechar horizontal
-      ## frVLine framechar vertical
-      ## frCol   color of line
-      ## dotCol  color of corner dotCol
-      ## xpos    topleft start position
-      ## blink   true or false to blink the dots
-      ##
-      ##
-      ##.. code-block:: nim
-      ##    import nimcx
-      ##    clearUp(18)
-      ##    curSet()
-      ##    drawRect(15,24,frhLine = "+",frvLine = wideDot , frCol = randCol(),xpos = 8)
-      ##    curup(12)
-      ##    drawRect(9,20,frhLine = "=",frvLine = wideDot , frCol = randCol(),xpos = 10,blink = true)
-      ##    curup(12)
-      ##    drawRect(9,20,frhLine = "=",frvLine = wideDot , frCol = randCol(),xpos = 35,blink = true)
-      ##    curup(10)
-      ##    drawRect(6,14,frhLine = "~",frvLine = "$" , frCol = randCol(),xpos = 60,blink = true)
-      ##    decho(5)
-      ##    doFinish()
-      ##
-      ##
-      # topline
-      printDotPos(xpos,dotCol,blink,dottype)
-      print2(frhLine.repeat(w - dottype.len),frcol)
-      printDotPos(xpos + w - dottype.len,dotCol,blink,dottype)
-      writeLine(stdout,"")
-      # sidelines
-      for x in 2.. h:
-         print2(frVLine,frcol,xpos = xpos) # left
-         print2(frVLine,frcol,xpos = xpos + w - (dottype.len div 2) - 1)  # right
-         writeLine(stdout,"")
-      # bottom line
-      printDotPos(xpos,dotCol,blink,dottype)
-      print2(frhLine.repeat(w - dottype.len),frcol)
-      printDotPos(xpos + w - dottype.len,dotCol,blink,dottype)
-      writeLine(stdout,"")
-        
-    
 proc cxBinomialCoeff*(n, k:int): int =
     # cxBinomialCoeff
     # 
@@ -1008,10 +949,10 @@ proc boxy*(w:int = 20, h:int = 5,fgr=randcol(),xpos:int=1) =
     ## 
     ## draws a box with width w , height h , color color at position xpos
     ## 
-    println2(lefttop & linechar * w & righttop,fgr = fgr,xpos=xpos)
+    printLn(lefttop & linechar * w & righttop,fgr = fgr,xpos=xpos)
     for x in 0..h:
-        println2(vertlinechar & spaces(w) & vertlinechar,fgr = fgr,xpos=xpos)
-    printLn2(leftbottom & linechar * w & rightbottom,fgr = fgr,xpos=xpos)
+        printLn(vertlinechar & spaces(w) & vertlinechar,fgr = fgr,xpos=xpos)
+    printLn(leftbottom & linechar * w & rightbottom,fgr = fgr,xpos=xpos)
  
     
 proc boxy2*(w:int = 20, h:int = 5,fgr=randcol(),xpos:int=1) =
@@ -1021,10 +962,10 @@ proc boxy2*(w:int = 20, h:int = 5,fgr=randcol(),xpos:int=1) =
     ## 
     ## similar to boxy but with random color for each element rather than each box
     ## 
-    println2(lefttop & linechar * w & righttop,fgr = randcol(),xpos=xpos)
+    printLn(lefttop & linechar * w & righttop,fgr = randcol(),xpos=xpos)
     for x in 0..h:
-        println2(vertlinechar & spaces(w) & vertlinechar,fgr = randcol(),xpos=xpos)
-    printLn2(leftbottom & linechar * w & rightbottom,fgr = randcol(),xpos=xpos)     
+        printLn(vertlinechar & spaces(w) & vertlinechar,fgr = randcol(),xpos=xpos)
+    printLn(leftbottom & linechar * w & rightbottom,fgr = randcol(),xpos=xpos)     
     
  
 proc spiralBoxy*(w:int = 20, h:int = 20,xpos:int = 1) =
@@ -1055,7 +996,8 @@ proc spiralBoxy2*(w:int = 20, h:int = 20,xpos:int = 1) =
        dec hh
        inc xxpos
        curup(hh + 4)
-     
+       
+    
     
 proc showSeq*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5,displayflag : bool = true):string {.discardable.} = 
     ## showSeq
@@ -1073,7 +1015,10 @@ proc showSeq*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5,di
     ##      showSeq(createSeqGeoshapes(),randcol())
     ##      showSeq(createSeqint(1000,10000,100000))
     ##      
-    ##      
+    ## 
+    runnableExamples:
+        showSeq(createSeqCJK(),"rand")
+        
     result = ""
     var c = 0
     for x in 0 ..< z.len:
@@ -1098,7 +1043,7 @@ proc showSeq*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5,di
     if displayflag == true:
       decho()      
       let msg1 = "0 - " & $(z.len - 1) & spaces(3)
-      printLnInfoMsg("Item Count ",cxpad($z.len,msg1.len),xpos = 3) 
+      cxprintLn(3,trueblue,yellowgreenbg,"Item Count ",cxpad($z.len,msg1.len)) 
       decho()          
  
 
@@ -1117,7 +1062,7 @@ proc seqHighLite*[T](b:seq[T],b1:seq[T],col:string=gold) =
    var bs:string = $b1
    bs = bs.replace("@[","")
    bs.removesuffix(']')
-   printLn2(b,col,styled = {styleReverse},substr = bs)       
+   printLn(b,col,styled = {styleReverse},substr = bs)       
        
 
 proc shift*[T](x: var seq[T], zz: Natural = 0): T =
@@ -1169,7 +1114,7 @@ template withFile*(f,fn, mode, actions: untyped): untyped =
                 actions
             except:    
                 echo()
-                printLnErrorMsg("Cannot open file " & fn)
+                cxprintLn(2,white,bgred,"Error : Cannot open file " & fn)
                 quit()
             finally:
                 close(f)
@@ -1187,9 +1132,9 @@ proc checkMemFull*(xpos:int = 2) =
        for aline in seqline:
                let zline = aline.split(":")
                try:
-                  printLnInfoMsg(cxpad(zline[0],n),fmtx([">15"],strutils.strip(zline[1])),yellowgreen,xpos = xpos)
+                  cxprintLn(xpos,yellowgreen,cxpad(zline[0],n),fmtx([">15"],strutils.strip(zline[1])))
                except IndexError  as ex:
-                  printLnErrorMsg(ex.msg)
+                  cxprintln(xpos,white,redbg,ex.msg)
                   discard
  
 
@@ -1207,7 +1152,7 @@ proc checkMem*(xpos:int=2) =
        for aline in seqline:
             if aline.startswith("Mem"):
                let zline = aline.split(":")
-               printLnInfoMsg2(cxpad(zline[0],n),fmtx([">15"],strutils.strip(zline[1])),yellowgreen,xpos = xpos)
+               cxprintLn(xpos,yellowgreen,cxpad(zline[0],n),fmtx([">15"],strutils.strip(zline[1])))
               
 
 proc fullGcStats*(xpos:int = 2):int {.discardable.} =
@@ -1217,7 +1162,7 @@ proc fullGcStats*(xpos:int = 2):int {.discardable.} =
          let agcls = agcl.split("] ")
          if agcls.len > 1:
            let agcls1 = agcls[1].split(":")
-           printLnInfomsg2(agcls[0],cxpad(agcls1[0],20) & cxlpad(agcls1[1],15),xpos = xpos)
+           cxprintln(xpos,agcls[0],cxpad(agcls1[0],20) & cxlpad(agcls1[1],15))
      result = gcsl.len  
      
 proc memCheck*(stats:bool = false) =
@@ -1229,9 +1174,9 @@ proc memCheck*(stats:bool = false) =
       ## @[1, 2, 4, 8, 16, 32]
       echo()
       if stats == true:
-         printLnInfoMsg("MemCheck",cxpad("GC and System",30),skyblue,xpos = 2)
+         cxprintln(2,skyblue,"MemCheck",cxpad("GC and System",30))
       else:
-         printLnInfoMsg("MemCheck",cxpad("System",30),skyblue,xpos = 2)
+         cxprintln(2,skyblue,"MemCheck",cxpad("System",30))
       printLnBiCol("Status : Current ",colLeft=salmon,xpos = 2)
       var b = 0
       if stats == true:
@@ -1243,7 +1188,7 @@ proc memCheck*(stats:bool = false) =
           curup(b + 3)
       else:
           curup(b + 4)
-      printLnBiCol2("Status : GC_FullCollect executed",colLeft=salmon,colRight=pink,xpos=55)
+      printLnBiCol("Status : GC_FullCollect executed",colLeft=salmon,colRight=pink,xpos=55)
       if stats == true:
           fullgcstats(xpos=55)
       checkmem(xpos=55)

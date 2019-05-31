@@ -1,4 +1,4 @@
-import cxglobal,cxprint2,cxconsts
+import cxglobal,cxprint,cxconsts
 import os,terminal,times,parseutils,strutils
 
 # cxtime.nim
@@ -147,10 +147,8 @@ proc toDateTime*(date:string = "2000-01-01"): DateTime =
       of  11: zmonth = mNov 
       of  12: zmonth = mDec 
       else:
-         
-         #printLnErrorMsg("Month = " & adate[1] & " ?? ")
-         printLnErrorMsg("")
-         printLnBErrorMsg("Wrong Month in " & adate[1])
+                 
+         printLnBiCol("Wrong Month in : " & adate[1],colLeft=red,colRight=yellowgreen,styled={styleReverse})
          quit(0)
    
    let zday = parseint(adate[2])
@@ -298,7 +296,7 @@ proc plusDays*(aDate:string,days:int):string =
       rxs = fx(tifo + myinterval)
       result = rxs
    else:
-      printLnErrorMsg("Plusdays  : " & aDate)
+      printLnBiCol("Plusdays : " & adate,colLeft=red,colRight=yellowgreen,styled={styleReverse})
       result = "Error"
 
 
@@ -319,7 +317,7 @@ proc minusDays*(aDate:string,days:int):string =
       rxs = fx(tifo - myinterval)
       result = rxs
    else:
-      printLnErrorMsg("minusDays : " & aDate)
+      printLnBiCol("MinusDays : " & adate,colLeft=red,colRight=yellowgreen,styled={styleReverse})
       result = "Error"
 
     
@@ -592,8 +590,7 @@ proc clearAllTimerResults*(quiet:bool = true,xpos:int = 3) =
      cxtimerresults = @[] 
      echo()
      if quiet == false:
-        printLnInfoMsg("Info   ","All timers deleted",xpos = xpos)   
-    
+          cxprint(xpos,white,yellowgreenbg,"Info   : ",pastelWhite,"Alltimers deleted")
    
    
    

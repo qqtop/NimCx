@@ -12,7 +12,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-01-27
+##     Latest      : 2019-05-31
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -29,12 +29,13 @@
 ##                   
 ## 
 
-import terminal,colors,sequtils, strutils
+import terminal,colors,sequtils,strutils
+import htmlparser
  
 const cxcodestart* = "cxcodestart"
 const cxcodeend*   = "cxcodeend"
  
-proc getfg(fg:ForegroundColor):string =
+proc getfg*(fg:ForegroundColor):string =
     var gFG = ord(fg)
     result = "\e[" & $gFG & 'm'
 
@@ -119,6 +120,21 @@ const
       euro*   = "€"
       dollar* = "$"
       yen*    = "¥"
+      
+const 
+      # umlaut
+      ae* = entityToRune("Auml")
+      oe* = entityToRune("Ouml")
+      ue* = entityToRune("Uuml")   
+      
+      # example usage umlaut consts
+      # echo ue,"ber",oe,ae
+      # example usage htmlparser entityxx proc
+      # echo entityToUtf8("#0931")
+      # echo entityToUtf8("#x03A3")
+      # echo runeToEntity("∈".runeAt(0))
+      # echo entityToRune("#8712")
+         
       
 # selected box chars
 # run : showseq(createSeqBoxChars())
@@ -205,7 +221,7 @@ const
       pastelwhite*          =  "\x1b[38;2;204;204;204m"
       
       # WIP  background escape seqs colors
-      # Note colornames ending with bg or Ibg are currently only available via echo command
+      sandybrownbg*         = "\x1b[48;2;244;164;96m"
       pastelgreenbg*        = "\x1b[48;2;179;226;205m"
       pastelorangebg*       = "\x1b[48;2;253;205;172m"
       pastelbluebg*         = "\x1b[48;2;203;213;232m"
@@ -232,12 +248,18 @@ const
       bigdip*               =   "\x1b[38;2;156;37;66m"
       greenery*             =   "\x1b[38;2;136;176;75m"     
       bluey*                =   "\x1b[38;2;41;194;102m"    # not displaying , showing default bluishgreen
+      trueblue*             =   "\x1b[38;2;0;115;207m"
+      yaleblue*             =   "\x1b[38;2;15;77;146m"
+      
+      
       
       # other colors of interest with background bit set
       
       truetomatobg*         =   "\x1b[48;2;255;100;0m"
       greenerybg*           =   "\x1b[48;2;136;176;75m"
       blueybg*              =   "\x1b[48;2;41;194;102m"
+      truebluebg*           =   "\x1b[48;2;0;115;207m"
+      yalebluebg*           =   "\x1b[48;2;15;77;146m"
       
       # colors lifted from colors.nim and massaged into rgb escape seqs
 
@@ -384,6 +406,155 @@ const
       zcolor*               =  "\x1b[38;2;255;111;210m"
       zippi*                =  "\x1b[38;2;79;196;132m"     # maybe not displaying , showing default blueish green
 
+
+ # colors lifted from colors.nim and massaged into rgb background escape seqs
+
+      alicebluebg*            =  "\x1b[48;2;240;248;255m"
+      antiquewhitebg*         =  "\x1b[48;2;250;235;215m"
+      aquabg*                 =  "\x1b[48;2;0;255;255m"
+      aquamarinebg*           =  "\x1b[48;2;127;255;212m"
+      azurebg*                =  "\x1b[48;2;240;255;255m"
+      beigebg*                =  "\x1b[48;2;245;245;220m"
+      bisquebg*               =  "\x1b[48;2;255;228;196m"
+      blackbg*                =  "\x1b[48;2;0;0;0m"
+      blanchedalmondbg*       =  "\x1b[48;2;255;235;205m"
+      bluebg*                 =  "\x1b[48;2;0;0;255m"
+      bluevioletbg*           =  "\x1b[48;2;138;43;226m"
+      brownbg*                =  "\x1b[48;2;165;42;42m"
+      burlywoodbg*            =  "\x1b[48;2;222;184;135m"
+      cadetbluebg*            =  "\x1b[48;2;95;158;160m"
+      chartreusebg*           =  "\x1b[48;2;127;255;0m"
+      chocolatebg*            =  "\x1b[48;2;210;105;30m"
+      coralbg*                =  "\x1b[48;2;255;127;80m"
+      cornflowerbluebg*       =  "\x1b[48;2;100;149;237m"
+      cornsilkbg*             =  "\x1b[48;2;255;248;220m"
+      crimsonbg*              =  "\x1b[48;2;220;20;60m"
+      cyanbg*                 =  "\x1b[48;2;0;255;255m"
+      darkbluebg*             =  "\x1b[48;2;0;0;139m"
+      darkcyanbg*             =  "\x1b[48;2;0;139;139m"
+      darkgoldenrodbg*        =  "\x1b[48;2;184;134;11m"
+      darkgraybg*             =  "\x1b[48;2;169;169;169m"
+      darkgreenbg*            =  "\x1b[48;2;0;100;0m"
+      darkkhakibg*            =  "\x1b[48;2;189;183;107m"
+      darkmagentabg*          =  "\x1b[48;2;139;0;139m"
+      darkolivegreenbg*       =  "\x1b[48;2;85;107;47m"
+      darkorangebg*           =  "\x1b[48;2;255;140;0m"
+      darkorchidbg*           =  "\x1b[48;2;153;50;204m"
+      darkredbg*              =  "\x1b[48;2;139;0;0m"
+      darksalmonbg*           =  "\x1b[48;2;233;150;122m"
+      darkseagreenbg*         =  "\x1b[48;2;143;188;143m"
+      darkslatebluebg*        =  "\x1b[48;2;72;61;139m"
+      darkslategraybg*        =  "\x1b[48;2;47;79;79m"
+      darkturquoisebg*        =  "\x1b[48;2;0;206;209m"
+      darkvioletbg*           =  "\x1b[48;2;148;0;211m"
+      deeppinkbg*             =  "\x1b[48;2;255;20;147m"
+      deepskybluebg*          =  "\x1b[48;2;0;191;255m"
+      dimgraybg*              =  "\x1b[48;2;105;105;105m"
+      dodgerbluebg*           =  "\x1b[48;2;30;144;255m"
+      firebrickbg*            =  "\x1b[48;2;178;34;34m"
+      floralwhitebg*          =  "\x1b[48;2;255;250;240m"
+      forestgreenbg*          =  "\x1b[48;2;34;139;34m"
+      fuchsiabg*              =  "\x1b[48;2;255;0;255m"
+      gainsborobg*            =  "\x1b[48;2;220;220;220m"
+      ghostwhitebg*           =  "\x1b[48;2;248;248;255m"
+      goldbg*                 =  "\x1b[48;2;255;215;0m"
+      goldenrodbg*            =  "\x1b[48;2;218;165;32m"
+      graybg*                 =  "\x1b[48;2;128;128;128m"
+      greenbg*                =  "\x1b[48;2;0;128;0m"
+      greenyellowbg*          =  "\x1b[48;2;173;255;47m"
+      honeydewbg*             =  "\x1b[48;2;240;255;240m"
+      hotpinkbg*              =  "\x1b[48;2;255;105;180m"
+      indianredbg*            =  "\x1b[48;2;205;92;92m"
+      indigobg*               =  "\x1b[48;2;75;0;130m"
+      ivorybg*                =  "\x1b[48;2;255;255;240m"
+      khakibg*                =  "\x1b[48;2;240;230;140m"
+      lavenderbg*             =  "\x1b[48;2;230;230;250m"
+      lavenderblushbg*        =  "\x1b[48;2;255;240;245m"
+      lawngreenbg*            =  "\x1b[48;2;124;252;0m"
+      lemonchiffonbg*         =  "\x1b[48;2;255;250;205m"
+      lightbluebg*            =  "\x1b[48;2;173;216;230m"
+      lightcoralbg*           =  "\x1b[48;2;240;128;128m"
+      lightcyanbg*            =  "\x1b[48;2;224;255;255m"
+      lightgoldenrodyellowbg* =  "\x1b[48;2;250;250;210m"
+      lightgreybg*            =  "\x1b[48;2;211;211;211m"
+      lightgreenbg*           =  "\x1b[48;2;144;238;144m"
+      lightpinkbg*            =  "\x1b[48;2;255;182;193m"
+      lightsalmonbg*          =  "\x1b[48;2;255;160;122m"
+      lightseagreenbg*        =  "\x1b[48;2;32;178;170m"
+      lightskybluebg*         =  "\x1b[48;2;135;206;250m"
+      lightslategraybg*       =  "\x1b[48;2;119;136;153m"
+      lightsteelbluebg*       =  "\x1b[48;2;176;196;222m"
+      lightyellowbg*          =  "\x1b[48;2;255;255;224m"
+      limebg*                 =  "\x1b[48;2;0;255;0m"
+      limegreenbg*            =  "\x1b[48;2;50;205;50m"
+      linenbg*                =  "\x1b[48;2;250;240;230m"
+      magentabg*              =  "\x1b[48;2;255;0;255m"
+      maroonbg*               =  "\x1b[48;2;128;0;0m"
+      mediumaquamarinebg*     =  "\x1b[48;2;102;205;170m"
+      mediumbluebg*           =  "\x1b[48;2;0;0;205m"
+      mediumorchidbg*         =  "\x1b[48;2;186;85;211m"
+      mediumpurplebg*         =  "\x1b[48;2;147;112;216m"
+      mediumseagreenbg*       =  "\x1b[48;2;60;179;113m"
+      mediumslatebluebg*      =  "\x1b[48;2;123;104;238m"
+      mediumspringgreenbg*    =  "\x1b[48;2;0;250;154m"
+      mediumturquoisebg*      =  "\x1b[48;2;72;209;204m"
+      mediumvioletredbg*      =  "\x1b[48;2;199;21;133m"
+      midnightbluebg*         =  "\x1b[48;2;25;25;112m"
+      mintcreambg*            =  "\x1b[48;2;245;255;250m"
+      mistyrosebg*            =  "\x1b[48;2;255;228;225m"
+      moccasinbg*             =  "\x1b[48;2;255;228;181m"
+      navajowhitebg*          =  "\x1b[48;2;255;222;173m"
+      navybg*                 =  "\x1b[48;2;0;0;128m"
+      oldlacebg*              =  "\x1b[48;2;253;245;230m"
+      olivebg*                =  "\x1b[48;2;128;128;0m"
+      olivedrabbg*            =  "\x1b[48;2;107;142;35m"
+      orangebg*               =  "\x1b[48;2;255;165;0m"
+      orangeredbg*            =  "\x1b[48;2;255;69;0m"
+      orchidbg*               =  "\x1b[48;2;218;112;214m"
+      palegoldenrodbg*        =  "\x1b[48;2;238;232;170m"
+      palegreenbg*            =  "\x1b[48;2;152;251;152m"
+      paleturquoisebg*        =  "\x1b[48;2;175;238;238m"
+      palevioletredbg*        =  "\x1b[48;2;216;112;147m"
+      papayawhipbg*           =  "\x1b[48;2;255;239;213m"
+      peachpuffbg*            =  "\x1b[48;2;255;218;185m"
+      perubg*                 =  "\x1b[48;2;205;133;63m"
+      pinkbg*                 =  "\x1b[48;2;255;192;203m"
+      plumbg*                 =  "\x1b[48;2;221;160;221m"
+      powderbluebg*           =  "\x1b[48;2;176;224;230m"
+      purplebg*               =  "\x1b[48;2;128;0;128m"
+      redbg*                  =  "\x1b[48;2;255;0;0m"
+      rosybrownbg*            =  "\x1b[48;2;188;143;143m"
+      royalbluebg*            =  "\x1b[48;2;65;105;225m"
+      saddlebrownbg*          =  "\x1b[48;2;139;69;19m"
+      salmonbg*               =  "\x1b[48;2;250;128;114m"
+      seagreenbg*             =  "\x1b[48;2;46;139;87m"
+      seashellbg*             =  "\x1b[48;2;255;245;238m"
+      siennabg*               =  "\x1b[48;2;160;82;45m"
+      silverbg*               =  "\x1b[48;2;192;192;192m"
+      skybluebg*              =  "\x1b[48;2;135;206;235m"
+      slatebluebg*            =  "\x1b[48;2;106;90;205m"
+      slategraybg*            =  "\x1b[48;2;112;128;144m"
+      snowbg*                 =  "\x1b[48;2;255;250;250m"
+      springgreenbg*          =  "\x1b[48;2;0;255;127m"
+      steelbluebg*            =  "\x1b[48;2;70;130;180m"
+      tanbg*                  =  "\x1b[48;2;210;180;140m"
+      tealbg*                 =  "\x1b[48;2;0;128;128m"
+      thistlebg*              =  "\x1b[48;2;216;191;216m"
+      tomatobg*               =  "\x1b[48;2;255;99;71m"
+      turquoisebg*            =  "\x1b[48;2;64;224;208m"
+      violetbg*               =  "\x1b[48;2;238;130;238m"
+      wheatbg*                =  "\x1b[48;2;245;222;179m"
+      whitebg*                =  "\x1b[48;2;255;255;255m"    # same as brightwhite
+      whitesmokebg*           =  "\x1b[48;2;245;245;245m"
+      yellowbg*               =  "\x1b[48;2;255;255;0m"
+      yellowgreenbg*          =  "\x1b[48;2;154;205;50m"
+      zcolorbg*               =  "\x1b[48;2;255;111;210m"
+      zippibg*                =  "\x1b[48;2;79;196;132m"     # maybe not displaying , showing default blueish green
+
+
+
+
+
 # all colors except original terminal colors
 const colorNames* = @[
       ("aliceblue", aliceblue),
@@ -399,7 +570,7 @@ const colorNames* = @[
       ("blue", blue),
       ("blueviolet", blueviolet),
       ("bluey",bluey),
-      #("blueybg",blueybg),
+      ("blueybg",blueybg),
       ("brown", brown),
       ("burlywood", burlywood),
       ("cadetblue", cadetblue),
@@ -442,7 +613,7 @@ const colorNames* = @[
       ("gray", gray),
       ("green", green),
       ("greenery",greenery),
-      #("greenerybg",greenerybg),
+      ("greenerybg",greenerybg),
       ("greenyellow", greenyellow),
       ("honeydew", honeydew),
       ("hotpink", hotpink),
@@ -510,6 +681,7 @@ const colorNames* = @[
       ("saddlebrown", saddlebrown),
       ("salmon", salmon),
       ("sandybrown", sandybrown),
+      ("sandybrownbg", sandybrownbg),
       ("seagreen", seagreen),
       ("seashell", seashell),
       ("sienna", sienna),
@@ -525,37 +697,42 @@ const colorNames* = @[
       ("thistle", thistle),
       ("tomato", tomato),
       ("turquoise", turquoise),
+      ("trueblue",trueblue),
       ("violet", violet),
       ("wheat", wheat),
       ("white", white),
       ("whitesmoke", whitesmoke),
+      ("yaleblue",yaleblue),
       ("yellow", yellow),
       ("yellowgreen", yellowgreen),
+      ("yellowgreenbg", yellowgreenbg),
       ("pastelbeige",pastelbeige),
-      #("pastelbeigebg",pastelbeigebg),
+      ("pastelbeigebg",pastelbeigebg),
       ("pastelblue",pastelblue),
-      #("pastelbluebg",pastelbluebg),
+      ("pastelbluebg",pastelbluebg),
       ("pastelgreen",pastelgreen),
-      #("pastelgreenbg",pastelgreenbg),
+      ("pastelgreenbg",pastelgreenbg),
       ("pastelorange",pastelorange),
-      #("pastelorangebg",pastelorangebg),
+      ("pastelorangebg",pastelorangebg),
       ("pastelpink",pastelpink),
-      #("pastelpinkbg",pastelpinkbg),
+      ("pastelpinkbg",pastelpinkbg),
       ("pastelwhite",pastelwhite),
-      #("pastelwhitebg",pastelwhitebg),
+      ("pastelwhitebg",pastelwhitebg),
       ("pastelyellow",pastelyellow),
-      #("pastelyellowbg",pastelyellowbg),
+      ("pastelyellowbg",pastelyellowbg),
       ("pastelyellowgreen",pastelyellowgreen),
-      #("pastelyellowgreenbg",pastelyellowgreenbg),
+      ("pastelyellowgreenbg",pastelyellowgreenbg),
+      ("truebluebg",truebluebg),
       ("truetomato",truetomato),
-      #("truetomatobg",truetomatobg),
+      ("truetomatobg",truetomatobg),
+      ("yalebluebg",yalebluebg),
       ("zcolor",zcolor),
       ("zippi",zippi)]
 
       
 # cxColorNames can after recent change in terminal nim be used for backgroundcolors      
 # note still need a fall back if terminal does not support truecolors , currently a
-# error message maybe displayed , colors commented out are currently not int he named colors set in Nim
+# error message maybe displayed , colors commented out are currently not in the named colors set in Nim
 const cxColorNames* = @[
       ("colaliceblue"   , colaliceblue),
       ("colantiquewhite", colantiquewhite),
@@ -700,6 +877,7 @@ const cxColorNames* = @[
       ("colwheat"      , colwheat),
       ("colwhite"      , colwhite),
       ("colwhitesmoke" , colwhitesmoke),
+      #("colyaleblue"   , colYaleblue),
       ("colyellow"     , colyellow),
       ("colyellowgreen", colyellowgreen),
 #       ("colpastelbeige",pastelbeige),
@@ -718,6 +896,7 @@ const cxColorNames* = @[
 #       ("colpastelyellowbg",pastelyellowbg),
 #       ("colpastelyellowgreen",pastelyellowgreen),
 #       ("colpastelyellowgreenbg",pastelyellowgreenbg),
+#       ("coltrueblue" ,trueblue),
 #       ("coltruetomato" ,truetomato),
 #       ("coltruetomatobg",truetomatobg),
 #       ("colzcolor"     ,zcolor),

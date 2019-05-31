@@ -10,9 +10,9 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2018-03-04
+##     Latest      : 2019-05-18
 ##
-##     Compiler    : Nim >= 0.18.x dev branch
+##     Compiler    : Nim >= 0.19.x dev branch
 ##
 ##     Description : Utiliy functions for the linux terminal
 ##
