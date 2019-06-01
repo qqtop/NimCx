@@ -19,7 +19,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-05-24 
+##     Latest      : 2019-06-01 
 ##
 ##     Compiler    : Nim >= 0.19.x devel branch
 ##
@@ -548,7 +548,7 @@ proc showBench*() =
                     printLn(fmtx(["<$1" % $bnamesize, "", "<70", "<50"],aa1, spaces(3), cc1, ee1))
 
                     if dd1.contains("Inf") or ee1.contains("Inf"):
-                            cxprintln(2,white,yellowgreenbg,"Inf - To measure something increase the loop count.")
+                            cxprintln(2,yaleblue,limegreenbg,"Inf - To measure something increase the loop count.")
 
                 echo()
                 benchmarkresults = @[]
@@ -773,10 +773,11 @@ proc remDir*(dirname: string): bool {.discardable.} =
         if existsDir(dirname):
             try:
                     removeDir(dirname)
-                    cxprintln(2,white,yellowgreenbg,"Directory " & dirname & " deleted")
+                    cxprintln(2,yaleblue,limegreenbg,"Directory " & dirname & " deleted")
                     result = true
             except OSError:
-                    cxprintln(2,white,bgred,"Directory " & dirname & " deletion failed")
+                    cxprintLn(2,white,bgred,"Directory " & dirname & " deletion failed")
+                    cxprintLn(2,white,bgred,"System    " & getCurrentExceptionMsg())
                     result = false
         else:
             cxprintln(2,white,bgred,"Directory " & dirname & " does not exists !")
@@ -834,25 +835,6 @@ proc getColorName*[T](sc: T): string =
      for x in colornames:
         if x[1] == sc: result = x[0]
 
-proc getColorConst*[T](sc: T): string =
-     ## getColorConst
-     ## 
-     ## this functions returns the colorname constant color escape sequence based on a colorname
-     ## ready to be used in print routines , it is the reverse of the getColorName function.
-     ## usefull if we have colorname strings read in from a file or a sequence
-     ## 
-     ##.. code-block:: nim
-     ##  import nimcx
-     ##  var astringseq = split("lightgrey,pastelgreen,pastelpink,lightblue,goldenrod,truetomato,truetomato,white",sep=',')          
-     ##  for acolor in astringseq:          
-     ##      printLn("good color " & acolor , getColorConst(acolor))    
-     ## 
-     ##
-     result = "unknown color"
-     for x in colornames:
-           if x[0] == sc:
-              result = x[1]
-
 
 proc showTerminalSize*() =
       ## showTerminalSize
@@ -864,7 +846,7 @@ proc showTerminalSize*() =
       ## height is always available via th
       ##
       ##
-      cxprintln(2,white,yellowgreenbg,"Terminal Size", styleReverse,"W" & spaces(1) & $tw & " x" & " H" & spaces(1) & $th)
+      cxprintln(2,yaleblue,limegreenbg," Terminal Size ", styleReverse," W" & spaces(1) & $tw & " x" & " H " & $th & spaces(1))
 
 
 proc cxAlert*(xpos: int = 1) =
@@ -1000,7 +982,7 @@ template infoProc*(code: untyped) =
           try:
               let pos = instantiationInfo()
               code
-              cxprintln(2,white,yellowgreenbg,"infoproc ",getbg(bgDefault), " $1 Line: $2 with: '$3'" % [pos.filename, $pos.line, astToStr(code)])
+              cxprintln(2,yaleblue,goldenrodbg," Infoproc ",getFg(fgDefault),getbg(bgDefault), " $1 Line: $2 with: '$3'" % [pos.filename, $pos.line, astToStr(code)])
           except:
               cxprintln(2,white,bgred,"Checking instantiationInfo ")
               discard
@@ -1172,6 +1154,21 @@ proc printTest*(astring:string="") =
      if astring != "":
          echo("  ",skyblue,rightarrow,white,astring)
      decho(2)
+ 
+ 
+proc cpuInfo*() =
+   # cpuInfo
+   # requires lscpu available on system
+   echo()
+   printLn("CPU Information" & spaces(40) , skyblue,yalebluebg )
+   try:
+      let lscp = execProcess("lscpu")
+      let lscp1 = lscp.splitLines()
+      for x in lscp1:
+          if not x.startswith("Flags:"):
+             printLnBiCol(x)
+   except:
+       printlnErrorMsg("lscpu command my not be available on this system") 
       
 # code below borrowed from distros.nim and made exportable
 # there is now a new posix_utils module which also can give 
@@ -1196,8 +1193,8 @@ template doByeBye*() =
         print("Exiting now !  ", lime)
         printLn("Bye-Bye from " & extractFileName(getAppFilename()), red)
         printLn(yellowgreen & "Mem -> " & lightsteelblue & "Used : " & white &
-                        ff2(getOccupiedMem()) & lightsteelblue & "  Free : " & white & ff2(getFreeMem(
-                        )) & lightsteelblue & "  Total : " & white & ff2(getTotalMem()))
+               ff2(getOccupiedMem()) & lightsteelblue & "  Free : " & white & ff2(getFreeMem()) &
+               lightsteelblue & "  Total : " & white & ff2(getTotalMem()))
         
 
 proc doFinish*() =
@@ -1260,19 +1257,19 @@ proc handler*() {.noconv.} =
     rmTmpFilenames()      # clean up if possible
     echo()
     hlineLn()
-    cechoLn(yellowgreen, "Thank you for using        : " & getAppFilename())
+    printLn( "Thank you for using        : " & getAppFilename(),yellowgreen)
     hlineLn()
     printlnBiCol(fmtx(["<", "<11", ">9",""], "Last compilation on        : ",
-                    CompileDate, CompileTime," UTC"), brightcyan, termwhite, ":", 0, false, {})
+                    CompileDate, CompileTime," UTC"), brightcyan, termwhite, ":", 0, false, {styleBright})
     printlnBiCol(fmtx(["<", "<11", ">9"], "Exit handler invocation at : ",
-                    cxtoday, getClockStr()), pastelorange, termwhite, ":", 0, false, {})
+                    cxtoday, getClockStr()), pastelorange, termwhite,":", 0, false, {styleBright})
     hlineLn()
     echo()
-    cxprint(2,white,yellowgreenbg,"Nim Version ", NimVersion)
+    cxprint(2,yaleblue,limegreenbg,cxbright,"Nim Version ", NimVersion)
     print(" | ", brightblack)
-    cxprint(25,white,yellowgreenbg,"NimCx Version", CXLIBVERSION)
-    cxprint(49,white,yellowgreenbg,"Elapsed secs ", fmtx(["<10.3"], epochTime() - cxstart))
-    cxprint(78,white,yellowgreenbg,"Info", " Have a Nice Day !") ## change or add custom messages as required
+    cxprint(25,yaleblue,limegreenbg,cxbright,"NimCx Version", CXLIBVERSION)
+    cxprint(49,yaleblue,limegreenbg,cxbright,"Elapsed secs ", fmtx(["<10.3"], epochTime() - cxstart))
+    cxprint(78,yaleblue,limegreenbg,cxbright,"Info", " Have a Nice Day !") ## change or add custom messages as required
     decho()
     system.addQuitProc(resetAttributes)
     quit(0)

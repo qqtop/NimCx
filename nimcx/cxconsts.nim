@@ -64,7 +64,7 @@ const
       cxReverse* = {styleReverse}
       cxBright*  = {styleBright}
       cxReverseBright* = {styleReverse,styleBright}        
-      
+      cxBlink* = {styleBlink}
       
 const
       # block chars for font building with some easy to remember names

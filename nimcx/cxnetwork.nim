@@ -346,7 +346,7 @@ proc showHosts*(dm:string) =
     ##    doFinish()
     ##
     ##
-    cechoLn(yellowgreen,"Hosts Data for " & dm)
+    printLn("Hosts Data for " & dm,yellowgreen)
     let z = getHosts(dm)
     if z.len < 1:
          printLn("Nothing found or not resolved",red)
