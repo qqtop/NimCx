@@ -292,8 +292,9 @@ proc showColors*() =
           print(fmtx(["<22"], x[0]) & "▒".repeat(10) & spaces(2) & "⌘".repeat(10) & spaces(2) & "ABCD abcd 1234567890 --> " & " Nim Colors  ", x[1], getBg(bgDefault), xpos = 3)
           print(fmtx(["<23"], spaces(2) & x[0]), x[1], styled = {styleReverse}) 
           print(spaces(2))
-          printLn(fmtx(["<23"], spaces(2) & x[0]), x[1],yalebluebg, styled = {}) 
-          sleepy(0.01)
+          printLn(fmtx(["<23"], spaces(2) & x[0]), x[1],yalebluebg)
+          echo() 
+          #sleepy(0.001)
     decho()
 
 proc makeColor*(r:int=getrndint(0,2550),g:int=getrndint(0,2550),b:int=getrndint(1000,2550),xpos:int=1) =
@@ -1289,7 +1290,7 @@ proc doCxEnd*() =
     clearup()
     decho(3)
     showcolors()
-    print(nimcxl,randcol(),styled={styleBright})         
+    print(nimcxl,randcol(),styled=cxBright)         
     doFinish()
 
 # putting decho here will put two blank lines before anything else runs

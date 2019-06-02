@@ -9,25 +9,20 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-06-01 
+##     Latest      : 2019-06-02 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
 ##     OS          : Linux
 ##
 ##     Description : provides most printing functions for the library
-##     
-##     Note        : some parts are experimental, the future aim will be 
-##           
-##                   one smart print function which handles any kind of demand for colors.
-##                   
+##              
 ## 
-##                   cpcx.nim2.nim has backgroundcolor set to bgDefault
 ## 
 import cxconsts,cxglobal,terminal,strutils,sequtils,colors,macros
 
-proc print*[T](astring:T,fgr:string = termwhite ,bgr     : string     = getBg(bgDefault),xpos:int = 0,fitLine:bool = false ,centered:bool = false,styled : set[Style]= {})
-proc printLn*[T](astring:T,fgr:string = termwhite , bgr:string = getBg(bgDefault),xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {})
+proc print*  [T](astring:T,fgr:string = getFg(fgDefault) ,bgr: string = getBg(bgDefault),xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {})
+proc printLn*[T](astring:T,fgr:string = getFg(fgDefault) ,bgr: string = getBg(bgDefault),xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {})
 proc printBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) 
 proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) 
 proc printRainbow*(astr : string,styled:set[Style] = {})     ## forward declaration
@@ -35,7 +30,6 @@ proc hline*(n:int = tw,col:string = white,xpos:int = 0,lt:string = "-") : string
 proc hlineLn*(n:int = tw,col:string = white,xpos:int = 0,lt:string = "-") : string {.discardable.}## forward declaration
 proc printErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} 
 proc printLnErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} 
-
 
 
 template rndCxFgrCol*():untyped = cxColorNames[rndSample(txcol)][0]
@@ -102,7 +96,7 @@ proc printf*(formatStr: cstring) {.importc, header: "<stdio.h>", varargs.}
      ##   
 
 proc print*[T](astring :T,
-               fgr     : string     = termwhite,
+               fgr     : string     = getFg(fgDefault),
                bgr     : string     = getBg(bgDefault),
                xpos    : int        = 0,
                fitLine : bool       = false,
@@ -188,14 +182,14 @@ proc print*[T](astring :T,
         stdout.styledwrite(fgr,bgr,styled,$astring)
 
         # reset to white/black only if any changes
-        if fgr != $fgWhite or bgr != getBg(bgDefault):
-           setForeGroundColor(fgWhite)
+        if fgr != getFg(fgDefault) or bgr != getBg(bgDefault):
+           setForeGroundColor(fgDefault)
            setBackGroundColor(bgDefault)
 
 
       
-proc printLn*[T](astring:T,
-                fgr:string = termwhite,
+proc printLn*[T](astring: T,
+                fgr:string = getFg(fgDefault),
                 bgr:string = getBg(bgDefault),   
                 xpos:int = 0,
                 fitLine:bool = false,
@@ -247,8 +241,8 @@ proc printLn*[T](astring:T,
     ##    
 
     print($(astring) & "\n",fgr,bgr,xpos,fitLine,centered,styled)
-    print cleareol
-  
+    stdout.write cleareol
+
 # output  horizontal lines
 proc hline*(n:int = tw,
             col:string = white,
@@ -479,22 +473,16 @@ proc printLnBiCol*[T](s:varargs[T,`$`],
             # no separator so we just execute printLn with left color
             printLn(zz,fgr=colLeft,xpos=xpos,centered=centered,styled = styled)
 
-        if nosepflag == false:
+        if nosepflag == false:    
 
             if centered == false:
-                print(z[0],fgr = colLeft,bgr = getBg(bgDefault),xpos = xpos,styled = styled)
-                if colRight == clrainbow:   # we currently do this as rainbow implementation has changed
-                        printLn(z[1],fgr = randcol(),bgr = getBg(bgDefault),styled = styled)
-                else:
-                        printLn(z[1],fgr = colRight,bgr = getBg(bgDefault),styled = styled)
+                  print(z[0],fgr = colLeft,bgr = getBg(bgDefault),xpos = xpos,styled = styled)
+                  printLn(z[1],fgr = colRight,bgr = getBg(bgDefault),styled = styled)
 
             else:  # centered == true
-                let npos = centerX() - zz.len div 2 - 1
-                print(z[0],fgr = colLeft,bgr = getBg(bgDefault),xpos = npos)
-                if colRight == clrainbow:   
-                        printLn(z[1],fgr = randcol(),bgr = getBg(bgDefault),styled = styled)
-                else:
-                        printLn(z[1],fgr = colRight,bgr = getBg(bgDefault),styled = styled)
+                  let npos = centerX() - zz.len div 2 - 1
+                  print(z[0],fgr = colLeft,bgr = getBg(bgDefault),xpos = npos)
+                  printLn(z[1],fgr = colRight,bgr = getBg(bgDefault),styled = styled)
                         
                         
 proc printHL*(s     : string,
@@ -519,6 +507,7 @@ proc printHL*(s     : string,
           print(rx[x])
           if x != rx.high:
              print(substr,col,bgr)
+
 
 proc printLnHL*(s      : string,
                 substr : string,
@@ -551,7 +540,7 @@ proc printCxLine*(aline:var Cxline) =
      
      case aline.linetype 
                               
-       of cxHorizontal :
+       of cxHorizontal : 
             # ok
             var xpos = aline.startpos
             var rdotpos = xpos   # this will become the end position 
@@ -611,7 +600,7 @@ proc doty*(d   :int,
            fgr :string = white,
            bgr :string = black, 
            xpos:int = 1) =
-           
+               
      ## doty
      ##
      ## prints number d of widedot ⏺  style dots in given fore/background color
@@ -635,8 +624,7 @@ proc doty*(d   :int,
 proc dotyLn*(d    :int,
              fgr  :string = white,
              bgr  :string = black, 
-             xpos :int = 1) =
-             
+             xpos :int = 1) = 
      ## dotyLn
      ##
      ## prints number d of widedot ⏺  style dots in given fore/background color and issues new line
@@ -687,10 +675,10 @@ proc printLnBAlertMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printLnBiCol("[      ] " & atext , colLeft = truetomato ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})        
      
 proc printOKMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-      printBiCol("[OK    ]" & spaces(1) & atext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
+      printBiCol("[OK    ]" & spaces(1) & atext , colLeft = limegreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
 #      
 proc printLnOkMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-      printLnBiCol("[OK    ]" & spaces(1) & atext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})    
+      printLnBiCol("[OK    ]" & spaces(1) & atext , colLeft = limegreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})    
 #     
 proc printStatusMsg*(atext:string = "",xpos:int = 1,colLeft=lightseagreen) =
      cxprint(xpos,colLeft,styleReverse,"[Status]",snow,stylereverse,spaces(1) & atext & spaces(1))

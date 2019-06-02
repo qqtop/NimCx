@@ -12,7 +12,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-05-31
+##     Latest      : 2019-06-02
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -29,17 +29,16 @@
 ##                   
 ## 
 
-import terminal,colors,sequtils,strutils
-import htmlparser
+import terminal,colors,sequtils,strutils, htmlparser
  
 const cxcodestart* = "cxcodestart"
 const cxcodeend*   = "cxcodeend"
  
-proc getfg*(fg:ForegroundColor):string =
+proc getFg*(fg:ForegroundColor):string =
     var gFG = ord(fg)
     result = "\e[" & $gFG & 'm'
 
-proc getbg*(bg:BackgroundColor):string =
+proc getBg*(bg:BackgroundColor):string =
     var gBG = ord(bg)
     result = "\e[" & $gBG & 'm'
 
@@ -63,9 +62,11 @@ const
       cxNoStyle* = {}
       cxReverse* = {styleReverse}
       cxBright*  = {styleBright}
-      cxReverseBright* = {styleReverse,styleBright}        
+      cxDim*     = {styleDim}
+      cxReverseBright* = {styleReverse,styleBright}   
+      cxReverseDim* = {styleReverse,styleDim}      
       cxBlink* = {styleBlink}
-      
+      cxItalic* = {styleItalic}
 const
       # block chars for font building with some easy to remember names
       efb1* = "▀"
@@ -80,7 +81,7 @@ const
       cfb2* = "△"
       # circles
       cfb4* = "⭕"   # shadowed circle
-      cfb5* = "⬤"    # black circle
+      cfb5* = "⬤"      # black circle
 
 const
 
@@ -141,18 +142,18 @@ const
 # to see more
 # 
 const
-    linechar* = "─"
-    leftbottom* = "╰"
-    lefttop* = "╭"
-    righttop* = "╮"
-    rightbottom* = "╯"
-    vertlinechar* = "│"
-    cross* = "┼"
-    rcross* = "┤"
-    lcross* = "├"
-    topcross* ="┬"
-    bottomcross* ="┴"      
-      
+      linechar* = "─"
+      leftbottom* = "╰"
+      lefttop* = "╭"
+      righttop* = "╮"
+      rightbottom* = "╯"
+      vertlinechar* = "│"
+      cross* = "┼"
+      rcross* = "┤"
+      lcross* = "├"
+      topcross* ="┬"
+      bottomcross* ="┴"      
+          
       
 const
       # Terminal ForegroundColor Normal
@@ -177,18 +178,16 @@ const
       brightmagenta*        = fbright(fgMagenta)
       brightblack*          = fbright(fgBlack)
 
-      clrainbow*            = "clrainbow"
-
       # Terminal BackgroundColor Normal
 
-      bred*                 = getbg(bgRed)
-      bgreen*               = getbg(bgGreen)
-      bblue*                = getbg(bgBlue)
-      bcyan*                = getbg(bgCyan)
-      byellow*              = getbg(bgYellow)
-      bwhite*               = getbg(bgWhite)
-      bblack*               = getbg(bgBlack)
-      bmagenta*             = getbg(bgMagenta)
+      bred*                 = getBg(bgRed)
+      bgreen*               = getBg(bgGreen)
+      bblue*                = getBg(bgBlue)
+      bcyan*                = getBg(bgCyan)
+      byellow*              = getBg(bgYellow)
+      bwhite*               = getBg(bgWhite)
+      bblack*               = getBg(bgBlack)
+      bmagenta*             = getBg(bgMagenta)
 
       # Terminal BackgroundColor Bright
 
@@ -232,34 +231,32 @@ const
       pastelwhitebg*        = "\x1b[48;2;204;204;204m"
       
       
-      # a few colors with intensity bit set , but used only for testing as the results are confusing
-      pastelgreenIbg*       = "\x1b[48;5;179;226;205m"    # intense bit set gives some unexpected colors
-      pastelorangeIbg*      = "\x1b[48;5;253;205;172m"
-      pastelblueIbg*        = "\x1b[48;5;203;213;232m"
-      pastelpinkIbg*        = "\x1b[48;5;244;202;228m"
-      
-      
       # TODO :  more colors
       
       # other colors of interest
       # https://www.w3schools.com/colors/colors_trends.asp
       # http://www.javascripter.net/faq/hextorgb.htm
-      truetomato*           =   "\x1b[38;2;255;100;0m"
-      bigdip*               =   "\x1b[38;2;156;37;66m"
-      greenery*             =   "\x1b[38;2;136;176;75m"     
-      bluey*                =   "\x1b[38;2;41;194;102m"    # not displaying , showing default bluishgreen
-      trueblue*             =   "\x1b[38;2;0;115;207m"
-      yaleblue*             =   "\x1b[38;2;15;77;146m"
-      
-      
+      truetomato*           =  "\x1b[38;2;255;100;0m"
+      bigdip*               =  "\x1b[38;2;156;37;66m"
+      greenery*             =  "\x1b[38;2;136;176;75m"     
+      bluey*                =  "\x1b[38;2;41;194;102m"     # not displaying , showing default bluishgreen
+      trueblue*             =  "\x1b[38;2;0;115;207m"
+      yaleblue*             =  "\x1b[38;2;15;77;146m"
+      zcolor*               =  "\x1b[38;2;255;111;210m"
+      zippi*                =  "\x1b[38;2;79;196;132m"     # maybe not displaying , showing default blueish green
+
       
       # other colors of interest with background bit set
       
-      truetomatobg*         =   "\x1b[48;2;255;100;0m"
-      greenerybg*           =   "\x1b[48;2;136;176;75m"
-      blueybg*              =   "\x1b[48;2;41;194;102m"
-      truebluebg*           =   "\x1b[48;2;0;115;207m"
-      yalebluebg*           =   "\x1b[48;2;15;77;146m"
+      truetomatobg*         =  "\x1b[48;2;255;100;0m"
+      bigdipbg*             =  "\x1b[48;2;156;37;66m"
+      greenerybg*           =  "\x1b[48;2;136;176;75m"
+      blueybg*              =  "\x1b[48;2;41;194;102m"
+      truebluebg*           =  "\x1b[48;2;0;115;207m"
+      yalebluebg*           =  "\x1b[48;2;15;77;146m"
+      zcolorbg*             =  "\x1b[48;2;255;111;210m"
+      zippibg*              =  "\x1b[48;2;79;196;132m"     # maybe not displaying , showing default blueish green
+
       
       # colors lifted from colors.nim and massaged into rgb escape seqs
 
@@ -403,8 +400,6 @@ const
       whitesmoke*           =  "\x1b[38;2;245;245;245m"
       yellow*               =  "\x1b[38;2;255;255;0m"
       yellowgreen*          =  "\x1b[38;2;154;205;50m"
-      zcolor*               =  "\x1b[38;2;255;111;210m"
-      zippi*                =  "\x1b[38;2;79;196;132m"     # maybe not displaying , showing default blueish green
 
 
  # colors lifted from colors.nim and massaged into rgb background escape seqs
@@ -548,12 +543,7 @@ const
       whitesmokebg*           =  "\x1b[48;2;245;245;245m"
       yellowbg*               =  "\x1b[48;2;255;255;0m"
       yellowgreenbg*          =  "\x1b[48;2;154;205;50m"
-      zcolorbg*               =  "\x1b[48;2;255;111;210m"
-      zippibg*                =  "\x1b[48;2;79;196;132m"     # maybe not displaying , showing default blueish green
-
-
-
-
+ 
 
 # all colors except original terminal colors
 const colorNames* = @[
@@ -902,6 +892,7 @@ const cxColorNames* = @[
 #       ("colzcolor"     ,zcolor),
 #       ("colzippi"      ,zippi)] 
         ]
+
 #hexColorNames used in eg svg creation      
 const hexColorNames* = @[
         "#F0F8FF",
@@ -3707,10 +3698,9 @@ const
 
 
 
-let nimcxl* = """
-                 
-      _  _  _  _  _   ___  _  _ 
-      |\ |  |  |\/|  |      \/  
-      | \|  |  |  |  |___  _/\_ 
-   
+let nimcxl* = """   
+   _  _  _  _  _   ___  _  _ 
+   |\ |  |  |\/|  |      \/  
+   | \|  |  |  |  |___  _/\_ 
+      
  """    
