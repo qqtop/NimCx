@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-06-02 
+##     Latest      : 2019-06-04 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -185,7 +185,6 @@ proc print*[T](astring :T,
         if fgr != getFg(fgDefault) or bgr != getBg(bgDefault):
            setForeGroundColor(fgDefault)
            setBackGroundColor(bgDefault)
-
 
       
 proc printLn*[T](astring: T,
@@ -690,7 +689,7 @@ proc printHelpMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printBiCol("[Help  ]" & spaces(1) & atext , colLeft = thistle ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
      
 proc printLnHelpMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[Help  ]" & spaces(1) & atext , colLeft = palegreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})    
+     printLnBiCol("[Help  ]" & spaces(1) & atext , colLeft = limegreen ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})    
      
 #printLnBelpMsg used for inserting more help lines without Help word
 proc printBelpMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
@@ -704,6 +703,12 @@ proc printCodeMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
 
 proc printLnCodeMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printLnBiCol("[Code  ]" & spaces(1) & atext , colLeft = lavender ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})    
+
+proc printEelpMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
+     printBiCol("[End   ]" & spaces(1) & atext , colLeft = truetomato ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})    
+
+proc printLnEelpMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[End   ]" & spaces(1) & atext , colLeft = truetomato ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})         
                 
 proc printPassMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printBiCol("[Pass  ]" & spaces(1) & atext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})

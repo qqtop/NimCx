@@ -19,7 +19,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-06-01 
+##     Latest      : 2019-06-04 
 ##
 ##     Compiler    : Nim >= 0.19.x devel branch
 ##
@@ -882,75 +882,77 @@ proc cxAlertLn*(xpos: int = 1) =
      ##
      printLn(doflag(red, 6, "ALERT ", truetomato) & doflag(red, 6),xpos = xpos)
 
-# 
-# proc cxHelp*(s: openarray[string], xpos: int = 2) =
-#       ## cxHelp
-#       ## 
-#       ## a help generator which can easily be called from within or on app start  
-#       ## with ability to include code blocks
-#       ## 
-#       ##
-#       ##.. code-block:: nim
-#       ##    cxHelp(["Help system for " & extractFileName(getAppFilename()),
-#       ##         "",
-#       ##        "1) Read the book",
-#       ##        "2) use more data",
-#       ##        "3) have a beer",
-#       ##        cxcodestart,
-#       ##        "Example 1",
-#       ##        "",
-#       ##        "let abc = @[1,2,3]",
-#       ##        "    ",
-#       ##        "var xfg = mysupergenerator(abc,3)",
-#       ##        cxcodeend,
-#       ##        "this should be help style again",
-#       ##        cxcodestart,
-#       ##        "Example 2  ",
-#       ##        "",
-#       ##        "for x in 0..<n:",
-#       ##        """   printLn("Something Nice  ",blue)"""",
-#       ##        cxcodeend,
-#       ##        "Have a nice day"])
-# 
-#       var maxlen = 0
-#       for ss in 0..<s.len:
-#            # scan for max len which will be the max width of the help
-#            # but need to limit it to within tw
-#            if maxlen < s[ss].len:  maxlen = s[ss].len
-# 
-#       if maxlen > tw - 10:
-#                 cxAlertLn(2)
-#                 showTerminalSize()
-#                 cxprintln(xpos,white,bgred,"Terminal Size to small for help line width")
-#                 cxAlertLn(2)
-#                 echo()
-# 
-#       var cxcodeflag = false
-#       var cxcodeendflag = false
-#       for ss in 0..<s.len:
-#                 var sss = s[ss]
-#                 if sss.len < maxlen: sss = sss & spaces(max(0,  maxlen - sss.len))
-#                 # we can embed a code which is set off from the help msg style
-#                 if sss.contains(cxcodestart) == true: cxcodeflag = true
-#                 if sss.contains(cxcodeend) == true: cxcodeendflag = true
-#                 if ss == 0:
-#                         printLnHelpMsg(sss, xpos = xpos)
-#                 var bhelptemp = spaces(max(0, maxlen)) # set up a blank line of correct length
-#                 if cxcodeflag == true:
-#                         if sss.contains(cxcodestart) == true:
-#                                 printLnBelpMsg(bhelptemp, xpos = xpos)
-#                         elif sss.contains(cxcodeend) == true:
-#                                 printLnBelpMsg(bhelptemp, xpos = xpos)
-#                                 # reset the flags
-#                                 cxcodeflag = false
-#                                 cxcodeendflag = false
-#                         else:
-#                                 if cxcodeflag == true:
-#                                         printLnCodeMsg(sss, xpos = xpos)
-#                 else:
-#                         if cxcodeendflag == false and ss > 0:
-#                                 printLnBelpMsg(sss, xpos = xpos)
-#       echo()
+ 
+proc cxHelp*(s: openarray[string], xpos: int = 2) =
+      ## cxHelp
+      ## 
+      ## a help generator which can easily be called from within or on app start  
+      ## with ability to include code blocks
+      ## 
+      ##
+      ##.. code-block:: nim
+      ##    cxHelp(["Help system for " & extractFileName(getAppFilename()),
+      ##         "",
+      ##        "1) Read the book",
+      ##        "2) use more data",
+      ##        "3) have a beer",
+      ##        cxcodestart,
+      ##        "Example 1",
+      ##        "",
+      ##        "let abc = @[1,2,3]",
+      ##        "    ",
+      ##        "var xfg = mysupergenerator(abc,3)",
+      ##        cxcodeend,
+      ##        "this should be help style again",
+      ##        cxcodestart,
+      ##        "Example 2  ",
+      ##        "",
+      ##        "for x in 0..<n:",
+      ##        """   printLn("Something Nice  ",blue)"""",
+      ##        cxcodeend,
+      ##        "Have a nice day"])
+
+      var maxlen = 0
+      for ss in 0..<s.len:
+           # scan for max len which will be the max width of the help
+           # but need to limit it to within tw
+           if maxlen < s[ss].len:  maxlen = s[ss].len
+
+      if maxlen > tw - 10:
+                cxAlertLn(2)
+                showTerminalSize()
+                cxprintln(xpos,white,bgred,"Terminal Size to small for help line width")
+                cxAlertLn(2)
+                echo()
+
+      var cxcodeflag = false
+      var cxcodeendflag = false
+      for ss in 0..<s.len:
+                var sss = s[ss]
+                if sss.len < maxlen: sss = sss & spaces(max(0,  maxlen - sss.len))
+                # we can embed a code which is set off from the help msg style
+                if sss.contains(cxcodestart) == true: cxcodeflag = true
+                if sss.contains(cxcodeend) == true: cxcodeendflag = true
+                if ss == 0:
+                        printLnHelpMsg(sss, xpos = xpos)
+                var bhelptemp = spaces(max(0, maxlen)) # set up a blank line of correct length
+                if cxcodeflag == true:
+                        if sss.contains(cxcodestart) == true:
+                                printLnBelpMsg(bhelptemp, xpos = xpos)
+                        elif sss.contains(cxcodeend) == true:
+                                printLnBelpMsg(bhelptemp, xpos = xpos)
+                                # reset the flags
+                                cxcodeflag = false
+                                cxcodeendflag = false
+                        else:
+                                if cxcodeflag == true:
+                                        printLnCodeMsg(sss, xpos = xpos)
+                else:
+                        if cxcodeendflag == false and ss > 0:
+                                printLnBelpMsg(sss, xpos = xpos)
+      printLnEelpMsg(cxpad("",maxlen),xpos = xpos)                          
+      echo()
+
 
 
 template infoProc*(code: untyped) =
