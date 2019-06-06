@@ -13,19 +13,19 @@ Shades of rgb grey
 
 
 
-| Code  Modules  | Demoslib         | Demos & Tests    |
-|----------------|------------------|------------------|
-| cx.nim         |                  |                  |
-| cxconsts.nim   |                  |                  |
-| cxglobal.nim   |                  |                  |
-| cxprint.nim    |                  |                  |
-| cxfont.nim     |                  |                  |
-| cxnetwork.nim  |                  |                  |
-| cxtruecolor.nim|                  |                  |
-| cxhash.nim     |                  |                  |
-| cxtime.nim     |                  |                  |
-| cxutils.nim    |                  |                  |
-| cxstats.nim    |                  |                  |
+| Code  Modules  | Demos & Tests    |
+|----------------|------------------|
+| cx.nim         | cxtest.nim       |
+| cxconsts.nim   |                  |                  
+| cxglobal.nim   |                  |                  
+| cxprint.nim    |                  |                  
+| cxfont.nim     |                  |                  
+| cxnetwork.nim  |                  |                  
+| cxtruecolor.nim|                  |                  
+| cxhash.nim     |                  |                  
+| cxtime.nim     |                  |                  
+| cxutils.nim    |                  |                  
+| cxstats.nim    |                  |                  
 
 
 [Documentation for nimcx.nim](https://qqtop.github.io/theindex.html)
@@ -106,13 +106,7 @@ doFinish()
 
 ![Image](http://qqtop.github.io/nimcolors8.png?raw=true)
 
- 
-    Brought to you by :
-  
-  
-   ![Image](http://qqtop.github.io/gnu2.png?raw=true)  ![Image](http://qqtop.github.io/gnu.png?raw=true)
-
-  
+     
 ![Image](http://qqtop.github.io/qqtop-small.png?raw=true)  
   
 

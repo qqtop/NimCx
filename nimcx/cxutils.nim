@@ -9,11 +9,11 @@
 ##
 ##     License     : MIT opensource
 ##
-##     Version     : 0.9.9
+##     Version     : 1.0.0
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-05-17
+##     Latest      : 2019-06-06
 ##
 ##     OS          : Linux
 ##

@@ -4,7 +4,7 @@ import cxprint,hashes,strutils
 ## 
 ## convenience functions for hashes 
 ## 
-## Last 2019-05-31
+## Last 2019-06-06
 ## 
 
 export hashes

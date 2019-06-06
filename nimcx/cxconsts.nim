@@ -8,11 +8,11 @@
 ##
 ##     License     : MIT opensource
 ##
-##     Version     : 0.9.9
+##     Version     : 1.0.0
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-06-02
+##     Latest      : 2019-06-06
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##

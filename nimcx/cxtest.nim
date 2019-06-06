@@ -277,8 +277,6 @@ for x in 0 ..< colPaletteLen(mycol):
    println(spaces(5) & rightarrow & "  this 12345678909 ",randCol())
   
 nextTest()
-import cxfont
-
 
 # this test will need a zoomed out terminal to accomodate all letters
 # nextTest()
@@ -297,7 +295,7 @@ import cxfont
 
 nextTest()
 
-printNimcx()
+printNimCx()
 decho(8)
 printMadeWithNim()
 decho(8)

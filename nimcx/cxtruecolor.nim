@@ -19,9 +19,9 @@ import cxglobal,cxconsts,cxprint,cxutils,terminal,strutils,random
 # Now all cxtruecolor functions need one  call to
 # getCxTrueColorSet()  and compilation with -d:cxTrueCol 
 # eg. nim c -r -d:cxTruecol cxtruecolor.nim
-# then it will work like expected
+# then it may/will work like expected
 #
-# Last : 2019-05-31
+# Last : 2019-06-06
 # 
 # 
 type

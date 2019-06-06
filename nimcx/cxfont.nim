@@ -5,10 +5,9 @@ import strutils,terminal,sets
 # cxfont.nim
 #
 # Experimental font building 
+#
+# may break  
 # 
-# currently removed from nimcx 2019-05-31
-# 
-# status ok : needs more testing
 #
 # experimental font, slim numbers , swampfont , dotmatrix ,
 # 
@@ -18,7 +17,7 @@ import strutils,terminal,sets
 # try : 
 # 
 # 
-# Last : 2019-06-03  
+# Last : 2019-06-06  
 # 
 # 
 # Examples :
@@ -1047,6 +1046,7 @@ proc printFontFancy*(s:string, coltop1 = rndcol(),xpos:int = -10) =
             else: discard             
  
 proc printNimCx*(npos:int = tw div 2 - 30) =
+
         ## printNimcx
         ## 
         ##  experiments in block font building , default is center in terminal
@@ -1059,11 +1059,11 @@ proc printNimCx*(npos:int = tw div 2 - 30) =
         let colc = randCol2("light")
         cxc(xpos+29, colc,coltop=red)
         cxx(xpos+38,coltop=red) 
-        #echo()
+        
               
 
 proc printMadeWithNim*(npos:int = tw div 2 - 60) =
-        ## printNimcx
+        ## printMadeWithNim
         ## 
         ##  experiments in block font building , default is center in terminal
         ## 
