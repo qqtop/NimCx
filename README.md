@@ -72,7 +72,7 @@ Example usage of print procs
 ![Image](http://qqtop.github.io/nimspirals.png?raw=true)
 
 
-![Image](http://qqtop.github.io/sierpred.png?raw=true)
+![Image](http://qqtop.github.io/sierpcarpet.png?raw=true)
 
 
 ![Image](http://qqtop.github.io/nimspectrum.png?raw=true)
