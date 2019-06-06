@@ -53,7 +53,7 @@ Shades of rgb grey
 [Documentation for cxstats.nim](https://qqtop.github.io/cxstats.html)
 
 
-Requires     : Latest Nim dev version and best used in a konsole for full color effects
+Requires     : Latest Nim devel version and best used in a konsole for full color effects
 
 Installation : 
 
@@ -84,20 +84,27 @@ Example usage of print procs
 ```nimrod         
 
 import nimcx
-# show the colors
 showColors()
 doFinish()
 
 ```
 
 
-![Image](http://qqtop.github.io/nimcolors33.png?raw=true)
+![Image](http://qqtop.github.io/nimcolors1.png?raw=true)
 
-![Image](http://qqtop.github.io/nimcolors34.png?raw=true)
+![Image](http://qqtop.github.io/nimcolors2.png?raw=true)
 
-![Image](http://qqtop.github.io/nimcolors35.png?raw=true)
+![Image](http://qqtop.github.io/nimcolors3.png?raw=true)
 
-![Image](http://qqtop.github.io/nimcolors36.png?raw=true)
+![Image](http://qqtop.github.io/nimcolors4.png?raw=true)
+
+![Image](http://qqtop.github.io/nimcolors5.png?raw=true)
+
+![Image](http://qqtop.github.io/nimcolors6.png?raw=true)
+
+![Image](http://qqtop.github.io/nimcolors7.png?raw=true)
+
+![Image](http://qqtop.github.io/nimcolors8.png?raw=true)
 
  
     Brought to you by :

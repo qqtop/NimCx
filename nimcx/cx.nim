@@ -92,7 +92,7 @@
 ##
 ##                   proc fmtx a simple formatting utility has been added and works with strformat too
 ##
-##                   for printing of multiple columns in the terminal the print,printLn,printBiCol,printlnBiCol
+##                   for printing of multiple columns in the terminal the print,printLn,printBiCol,printLnBiCol
 ##                   
 ##                   routines should be used.  
 ##                   
@@ -171,7 +171,7 @@ elif defined(clang): someGcc = "clang"
 elif defined(cpp): someGcc = "c++ target"
 else: someGcc = "undefined"
 
-const CXLIBVERSION* = "0.9.9"
+const CXLIBVERSION* = "1.0.0"
 discard setLocale(LC_ALL, "") # init utf8 
 
 when defined(macosx):
@@ -243,7 +243,7 @@ proc newColor*(r, g, b: int): string =
     ##   newColor
     ##   
     ##   creates a new color string from r,g,b values. Passed in colors can be used as 
-    ##   foregroundcolor in print,printLn routines and as bgr in cxPrint,cxPrintLn .
+    ##   foregroundcolor in print,printLn routines and as bgr in cxPrint,cxprintLn .
     ##   
     ##   Example
     ##   
@@ -289,13 +289,14 @@ proc showColors*() =
     ##
     for x in colorNames:
        if x[0].endswith("bg") == false:
-          print(fmtx(["<22"], x[0]) & "▒".repeat(10) & spaces(2) & "⌘".repeat(10) & spaces(2) & "ABCD abcd 1234567890 --> " & " Nim Colors  ", x[1], getBg(bgDefault), xpos = 3)
+          print(fmtx(["<22"], x[0]) & "▒".repeat(10) & spaces(2) & "⌘".repeat(10) & spaces(2) & "ABCD abcd 1234567890 --> ", x[1], getBg(bgDefault), xpos = 3)
           print(fmtx(["<23"], spaces(2) & x[0]), x[1], styled = {styleReverse}) 
           print(spaces(2))
-          printLn(fmtx(["<23"], spaces(2) & x[0]), x[1],yalebluebg)
+          print(fmtx(["<23"], spaces(2) & x[0]), x[1],yalebluebg)
+          print("  ||| ",x[1], getBg(bgDefault))
+          printLn(fmtx(["<23"], spaces(2) & x[0]), x[1],darkslategraybg,styled={styleBright})
           echo() 
-          #sleepy(0.001)
-    decho()
+    echo()
 
 proc makeColor*(r:int=getrndint(0,2550),g:int=getrndint(0,2550),b:int=getrndint(1000,2550),xpos:int=1) =
     ## makeColor
@@ -305,7 +306,7 @@ proc makeColor*(r:int=getrndint(0,2550),g:int=getrndint(0,2550),b:int=getrndint(
     ## 
     let nc = newcolor(r,g,b)
     print(cxlpad($r & " " & $g & " " & $b,15) & " " & efb2 * 20,nc,xpos=xpos)
-    decho(1)
+    echo()
 
  
 proc makeColorTest*() = 
@@ -360,12 +361,12 @@ proc nimcat*(curFile: string, countphrase: varargs[string, `$`] = "") =
     if ext == "": ccurFile = ccurFile & ".nim"
     if not fileExists(ccurfile):
             echo()
-            cxprintln(2,white,bgred,ccurfile & " not found !")
+            cxprintLn(2,white,bgred,ccurfile & " not found !")
             printLn(spaces(8) & " Check path and filename")
             echo()
             discard
     else:
-            decho()
+            echo()
             dlineLn()
             echo()
             var phraseinline = newSeqWith(countphrase.len, newSeq[int](0)) # holds the line numbers where a phrase to be counted was found
@@ -387,7 +388,7 @@ proc nimcat*(curFile: string, countphrase: varargs[string, `$`] = "") =
             for x in countphrase:
                 if x.len > maxphrasewidth: maxphrasewidth = x.len
             if countphrase.len > 0:
-                println("\nPhraseCount stats :    \n", gold, styled = {styleUnderScore})
+                printLn("\nPhraseCount stats :    \n", gold, styled = {styleUnderScore})
                 for x in 0..<countphrase.len:
                     printLnBiCol(fmtx(["<" & $maxphrasewidth, "",""], countphrase[x]," : " & rightarrow & " Count: ", phraseinline[x].len), xpos = 4)
                     printLnBiCol("Occurence : Line No.", colLeft = truetomato, colRight = yellow, sep = ":", 4, false, {})
@@ -549,7 +550,7 @@ proc showBench*() =
                     printLn(fmtx(["<$1" % $bnamesize, "", "<70", "<50"],aa1, spaces(3), cc1, ee1))
 
                     if dd1.contains("Inf") or ee1.contains("Inf"):
-                            cxprintln(2,yaleblue,limegreenbg,"Inf - To measure something increase the loop count.")
+                            cxprintLn(2,yaleblue,limegreenbg,"Inf - To measure something increase the loop count.")
 
                 echo()
                 benchmarkresults = @[]
@@ -691,7 +692,7 @@ proc spellFloat*(n: float64, currency: bool = false, sep: string = ".", sepname:
         ##  printLn spellFloat(0.00)
         ##  printLn spellFloat(234)
         ##  printLn spellFloat(-2311.345)
-        ##  println spellFloat(5212311.00).replace("dot","and") & "hundreds"
+        ##  printLn spellFloat(5212311.00).replace("dot","and") & "hundreds"
         ##  printLn spellFloat(122311.34,true).replace("dot","dollars and") & " cents"
         ##
 
@@ -756,7 +757,7 @@ proc newDir*(dirname: string) =
             except OSError:
                 cxprintLn(2,white,bgred,dirname & " creation failed. Check permissions.")
      else:
-            cxprintln(2,white,bgred,"Directory " & dirname & " already exists !")
+            cxprintLn(2,white,bgred,"Directory " & dirname & " already exists !")
 
 proc remDir*(dirname: string): bool {.discardable.} =
     ## remDir
@@ -774,14 +775,14 @@ proc remDir*(dirname: string): bool {.discardable.} =
         if existsDir(dirname):
             try:
                     removeDir(dirname)
-                    cxprintln(2,yaleblue,limegreenbg,"Directory " & dirname & " deleted")
+                    cxprintLn(2,yaleblue,limegreenbg,"Directory " & dirname & " deleted")
                     result = true
             except OSError:
                     cxprintLn(2,white,bgred,"Directory " & dirname & " deletion failed")
                     cxprintLn(2,white,bgred,"System    " & getCurrentExceptionMsg())
                     result = false
         else:
-            cxprintln(2,white,bgred,"Directory " & dirname & " does not exists !")
+            cxprintLn(2,white,bgred,"Directory " & dirname & " does not exists !")
             result = false
 
 
@@ -813,7 +814,7 @@ proc toClip*[T](s: T) =
     ## 
     ##
     let res = execCmd("echo $1 | xclip " % $s)
-    if res <> 0: cxprintln(2,white,bgred,"xclip output : " & $res & " but expected 0")
+    if res <> 0: cxprintLn(2,white,bgred,"xclip output : " & $res & " but expected 0")
 
 
 proc getColorName*[T](sc: T): string =
@@ -847,7 +848,7 @@ proc showTerminalSize*() =
       ## height is always available via th
       ##
       ##
-      cxprintln(2,yaleblue,limegreenbg," Terminal Size ", styleReverse," W" & spaces(1) & $tw & " x" & " H " & $th & spaces(1))
+      cxprintLn(2,yaleblue,limegreenbg," Terminal Size ", styleReverse," W" & spaces(1) & $tw & " x" & " H " & $th & spaces(1))
 
 
 proc cxAlert*(xpos: int = 1) =
@@ -921,7 +922,7 @@ proc cxHelp*(s: openarray[string], xpos: int = 2) =
       if maxlen > tw - 10:
                 cxAlertLn(2)
                 showTerminalSize()
-                cxprintln(xpos,white,bgred,"Terminal Size to small for help line width")
+                cxprintLn(xpos,white,bgred,"Terminal Size to small for help line width")
                 cxAlertLn(2)
                 echo()
 
@@ -985,9 +986,9 @@ template infoProc*(code: untyped) =
           try:
               let pos = instantiationInfo()
               code
-              cxprintln(2,yaleblue,goldenrodbg," Infoproc ",getFg(fgDefault),getbg(bgDefault), " $1 Line: $2 with: '$3'" % [pos.filename, $pos.line, astToStr(code)])
+              cxprintLn(2,yaleblue,goldenrodbg," Infoproc ",getFg(fgDefault),getbg(bgDefault), " $1 Line: $2 with: '$3'" % [pos.filename, $pos.line, astToStr(code)])
           except:
-              cxprintln(2,white,bgred,"Checking instantiationInfo ")
+              cxprintLn(2,white,bgred,"Checking instantiationInfo ")
               discard
 
 
@@ -1053,7 +1054,7 @@ proc rmTmpFilenames*() =
           try:
               removeFile(fn)
           except:
-              cxprintln(2,white,truetomatobg,fn & "could not be deleted.")
+              cxprintLn(2,white,truetomatobg,fn & "could not be deleted.")
 
 proc doInfo*() =
     ## doInfo
@@ -1065,59 +1066,59 @@ proc doInfo*() =
     let modTime = getLastModificationTime(filename)
     let sep = ":"
     superHeader("Information for file " & filename & " and System " & spaces(22))
-    printlnBiCol("Last compilation on           : " & CompileDate & " at " & CompileTime & " UTC", yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Last compilation on           : " & CompileDate & " at " & CompileTime & " UTC", yellowgreen, lightgrey, sep, 0, false, {})
     # this only makes sense for non executable files
     #printLnBiCol("Last access time of file     : " & filename & " " & $(fromSeconds(int(getLastAccessTime(filename)))),yellowgreen,lightgrey,sep,0,false,{})
-    printlnBiCol("Last modificaton time of file : " & filename & " " & $modTime, yellowgreen, lightgrey, sep, 0, false, {})
-    printlnBiCol("Offset from UTC in hours      : " & cxTimeZone(), yellowgreen, lightgrey, sep, 0, false, {})
-    printlnBiCol("UTC Time                      : " & $now().utc, yellowgreen, lightgrey, sep, 0, false, {})
-    printlnBiCol("Local Time                    : " & $now().local,yellowgreen, lightgrey, sep, 0, false, {})
-    printlnBiCol("Environment Info              : " & os.getEnv("HOME"),yellowgreen, lightgrey, sep, 0, false, {})
-    printlnBiCol("TrueColor                     : " & $checktruecolorsupport(), goldenrod, lightgrey, sep, 0, false, {})
-    printlnBiCol("File exists                   : " & $(existsFile filename), yellowgreen, lightgrey, sep, 0, false, {})
-    printlnBiCol("Dir exists                    : " & $(existsDir "/"),yellowgreen, lightgrey, sep, 0, false, {})
-    printlnBiCol("AppDir                        : " & getAppDir(),yellowgreen, lightgrey, sep, 0, false, {})
-    printlnBiCol("App File Name                 : " & getAppFilename(),yellowgreen, lightgrey, sep, 0, false, {})
-    printlnBiCol("User home  dir                : " & os.getHomeDir(),yellowgreen, lightgrey, sep, 0, false, {})
-    printlnBiCol("Config Dir                    : " & os.getConfigDir(), yellowgreen, lightgrey, sep, 0, false, {})
-    printlnBiCol("Current Dir                   : " & os.getCurrentDir(), yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Last modificaton time of file : " & filename & " " & $modTime, yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Offset from UTC in hours      : " & cxTimeZone(), yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("UTC Time                      : " & $now().utc, yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Local Time                    : " & $now().local,yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Environment Info              : " & os.getEnv("HOME"),yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("TrueColor                     : " & $checktruecolorsupport(), goldenrod, lightgrey, sep, 0, false, {})
+    printLnBiCol("File exists                   : " & $(existsFile filename), yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Dir exists                    : " & $(existsDir "/"),yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("AppDir                        : " & getAppDir(),yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("App File Name                 : " & getAppFilename(),yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("User home  dir                : " & os.getHomeDir(),yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Config Dir                    : " & os.getConfigDir(), yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Current Dir                   : " & os.getCurrentDir(), yellowgreen, lightgrey, sep, 0, false, {})
     let fi = getFileInfo(filename)
-    printlnBiCol("File Id                       : " & $(fi.id.device), yellowgreen, lightgrey, sep, 0, false, {})
-    printlnBiCol("File No.                      : " & $(fi.id.file), yellowgreen, lightgrey, sep, 0, false, {})
-    printlnBiCol("Kind                          : " & $(fi.kind),yellowgreen, lightgrey, sep, 0, false, {})
-    printlnBiCol("Size                          : " & $(float(fi.size) / float(1000)) & " kb", yellowgreen, lightgrey, sep, 0, false, {})
-    printlnBiCol("File Permissions              : ", yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("File Id                       : " & $(fi.id.device), yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("File No.                      : " & $(fi.id.file), yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Kind                          : " & $(fi.kind),yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Size                          : " & $(float(fi.size) / float(1000)) & " kb", yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("File Permissions              : ", yellowgreen, lightgrey, sep, 0, false, {})
     for pp in fi.permissions:
-            printlnBiCol("                              : " & $pp, yellowgreen, lightgrey, sep, 0, false, {})
-    printlnBiCol("Link Count                    : " & $(fi.linkCount), yellowgreen, lightgrey, sep, 0, false, {})
+            printLnBiCol("                              : " & $pp, yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Link Count                    : " & $(fi.linkCount), yellowgreen, lightgrey, sep, 0, false, {})
     # these only make sense for non executable files
-    printlnBiCol("Last Access                   : " & $(fi.lastAccessTime), yellowgreen, lightgrey, sep, 0, false, {})
-    printlnBiCol("Last Write                    : " & $(fi.lastWriteTime), yellowgreen, lightgrey, sep, 0, false, {})
-    printlnBiCol("Creation                      : " & $(fi.creationTime), yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Last Access                   : " & $(fi.lastAccessTime), yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Last Write                    : " & $(fi.lastWriteTime), yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Creation                      : " & $(fi.creationTime), yellowgreen, lightgrey, sep, 0, false, {})
 
     when defined windows:
-            printlnBiCol("System                        : Windows..... Really ??", red, lightgrey, sep, 0, false, {})
+            printLnBiCol("System                        : Windows..... Really ??", red, lightgrey, sep, 0, false, {})
     elif defined linux:
-            printlnBiCol("System                        : Running on Linux", brightcyan, yellowgreen, sep, 0, false, {})
+            printLnBiCol("System                        : Running on Linux", brightcyan, yellowgreen, sep, 0, false, {})
     else:
-            printlnBiCol("System                        : Interesting Choice", yellowgreen, lightgrey, sep, 0, false, {})
+            printLnBiCol("System                        : Interesting Choice", yellowgreen, lightgrey, sep, 0, false, {})
 
     when defined x86:
-            printlnBiCol("Code specifics                : x86", yellowgreen, lightgrey, sep, 0, false, {})
+            printLnBiCol("Code specifics                : x86", yellowgreen, lightgrey, sep, 0, false, {})
 
     elif defined amd64:
-            printlnBiCol("Code specifics                : amd86",yellowgreen, lightgrey, sep, 0, false, {})
+            printLnBiCol("Code specifics                : amd86",yellowgreen, lightgrey, sep, 0, false, {})
     else:
-            printlnBiCol("Code specifics                : generic",yellowgreen, lightgrey, sep, 0, false, {})
+            printLnBiCol("Code specifics                : generic",yellowgreen, lightgrey, sep, 0, false, {})
 
-    printlnBiCol("Nim Version                   : " & $NimMajor & "." & $NimMinor & "." & $NimPatch, yellowgreen, lightgrey, sep, 0, false, {})
-    printlnBiCol("Processor count               : " & $cpuInfo.countProcessors(), yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Nim Version                   : " & $NimMajor & "." & $NimMinor & "." & $NimPatch, yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Processor count               : " & $cpuInfo.countProcessors(), yellowgreen, lightgrey, sep, 0, false, {})
     printBiCol("OS                            : " & hostOS, yellowgreen,lightgrey, sep, 0, false, {})  
     printBiCol(" | CPU: " & hostCPU, yellowgreen, lightgrey, sep, 0,false, {})
-    printlnBiCol(" | cpuEndian: " & $cpuEndian, yellowgreen, lightgrey, sep, 0, false, {})
-    printlnBiCol("CPU Cores                     : " & $cpuInfo.countProcessors())
-    printlnBiCol("Current pid                   : " & $getpid(), yellowgreen, lightgrey, sep, 0, false, {})
-    printlnBiCol("Terminal encoding             : " & $getCurrentEncoding())
+    printLnBiCol(" | cpuEndian: " & $cpuEndian, yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("CPU Cores                     : " & $cpuInfo.countProcessors())
+    printLnBiCol("Current pid                   : " & $getpid(), yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Terminal encoding             : " & $getCurrentEncoding())
 
 
 proc infoLine*() =
@@ -1171,7 +1172,7 @@ proc cpuInfo*() =
           if not x.startswith("Flags:"):
              printLnBiCol(x)
    except:
-       printlnErrorMsg("lscpu command my not be available on this system") 
+       printLnErrorMsg("lscpu command my not be available on this system") 
       
 # code below borrowed from distros.nim and made exportable
 # there is now a new posix_utils module which also can give 
@@ -1215,25 +1216,25 @@ proc doFinish*() =
                 echo()
                 printBiCol(fmtx(["<14"], "Elapsed    : "), colLeft=yellowgreen)
                 printBiCol(fmtx(["<", ">5"], ff(epochtime() - cxstart, 3), " secs"), colLeft=goldenrod)
-                printlnBiCol("  Compiled on: " & $CompileDate & spaces(1) & $CompileTime & spaces(1) & "UTC in " & cxTimeZone())
+                printLnBiCol("  Compiled on: " & $CompileDate & spaces(1) & $CompileTime & spaces(1) & "UTC in " & cxTimeZone())
                 if detectOs(OpenSUSE) or detectOs(Parrot): # some additional data if on openSuse or parrotOs systems
                     let ux1 = uname().split("#")[0].split(" ")
-                    printlnBiCol("Kernel     :  " & ux1[2] & " | Computer: " & ux1[1] & " | Os: " & ux1[0] & " | CPU Cores: " & $(
+                    printLnBiCol("Kernel     :  " & ux1[2] & " | Computer: " & ux1[1] & " | Os: " & ux1[0] & " | CPU Cores: " & $(
                                     osproc.countProcessors()), yellowgreen, lightslategray, ":", 0, false, {})
                     let rld = release().splitLines()
                     let rld3 = rld[2].splitty(":")
                     let rld4 = rld3[0] & spaces(2) & strutils.strip(rld3[1])
                     printBiCol(rld4, yellowgreen, lightslategray, ":", 0,false, {})
-                    printlnBiCol(spaces(2) & "Release: " & strutils.strip((
+                    printLnBiCol(spaces(2) & "Release: " & strutils.strip((
                                     split(rld[3], ":")[1])), yellowgreen,
                                     lightslategray, ":", 0, false, {})
                     printBiCol("NimCx by   : ",colLeft=yellowgreen)                
                     qqTop()  # put your own name/linelogo here
-                    printlnBiCol(" - " & year(getDateStr()), colLeft = lightslategray)
+                    printLnBiCol(" - " & year(getDateStr()), colLeft = lightslategray)
                     echo()
                 else:
                     let un = execCmdEx("uname -v")
-                    cxprintln(2,white,"uname -v ", un.output)
+                    cxprintLn(2,white,"uname -v ", un.output)
                 rmTmpFilenames()
                 GC_fullCollect() # just in case anything hangs around
                 quit(0)
@@ -1262,9 +1263,9 @@ proc handler*() {.noconv.} =
     hlineLn()
     printLn( "Thank you for using        : " & getAppFilename(),yellowgreen)
     hlineLn()
-    printlnBiCol(fmtx(["<", "<11", ">9",""], "Last compilation on        : ",
+    printLnBiCol(fmtx(["<", "<11", ">9",""], "Last compilation on        : ",
                     CompileDate, CompileTime," UTC"), brightcyan, termwhite, ":", 0, false, {styleBright})
-    printlnBiCol(fmtx(["<", "<11", ">9"], "Exit handler invocation at : ",
+    printLnBiCol(fmtx(["<", "<11", ">9"], "Exit handler invocation at : ",
                     cxtoday, getClockStr()), pastelorange, termwhite,":", 0, false, {styleBright})
     hlineLn()
     echo()
