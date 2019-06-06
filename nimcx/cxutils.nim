@@ -346,7 +346,6 @@ proc showRuler* (xpos:int=0,xposE:int=0,ypos:int = 0,fgr:string = white,bgr:stri
      ## 
      ## for vertical   --> vert = true
      ##
-     ## see cxDemo and cxTest for more usage examples
      ##
      ## .. code-block::nim
      ##   # this will show a full terminal width ruler
@@ -362,9 +361,9 @@ proc showRuler* (xpos:int=0,xposE:int=0,ypos:int = 0,fgr:string = white,bgr:stri
      var npos  = xpos
      var nposE = xposE
      if xpos == 0: npos  = 0
-     if xposE == 0: nposE = tw - 1
+     if xposE == 0: nposE = tw - 3
      if vert == false :  # horizontalruler
-          for x in npos..nposE:
+          for x in npos .. nposE:
             if x == 0:
                 curup(1)
                 print(".",lime,bgr,xpos = 0)
@@ -1043,7 +1042,7 @@ proc showSeq*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5,di
     if displayflag == true:
       decho()      
       let msg1 = "0 - " & $(z.len - 1) & spaces(3)
-      cxprintLn(3,trueblue,yellowgreenbg,"Item Count ",cxpad($z.len,msg1.len)) 
+      cxprintLn(3,limegreen,darkslategraybg," Item Count : ",cxpad($z.len,msg1.len)) 
       decho()          
  
 

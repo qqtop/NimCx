@@ -271,7 +271,7 @@ proc rndSample*[T](asq: seq[T]): T =
           ## returns one rand sample from a sequence
           ## 
           randomize()
-          result = rand(asq)
+          result = sample(asq)
 
 proc rndRGB*(): auto =
           ## rndRGB

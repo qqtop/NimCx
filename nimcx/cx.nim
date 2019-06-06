@@ -15,11 +15,11 @@
 ##     
 ##     License     : MIT opensource
 ##
-##     Version     : 0.9.9
+##     Version     : 1.0.0
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-06-04 
+##     Latest      : 2019-06-06 
 ##
 ##     Compiler    : Nim >= 0.19.x devel branch
 ##
@@ -122,7 +122,7 @@
 ##
 
 import
-        cxconsts, cxglobal, cxtime, cxprint, cxhash, cxtruecolor, cxutils, cxnetwork, cxstats
+        cxconsts, cxglobal, cxtime, cxprint, cxhash, cxtruecolor, cxfont, cxutils, cxnetwork, cxstats
 import 
         std/[os, osproc, times, random, strutils,strmisc, strformat, strscans, parseutils, sequtils, parseopt,
         tables, sets, macros,posix,posix_utils, htmlparser,
@@ -134,7 +134,7 @@ import
 import strutils except align
 
 export
-        cxconsts, cxglobal, cxtime, cxprint, cxhash, cxtruecolor, cxutils, cxnetwork, cxstats,
+        cxconsts, cxglobal, cxtime, cxprint, cxhash, cxtruecolor, cxfont,cxutils, cxnetwork, cxstats,
         os, osproc, times, random, strmisc,strformat, strscans, parseutils, sequtils, parseopt,
         tables, sets, macros,posix, posix_utils,htmlparser,
         terminal, math, stats, json, streams, options, memfiles,
@@ -568,10 +568,14 @@ proc showPalette*(coltype:string = "white" ) =
      ##   coltype examples : "red","blue","medium","dark","light","pastel" etc..
      ##
      echo()
+     var n = 0
      let z = colPaletteLen(coltype)
      for x in 0 ..< z:
-        printLn(fmtx([">3", ">4"],$x,rightarrow) & " ABCD 1234567890   " & colPaletteName(coltype, x), colPalette(coltype, x))
-     printLnBiCol("\n" & coltype & "Palette items count   : " & $z)
+        if not colPaletteName(coltype, x).endswith("bg") :
+           inc n 
+           printLn(fmtx([">3", ">4"],$n,rightarrow) & " ABCD 1234567890   " & colPaletteName(coltype, x), colPalette(coltype, x))
+     echo()      
+     printLnBiCol(" Items in Palette " & coltype & " : " & $n)
      echo()
 
 
