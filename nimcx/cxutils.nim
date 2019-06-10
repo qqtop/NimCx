@@ -110,14 +110,15 @@ proc getPassword*(ahash:int64 = 0i64):string =
            curup(1)
            print(cleareol)
            # following could also be send to a logger
-           cxprint(1,white,yellowgreenbg,"Access granted at : " , trueblue,pastelwhitebg, cxnow)
+           cxprintLn(1,white,darkslategraybg,"Access granted at : " , limegreen,truebluebg, cxnow)
            echo()
            result = zz
      else:
-           echo()
+           curup(1)
            let dn = "Access denied at : " & cxnow
-           cxprintln(1,white,bgred,dn)
-           cxprintln(1,trueblue,pastelWhite,cxpad("Exiting now . Bye Bye.",dn.len))
+           cxprintln(1,yellow,redbg,dn)
+           cxprintln(1,pastelWhite,yalebluebg,cxpad("Exiting now . Bye Bye.",dn.len))
+           decho(2)
            quit(1)
     
   

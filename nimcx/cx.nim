@@ -19,7 +19,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-06-06 
+##     Latest      : 2019-06-10 
 ##
 ##     Compiler    : Nim >= 0.19.x devel branch
 ##
@@ -37,7 +37,7 @@
 ##                   
 ##                   cx.nim , cxconsts.nim , cxglobal, cxprint.nim , cxfont , cxhash ,
 ##                   
-##                   cxtime , cxtruecolor , cxstats and cxutils.nim , 
+##                   cxtime , cxstats and cxutils.nim , 
 ##                   
 ##                   all files are automatically imported with : import nimcx
 ## 
@@ -122,7 +122,7 @@
 ##
 
 import
-        cxconsts, cxglobal, cxtime, cxprint, cxhash, cxtruecolor, cxfont, cxutils, cxnetwork, cxstats
+        cxconsts, cxglobal, cxtime, cxprint, cxhash, cxfont, cxutils, cxnetwork, cxstats
 import 
         std/[os, osproc, times, random, strutils,strmisc, strformat, strscans, parseutils, sequtils, parseopt,
         tables, sets, macros,posix,posix_utils, htmlparser,
@@ -134,7 +134,7 @@ import
 import strutils except align
 
 export
-        cxconsts, cxglobal, cxtime, cxprint, cxhash, cxtruecolor, cxfont,cxutils, cxnetwork, cxstats,
+        cxconsts, cxglobal, cxtime, cxprint, cxhash, cxfont,cxutils, cxnetwork, cxstats,
         os, osproc, times, random, strmisc,strformat, strscans, parseutils, sequtils, parseopt,
         tables, sets, macros,posix, posix_utils,htmlparser,
         terminal, math, stats, json, streams, options, memfiles,
@@ -192,6 +192,7 @@ when defined(posix):
 
 let cxstart* = epochTime() # simple execution timing with one line see doFinish()
 randomize()                # seed rand number generator
+enableTrueColors()         # enable truecolorsupport
 
 # type used in Benchmark
 type
@@ -268,8 +269,9 @@ proc newColor2*(r, g, b: int): string = "\x1b[48;2;$1;$2;$3m" % [$r, $g, $b]
     ##   newColor2
     ##   
     ##   creates a new color string from r,g,b values passed in with styleReverse effect for text
-    ##   best used as foregroundcolor in print, printLn routines
+    ##   best used as backroundcolor in print, printLn routines
     ##
+    
 
 proc checkColor*(colname: string): bool =
     ## checkColor
@@ -1071,14 +1073,11 @@ proc doInfo*() =
     let sep = ":"
     superHeader("Information for file " & filename & " and System " & spaces(22))
     printLnBiCol("Last compilation on           : " & CompileDate & " at " & CompileTime & " UTC", yellowgreen, lightgrey, sep, 0, false, {})
-    # this only makes sense for non executable files
-    #printLnBiCol("Last access time of file     : " & filename & " " & $(fromSeconds(int(getLastAccessTime(filename)))),yellowgreen,lightgrey,sep,0,false,{})
     printLnBiCol("Last modificaton time of file : " & filename & " " & $modTime, yellowgreen, lightgrey, sep, 0, false, {})
     printLnBiCol("Offset from UTC in hours      : " & cxTimeZone(), yellowgreen, lightgrey, sep, 0, false, {})
     printLnBiCol("UTC Time                      : " & $now().utc, yellowgreen, lightgrey, sep, 0, false, {})
     printLnBiCol("Local Time                    : " & $now().local,yellowgreen, lightgrey, sep, 0, false, {})
     printLnBiCol("Environment Info              : " & os.getEnv("HOME"),yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("TrueColor                     : " & $checktruecolorsupport(), goldenrod, lightgrey, sep, 0, false, {})
     printLnBiCol("File exists                   : " & $(existsFile filename), yellowgreen, lightgrey, sep, 0, false, {})
     printLnBiCol("Dir exists                    : " & $(existsDir "/"),yellowgreen, lightgrey, sep, 0, false, {})
     printLnBiCol("AppDir                        : " & getAppDir(),yellowgreen, lightgrey, sep, 0, false, {})
@@ -1289,15 +1288,15 @@ proc doCxEnd*() =
     ##
     clearup()
     decho()
-    print(nimcxl,randcol(),styled={styleBright}) 
-    print(spaces(11))
+    print(nimcxl & "  V. " & CXLIBVERSION,randcol(),styled={styleBright}) 
+    print(spaces(6))
     qqtop()
     echo("  -  " & year(getDateStr()))
     doInfo()
     clearup()
     decho(3)
     showcolors()
-    print(nimcxl,randcol(),styled=cxBright)         
+    print(nimcxl & "  V. " & CXLIBVERSION,randcol(),styled={styleBright})  
     doFinish()
 
 # putting decho here will put two blank lines before anything else runs

@@ -1,5 +1,5 @@
 {.deadCodeElim: on , optimization: speed.}
-import cxglobal,cxconsts,cxprint,cxtruecolor
+import cxglobal,cxconsts,cxprint
 import strutils,terminal,sets
 
 # cxfont.nim
@@ -17,7 +17,7 @@ import strutils,terminal,sets
 # try : 
 # 
 # 
-# Last : 2019-06-06  
+# Last : 2019-06-10  
 # 
 # 
 # Examples :

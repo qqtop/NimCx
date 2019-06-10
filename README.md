@@ -20,8 +20,7 @@ Shades of rgb grey
 | cxglobal.nim   |                  |                  
 | cxprint.nim    |                  |                  
 | cxfont.nim     |                  |                  
-| cxnetwork.nim  |                  |                  
-| cxtruecolor.nim|                  |                  
+| cxnetwork.nim  |                  |                                
 | cxhash.nim     |                  |                  
 | cxtime.nim     |                  |                  
 | cxutils.nim    |                  |                  
@@ -35,8 +34,6 @@ Shades of rgb grey
 [Documentation for cxglobal.nim](https://qqtop.github.io/cxglobal.html)
 
 [Documentation for cxprint.nim](https://qqtop.github.io/cxprint.html)
-
-[Documentation for cxtruecolor.nim](https://qqtop.github.io/cxtruecolor.html)
 
 [Documentation for cxtime.nim](https://qqtop.github.io/cxtime.html)
 

@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-06-04 
+##     Latest      : 2019-06-06 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -30,25 +30,6 @@ proc hline*(n:int = tw,col:string = white,xpos:int = 0,lt:string = "-") : string
 proc hlineLn*(n:int = tw,col:string = white,xpos:int = 0,lt:string = "-") : string {.discardable.}## forward declaration
 proc printErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} 
 proc printLnErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} 
-
-
-template rndCxFgrCol*():untyped = cxColorNames[rndSample(txcol)][0]
-    ## rndCxFgrCol
-    ## 
-    ## returns a random foreground color for cxPrint or cxPrintLn procs
-    ## from cxColorNames seq defined in cxconsts.nim
-    ## 
-    
-    
-template rndCxBgrCol*():untyped =   
-    ## rndCxBgrCol
-    ## 
-    ## returns a random background color for cxPrint or cxPrintLn procs
-    ## from the cxTrueCol seq . defaults to a pool of 421875 colors 
-    ## which can be changed , See  getcxTrueColorSet()
-    ## 
-    colornumber48 = color48(cxTrueCol)
-    cxTrueCol[colornumber48]
 
 
 template cxprint*(xpos:int,args:varargs[untyped]) =

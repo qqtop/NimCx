@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-06-06 
+##     Latest      : 2019-06-10 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -504,6 +504,9 @@ proc ff2*(zz: SomeNumber, n: int = 3):string =
           ## 
           ## format int or float to string showing thousand separator and desired decimal places
           ## 
+          ## TODO: better accomodate ints or floats represented with e notation like 1.23456e-05
+          ##       currently nothing will be done to automatically converted numbers containg e
+          ##
           ## ff2(12345,0)   ==> 12,345     # display an integer with thousands seperator as we know it
           ## 
           ## ff2(12345,1)   ==> 12,345.0   # display an integer but like a float with 1 decimal place
@@ -520,7 +523,7 @@ proc ff2*(zz: SomeNumber, n: int = 3):string =
           ##    import nimcx
           ##    
           ##    # floats example
-          ##    for x in 1.. 2000:
+          ##    for x in 1 .. 2000:
           ##       # generate some positve and negative rand float
           ##       var z = getrandfloat() * 2345243.132310 * getRandomSignF()
           ##       printLnBiCol(fmtx(["",">6","",">20"],"NZ ",$x," : ",ff2(z)))
@@ -536,6 +539,8 @@ proc ff2*(zz: SomeNumber, n: int = 3):string =
                        result = rresult & "." & "0" * n
                       
           else:   # so must be some float
+              
+                if not result.contains("e"):
                   let c = rpartition($zz, ".")
                   var cnew = ""
                   
@@ -1160,15 +1165,26 @@ template curSetx*(x: int) =
          ## mirrors terminal setCursorXPos
          setCursorXPos(stdout, x)
 
+template cxPos*(x): string = "\e[" & $(x + 1) & "G"
+         ## cxPos
+         ##
+         ## mirrors terminal setCursorXPos
+         ##
 
 template curSet*(x: int = 0, y: int = 0) =
          ## curSet
          ##
-         ## mirrors terminal setCursorPos
+         ## mirrors terminal setCursorPos at x,y position
          ##
          ##
          setCursorPos(x, y)
 
+template cxPosxy*(x, y): string =  "\e[" & $(y + 1) & ";" & $(x + 1) & "H"
+         ## cxPosxy
+         ##
+         ##  mirrors terminal setCursorPos at x,y position
+         ##
+                
 
 template clearup*(x: int = 80) =
          ## clearup
