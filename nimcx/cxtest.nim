@@ -301,5 +301,15 @@ printMadeWithNim()
 decho(8)
 printSlimNumber($getClockStr() & "  ",pastelpink,blackbg,xpos=60)
 decho(5)
+
+nexttest()
+printLnBiCol(["cxLocal           : ",cxLocal])
+printLnBiCol(["cxNow             : ",cxNow])  
+printLnBiCol(["cxTime            : ",cxTime]) 
+printLnBiCol(["cxToday           : ",cxToday])
+printLnBiCol(["cxTimeZone(long)  : ",cxTimezone(long)])
+printLnBiCol(["cxTimeZone(short) : ",cxTimezone(short)])
+
+
          
 doFinish()

@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-06-06 
+##     Latest      : 2019-06-10 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -64,6 +64,31 @@ template cxprintLn*(xpos:int, args: varargs[untyped]) =
     ##   
     setCursorXPos(xpos)
     styledEcho(args)
+
+
+template cxwrite*(args:varargs[untyped]) =
+    ## cxwrite
+    ## 
+    ## Calls styledWrite with args given
+    ##    
+    ## Backgroundcolors defined in cxconsts.nim colorNames can be used , that is 
+    ## any color ending with xxxxxxbg  like pastelpinkbg
+    ## 
+    ## x positioning    via cxpos(x)
+    ## x,y positioning  via cxPosxy(x,y)   
+    ##
+    stdout.styledWrite(args)  
+       
+template cxwriteLn*(args:varargs[untyped]) =
+    ## cxwriteLn
+    ##  
+    ## Calls styledWriteLine with args given
+    ##    
+    ## Backgroundcolors defined in cxconsts.nim colorNames can be used , that is 
+    ## any color ending with xxxxxxbg  like pastelpinkbg
+    ##    
+    stdout.styledWriteLine(args)  
+       
 
 
 

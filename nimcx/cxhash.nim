@@ -9,14 +9,14 @@ import cxprint,hashes,strutils
 
 export hashes
 
-# activate if errormsg print ok        
+      
 proc checkHash*[T](kata:string,hsx:T)  =
   ## checkHash
   ## 
   ## checks hash of a string and print status
   ## 
   if hash(kata) == hsx:
-        cxprintLn(5,white,yellowgreenbg,"Hash Status ok")
+        cxprintln(5,white,darkslategraybg,"Hash Status ok")
   else:
         cxprintln(5,white,bgred,"Hash Status failed")
 
@@ -53,8 +53,8 @@ proc getGitHash*():string =
    ## to get the git hash during compile
    ## 
    const gitHash = strutils.strip(gorge("git log -n 1 --format=%H"))
-   if githash.startswith("fatal") : discard
+   if githash.startswith("fatal") : result = ""
    else: result = githash    
-   
+
    
 # end of cxhash.nim   

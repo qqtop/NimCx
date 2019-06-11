@@ -6,8 +6,6 @@ import strutils,terminal,sets
 #
 # Experimental font building 
 #
-# may break  
-# 
 #
 # experimental font, slim numbers , swampfont , dotmatrix ,
 # 

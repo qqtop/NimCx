@@ -19,7 +19,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-06-10 
+##     Latest      : 2019-06-11 
 ##
 ##     Compiler    : Nim >= 0.19.x devel branch
 ##
@@ -183,10 +183,13 @@ when defined(windows):
 
 when defined(posix):
         {.hint: "\x1b[38;2;154;205;50m \u2691  NimCx  V. " & CXLIBVERSION &
-                        "  :" & "\x1b[38;2;255;215;0m Officially made for Linux only." & spaces(13) & "\x1b[38;2;154;205;50m \u2691".}
+                "  :" & "\x1b[38;2;255;215;0m Officially made for Linux only." & 
+                spaces(13) & "\x1b[38;2;154;205;50m \u2691".}
+                
         {.hint: "\x1b[38;2;154;205;50m \u2691  Compiling        :" &
-                        "\x1b[38;2;255;100;0m Please wait , Nim will be right back ! \xE2\x9A\xAB" &
-                        " " & "\xE2\x9A\xAB" & spaces(2) & "\x1b[38;2;154;205;50m \u2691".}
+                "\x1b[38;2;255;100;0m Please wait , Nim will be right back ! \xE2\x9A\xAB" &
+                " " & "\xE2\x9A\xAB" & spaces(2) & "\x1b[38;2;154;205;50m \u2691".}
+                
         {.hints: off.}  # turn on off as per requirement
 
 
@@ -1141,9 +1144,10 @@ proc infoLine*() =
      printBiCol("nimcx : ", colLeft = peru)
      printBiCol(CXLIBVERSION, colLeft = brightblack)
      printBiCol(" | ", colLeft = brightblack)
-     printBiCol($someGcc & " | ",colLeft = brightblack)
+     #printBiCol($someGcc & " | ",colLeft = brightblack)
+     
      printBiCol("Size: " & formatSize(getFileSize(getAppFilename())),colLeft=peru,colRight=brightblack)
-     printBiCol(" | ", colLeft = brightblack)
+     #printBiCol(" | ", colLeft = brightblack)
         
 
 proc printTest*(astring:string="") =
@@ -1217,9 +1221,11 @@ proc doFinish*() =
                 decho()
                 infoLine()
                 echo()
-                printBiCol(fmtx(["<14"], "Elapsed    : "), colLeft=yellowgreen)
-                printBiCol(fmtx(["<", ">5"], ff(epochtime() - cxstart, 3), " secs"), colLeft=goldenrod)
-                printLnBiCol("  Compiled on: " & $CompileDate & spaces(1) & $CompileTime & spaces(1) & "UTC in " & cxTimeZone())
+                printBiCol(fmtx(["<14"], "Elapsed    :"), colLeft=yellowgreen)
+                printLnBiCol(fmtx(["<", ">5"], ff(epochtime() - cxstart, 3), " secs"), colLeft=goldenrod)
+                #printLnBiCol("  Compiled on: " & $CompileDate & spaces(1) & $CompileTime & spaces(1) & "UTC in " & cxTimeZone())
+                printBiCol("Compile UTC:  " & CompileDate & spaces(1) & CompileTime & spaces(1) & "in " & cxTimeZone() &  " | ")
+                printLnBiCol(execCmdEx("gcc --version")[0].splitLines()[0] ,colLeft = peru, colright = brightblack,sep = spaces(1))
                 if detectOs(OpenSUSE) or detectOs(Parrot): # some additional data if on openSuse or parrotOs systems
                     let ux1 = uname().split("#")[0].split(" ")
                     printLnBiCol("Kernel     :  " & ux1[2] & " | Computer: " & ux1[1] & " | Os: " & ux1[0] & " | CPU Cores: " & $(
@@ -1228,10 +1234,10 @@ proc doFinish*() =
                     let rld3 = rld[2].splitty(":")
                     let rld4 = rld3[0] & spaces(2) & strutils.strip(rld3[1])
                     printBiCol(rld4, yellowgreen, lightslategray, ":", 0,false, {})
-                    printLnBiCol(spaces(2) & "Release: " & strutils.strip((
+                    printBiCol(spaces(2) & "Release: " & strutils.strip((
                                     split(rld[3], ":")[1])), yellowgreen,
                                     lightslategray, ":", 0, false, {})
-                    printBiCol("NimCx by   : ",colLeft=yellowgreen)                
+                    printBiCol("  NimCx by   : ",colLeft=yellowgreen)                
                     qqTop()  # put your own name/linelogo here
                     printLnBiCol(" - " & year(getDateStr()), colLeft = lightslategray)
                     echo()
