@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-06-06
+##     Latest      : 2019-06-13
 ##
 ##     OS          : Linux
 ##
@@ -271,7 +271,7 @@ proc getRandomPoint*(minx:int = -500 ,maxx:int = 500 ,miny:int = -500 ,maxy:int 
 proc getPointInSphere*():auto =
     ## getPointInSphere
     ## 
-    ## returns x,y,x coordinates for a point in sphere with max size  1,1,1
+    ## returns x,y,z coordinates for a point in sphere with max size  1,1,1
     ## 
     ## https://karthikkaranth.me/blog/generating-random-points-in-a-sphere/#better-choice-of-spherical-coordinates
     ## 
@@ -279,7 +279,7 @@ proc getPointInSphere*():auto =
     ##    # display 100 coordinates of in sphere points
     ##    for x in countup(0,99,1):      
     ##       let b = getPointinSphere()  
-    ##       printLnBiCol(fmtx(["",">7","",">7","",">7"],"  x: ",b[0],"  y: ",b[1],"  z: ",b[2]))
+    ##       cxwriteln(fmtx(["","","",">7","","","",">7","","","",">7"],limegreen, "  x: ",white, b[0],limegreen,"  y: ",white,b[1],limegreen,"  z: ",white,b[2]))
     ##       
     ##       
     let u = rand(1.0);
@@ -300,7 +300,7 @@ proc getPointInSphere*():auto =
 proc randpos*():int =
     ## randpos
     ##
-    ## sets  to a rand position in the visible terminal window
+    ## sets to a random position in the visible terminal window
     ##
     ## returns x position
     ##
@@ -579,8 +579,8 @@ proc newWord*(minwl:int=3,maxwl:int = 10):string =
               nw = nw & $char(x)
         result = normalize(nw)   # return in lower case , cleaned up
     else:
-         cxprintln(2,red,pastelwhitebg,"Error : minimum word length larger than maximum word length")
-         result = ""
+        cxprintln(2,red,pastelwhitebg,"Error : minimum word length larger than maximum word length")
+        result = ""
 
 
 proc newWord2*(minwl:int=3,maxwl:int = 10 ):string =
@@ -825,7 +825,7 @@ proc createSeqAll*(min:int = 0,max:int = 40878):seq[string] =
      
             # there are more chars up to maybe 120150 some
             # maybe for indian langs,iching, some special arab and koran symbols if installed on the system
-            # if not installed on your symondaystem you will see the omnious rectangle char  0xFFFD
+            # if not installed on your system you will see the omnious rectangle char  0xFFFD
             # https://www.w3schools.com/charsets/ref_html_utf8.asp
             # tablerune(createSeqAll(),cols=6,maxitemwidth=12)  
             # 
