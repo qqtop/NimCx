@@ -1,4 +1,5 @@
-import os,osproc,json,httpclient,strutils,strscans,posix,net,nativesockets,sets,terminal
+import os,osproc,json,httpclient,strutils,strscans,posix
+import net,nativesockets,sets,terminal
 import cxconsts,cxglobal,cxprint
 # cxnetwork.nim
 # 
@@ -6,7 +7,7 @@ import cxconsts,cxglobal,cxprint
 # nmap , ss needs to be installed if relevant procs to be used.
 # 
 # 
-# Last 2019-06-06
+# Last 2019-06-13
 # 
 
   
@@ -111,8 +112,8 @@ proc localRouterIp*():string =
    
 
 proc showLocalIpInfo*() =
-     cxprintln(2,white,yellowgreenbg,"Machine " ,styleReverse, localIp())
-     cxprintln(2,white,yellowgreenbg,"Router  " ,stylereverse, strip(localRouterIp()))
+     cxprintln(2,white,darkslategraybg,"Machine " ,styleReverse, localIp())
+     cxprintln(2,white,darkslategraybg,"Router  " ,stylereverse, strip(localRouterIp()))
      echo()
 
 
@@ -142,77 +143,82 @@ proc pingy*(dest:string,pingcc:int = 3,col:string = termwhite) =
             
 proc cxPortCheck*(cmd:string = "lsof -i") =
      ## cxPortCheck
-     ## 
-     ## runs a linux system command to see what the ports are listening to
+     ##
+     ## shows the list of all network connections which are
+     ##
+     ## listening and established.
+     ##
+     ## This runs a linux system command to see what the ports are listening to
      ##
      ## if no or partial output at all run your program with sudo 
      ## 
-     cxprintln(2,yellowgreen,pastelwhitebg,stylereverse,"cxPortCheck")
+     cxprintln(0,white,darkslategraybg,cxpad("cxPortCheck",60))
      if not cmd.startsWith("lsof") :  # do not allow any old command here
         printLnBiCol("cxPortCheck Error: Wrong command --> $1" % cmd,colLeft=red)
         printLn("Exiting now ...")
         quit 0
      let pc = execCmdEx(cmd)  
      let pcl = pc[0].splitLines()
-     printLn(pcl[0],yellowgreen,styled={styleUnderscore})
-     for x in 1..pcl.len - 1:
-        if pcl[x].contains("UDP "):
-           var pclt = pcl[x].split(" ")
-           echo()
-           print(pclt[0] & spaces(1),sandybrown)
-           for xx in 1..<pclt.len:
-             try:
-               if pclt[xx].contains("IPv4") :
-                  print(pclt[xx],dodgerblue,styled={styleReverse})
-                  print(spaces(1))
-               elif pclt[xx].contains("IPv6") :
-                  print(pclt[xx],truetomato,styled={styleReverse})
-                  print(spaces(1))   
-               elif pclt[xx].contains("UDP") :
-                  print(pclt[xx],sandybrown,styled={styleReverse})
-                  print(spaces(1))
-               elif pclt[xx].contains("root") :
-                  print(pclt[xx],darkred,styled={styleReverse})
-                  print(spaces(1))   
-               else:
-                  print(pclt[xx],skyblue)
-                  print(spaces(1))
-               if xx == pclt.len: echo() 
-             except:
-                 discard
-                 
-        elif pcl[x].contains("TCP "):
-           var pclt = pcl[x].split(" ")
-           echo()
-           print(pclt[0] & spaces(1),lime)
-           for xx in 1..<pclt.len:
-             try:
-               if pclt[xx].contains("IPv4") :
-                  print(pclt[xx],dodgerblue,styled={styleReverse})
-                  print(spaces(1))
-               elif pclt[xx].contains("IPv6") :
-                  print(pclt[xx],truetomato,styled={styleReverse})
-                  print(spaces(1))   
-               elif pclt[xx].contains("TCP") :
-                  print(pclt[xx],pastelblue,styled={styleReverse})
-                  print(spaces(1))
-               elif pclt[xx].contains("root") :
-                  print(pclt[xx],darkred,styled={styleReverse})
-                  print(spaces(1))   
-               else:
-                  print(pclt[xx],pastelpink)
-                  print(spaces(1))
-                  
-               if xx == pclt.len: echo()   
-               
-             except:
-                 echo()
-                 discard
- 
-        else:
-           echo()
-           discard
-     cxprintln(2,white,yellowgreenbg,"cxPortCheck Finished.")      
+         
+     if pcl.len > 1:
+         printLn(pcl[0],yellowgreen,styled={styleUnderscore})
+         for x in 1..pcl.len - 1:
+            if pcl[x].contains("UDP "):
+               var pclt = pcl[x].split(spaces(1))
+               echo()
+               print(pclt[0] & spaces(1),sandybrown)
+               for xx in 1 ..< pclt.len:
+                 try:
+                   if pclt[xx].contains("IPv4") :
+                      print(pclt[xx],trueblue,styled={styleReverse})
+                      print(spaces(1))
+                   elif pclt[xx].contains("IPv6") :
+                      print(pclt[xx],truetomato,styled={styleReverse})
+                      print(spaces(1))   
+                   elif pclt[xx].contains("UDP") :
+                      print(pclt[xx],sandybrown,styled={styleReverse})
+                      print(spaces(1))
+                   elif pclt[xx].contains("root") :
+                      print(pclt[xx],darkred,styled={styleReverse})
+                      print(spaces(1))   
+                   else:
+                      print(pclt[xx],skyblue)
+                      print(spaces(1))
+                   if xx == pclt.len: echo() 
+                 except:
+                     discard
+                     
+            elif pcl[x].contains("TCP "):
+               var pclt = pcl[x].split(" ")
+               echo()
+               print(pclt[0] & spaces(1),lime)
+               for xx in 1..<pclt.len:
+                 try:
+                   if pclt[xx].contains("IPv4") :
+                      print(pclt[xx],dodgerblue,styled={styleReverse})
+                      print(spaces(1))
+                   elif pclt[xx].contains("IPv6") :
+                      print(pclt[xx],truetomato,styled={styleReverse})
+                      print(spaces(1))   
+                   elif pclt[xx].contains("TCP") :
+                      print(pclt[xx],pastelblue,styled={styleReverse})
+                      print(spaces(1))
+                   elif pclt[xx].contains("root") :
+                      print(pclt[xx],darkred,styled={styleReverse})
+                      print(spaces(1))   
+                   else:
+                      print(pclt[xx],pastelpink)
+                      print(spaces(1))
+                      
+                   if xx == pclt.len: echo()   
+                   
+                 except:
+                      discard
+           
+     else:
+            discard
+     echo()       
+     cxprintln(0,white,darkslategraybg,cxpad("cxPortCheck completed",60))      
      
      
      
@@ -367,6 +373,8 @@ proc ssService*():seq[string] =
        result = @["Error occured in ss execution"]
    else:    
        result = ss.splitLines()
+
+
          
          
 # end of cxnetwork.nim          
