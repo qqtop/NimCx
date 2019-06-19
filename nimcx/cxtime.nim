@@ -9,7 +9,7 @@ import os,terminal,times,parseutils,strutils
 # 
 # 
 # 
-# Last : 2019-06-06
+# Last : 2019-06-19
 # 
 # 
 
@@ -155,8 +155,7 @@ proc toDateTime*(date:string = "2000-01-01"): DateTime =
    result.year = zyear
    result.month = zmonth
    result.monthday = zday
-  
-   
+     
    
 proc epochSecs*(date:string="2000-01-01"):auto =
    ## epochSecs
@@ -470,13 +469,13 @@ proc newCxtimer*(aname:string = "cxtimer"):ref(CxTimer) =
      result = aresult
  
  
- 
 proc resetTimer*(co: ref(CxTimer)) = 
       co.start = 0.0
       co.stop = 0.0
       co.lap = @[] 
        
 proc startTimer*(co:ref(CxTimer)) = co.start = epochTime()
+
 
 proc lapTimer*(co:ref(CxTimer)):auto {.discardable.}  =
                var tdf = epochTime() - co.start
@@ -532,8 +531,7 @@ proc showTimerResults*(aname:string) =
               curup(1)
               printLnBiCol(fmtx(["","",""],"", " : " , "none recorded"),xpos = 8)
           printLnBiCol("Duration : " & $(b.stop - b.start) & " secs.")   
-               
-             
+                        
                
 proc showTimerResults*() =  
      ## showTimerResults  
@@ -592,6 +590,21 @@ proc clearAllTimerResults*(quiet:bool = true,xpos:int = 3) =
      if quiet == false:
           cxprint(xpos,white,yellowgreenbg,"Info   : ",pastelWhite,"Alltimers deleted")
    
+   
+proc cxHRTimer*(tstart:Time = getTime() ,tend:Time = getTime()):auto = 
+   ## cxHRTimer
+   ##
+   ## Example
+   ##
+   ##.. code-block:: nim
+   ##   let currenttime = getTime() 
+   ##   sleep(2000)
+   ##   let later = gettime()
+   ##   echo cxHRTimer(currentime,later)  
+   ##
+   ##
+   result = initDuration(seconds=tend.toUnix(), nanoseconds=tend.nanosecond) - initDuration(seconds=tstart.toUnix(), nanoseconds=tstart.nanosecond)
+     
    
    
 # end of module cxtime.nim   

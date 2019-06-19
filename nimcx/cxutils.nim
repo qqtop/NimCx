@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-06-13
+##     Latest      : 2019-06-16
 ##
 ##     OS          : Linux
 ##
@@ -1269,8 +1269,11 @@ proc quickLargeInt*():string =
    ## quickLargeInt
    ## 
    ## returns a random large int string
-   ## 
-   result =  repeat($rand(10_00_00_00_00_00_00_00_00.int..int.high), 2)   
+   ##
+   try: 
+      result =  repeat($rand(10_00_00_00_00_00_00_00_00.int..int.high), 2)   
+   except:
+      result = $rand(int.high)    
    
 proc quickBinaryString*(width:int=10):string =
      ## quickBinaryString

@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-06-10 
+##     Latest      : 2019-06-19 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -339,7 +339,6 @@ proc isEmpty*(val: string): bool {.inline.} =
 proc getRndInt*(mi: int = 0, ma: int = int.high): int {.noInit, inline.} =
           ## getRndInt
           ##
-          ## so for 0 or 1 we need rand(0..2)
           var maa = ma
           if maa <= mi: maa = mi + 1
           result = rand(mi..maa)
@@ -347,6 +346,8 @@ proc getRndInt*(mi: int = 0, ma: int = int.high): int {.noInit, inline.} =
 
 
 proc getRndBool*(): bool =
+          ## getRndBool
+          ##
           if getRndInt(0, 1) == 0:
                     result = false
           else:
@@ -1179,12 +1180,7 @@ template curSet*(x: int = 0, y: int = 0) =
          ##
          setCursorPos(x, y)
 
-template cxPosxy*(x, y): string =  "\e[" & $(y + 1) & ";" & $(x + 1) & "H"
-         ## cxPosxy
-         ##
-         ##  mirrors terminal setCursorPos at x,y position
-         ##
-                
+            
 
 template clearup*(x: int = 80) =
          ## clearup

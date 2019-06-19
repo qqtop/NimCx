@@ -2,7 +2,7 @@
 # rough and ready testing of some of available functions in nimcx library
 # see docs for more examples 
 #
-# Latest      : 2019-06-06   
+# Latest      : 2019-06-19   
  
 import nimcx
 
@@ -303,13 +303,14 @@ printSlimNumber($getClockStr() & "  ",pastelpink,blackbg,xpos=60)
 decho(5)
 
 nexttest()
+let stime = getTime()
 printLnBiCol(["cxLocal           : ",cxLocal])
 printLnBiCol(["cxNow             : ",cxNow])  
 printLnBiCol(["cxTime            : ",cxTime]) 
 printLnBiCol(["cxToday           : ",cxToday])
 printLnBiCol(["cxTimeZone(long)  : ",cxTimezone(long)])
 printLnBiCol(["cxTimeZone(short) : ",cxTimezone(short)])
-
+printLnBiCol("This test took     : " & $cxHRTimer(stime,getTime()))
 
          
 doFinish()

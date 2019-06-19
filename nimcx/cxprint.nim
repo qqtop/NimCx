@@ -42,7 +42,21 @@ template cxprint*(xpos:int,args:varargs[untyped]) =
     ##    
     setCursorXPos(xpos)
     stdout.styledWrite(args)  
+    
+ 
+template cxprintxy*(xpos:int,ypos:int,args:varargs[untyped]) =
+    ## cxprint
+    ## xpos : x position 
+    ## ypos : y position starting from 0,0
+    ## Calls styledWrite with args given
+    ##    
+    ## Backgroundcolors defined in cxconsts.nim colorNames can be used , that is 
+    ## any color ending with xxxxxxbg  like pastelpinkbg
+    ##    
+    curSet(xpos,ypos)
+    stdout.styledWrite(args)  
        
+    
        
 template cxprintLn*(xpos:int, args: varargs[untyped]) =
     ## cxprintLn
