@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-06-19 
+##     Latest      : 2019-06-30 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -494,7 +494,7 @@ proc ff22(zz: int): string =
                     nz = strutils.strip(nz, true, false, {','})
           elif nz.startswith("-,") == true:
                     nz = nz.multiReplace(("-,", "-"))
-
+          
           result = nz
 
        
@@ -537,6 +537,8 @@ proc ff2*(zz: SomeNumber, n: int = 3):string =
                        result = rresult 
                   if n > 0 :
                        result = rresult & "." & "0" * n
+                  
+                  result.removeSuffix(".") 
                       
           else:   # so must be some float
               

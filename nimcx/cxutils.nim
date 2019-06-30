@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-06-16
+##     Latest      : 2019-06-30
 ##
 ##     OS          : Linux
 ##
@@ -218,10 +218,17 @@ proc getRandomPoint*(minx:float = -500.0,maxx:float = 500.0,miny:float = -500.0,
     ## maxy  max y  value
     ##
     ## .. code-block:: nim
-    ##    for x in 0..10:decho(5)    
-    ##    var n = getRandomPoint(-500.00,200.0,-100.0,300.00)
-    ##    printLnBiCol(fmtx([">4",">5","",">6",">5"],"x:",$n.x,spaces(7),"y:",$n.y),spaces(7))
-    ## 
+    ##
+    ##  for x in 1..10:
+    ##      let n = getRandomPoint(-500.00,200.0,-100.0,300.00)
+    ##      cxwriteln(fmtx(["",">3","",">4","",">7.2","","",">4","",">7.2"],
+    ##      "point ",$x,
+    ##      yellowgreen," x:",termwhite,ff2(n.x,4),
+    ##      spaces(3),
+    ##      yellowgreen," y:",termwhite,ff2(n.y,4)))
+    ##  decho(2)
+    ##  
+
 
     var point : RpointFloat
     var rx    : float
@@ -259,8 +266,8 @@ proc getRandomPoint*(minx:int = -500 ,maxx:int = 500 ,miny:int = -500 ,maxy:int 
     ##
     ## .. code-block:: nim
     ##    for x in 0..10:
-    ##    var n = getRandomPoint(-500,500,-500,200)
-    ##    printLnBiCol(fmtx([">4",">5","",">6",">5"],"x:",$n.x,spaces(7),"y:",$n.y),spaces(7))
+    ##        var n = getRandomPoint(-500,500,-500,200)
+    ##        cxwriteln(fmtx([">4",">5","",">6",">5"],"x:",$n.x,spaces(7),"y:",$n.y),spaces(7))
     ## 
     var point : RpointInt
     point.x = getRandomSignI() * getRndInt(minx,maxx) 
@@ -324,7 +331,7 @@ template getCard* :auto =
     ##
     ## .. code-block:: nim
     ##    import nimcx
-    ##    print(getCard(),randCol(),xpos = centerX())  # get card and print in random color at xpos
+    ##    printLn(getCard(),randCol(),xpos = centerX())  # get card and print in random color at xpos
     ##    doFinish()
     ##
     cards[sample(rxCards)]
@@ -350,13 +357,14 @@ proc showRuler* (xpos:int=0,xposE:int=0,ypos:int = 0,fgr:string = white,bgr:stri
      ##
      ## .. code-block::nim
      ##   # this will show a full terminal width ruler
-     ##   ruler(fgr=pastelblue)
+     ##   showRuler(fgr=pastelblue)
      ##   decho(3)
      ##   # this will show a specified position only
-     ##   ruler(xpos =22,xposE = 55,fgr=pastelgreen)
+     ##   showRuler(xpos =22,xposE = 55,fgr=pastelgreen)
      ##   decho(3)
      ##   # this will show a full terminal width ruler starting at a certain position
-     ##   ruler(xpos = 75,fgr=pastelblue)
+     ##   showRuler(xpos = 75,fgr=pastelblue)
+     ##
      echo()
      var fflag:bool = false
      var npos  = xpos
@@ -481,7 +489,7 @@ proc superHeader*(bstring:string,strcol:string,frmcol:string) =
         ##.. code-block:: nim
         ##    import nimcx
         ##
-        ##    superheader("Ok That's it for Now !",clrainbow,white)
+        ##    superheader("Ok That's it for Now !",skyblue,lightslategray)
         ##    echo()
         ##
         var astring = bstring
@@ -552,10 +560,15 @@ proc newWordCJK*(minwl:int = 3 ,maxwl:int = 10):string =
       ##    # create a string of chinese or CJK chars with length 20 
       ##    echo newWordCJK(20,20)
       result = ""
-      let c5 = toSeq(minwl..maxwl)
-      let chc = toSeq(parsehexint("3400")..parsehexint("4DB5"))
-      for xx in 0..<sample(c5): result = result & $Rune(sample(chc))
+      if minwl <= maxwl:
+         let c5 = toSeq(minwl..maxwl)
+         let chc = toSeq(parsehexint("3400")..parsehexint("4DB5"))
+         for xx in 0..<sample(c5): result = result & $Rune(sample(chc))
+      else:
+        cxprintln(2,white,redbg,"Error : minimum word length larger than maximum word length")
+        result = ""
 
+        
 proc newWord*(minwl:int=3,maxwl:int = 10):string =
     ## newWord
     ##
@@ -579,7 +592,7 @@ proc newWord*(minwl:int=3,maxwl:int = 10):string =
               nw = nw & $char(x)
         result = normalize(nw)   # return in lower case , cleaned up
     else:
-        cxprintln(2,red,pastelwhitebg,"Error : minimum word length larger than maximum word length")
+        cxprintln(2,white,redbg,"Error : minimum word length larger than maximum word length")
         result = ""
 
 
@@ -605,7 +618,7 @@ proc newWord2*(minwl:int=3,maxwl:int = 10 ):string =
               nw = nw & $char(x)
         result = normalize(nw)   # return in lower case , cleaned up
     else:
-         cxprintln(2,red,pastelwhitebg,"Error : minimum word length larger than maximum word length")
+         cxprintln(2,white,redbg,"Error : minimum word length larger than maximum word length")
          result = ""
 
 
@@ -636,7 +649,7 @@ proc newWord3*(minwl:int=3,maxwl:int = 10 ,nflag:bool = true):string =
         else :
            result = nw
     else:
-         cxprintln(2,red,pastelwhitebg,"Error : minimum word length larger than maximum word length")
+         cxprintln(2,white,redbg,"Error : minimum word length larger than maximum word length")
          result = ""
 
 
@@ -658,7 +671,7 @@ proc newHiragana*(minwl:int=3,maxwl:int = 10 ):string =
               result = result & $Rune(hig)
        
     else:
-         cxprintln(2,red,pastelwhitebg,"Error : minimum word length larger than maximum word length")
+         cxprintln(2,white,redbg,"Error : minimum word length larger than maximum word length")
          result = ""
 
 
@@ -676,7 +689,7 @@ proc newKatakana*(minwl:int=3,maxwl:int = 10 ):string =
         while result.len < sample(toSeq(minwl..maxwl)):
               result = result & $Rune(sample(toSeq(parsehexint("30A0")..parsehexint("30FF"))))  
     else:
-        cxprintln(2,red,pastelwhitebg,"Error : minimum word length larger than maximum word length")
+        cxprintln(2,white,redbg,"Error : minimum word length larger than maximum word length")
         result = ""
 
 proc newText*(textLen:int = 1000,textgen:string = "newWord"):string = 
@@ -755,8 +768,8 @@ proc newText*(textLen:int = 1000,textgen:string = "newWord"):string =
                        tres = ""     
        else:
             decho()
-            cxprintLn(2,truetomato,pastelwhitebg,"newText() ")
-            cxprintLn(2,red,pastelwhitebg,"Error : " & textgen & " generator proc not available !")
+            cxprintLn(2,white,redbg,"newText() ")
+            cxprintLn(2,white,redbg,"Error : " & textgen & " generator proc not available !")
             discard                
                      
 proc rndStr*(n:int = 20): string =
