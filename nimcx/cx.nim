@@ -194,6 +194,7 @@ when defined(posix):
 
 
 let cxstart* = epochTime() # simple execution timing with one line see doFinish()
+let cxstartgTime = getTime() 
 randomize()                # seed rand number generator
 enableTrueColors()         # enable truecolorsupport
 
@@ -243,7 +244,7 @@ template cx45Up*:untyped       = cyan & "→↑" & termwhite
 template cx45Down*:untyped     = yellow & "→↓" & termwhite
 
 
-proc newColor*(r, g, b: int): string =
+func newColor*(r, g, b: int): string =
     ##   newColor
     ##   
     ##   creates a new color string from r,g,b values. Passed in colors can be used as 
@@ -268,7 +269,7 @@ proc newColor*(r, g, b: int): string =
     result = "\x1b[38;2;$1;$2;$3m" % [$r, $g, $b]
 
 
-proc newColor2*(r, g, b: int): string = "\x1b[48;2;$1;$2;$3m" % [$r, $g, $b]
+func newColor2*(r, g, b: int): string = "\x1b[48;2;$1;$2;$3m" % [$r, $g, $b]
     ##   newColor2
     ##   
     ##   creates a new color string from r,g,b values passed in with styleReverse effect for text
@@ -276,7 +277,7 @@ proc newColor2*(r, g, b: int): string = "\x1b[48;2;$1;$2;$3m" % [$r, $g, $b]
     ##
     
 
-proc checkColor*(colname: string): bool =
+func checkColor*(colname: string): bool =
     ## checkColor
     ##
     ## returns true if colname is a known color name in colorNames constants.nim 
@@ -1222,8 +1223,8 @@ proc doFinish*() =
                 infoLine()
                 echo()
                 printBiCol(fmtx(["<14"], "Elapsed    :"), colLeft=yellowgreen)
-                printLnBiCol(fmtx(["<", ">5"], ff(epochtime() - cxstart, 3), " secs"), colLeft=goldenrod)
-                #printLnBiCol("  Compiled on: " & $CompileDate & spaces(1) & $CompileTime & spaces(1) & "UTC in " & cxTimeZone())
+                printBiCol(fmtx(["<", ">5"], ff(epochtime() - cxstart, 3), " secs"), colLeft=goldenrod)
+                printLn(" -> " & $cxHRTimer(cxstartgTime,getTime())) # displays micro,milli,nanoseconds
                 printBiCol("Compile UTC:  " & CompileDate & spaces(1) & CompileTime & spaces(1) & "in " & cxTimeZone() &  " | ")
                 printLnBiCol(execCmdEx("gcc --version")[0].splitLines()[0] ,colLeft = peru, colright = brightblack,sep = spaces(1))
                 if detectOs(OpenSUSE) or detectOs(Parrot): # some additional data if on openSuse or parrotOs systems

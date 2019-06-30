@@ -4,8 +4,8 @@
 #
 # Latest      : 2019-06-19   
  
-import nimcx
-
+#import nimcx
+import "/data5/NimStuff/NimCxDevel/cx.nim" 
 var testno = newCxcounter()
 
 let s = "nimcx Testing "
@@ -47,9 +47,9 @@ cxHelp(["Help system for " & extractFileName(getAppFilename()),
 
 # print and printLn test
 nexttest()
-print("This is " & NIMVERSION)
+print("This is Nim version " & NIMVERSION)
 print("",xpos=30)
-print("This nimcx " & CXLIBVERSION)
+print("This is nimcx version " & CXLIBVERSION)
 print("\L" * 2)
 printLn(" white on black ",white,blackbg)
 printLn(" black on white ",black,whitebg)

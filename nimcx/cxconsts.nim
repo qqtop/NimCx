@@ -12,7 +12,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-06-10
+##     Latest      : 2019-06-30
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -123,19 +123,26 @@ const
       yen*    = "¥"
       
 const 
-      # umlaut
+      # umlaut uppercase
       ae* = entityToRune("Auml")
       oe* = entityToRune("Ouml")
       ue* = entityToRune("Uuml")   
       
+      # umlaut lowercase
+      ael* = entityToRune("auml")
+      oel* = entityToRune("ouml")
+      uel* = entityToRune("uuml") 
+      
       # example usage umlaut consts
       # echo ue,"ber",oe,ae
       # example usage htmlparser entityxx proc
-      # echo entityToUtf8("#0931")
+      # echo entityToUtf8("#0931")    # sigma
       # echo entityToUtf8("#x03A3")
       # echo runeToEntity("∈".runeAt(0))
       # echo entityToRune("#8712")
-         
+      # echo "in ",sigma," ", ael , "ndert sich nichts"
+      # echo ue,uel,ae,ael,oe,oel   
+      # cxwriteln(lime,$ae,skyblue,$uel,yellow,$oel)
       
 # selected box chars
 # run : showseq(createSeqBoxChars())
@@ -1350,13 +1357,12 @@ const
     monkey*             =  "🐵"
     cow*                =  "🐮"
     # other
-    errorsymbol*        =  "🔥"
     errorsymbol2*       =  "𝐄"
-
+    blove*              =  "😎"
 
 const emojis* = @[check,xmark,heart,sun,star,darkstar,umbrella,flag,snowflake,music,scissors,
                trademark,copyright,roof,skull,smile,smiley,innocent,lol,tongue,blush,
-               sad,cry,rage,cat,kitty,monkey,cow,errorsymbol,errorsymbol2]
+               sad,cry,rage,cat,kitty,monkey,cow,errorsymbol2,blove]
    
 
 # more emojis len 4   

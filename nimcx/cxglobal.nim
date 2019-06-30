@@ -383,8 +383,7 @@ proc reverseMe*[T](xs: openarray[T]): seq[T] =
           ##    printLn(z.reverseMe,red)
           ##
           result = newSeq[T](xs.len)
-          for i, x in xs:
-                    result[xs.high - i] = x
+          for i, x in xs: result[xs.high - i] = x
 
 
 proc reverseText*(text: string): string =
@@ -619,8 +618,7 @@ proc createSeqFloat*(n: int = 10, prec: int = 3): seq[float] =
                               if result.len == n: break
 
                     if result.len == n: break
-
-         
+                    
    
 
 proc seqLeft*[T](it: seq[T], n: int): seq[T] =

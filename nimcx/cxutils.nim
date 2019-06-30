@@ -1266,13 +1266,13 @@ proc quickPw*():string =
    for i in 1..100: result.add(rand(33..128).char)
 
 proc quickLargeInt*():string =   
-   ## quickLargeInt
-   ## 
-   ## returns a random large int string
-   ##
-   try: 
+  ## quickLargeInt
+  ## 
+  ## returns a random large int string
+  ##
+  try: 
       result =  repeat($rand(10_00_00_00_00_00_00_00_00.int..int.high), 2)   
-   except:
+  except:
       result = $rand(int.high)    
    
 proc quickBinaryString*(width:int=10):string =
