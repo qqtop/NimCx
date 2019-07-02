@@ -149,15 +149,17 @@ proc getNextMonday*(adate:string):string =
     ##.. code-block:: nim
     ##      import nimcx
     ##      # get next 10 mondays
-    ##      var dw = "2015-08-10"
-    ##      for x in 1 .. 10:
-    ##          dw = getNextMonday(dw)
-    ##          decho(5)    
+    ##      var dw = getdatestr()
+    ##      echo dw
+    ##      for x in 1..10:
+    ##         dw = getnextmonday(dw)
+    ##         echo dw
+    ##         dw = plusDays(dw,1)
     ##
         
     var ndatestr = ""
     if adate == "" :
-        cxprintln(2,red,pastelwhitebg,"Received an invalid date.")
+        cxprintln(2,black,redbg,"Received an invalid date.")
     else:
         if validdate(adate) == true:
             var z = cxdayofweek(adate)
@@ -565,7 +567,7 @@ proc newWordCJK*(minwl:int = 3 ,maxwl:int = 10):string =
          let chc = toSeq(parsehexint("3400")..parsehexint("4DB5"))
          for xx in 0..<sample(c5): result = result & $Rune(sample(chc))
       else:
-        cxprintln(2,white,redbg,"Error : minimum word length larger than maximum word length")
+        cxprintln(2,black,redbg,"Error : minimum word length larger than maximum word length")
         result = ""
 
         
@@ -592,7 +594,7 @@ proc newWord*(minwl:int=3,maxwl:int = 10):string =
               nw = nw & $char(x)
         result = normalize(nw)   # return in lower case , cleaned up
     else:
-        cxprintln(2,white,redbg,"Error : minimum word length larger than maximum word length")
+        cxprintln(2,black,redbg,"Error : minimum word length larger than maximum word length")
         result = ""
 
 
@@ -618,7 +620,7 @@ proc newWord2*(minwl:int=3,maxwl:int = 10 ):string =
               nw = nw & $char(x)
         result = normalize(nw)   # return in lower case , cleaned up
     else:
-         cxprintln(2,white,redbg,"Error : minimum word length larger than maximum word length")
+         cxprintln(2,black,redbg,"Error : minimum word length larger than maximum word length")
          result = ""
 
 
@@ -649,7 +651,7 @@ proc newWord3*(minwl:int=3,maxwl:int = 10 ,nflag:bool = true):string =
         else :
            result = nw
     else:
-         cxprintln(2,white,redbg,"Error : minimum word length larger than maximum word length")
+         cxprintln(2,black,redbg,"Error : minimum word length larger than maximum word length")
          result = ""
 
 
@@ -671,7 +673,7 @@ proc newHiragana*(minwl:int=3,maxwl:int = 10 ):string =
               result = result & $Rune(hig)
        
     else:
-         cxprintln(2,white,redbg,"Error : minimum word length larger than maximum word length")
+         cxprintln(2,black,redbg,"Error : minimum word length larger than maximum word length")
          result = ""
 
 
@@ -689,7 +691,7 @@ proc newKatakana*(minwl:int=3,maxwl:int = 10 ):string =
         while result.len < sample(toSeq(minwl..maxwl)):
               result = result & $Rune(sample(toSeq(parsehexint("30A0")..parsehexint("30FF"))))  
     else:
-        cxprintln(2,white,redbg,"Error : minimum word length larger than maximum word length")
+        cxprintln(2,black,redbg,"Error : minimum word length larger than maximum word length")
         result = ""
 
 proc newText*(textLen:int = 1000,textgen:string = "newWord"):string = 
@@ -711,7 +713,8 @@ proc newText*(textLen:int = 1000,textgen:string = "newWord"):string =
      ##.. code-block:: nim
      ##  printLn(newText(10000,"newHiragana"),rndcol)
      ##    
-     ##  
+     ##
+     
      var tres = ""
      case toLowerAscii(textgen) 
        of "newword":
@@ -768,8 +771,8 @@ proc newText*(textLen:int = 1000,textgen:string = "newWord"):string =
                        tres = ""     
        else:
             decho()
-            cxprintLn(2,white,redbg,"newText() ")
-            cxprintLn(2,white,redbg,"Error : " & textgen & " generator proc not available !")
+            cxprintLn(2,black,redbg,"newText() ")
+            cxprintLn(2,black,redbg,"Error : " & textgen & " generator proc not available !")
             discard                
                      
 proc rndStr*(n:int = 20): string =
@@ -1147,7 +1150,7 @@ proc checkMemFull*(xpos:int = 2) =
                try:
                   cxprintLn(xpos,yellowgreen,cxpad(zline[0],n),fmtx([">15"],strutils.strip(zline[1])))
                except IndexError  as ex:
-                  cxprintln(xpos,white,redbg,ex.msg)
+                  cxprintln(xpos,black,redbg,ex.msg)
                   discard
  
 

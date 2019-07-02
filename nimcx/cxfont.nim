@@ -45,7 +45,7 @@ import strutils,terminal,sets
 # type used in slim number printing
 type
     T7 = object  
-      zx : seq[string]
+      zx : seq[string] 
       
 # experimental your results may depend on terminal in use
 # 
@@ -1162,6 +1162,7 @@ proc printSlimNumber*(anumber:string,fgr:string = yellowgreen ,bgr:string = getB
 proc slimN(x:int):T7 =
   # supporting slim number printing
   var nnx : T7
+  nnx.zx = @[]
   case x
     of 0: nnx.zx = snumber0
     of 1: nnx.zx = snumber1
