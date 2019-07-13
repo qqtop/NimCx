@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-06-10 
+##     Latest      : 2019-07-13 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -774,7 +774,7 @@ macro pdebug*(n: varargs[typed]): untyped =
       result.add(newCall("write", newIdentNode("stdout"), toStrLit(n[i])))
       result.add(newCall("write", newIdentNode("stdout"), newStrLitNode(": ")))
       result.add(newCall("write", newIdentNode("stdout"), n[i]))
-    if i != n.len-1:
+    if i != n.len - 1:
       # separate by ", "
       result.add(newCall("write", newIdentNode("stdout"), newStrLitNode(", ")))
     else:

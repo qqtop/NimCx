@@ -19,7 +19,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-06-11 
+##     Latest      : 2019-07-13 
 ##
 ##     Compiler    : Nim >= 0.19.x devel branch
 ##
@@ -124,9 +124,9 @@
 import
         cxconsts, cxglobal, cxtime, cxprint, cxhash, cxfont, cxutils, cxnetwork, cxstats
 import 
-        std/[os, osproc, times, random, strutils,strmisc, strformat, strscans, parseutils, sequtils, parseopt,
-        tables, sets, macros,posix,posix_utils, htmlparser,
-        terminal, math, stats, json, streams, options, memfiles,
+        std/[os, osproc, times, random, strutils,strmisc, strformat, strscans, parseutils,
+        sequtils, parseopt,tables, sets, macros,posix,posix_utils, htmlparser, terminal,
+        math, stats, json, streams, options, memfiles,
         httpclient, nativesockets, browsers, intsets, algorithm, net,
         unicode, typeinfo, typetraits, cpuinfo, colors, encodings, distros,
         rdstdin, sugar , wordwrap]
@@ -135,9 +135,9 @@ import strutils except align
 
 export
         cxconsts, cxglobal, cxtime, cxprint, cxhash, cxfont,cxutils, cxnetwork, cxstats,
-        os, osproc, times, random, strmisc,strformat, strscans, parseutils, sequtils, parseopt,
-        tables, sets, macros,posix, posix_utils,htmlparser,
-        terminal, math, stats, json, streams, options, memfiles,
+        os, osproc, times, random, strmisc,strformat, strscans, parseutils,
+        sequtils, parseopt,tables, sets, macros,posix, posix_utils,htmlparser,terminal,
+        math, stats, json, streams, options, memfiles,
         httpclient, nativesockets, browsers, intsets, algorithm, net,
         typeinfo, typetraits, cpuinfo, colors, encodings, distros,
         rdstdin, sugar ,wordwrap
@@ -190,7 +190,7 @@ when defined(posix):
                 "\x1b[38;2;255;100;0m Please wait , Nim will be right back ! \xE2\x9A\xAB" &
                 " " & "\xE2\x9A\xAB" & spaces(2) & "\x1b[38;2;154;205;50m \u2691".}
                 
-        {.hints: off.}  # turn on off as per requirement
+        {.hints: on.}  # turn on off as per requirement
 
 
 let cxstart* = epochTime() # simple execution timing with one line see doFinish()
@@ -200,7 +200,7 @@ enableTrueColors()         # enable truecolorsupport
 
 # type used in Benchmark
 type
-      Benchmarkres* = tuple[bname, cpu, epoch, repeats: string]
+      Benchmarkres* = tuple[bname, cpu, epoch, gett, repeats: string]
 
 # used to store all benchmarkresults
 var benchmarkresults* = newSeq[Benchmarkres]()
@@ -368,7 +368,7 @@ proc nimcat*(curFile: string, countphrase: varargs[string, `$`] = "") =
     if not fileExists(ccurfile):
             echo()
             cxprintLn(2,white,bgred,ccurfile & " not found !")
-            printLn(spaces(8) & " Check path and filename")
+            printLn(spaces(8) & " Check input path and filename ", dir & "/" & name & "." & ext)
             echo()
             discard
     else:
@@ -448,12 +448,15 @@ template benchmark*(benchmarkName: string, repeatcount: int = 1, code: typed) =
         var zbres: Benchmarkres
         let t0 = epochTime()
         let t1 = cpuTime()
+        let t2 = getTime()
         repeats(repeatcount):
                 code
         let elapsed = epochTime() - t0
         let elapsed1 = cpuTime() - t1
+        let elapsed2 = getTime() - t2
         zbres.epoch = ff(elapsed, 4)
         zbres.cpu = ff(elapsed1, 4)
+        zbres.gett =  $elapsed2
         zbres.bname = benchmarkName
         zbres.repeats = $repeatcount
         benchmarkresults.add(zbres)
@@ -493,13 +496,16 @@ template benchmark*(benchmarkName: string, code: typed) =
         var zbres: Benchmarkres
         let t0 = epochTime()
         let t1 = cpuTime()
+        let t2 = getTime()
         let repeatcount = 1
         repeats(repeatcount):
                 code
         let elapsed = epochTime() - t0
         let elapsed1 = cpuTime() - t1
+        let elapsed3 = getTime() - t2
         zbres.epoch = ff(elapsed, 4)
         zbres.cpu = ff(elapsed1, 4)
+        zbres.gett = $elapsed3
         zbres.bname = benchmarkName
         zbres.repeats = $repeatcount
         benchmarkresults.add(zbres)
@@ -514,24 +520,28 @@ proc showBench*() =
         var epochsize = 0
         var cpusize = 0
         var repeatsize = 0
-        for x in benchmarkresults:
-            var aa11 = spaces(1) & dodgerblue & "[" & salmon & x.bname & dodgerblue & "]"
-            if len(aa11) > bnamesize: bnamesize = len(aa11)
-            if bnamesize < 13: bnamesize = 13
-            if len(x.epoch) > epochsize: epochsize = len(x.epoch) - bnamesize + 50
-            if len(x.cpu) > cpusize: cpusize = len(x.cpu) + 26
-            if len(x.repeats) > repeatsize: repeatsize = len(x.repeats)
 
-        if benchmarkresults.len > 0:
-                for x in benchmarkresults:
+        if benchmarkresults.len == 0:
+            printLn("Benchmark results emtpy. Nothing to show", red)
+        else:    
+          for x in benchmarkresults:
+              var aa11 = spaces(1) & dodgerblue & "[" & salmon & x.bname & dodgerblue & "]"
+              if len(aa11) > bnamesize: bnamesize = len(aa11)
+              if bnamesize < 13: bnamesize = 13
+              if len(x.epoch) > epochsize: epochsize = len(x.epoch) - bnamesize + 50
+              if len(x.cpu) > cpusize: cpusize = len(x.cpu) + 26
+              if len(x.repeats) > repeatsize: repeatsize = len(x.repeats)
+                         
+            
+          for x in benchmarkresults:
                     echo()
-                    let tit = fmtx(["",
-                                    "<$1" % $(bnamesize - len(gold) * 3), "", "<28", "<19"], spaces(2),
-                                    "BenchMark", spaces(4), "Timing",
-                                    "Cycles : $1" % x.repeats)
+                 
+                    let tit = fmtx(["", "<$1" % $(bnamesize - len(gold) * 3), "", "<28", "<55"], spaces(2),
+                                "BenchMark", spaces(4), "Timing", "Cycles : $1" % x.repeats)
+
 
                     if parseInt(x.repeats) > 0:
-                            printLn(tit, sandybrown, styled = {styleUnderScore})
+                            printLn(tit, skyblue,darkslategraybg, styled = {styleUnderScore})
                             echo()
                     else:
                             printLn(tit, red, styled = {styleUnderScore})
@@ -539,6 +549,7 @@ proc showBench*() =
                     let aa1 = spaces(1) & gold & "[" & salmon & x.bname & gold & "]"
                     let bb1 = cornflowerblue & "Epoch Time : " & oldlace & x.epoch & " secs"
                     let cc1 = cornflowerblue & "Cpu Time   : " & oldlace & x.cpu & " secs"
+                    let cgt = cornflowerblue & "Get Time   : " & oldlace & x.gett 
                     var dd1 = ""
                     var ee1 = ""
 
@@ -552,18 +563,17 @@ proc showBench*() =
                     else:
                             ee1 = "Cycles/sec : Inf"
 
-                    printLn(fmtx(["<$1" % $bnamesize, "", "<70", "<90"],aa1, spaces(3), bb1, dd1))
+                    printLn(fmtx(["<$1" % $bnamesize, "", "<70", "<90"],aa1, spaces(3), bb1,dd1))
                     printLn(fmtx(["<$1" % $bnamesize, "", "<70", "<50"],aa1, spaces(3), cc1, ee1))
+                    printLn(fmtx(["<$1" % $bnamesize, "", ""],aa1, spaces(3), cgt)) 
 
                     if dd1.contains("Inf") or ee1.contains("Inf"):
                             cxprintLn(2,yaleblue,limegreenbg,"Inf - To measure something increase the loop count.")
 
-                echo()
-                benchmarkresults = @[]
-
-                printLn("Benchmark finished. Results cleared.", goldenrod)
-        else:
-                printLn("Benchmark results emtpy. Nothing to show", red)
+        echo()
+        benchmarkresults = @[]
+        printLn("Benchmark finished. Results cleared.", goldenrod)
+       
 
 
 proc showPalette*(coltype:string = "white" ) =

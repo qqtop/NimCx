@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-06-06 
+##     Latest      : 2019-07-13 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -19,7 +19,8 @@
 ##     Description : provides some functions pertaining to statistcs and calculations
 ## 
 
-import cxconsts,cxglobal,cxprint,stats,math,algorithm
+import terminal,stats,math,algorithm
+import cxconsts,cxglobal,cxprint
   
 # proc returnStat(x:Runningstat,stat : seq[string]):float =
 #      ## returnStat
@@ -61,20 +62,20 @@ proc showStats*(x:Runningstat,n:int = 3,xpos:int = 1) =
      ##     curdn(6)  
      ##     doFinish()
      ##
-     var sep = ":"
-     printlnbicol("Sum     : " & ff(x.sum,n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printlnbicol("Mean    : " & ff(x.mean,n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printlnbicol("Var     : " & ff(x.variance,n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printlnbicol("Var  S  : " & ff(x.varianceS,n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printlnbicol("Kurt    : " & ff(x.kurtosis,n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printlnbicol("Kurt S  : " & ff(x.kurtosisS,n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printlnbicol("Skew    : " & ff(x.skewness,n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printlnbicol("Skew S  : " & ff(x.skewnessS,n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printlnbicol("Std     : " & ff(x.standardDeviation,n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printlnbicol("Std  S  : " & ff(x.standardDeviationS,n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printlnbicol("Min     : " & ff(x.min,n),yellowgreen,white,sep,xpos = xpos,false,{})
-     printlnbicol("Max     : " & ff(x.max,n),yellowgreen,white,sep,xpos = xpos,false,{})
-     println("S --> sample\n",peru,xpos = xpos)
+     cxprintln(xpos,yellowgreen,"        : " ,white, "")
+     cxprintln(xpos,yellowgreen,"Sum " & sigma &  "   : " ,white, ff(x.sum,n))
+     cxprintLn(xpos,yellowgreen,"Mean    : " ,white, ff(x.mean,n))
+     cxprintLn(xpos,yellowgreen,"Var     : " ,white, ff(x.variance,n))
+     cxprintLn(xpos,yellowgreen,"Var  S  : " ,white, ff(x.varianceS,n))
+     cxprintLn(xpos,yellowgreen,"Kurt    : " ,white, ff(x.kurtosis,n))
+     cxprintLn(xpos,yellowgreen,"Kurt S  : " ,white, ff(x.kurtosisS,n))
+     cxprintLn(xpos,yellowgreen,"Skew    : " ,white, ff(x.skewness,n))
+     cxprintLn(xpos,yellowgreen,"Skew S  : " ,white, ff(x.skewnessS,n))
+     cxprintLn(xpos,yellowgreen,"Std     : " ,white, ff(x.standardDeviation,n))
+     cxprintLn(xpos,yellowgreen,"Std  S  : " ,white, ff(x.standardDeviationS,n))
+     cxprintLn(xpos,yellowgreen,"Min     : " ,white, ff(x.min,n))
+     cxprintLn(xpos,yellowgreen,"Max     : " ,white, ff(x.max,n))
+     cxprintLn(xpos,peru,"S --> sample\n")
 
 proc showRegression*(x,y: seq[float | int],n:int = 5,xpos:int = 1) =
      ## showRegression
@@ -88,12 +89,12 @@ proc showRegression*(x,y: seq[float | int],n:int = 5,xpos:int = 1) =
      ##    showRegression(a,b)
      ##
      ##
-     var rr :RunningRegress
+     var rr: RunningRegress
      rr.push(x,y)
      printLn("Regression Results",skyblue)
-     printlnbicol("Intercept     : " & ff(rr.intercept(),n),yellowgreen,white,":",xpos = xpos,false,{})
-     printlnbicol("Slope         : " & ff(rr.slope(),n),yellowgreen,white,":",xpos = xpos,false,{})
-     printlnbicol("Correlation   : " & ff(rr.correlation(),n),yellowgreen,white,":",xpos = xpos,false,{})
+     cxprintLn(xpos,yellowgreen,"Intercept     : " ,white, ff(rr.intercept(),n))
+     cxprintLn(xpos,yellowgreen,"Slope         : " ,white, ff(rr.slope(),n))
+     cxprintLn(xpos,yellowgreen,"Correlation   : " ,white, ff(rr.correlation(),n))
     
 
 proc showRegression*(rr: RunningRegress,n:int = 5,xpos:int = 1) =
@@ -101,9 +102,9 @@ proc showRegression*(rr: RunningRegress,n:int = 5,xpos:int = 1) =
      ##
      ## Displays RunningRegress data from an already formed RunningRegress
      ## 
-     printlnbicol("Intercept     : " & ff(rr.intercept(),n),yellowgreen,white,":",xpos = xpos,false,{})
-     printlnbicol("Slope         : " & ff(rr.slope(),n),yellowgreen,white,":",xpos = xpos,false,{})
-     printlnbicol("Correlation   : " & ff(rr.correlation(),n),yellowgreen,white,":",xpos = xpos,false,{})
+     cxprintLn(xpos,yellowgreen,"Intercept     : " ,white, ff(rr.intercept(),n))
+     cxprintLn(xpos,yellowgreen,"Slope         : " ,white, ff(rr.slope(),n))
+     cxprintLn(xpos,yellowgreen,"Correlation   : " ,white, ff(rr.correlation(),n))
 
      
 
