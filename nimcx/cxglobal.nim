@@ -198,7 +198,7 @@ proc fastWrite*(f: File, s: string) =
 func cxpad*(s: string, padlen: int, paddy: string = spaces(1)): string =
           ## cxpad
           ## 
-          ## pads a string on the right side with spaces to specified width 
+          ## pads a string on the right side with spaces to specified padlen 
           ##
           result = s
           if s.len < padlen:
@@ -208,29 +208,32 @@ func cxpdx*(padLen: int, s: string, paddy: string = spaces(1)): string =
           ## pdx 
           ## 
           ## same as cxpad but with padding char count in front
+          ##
           cxpad(s, padLen, paddy)
 
-func cxlpad*(s: string, padlen: int, paddy: string = spaces(1)): string =
+func cxLpad*(s: string, padlen: int, paddy: string = spaces(1)): string =
           ## cxlpad
           ## 
-          ## pads a string on the left side with spaces to specified width 
+          ## pads a string on the left side with spaces to specified padlen
           ##
           result = s
           if s.len < padlen:
               result = (paddy * (max(0, padlen - s.len))) & s
 
-func cxlpdx*(padLen: int, s: string, paddy: string = spaces(1)): string =
+func cxLpdx*(padLen: int, s: string, paddy: string = spaces(1)): string =
           ## cxlpdx 
           ## 
           ## same as cxpad but with padding char count in front
+          ##
           cxlpad(s, padLen, paddy)
 
-func cxlpadN*(s: string, padlen: int, paddy: string = spaces(1)): string =
+
+func cxLpadN*(s: string, padlen: int, paddy: string = "0"): string =
           ## cxlpadN
           ##
           ## for numbers
           ##
-          ## pads a string on the left side with spaces to specified width 
+          ## pads a string on the left side with "0" default or string to specified padlen
           ##
           result = s
           if result.startsWith("-") == false:
@@ -241,12 +244,32 @@ func cxlpadN*(s: string, padlen: int, paddy: string = spaces(1)): string =
               result = (paddy * (max(0, padlen - s.len))) & result
               result = "-" & result
 
+
+func cxLpadN*(s: SomeNumber, padlen: int, paddy: string = "0"): string =
+          ## cxlpadN
+          ##
+          ## for numbers
+          ##
+          ## pads a number on the left side with "0" default or string to specified padlen
+          ##
+          result = $s
+          if result.startsWith("-") == false:
+            if result.len < padlen:
+              result = (paddy * (max(0, padlen - result.len))) & result
+          else:
+              result.removePrefix("-")
+              result = (paddy * (max(0, padlen - result.len - 1))) & result
+              result = "-" & result
+
+              
+
 proc waitOn*(alen: int = 1) =
           ## waiton
           ## 
           ## stops program to wait for one or more keypresses. default = 1
           ##
           discard readBuffer(stdin, cast[pointer](newString(1)), alen)
+          
 
 proc rndSample*[T](asq: seq[T]): T =
           ## rndSample  
