@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-07-13 
+##     Latest      : 2019-07-18 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -21,13 +21,13 @@
 ## 
 import cxconsts,cxglobal,terminal,strutils,sequtils,colors,macros
 
-proc print*  [T](astring:T,fgr:string = getFg(fgDefault) ,bgr: string = getBg(bgDefault),xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {})
+proc print*[T](astring:T,fgr:string = getFg(fgDefault) ,bgr: string = getBg(bgDefault),xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {})
 proc printLn*[T](astring:T,fgr:string = getFg(fgDefault) ,bgr: string = getBg(bgDefault),xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {})
 proc printBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) 
 proc printLnBiCol*[T](s:varargs[T,`$`], colLeft:string = yellowgreen, colRight:string = termwhite,sep:string = ":",xpos:int = 0,centered:bool = false,styled : set[Style]= {}) 
 proc printRainbow*(astr : string,styled:set[Style] = {})     ## forward declaration
 proc hline*(n:int = tw,col:string = white,xpos:int = 0,lt:string = "-") : string {.discardable.} ## forward declaration
-proc hlineLn*(n:int = tw,col:string = white,xpos:int = 0,lt:string = "-") : string {.discardable.}## forward declaration
+proc hlineLn*(n:int = tw,col:string = white,xpos:int = 0,lt:string = "-") : string {.discardable.} ## forward declaration
 proc printErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} 
 proc printLnErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} 
 
@@ -49,7 +49,9 @@ template cxprintxy*(xpos:int,ypos:int,args:varargs[untyped]) =
     ## xpos : x position 
     ## ypos : y position starting from 0,0
     ## Calls styledWrite with args given
-    ##    
+    ##
+    ## enough space must be available in terminal window 
+    ##
     ## Backgroundcolors defined in cxconsts.nim colorNames can be used , that is 
     ## any color ending with xxxxxxbg  like pastelpinkbg
     ##    
@@ -103,8 +105,6 @@ template cxwriteLn*(args:varargs[untyped]) =
     ##    
     stdout.styledWriteLine(args)  
        
-
-
 
 proc printf*(formatStr: cstring) {.importc, header: "<stdio.h>", varargs.}
      ## printf

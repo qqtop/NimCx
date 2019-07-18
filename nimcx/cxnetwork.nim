@@ -361,20 +361,6 @@ proc showHosts*(dm:string) =
          printLn(x)    
          
 
-proc ssService*():seq[string] = 
-   ## ssService
-   ## 
-   ## WIP to provide color formated output to ss commands
-   ## like : ss --query=tcp -r
-   ## 
-   ## 
-   let (ss,err) = execCmdEx("ss --options --extended --memory --processes --info")
-   if err <> 0:
-       result = @["Error occured in ss execution"]
-   else:    
-       result = ss.splitLines()
-
-
-         
+     
          
 # end of cxnetwork.nim          

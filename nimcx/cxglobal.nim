@@ -225,6 +225,22 @@ func cxlpdx*(padLen: int, s: string, paddy: string = spaces(1)): string =
           ## same as cxpad but with padding char count in front
           cxlpad(s, padLen, paddy)
 
+func cxlpadN*(s: string, padlen: int, paddy: string = spaces(1)): string =
+          ## cxlpadN
+          ##
+          ## for numbers
+          ##
+          ## pads a string on the left side with spaces to specified width 
+          ##
+          result = s
+          if result.startsWith("-") == false:
+            if s.len < padlen:
+              result = (paddy * (max(0, padlen - s.len))) & s
+          else:
+              result.removePrefix("-")
+              result = (paddy * (max(0, padlen - s.len))) & result
+              result = "-" & result
+
 proc waitOn*(alen: int = 1) =
           ## waiton
           ## 
@@ -445,10 +461,10 @@ proc ff22(zz: int): string =
           let zs = split($zz, ".")
           let zrv = reverseme(zs[0])
 
-          for x in 0..<zrv.len:
+          for x in 0 ..< zrv.len:
                     zrs = zrs & $zrv[x]
 
-          for x in 0..<zrs.len:
+          for x in 0 ..< zrs.len:
                     if sc == 2:
                               nz = "," & $zrs[x] & nz
                               sc = 0
@@ -527,9 +543,34 @@ proc ff2*(zz: SomeNumber, n: int = 3):string =
                         result = ff22(parseInt(c[0]))
                   else:
                         try:
-                           result = ff22(parseInt(c[0])) & c[1] & cnew
+                           if c[0] == "-0":
+                                result = "-" & ff22(parseInt(c[0])) & c[1] & cnew
+                           else:     
+                                result = ff22(parseInt(c[0])) & c[1] & cnew
                         except:  # if there is nil ? we might get here
                             discard
+
+proc ff2Eu*(zzz: SomeNumber, n: int = 3):string =
+     ## ff2Eu
+     ##
+     ## convert a number into EU locale formatted string
+     ## 1234567.123   -->  1.234.567,123
+     ## set after comma positions with n , default is 3
+     ##
+     ##.. code-block:: nim
+     ##    echo ff2Eu(1234567.123)
+     ##
+     
+     var z = ff2(zzz,n) 
+     var zz = z.replace(",",".").splitty(".")
+     if zz.len > 0:
+        for x in 0 ..< zz.len - 1: result = result & zz[x]
+        result.removeSuffix(".")    
+        result = result & "," & zz[zz.high]
+     else:
+         result = z   
+
+
 
 proc getRandomFloat*():float = rand(1.0) * getRandomSignF()
           ## getRandomFloat
@@ -631,8 +672,8 @@ proc cxIsDigit*(s:string,sep:char = '.'):bool =
          break 
       
 
-proc fmtengine[T](a: string, astring: T): string =
-          ## fmtengine - used internally
+proc fmtEngine[T](a: string, astring: T): string =
+          ## fmtEngine - used internally
           ## ::
           ## simple string formater to right or left align within given param
           ## also can take care of floating point precision
@@ -675,19 +716,18 @@ proc fmtengine[T](a: string, astring: T): string =
 
           if dotflag == true and textflag == false:
                     # floats should now be shown with thousand seperator
-                    # like 1,234.56  instead of 1234.56
+                    # like 1,234.56  instead of 1234.56 other EU-locale not supported
                
                     # if df is nil we make it zero so no valueerror occurs
                     if strutils.strip(df,true, true).len == 0: df = "0"
                     # in case of any edge cases throwing an error
                     try:
-                              okstring = ff2(parseFloat(okstring), parseInt(
-                                                  df))
+                          okstring = ff2(parseFloat(okstring), parseInt(df))
                     except ValueError:
-                              #printLn("Error , invalid format string dedected.",red)
-                              #printLn("Showing exception thrown : ",peru)
-                              echo()
-                              raise
+                          #printLn("Error , invalid format string dedected.",red)
+                          #printLn("Showing exception thrown : ",peru)
+                          echo()
+                          raise
 
           var alx = spaces(max(0, pad - okstring.len))
 
@@ -759,7 +799,7 @@ proc fmtx*[T](fmts: openarray[string], fstrings: varargs[T, `$`]): string =
          doassert(fmts.len == fstrings.len)
          # now iterate and generate the desired output
          for cc in 0 ..< fmts.len:
-                   result = result & fmtengine(fmts[cc], fstrings[cc])
+               result = result & fmtengine(fmts[cc], fstrings[cc])
 
 
 
@@ -853,6 +893,7 @@ template aPaletteSample*(coltype: string): int =
           for x in 0..<colPaletteLen(coltypen): b.add(x)
           rand(b)            
 
+
 template paletix*(pl: string): untyped =
           ## paletix
           ## 
@@ -888,11 +929,9 @@ template randCol2*(coltype: string): auto =
                     coltypen = "darkgray"
           var ts = newSeq[string]()
           for x in 0..<colorNames.len:
-                    if colorNames[x][0].startswith(coltypen) or colorNames[x][
-                                        0].contains(coltypen):
-                              ts.add(colorNames[x][1])
-          if ts.len == 0: ts.add(colorNames[getRndInt(0, colorNames.len - 1)][
-                              1]) # incase of no suitable string we return standard randcol
+             if colorNames[x][0].startswith(coltypen) or colorNames[x][0].contains(coltypen):
+                 ts.add(colorNames[x][1])
+          if ts.len == 0: ts.add(colorNames[getRndInt(0, colorNames.len - 1)][1]) # if no suitable string return a randcol
           ts[sample(colPaletteIndexer(ts))] #rndsample
 
 
@@ -918,11 +957,10 @@ template rndCol*(r: int = getRndInt(0, 254), g: int = getRndInt(0, 254),b: int =
         ##    # print a string 6 times in a rand color selected from rgb spectrum
         ##    loopy(0..5,printLn("Hello Random Color",rndCol()))
         ##
+        
     
     
-    
-    
-# cxLine is a line creation object with several properties 
+# cxLine is a experimental line creation object with several properties 
 # up to 12 CxlineText objects can be placed into a cxline
 # also see printCxLine in cxprint.nim.nim for possible usage
 
@@ -1092,8 +1130,7 @@ proc getAscii*(s: string): seq[int] =
           ## returns a seq[int]  with ascii integer codes of every character in a string 
           ##
           result = @[]
-          for c in s:
-                    result.add(c.int)
+          for c in s: result.add(c.int)
 
 
 # simple navigation mostly mirrors terminal.nim functions
@@ -1239,7 +1276,7 @@ template loopy2*(mi: int = 0, ma: int = 5, st: untyped) =
          ##        printLnBiCol(xloopy , "  The house is in the back.",randcol(),randcol(),":",0,false,{})
          ##        printLn("Some integer : " & $getRndInt())
          ##
-         for xloopy {.inject.} in mi..<ma: st
+         for xloopy {.inject.} in mi ..< ma: st
 
 
 proc fromCString*(p: pointer, len: int): string =

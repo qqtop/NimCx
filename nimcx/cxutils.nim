@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-06-30
+##     Latest      : 2019-07-18
 ##
 ##     OS          : Linux
 ##
@@ -91,8 +91,7 @@ proc getAmzDateString*():string =
 proc getUserName*():string =
      # just a simple user name prompt 
      result = readLineFromStdin(" Enter your user name    : ")
-     
-     
+        
 
 proc getPassword*(ahash:int64 = 0i64):string =
      ## getPassword
@@ -230,7 +229,6 @@ proc getRandomPoint*(minx:float = -500.0,maxx:float = 500.0,miny:float = -500.0,
     ##      yellowgreen," y:",termwhite,ff2(n.y,4)))
     ##  decho(2)
     ##  
-
 
     var point : RpointFloat
     var rx    : float
@@ -1284,7 +1282,8 @@ proc quickLargeInt*():string =
   try: 
       result =  repeat($rand(10_00_00_00_00_00_00_00_00.int..int.high), 2)   
   except:
-      result = $rand(int.high)    
+      result = $rand(int.high)
+      
    
 proc quickBinaryString*(width:int=10):string =
      ## quickBinaryString

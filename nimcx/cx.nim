@@ -179,7 +179,7 @@ when defined(macosx):
 
 when defined(windows):
         {.hint: "Time to switch to Linux !".}
-        {.hint: "nimCx does not directly support Windows , you are on your own !".}
+        {.hint: "NimCx runs on windows but not all functionality is available ".}
 
 when defined(posix):
         {.hint: "\x1b[38;2;154;205;50m \u2691  NimCx  V. " & CXLIBVERSION &
@@ -1112,7 +1112,7 @@ proc doInfo*() =
     printLnBiCol("Creation                      : " & $(fi.creationTime), yellowgreen, lightgrey, sep, 0, false, {})
 
     when defined windows:
-            printLnBiCol("System                        : Windows..... Really ??", red, lightgrey, sep, 0, false, {})
+            printLnBiCol("System                        : Running on Windows", red, lightgrey, sep, 0, false, {})
     elif defined linux:
             printLnBiCol("System                        : Running on Linux", brightcyan, yellowgreen, sep, 0, false, {})
     else:
@@ -1127,7 +1127,7 @@ proc doInfo*() =
             printLnBiCol("Code specifics                : generic",yellowgreen, lightgrey, sep, 0, false, {})
 
     printLnBiCol("Nim Version                   : " & $NimMajor & "." & $NimMinor & "." & $NimPatch, yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("Processor count               : " & $cpuInfo.countProcessors(), yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Processor thread count        : " & $cpuInfo.countProcessors(), yellowgreen, lightgrey, sep, 0, false, {})
     printBiCol("OS                            : " & hostOS, yellowgreen,lightgrey, sep, 0, false, {})  
     printBiCol(" | CPU: " & hostCPU, yellowgreen, lightgrey, sep, 0,false, {})
     printLnBiCol(" | cpuEndian: " & $cpuEndian, yellowgreen, lightgrey, sep, 0, false, {})
@@ -1237,7 +1237,7 @@ proc doFinish*() =
                 printLnBiCol(execCmdEx("gcc --version")[0].splitLines()[0] ,colLeft = peru, colright = brightblack,sep = spaces(1))
                 if detectOs(OpenSUSE) or detectOs(Parrot): # some additional data if on openSuse or parrotOs systems
                     let ux1 = uname().split("#")[0].split(" ")
-                    printLnBiCol("Kernel     :  " & ux1[2] & " | Computer: " & ux1[1] & " | Os: " & ux1[0] & " | CPU Cores: " & $(
+                    printLnBiCol("Kernel     :  " & ux1[2] & " | Computer: " & ux1[1] & " | Os: " & ux1[0] & " | CPU Threads: " & $(
                                     osproc.countProcessors()), yellowgreen, lightslategray, ":", 0, false, {})
                     let rld = release().splitLines()
                     let rld3 = rld[2].splitty(":")
