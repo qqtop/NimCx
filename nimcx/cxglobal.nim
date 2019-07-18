@@ -156,41 +156,7 @@ converter toTwInt*(x: cushort): int = result = int(x)
 
 proc isNumeric*(s: string): bool = s.allCharsInSet({'0'..'9'})
 
-#proc getTerminalWidth*(): int =
-          ### getTerminalWidth
-          ###
-          ### get linux terminal width in columns
-          ### a terminalwidth function is now incorporated in Nim dev after 2016-09-02
-          ### which maybe is slightly slower than the one presented here
-          ###
-          #result = 0
-          #type WinSize = object
-                    #row, col, xpixel, ypixel: cushort
-          #const TIOCGWINSZ = 0x5413
-          #proc ioctl(fd: cint, request: culong, argp: pointer)
-                    #{.importc, header: "<sys/ioctl.h>".}
-          #var size: WinSize
-          #ioctl(0, TIOCGWINSZ, addr size)
-          #result = toTwInt(size.col)
-
-
 template tw*: int = terminalWidth() ## tw , a global where latest terminal width is always available
-
-#proc getTerminalHeight*(): int =
-          ### getTerminalHeight
-          ###
-          ### get linux terminal height in rows
-          ###
-
-          #type WinSize = object
-                    #row, col, xpixel, ypixel: cushort
-          #const TIOCGWINSZ = 0x5413
-          #proc ioctl(fd: cint, request: culong, argp: pointer)
-                    #{.importc, header: "<sys/ioctl.h>".}
-          #var size: WinSize
-          #ioctl(0, TIOCGWINSZ, addr size)
-          #result = toTwInt(size.row)
-
 
 template th*: int = terminalHeight() ## th , a global where latest terminal height is always available
 
