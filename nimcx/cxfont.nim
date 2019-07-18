@@ -1,7 +1,6 @@
 {.deadCodeElim: on , optimization: speed.}
 import cxglobal,cxconsts,cxprint
 import strutils,terminal,sets
-
 # cxfont.nim
 #
 # Experimental font building 
@@ -11,9 +10,7 @@ import strutils,terminal,sets
 # 
 # slimfont and  bracketmatrix font 
 # 
-# 
-# try : 
-# 
+# currently some print functions here may have same/similar functionality as in cxprint 
 # 
 # Last : 2019-06-10  
 # 
@@ -62,11 +59,11 @@ proc fprint*[T](astring:T,
                substr:string = "") =
  
     ## ::
-    ##   print2
+    ##   prev. print2
     ## 
-    ##   the old print routine with backgroundcolor set to black only  ,
+    ##   the old print routine with backgroundcolor set to fgDefault only  ,
     ##   
-    ##   required by printfont ,fprintln2 , printBiCol2 and printLnBiCol2
+    ##   required by printfont ,fprintln , printBiCol2 and printLnBiCol2
     ##
     ##   basically similar to terminal.nim styledWriteLine with more functionality
     ##   
@@ -162,7 +159,7 @@ proc fprintln*[T](astring:T,
               substr  : string = "") =  
     ## 
     ## ::
-    ##   fprintln2
+    ##   fprintln
     ## 
     ##  
     ##   foregroundcolor
@@ -175,22 +172,19 @@ proc fprintln*[T](astring:T,
     ## Examples
     ##
     ##.. code-block:: nim
-    ##    fprintln2("Yes ,  we made it.",clrainbow) 
-    ##    fprintln2("Yes ,  we made it.",green)
+    ##    fprintln("Yes ,  we made it.",green)
     ##    # or use it as a replacement of echo
-    ##    fprintln2(red & "What's up ? " & green & "Grub's up ! ")
-    ##    fprintln2("No need to reset the original color")
-    ##    fprintln2("Nim does it again",peru,centered = true ,styled = {styleDim,styleUnderscore},substr = "i")
+    ##    fprintln(red & "What's up ? " & green & "Grub's up ! ")
+    ##    fprintln("No need to reset the original color")
+    ##    fprintln("Nim does it again",peru,centered = true ,styled = {styleDim,styleUnderscore},substr = "i")
     ##    # To achieve colored text with styleReverse try:
     ##    loopy2(0,30):
-    ##        fprintln2("The end never comes on time ! ",randcol(),styled = {styleReverse})
+    ##        fprintln("The end never comes on time ! ",randcol(),styled = {styleReverse})
     ##        print cleareol
     ##        sleepy(0.1)
     ##
     fprint($(astring) & "\n",fgr,xpos,fitLine,centered,styled,substr)
     
-
-
 
 template cxZero*(npos:int=0,col:string=rndCol(),coltop:string = rndCol()) = 
       

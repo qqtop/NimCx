@@ -1314,8 +1314,7 @@ proc doCxEnd*() =
     print(nimcxl & "  V. " & CXLIBVERSION,randcol(),styled={styleBright})  
     doFinish()
 
-# putting decho here will put two blank lines before anything else runs
-decho()
+
 # putting this here we can stop most programs which use this lib and get the
 # automatic exit messages , it may not work in tight loops involving execCMD or
 # waiting for readLine() inputs.

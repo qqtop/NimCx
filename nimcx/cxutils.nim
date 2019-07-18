@@ -482,12 +482,6 @@ proc superHeader*(bstring:string,strcol:string,frmcol:string) =
         ##
         ## be cut to terminal window size without ceremony
         ##
-        ## the color of the string can be selected, available colors
-        ##
-        ## green,red,cyan,white,yellow and for going completely bonkers the frame
-        ##
-        ## can be set to clrainbow too .
-        ##
         ##.. code-block:: nim
         ##    import nimcx
         ##
@@ -561,6 +555,7 @@ proc newWordCJK*(minwl:int = 3 ,maxwl:int = 10):string =
       ## .. code-block:: nim
       ##    # create a string of chinese or CJK chars with length 20 
       ##    echo newWordCJK(20,20)
+      ##
       result = ""
       if minwl <= maxwl:
          let c5 = toSeq(minwl..maxwl)
