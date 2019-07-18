@@ -19,7 +19,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-07-13 
+##     Latest      : 2019-07-18 
 ##
 ##     Compiler    : Nim >= 0.19.x devel branch
 ##
@@ -655,9 +655,9 @@ iterator base1000Rev(n: int64): int64 =
 
 proc spellInteger*(n: int64): string =
         ## spellInteger
-  ## 
-  ## code adapted from rosettacode and updated to make it actually compile
-  ##
+        ## 
+        ## code adapted from rosettacode and updated to make it actually compile
+        ##
 
         if n < 0:
                 "minus " & spellInteger(-n)
@@ -684,11 +684,11 @@ proc spellInteger*(n: int64): string =
 
 proc spellInteger2*(n: string): string =
         ## spellInteger2
-  ## 
-  ## used in after comma part of a float , we just put out the numbers one by one
-  ## 
-  ## code adapted from rosettacode and updated 
-  ##
+        ## 
+        ## used in after comma part of a float , we just put out the numbers one by one
+        ## 
+        ## code adapted from rosettacode and updated 
+        ##
         result = ""
         var nn = n
         for x in nn:
@@ -725,11 +725,11 @@ proc spellFloat*(n: float64, currency: bool = false, sep: string = ".", sepname:
                 if nss[1].len == 0: nss[1] = $0
 
                 # depending on the situation we might want
-      # 250.365
-      # two hundred fifty dot three six five
-      # two hundred fifty dot three hundred sixty five 
-      # but we may also want 
-      # two hundred fifty dollars and thirty four cents
+                # 250.365
+                # two hundred fifty dot three six five
+                # two hundred fifty dot three hundred sixty five 
+                # but we may also want 
+                # two hundred fifty dollars and thirty four cents
                 if currency == false:
                         result = spellInteger(parseInt(nss[
                                         0])) & sepname & spellInteger2(nss[1])
@@ -859,16 +859,16 @@ proc getColorName*[T](sc: T): string =
 
 
 proc showTerminalSize*() =
-      ## showTerminalSize
-      ##
-      ## displays current terminal dimensions
-      ##
-      ## width is always available via tw
-      ##
-      ## height is always available via th
-      ##
-      ##
-      cxprintLn(2,yaleblue,limegreenbg," Terminal Size ", styleReverse," W" & spaces(1) & $tw & " x" & " H " & $th & spaces(1))
+     ## showTerminalSize
+     ##
+     ## displays current terminal dimensions
+     ##
+     ## width is always available via tw
+     ##
+     ## height is always available via th
+     ##
+     ##
+     cxprintLn(2,yaleblue,yellowgreenbg," Terminal Size ", styleReverse," W" & spaces(1) & $tw & " x" & " H " & $th & spaces(1))
 
 
 proc cxAlert*(xpos: int = 1) =
@@ -905,74 +905,73 @@ proc cxAlertLn*(xpos: int = 1) =
 
  
 proc cxHelp*(s: openarray[string], xpos: int = 2) =
-      ## cxHelp
-      ## 
-      ## a help generator which can easily be called from within or on app start  
-      ## with ability to include code blocks
-      ## 
-      ##
-      ##.. code-block:: nim
-      ##    cxHelp(["Help system for " & extractFileName(getAppFilename()),
-      ##         "",
-      ##        "1) Read the book",
-      ##        "2) use more data",
-      ##        "3) have a beer",
-      ##        cxcodestart,
-      ##        "Example 1",
-      ##        "",
-      ##        "let abc = @[1,2,3]",
-      ##        "    ",
-      ##        "var xfg = mysupergenerator(abc,3)",
-      ##        cxcodeend,
-      ##        "this should be help style again",
-      ##        cxcodestart,
-      ##        "Example 2  ",
-      ##        "",
-      ##        "for x in 0..<n:",
-      ##        """   printLn("Something Nice  ",blue)"""",
-      ##        cxcodeend,
-      ##        "Have a nice day"])
+     ## cxHelp
+     ## 
+     ## a help generator which can easily be called from within or on app start  
+     ## with ability to include code blocks
+     ## 
+     ##
+     ##.. code-block:: nim
+     ##    cxHelp(["Help system for " & extractFileName(getAppFilename()),
+     ##         "",
+     ##        "1) Read the book",
+     ##        "2) use more data",
+     ##        "3) have a beer",
+     ##        cxcodestart,
+     ##        "Example 1",
+     ##        "",
+     ##        "let abc = @[1,2,3]",
+     ##        "    ",
+     ##        "var xfg = mysupergenerator(abc,3)",
+     ##        cxcodeend,
+     ##        "this should be help style again",
+     ##        cxcodestart,
+     ##        "Example 2  ",
+     ##        "",
+     ##        "for x in 0..<n:",
+     ##        """   printLn("Something Nice  ",blue)"""",
+     ##        cxcodeend,
+     ##        "Have a nice day"])
 
-      var maxlen = 0
-      for ss in 0..<s.len:
-           # scan for max len which will be the max width of the help
-           # but need to limit it to within tw
-           if maxlen < s[ss].len:  maxlen = s[ss].len
+     var maxlen = 0
+     for ss in 0..<s.len:
+          # scan for max len which will be the max width of the help
+          # but need to limit it to within tw
+          if maxlen < s[ss].len:  maxlen = s[ss].len
+     if maxlen > tw - 10:
+               cxAlertLn(2)
+               showTerminalSize()
+               cxprintLn(xpos,white,bgred,"Terminal Size to small for help line width")
+               cxAlertLn(2)
+               echo()
 
-      if maxlen > tw - 10:
-                cxAlertLn(2)
-                showTerminalSize()
-                cxprintLn(xpos,white,bgred,"Terminal Size to small for help line width")
-                cxAlertLn(2)
-                echo()
-
-      var cxcodeflag = false
-      var cxcodeendflag = false
-      for ss in 0..<s.len:
-                var sss = s[ss]
-                if sss.len < maxlen: sss = sss & spaces(max(0,  maxlen - sss.len))
-                # we can embed a code which is set off from the help msg style
-                if sss.contains(cxcodestart) == true: cxcodeflag = true
-                if sss.contains(cxcodeend) == true: cxcodeendflag = true
-                if ss == 0:
-                        printLnHelpMsg(sss, xpos = xpos)
-                var bhelptemp = spaces(max(0, maxlen)) # set up a blank line of correct length
-                if cxcodeflag == true:
-                        if sss.contains(cxcodestart) == true:
-                                printLnBelpMsg(bhelptemp, xpos = xpos)
-                        elif sss.contains(cxcodeend) == true:
-                                printLnBelpMsg(bhelptemp, xpos = xpos)
-                                # reset the flags
-                                cxcodeflag = false
-                                cxcodeendflag = false
-                        else:
-                                if cxcodeflag == true:
-                                        printLnCodeMsg(sss, xpos = xpos)
-                else:
-                        if cxcodeendflag == false and ss > 0:
-                                printLnBelpMsg(sss, xpos = xpos)
-      printLnEelpMsg(cxpad("",maxlen),xpos = xpos)                          
-      echo()
+     var cxcodeflag = false
+     var cxcodeendflag = false
+     for ss in 0..<s.len:
+               var sss = s[ss]
+               if sss.len < maxlen: sss = sss & spaces(max(0,  maxlen - sss.len))
+               # we can embed a code which is set off from the help msg style
+               if sss.contains(cxcodestart) == true: cxcodeflag = true
+               if sss.contains(cxcodeend) == true: cxcodeendflag = true
+               if ss == 0:
+                       printLnHelpMsg(sss, xpos = xpos)
+               var bhelptemp = spaces(max(0, maxlen)) # set up a blank line of correct length
+               if cxcodeflag == true:
+                       if sss.contains(cxcodestart) == true:
+                               printLnBelpMsg(bhelptemp, xpos = xpos)
+                       elif sss.contains(cxcodeend) == true:
+                               printLnBelpMsg(bhelptemp, xpos = xpos)
+                               # reset the flags
+                               cxcodeflag = false
+                               cxcodeendflag = false
+                       else:
+                               if cxcodeflag == true:
+                                       printLnCodeMsg(sss, xpos = xpos)
+               else:
+                      if cxcodeendflag == false and ss > 0:
+                               printLnBelpMsg(sss, xpos = xpos)
+     printLnEelpMsg(cxpad("",maxlen),xpos = xpos)                          
+     echo()
 
 
 
@@ -1023,10 +1022,9 @@ template checkLocals*() =
         dlineLn(tw() - 1)
         printLn("[checkLocals -->] ", gold)
         for name, value in fieldPairs(locals()):
-               printLnBiCol(fmtx(["", "<20", "", "", "", "", "<25", "", "",
-                                "", "", ""], "Variable : ", $name, spaces(3),
-                                peru, "Type : ", termwhite, $type(value),
-                                spaces(1), aqua, "Value : ", termwhite,$value))
+               printLnBiCol(fmtx(["", "<20", "", "", "", "", "<25", "", "", "", "", ""],
+                                  "Variable : ", $name, spaces(3), peru, "Type : ", termwhite,
+                                  $type(value), spaces(1), aqua, "Value : ", termwhite,$value))
         dlineLn(tw() - 1)
 
 proc qqTop*() =
@@ -1034,7 +1032,7 @@ proc qqTop*() =
      ##
      ## prints qqTop in custom color
      ##
-     stdout.styledWrite(cyan,"qq",greenyellow , "T" , brightred , "o", gold , "p")
+     cxwrite(cyan,"qq",greenyellow , "T" , brightred , "o", gold , "p")
 
 
 proc tmpFilename*(): string =

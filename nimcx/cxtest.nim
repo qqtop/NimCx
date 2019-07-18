@@ -2,10 +2,10 @@
 # rough and ready testing of some of available functions in nimcx library
 # see docs for more examples 
 #
-# Latest      : 2019-06-19   
+# Latest      : 2019-07-18   
  
-#import nimcx
-import "/data5/NimStuff/NimCxDevel/cx.nim" 
+import nimcx
+ 
 var testno = newCxcounter()
 
 let s = "nimcx Testing "

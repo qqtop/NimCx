@@ -12,7 +12,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-06-30
+##     Latest      : 2019-07-17
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -134,7 +134,7 @@ const
       uel* = entityToRune("uuml") 
       
       # example usage umlaut consts
-      # echo ue,"ber",oe,ae
+      # echo(ue,"ber",oe,ae)
       # example usage htmlparser entityxx proc
       # echo entityToUtf8("#0931")    # sigma
       # echo entityToUtf8("#x03A3")
