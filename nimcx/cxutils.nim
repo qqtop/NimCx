@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-07-18
+##     Latest      : 2019-08-03
 ##
 ##     OS          : Linux
 ##
@@ -21,9 +21,9 @@
 ##                   
 ##  
 
-import os,osproc,math,stats,cpuinfo,httpclient,browsers,typeinfo,typetraits,rdstdin
+import os,osproc,math,cpuinfo,rdstdin
 import terminal,strutils,times,random,sequtils,unicode,streams
-import cxconsts,cxglobal,cxprint,cxtime,cxhash,macros
+import cxconsts,cxglobal,cxprint,cxtime,cxhash 
 
 # type used in getRandomPoint
 type
@@ -59,7 +59,33 @@ proc cxCpuInfo*():string =
    if error <> 0:
      result = $error
    else:  
-     result = output       
+     result = output
+
+
+
+
+proc cpuInfo*():seq[string] {.discardable.} =
+   # cpuInfo
+   # requires lscpu available on system
+  
+   try:
+       result = execProcess("lscpu").splitLines()
+   except:
+       printLnErrorMsg("lscpu command my not be available on this system") 
+       result = @["lscpu command my not be available on this system"]
+
+proc showCpuInfo*() =
+   echo()
+   printLn("CPU Information" & spaces(40) , skyblue,yalebluebg)
+   try:
+      #let lscp = execProcess("lscpu")
+      #let lscp1 = lscp.splitLines()
+      for x in cpuInfo():
+          if not x.startswith("Flags:"): printLnBiCol(x)
+   except:
+       printLnErrorMsg("lscpu command my not be available on this system") 
+   echo()   
+         
 
 proc cxVideoInfo*():string = 
    ## cxVideoInfo
@@ -1278,11 +1304,13 @@ proc quickLargeInt*():string =
   ## quickLargeInt
   ## 
   ## returns a random large int string
+  ##  
   ##
-  try: 
-      result =  repeat($rand(10_00_00_00_00_00_00_00_00.int..int.high), 2)   
-  except:
-      result = $rand(int.high)
+  let cpi = cpuInfo()
+  if cpi[0].contains("86_64"):
+        result =  repeat($rand(10_00_00_00_00_00_00_00_00.int..int.high), 2)   
+  else:
+        result = $rand(int.high)
       
    
 proc quickBinaryString*(width:int=10):string =

@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-07-18 
+##     Latest      : 2019-08-03 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -24,7 +24,6 @@ import
           cxconsts,
           terminal,
           strutils,
-          parseutils,
           sequtils,
           strmisc,
           math,
@@ -34,10 +33,8 @@ import
           macros,
           colors,
           json,
-          streams,
-          typeinfo,
-          typetraits
-from times import getTime, toUnix, nanosecond 
+          streams
+          
 
 # forward declarations
 proc ff*(zz: float, n: int = 5): string
@@ -225,13 +222,13 @@ func cxLpdx*(padLen: int, s: string, paddy: string = spaces(1)): string =
           ## 
           ## same as cxpad but with padding char count in front
           ##
-          cxlpad(s, padLen, paddy)
+          cxLpad(s, padLen, paddy)
 
 
 func cxLpadN*(s: string, padlen: int, paddy: string = "0"): string =
           ## cxlpadN
           ##
-          ## for numbers
+          ## left pad for numbers
           ##
           ## pads a string on the left side with "0" default or string to specified padlen
           ##
@@ -248,7 +245,7 @@ func cxLpadN*(s: string, padlen: int, paddy: string = "0"): string =
 func cxLpadN*(s: SomeNumber, padlen: int, paddy: string = "0"): string =
           ## cxlpadN
           ##
-          ## for numbers
+          ## left pad for numbers
           ##
           ## pads a number on the left side with "0" default or string to specified padlen
           ##
@@ -318,7 +315,7 @@ template doSomething*(secs: int, body: untyped) =
           ##.. code-block:: nim
           ##    doSomething(10,myproc())  # executes my proc for ten secs   , obviously this will fail if your proc uses sleep...
           ##
-          let mytime = now()  #getTime().getLocalTime()
+          let mytime = now()  
           while toTime(now()) < toTime(mytime) + secs.seconds:
                     body
 
@@ -1388,8 +1385,7 @@ proc tupleToStr*(xs: tuple): string =
                     result.add($x)
           result.add(")")
 
-
-
+ 
 template colPaletteIndexer*(colx: seq[string]): auto = toSeq(colx.low .. colx.high)
 
 template colPaletteLen*(coltype: string): auto =

@@ -1,5 +1,5 @@
-import os,osproc,json,httpclient,strutils,strscans,posix
-import net,nativesockets,sets,terminal
+import os,osproc,json,httpclient,strutils,strscans
+import nativesockets,sets,terminal
 import cxconsts,cxglobal,cxprint
 # cxnetwork.nim
 # 
@@ -7,7 +7,7 @@ import cxconsts,cxglobal,cxprint
 # nmap , ss needs to be installed if relevant procs to be used.
 # 
 # 
-# Last 2019-06-13
+# Last 2019-07-27
 # 
 
   

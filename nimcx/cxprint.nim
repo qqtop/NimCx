@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-07-18 
+##     Latest      : 2019-07-27 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -19,7 +19,7 @@
 ##              
 ## 
 ## 
-import cxconsts,cxglobal,terminal,strutils,sequtils,colors,macros
+import cxconsts,cxglobal,terminal,strutils,macros
 
 proc print*[T](astring:T,fgr:string = getFg(fgDefault) ,bgr: string = getBg(bgDefault),xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {})
 proc printLn*[T](astring:T,fgr:string = getFg(fgDefault) ,bgr: string = getBg(bgDefault),xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {})
@@ -76,7 +76,7 @@ template cxprintLn*(xpos:int, args: varargs[untyped]) =
     ##   cxprintln(0,trueblue,bgwhite," Yes ! ",
     ##             yaleblue,truetomatobg," No ! ",
     ##             trueblue,bgwhite,styleReverse," Yes ! ",
-    ##             truetomato,bgwhite,styleBlink,styleBright," Oooh, it blinks too  ! ")
+    ##             truetomato,darkslatebluebg,styleBlink,styleBright," Oooh, it blinks too  ! ")
     ##   
     setCursorXPos(xpos)
     styledEcho(args)

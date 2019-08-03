@@ -19,7 +19,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-07-18 
+##     Latest      : 2019-08-03 
 ##
 ##     Compiler    : Nim >= 0.19.x devel branch
 ##
@@ -179,7 +179,7 @@ when defined(macosx):
 
 when defined(windows):
         {.hint: "Time to switch to Linux !".}
-        {.hint: "NimCx runs on windows but not all functionality is available ".}
+        {.hint: "NimCx compiles on windows but not all functions are available ".}
 
 when defined(posix):
         {.hint: "\x1b[38;2;154;205;50m \u2691  NimCx  V. " & CXLIBVERSION &
@@ -1175,21 +1175,8 @@ proc printTest*(astring:string="") =
          echo("  ",skyblue,rightarrow,white,astring)
      decho(2)
  
- 
-proc cpuInfo*() =
-   # cpuInfo
-   # requires lscpu available on system
-   echo()
-   printLn("CPU Information" & spaces(40) , skyblue,yalebluebg )
-   try:
-      let lscp = execProcess("lscpu")
-      let lscp1 = lscp.splitLines()
-      for x in lscp1:
-          if not x.startswith("Flags:"):
-             printLnBiCol(x)
-   except:
-       printLnErrorMsg("lscpu command my not be available on this system") 
-      
+
+   
 # code below borrowed from distros.nim and made exportable
 # there is now a new posix_utils module which also can give 
 # uname -a results
