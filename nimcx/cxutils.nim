@@ -1306,11 +1306,7 @@ proc quickLargeInt*():string =
   ## returns a random large int string
   ##  
   ##
-  let cpi = cpuInfo()
-  if cpi[0].contains("86_64"):
-        result =  repeat($rand(10_00_00_00_00_00_00_00_00.int..int.high), 2)   
-  else:
-        result = $rand(int.high)
+  result =  repeat($rand(int.high div 2..int.high), 2)   
       
    
 proc quickBinaryString*(width:int=10):string =
