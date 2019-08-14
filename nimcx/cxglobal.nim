@@ -532,7 +532,8 @@ proc ff2*(zz: SomeNumber, n: int = 3):string =
           ##  
           ##
      
-          result = $zz 
+          result = $zz   # <--- this needs improvement to avoid rounding errors
+          echo "---->  ",result
           when zz is SomeSignedInt:
                   let rresult = ff22(zz)     
                   if n == 0:

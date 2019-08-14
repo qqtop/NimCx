@@ -46,6 +46,8 @@ template cxprint*(xpos:int,args:varargs[untyped]) =
  
 template cxprintxy*(xpos:int,ypos:int,args:varargs[untyped]) =
     ## cxprint
+    ##
+    ## print to a certain x , y position in the terminal
     ## xpos : x position 
     ## ypos : y position starting from 0,0
     ## Calls styledWrite with args given
@@ -62,7 +64,9 @@ template cxprintxy*(xpos:int,ypos:int,args:varargs[untyped]) =
        
 template cxprintLn*(xpos:int, args: varargs[untyped]) =
     ## cxprintLn
-    ## 
+    ##
+    ## print to a certain x position
+    ##
     ## xpos : position  
     ## Calls styledEcho with args given
     ## 
@@ -238,7 +242,7 @@ proc printLn*[T](astring: T,
     ##    import nimcx
     ##    
     ##    printLn("Yes ,  we made it.",green,yellowbg)
-    ##    # or use it as a replacement of echo
+    ##    # or use it almost as a replacement of echo
     ##    printLn(red & "What's up ? " & green & "Grub's up ! ")
     ##    printLn("No need to reset the original color")
     ##    printLn("Nim does it again",peru,centered = true ,styled = {styleDim,styleUnderscore})

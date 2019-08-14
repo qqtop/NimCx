@@ -313,5 +313,18 @@ printLnBiCol(["cxTimeZone(long)  : ",cxTimezone(long)])
 printLnBiCol(["cxTimeZone(short) : ",cxTimezone(short)])
 printLnBiCol("This test took     : " & $cxHRTimer(stime,getTime()))
 
+nexttest()
+cxprintln(0,trueblue,bgwhite," Yes ! ",
+            yaleblue,truetomatobg," No ! ",
+            white,truebluebg," Yes ! ",
+            yellow,slatebluebg ,ff(456),
+            truetomato,darkslatebluebg,styleBlink,styleBright," Oooh, it blinks too  ! ")
+            
+nexttest()
+showCpuInfo()
+
+
+
+
          
 doFinish()

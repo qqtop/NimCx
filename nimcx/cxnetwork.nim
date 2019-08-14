@@ -7,7 +7,7 @@ import cxconsts,cxglobal,cxprint
 # nmap , ss needs to be installed if relevant procs to be used.
 # 
 # 
-# Last 2019-07-27
+# Last 2019-08-12
 # 
 
   
@@ -65,7 +65,7 @@ proc getIpInfo*(ip:string):JsonNode =
 proc getWanIp*() : string =
     ## getWanIP
     ## 
-    ## a way to get your wanip
+    ## get your wanip from api.ipify.org
     ## 
     var cxip = newhttpclient()
     try:
@@ -358,9 +358,9 @@ proc showHosts*(dm:string) =
          printLn("Nothing found or not resolved",red)
     else:
        for x in z:
-         printLn(x)    
-         
+         printLn(x)
 
-     
+
+
          
 # end of cxnetwork.nim          
