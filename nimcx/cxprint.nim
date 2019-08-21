@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-07-27 
+##     Latest      : 2019-08-15 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -34,32 +34,18 @@ proc printLnErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.}
 
 template cxprint*(xpos:int,args:varargs[untyped]) =
     ## cxprint
+    ##
+    ##
     ## xpos : position  
     ## Calls styledWrite with args given
-    ##    
+    ##
+    ## remember that first param must be xpos
+    ##
     ## Backgroundcolors defined in cxconsts.nim colorNames can be used , that is 
     ## any color ending with xxxxxxbg  like pastelpinkbg
     ##    
     setCursorXPos(xpos)
     stdout.styledWrite(args)  
-    
- 
-template cxprintxy*(xpos:int,ypos:int,args:varargs[untyped]) =
-    ## cxprint
-    ##
-    ## print to a certain x , y position in the terminal
-    ## xpos : x position 
-    ## ypos : y position starting from 0,0
-    ## Calls styledWrite with args given
-    ##
-    ## enough space must be available in terminal window 
-    ##
-    ## Backgroundcolors defined in cxconsts.nim colorNames can be used , that is 
-    ## any color ending with xxxxxxbg  like pastelpinkbg
-    ##    
-    curSet(xpos,ypos)
-    stdout.styledWrite(args)  
-       
     
        
 template cxprintLn*(xpos:int, args: varargs[untyped]) =
@@ -84,6 +70,23 @@ template cxprintLn*(xpos:int, args: varargs[untyped]) =
     ##   
     setCursorXPos(xpos)
     styledEcho(args)
+    
+
+template cxprintxy*(xpos:int,ypos:int,args:varargs[untyped]) =
+    ## cxprint
+    ##
+    ## print to a certain x , y position in the terminal
+    ## xpos : x position 
+    ## ypos : y position starting from 0,0
+    ## Calls styledWrite with args given
+    ##
+    ## enough space must be available in terminal window 
+    ##
+    ## Backgroundcolors defined in cxconsts.nim colorNames can be used , that is 
+    ## any color ending with xxxxxxbg  like pastelpinkbg
+    ##    
+    curSet(xpos,ypos)
+    stdout.styledWrite(args)
 
 
 template cxwrite*(args:varargs[untyped]) =
@@ -97,7 +100,8 @@ template cxwrite*(args:varargs[untyped]) =
     ## x positioning    via cxpos(x)
     ## x,y positioning  via cxPosxy(x,y)   
     ##
-    stdout.styledWrite(args)  
+    stdout.styledWrite(args)
+    
        
 template cxwriteLn*(args:varargs[untyped]) =
     ## cxwriteLn
@@ -119,7 +123,8 @@ proc printf*(formatStr: cstring) {.importc, header: "<stdio.h>", varargs.}
      ##   printf("This works %s and this %d,too ", "as expected" ,2)
      ##   
 
-proc print*[T](astring :T,
+
+proc print*[T](astring  : T,
                fgr     : string     = getFg(fgDefault),
                bgr     : string     = getBg(bgDefault),
                xpos    : int        = 0,

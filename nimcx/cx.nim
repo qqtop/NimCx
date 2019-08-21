@@ -19,7 +19,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-08-14 
+##     Latest      : 2019-08-20
 ##
 ##     Compiler    : Nim >= 0.19.x devel branch
 ##
@@ -604,7 +604,7 @@ proc colorio*() =
                     "ColorName in cx", spaces(2), "HEX Code", spaces(2),
                     "R", spaces(1), "G", spaces(1), "B"), zippi)
     echo()
-    for x in 0..<colorNames.len:
+    for x in 0 ..< colorNames.len:
             try:
                     let zr = extractRgb(parsecolor(colorNames[x][0]))
                     printLn(fmtx(["<20", "", "<20", "", ">5", "", ">5",
@@ -1073,6 +1073,24 @@ proc rmTmpFilenames*() =
               removeFile(fn)
           except:
               cxprintLn(2,white,truetomatobg,fn & "could not be deleted.")
+
+proc cxBell*() =
+     ## cxBell
+     ##
+     ## ring system bell
+     ##   
+     discard execCmd("tput bel")     # ring the system bell on linux
+
+     
+proc cxSound*(soundfile:string = "/usr/share/sounds/purple/receive.wav") =
+     ## cxSound
+     ##
+     ## play a sound file with aplay , default is receive.wav ,
+     ## if file and aplay is avaialble
+     ##
+     if fileExists(soundfile): discard execCmd("aplay -q " & soundfile)
+
+            
 
 proc doInfo*() =
     ## doInfo

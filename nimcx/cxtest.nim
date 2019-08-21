@@ -2,9 +2,10 @@
 # rough and ready testing of some of available functions in nimcx library
 # see docs for more examples 
 #
-# Latest      : 2019-07-18   
+# Latest      : 2019-08-15   
  
-import nimcx
+#import nimcx
+import "/data5/NimStuff/NimCxDevel/cx.nim"
  
 var testno = newCxcounter()
 
@@ -134,7 +135,7 @@ curup(27)
 sierpCarpetDemo(2,innocent,pastelGreen,xpos = 140)
 sierpCarpetDemo(2,smiley,truetomato,xpos = 140)
 sierpCarpetDemo(2,spaces(2),royalblue,xpos = 140)
-decho(2)
+decho(32)
 
 # cardsDemo
 nextTest()

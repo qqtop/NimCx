@@ -1309,6 +1309,7 @@ proc fromCString*(p: pointer, len: int): string =
      result = newString(len)
      copyMem(result.cstring, p, len)
 
+
 proc streamFile*(filename: string, mode: FileMode): FileStream = newFileStream(filename, mode)
      ## streamFile
      ##
