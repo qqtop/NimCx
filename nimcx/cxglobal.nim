@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-08-03 
+##     Latest      : 2019-09-02 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -531,22 +531,21 @@ proc ff2*(zz: SomeNumber, n: int = 3):string =
           ##       printLnBiCol(fmtx(["",">6","",">20"],"NZ ",$x," : ",ff2(z)))
           ##  
           ##
-     
-          result = $zz   # <--- this needs improvement to avoid rounding errors
-          #echo "---->  ",result
+          when zz is SomeSignedInt == false:
+             result = zz.formatFloat()   # cannot use $ as it introduces rounding errors
+                       
           when zz is SomeSignedInt:
                   let rresult = ff22(zz)     
                   if n == 0:
                        result = rresult 
                   if n > 0 :
                        result = rresult & "." & "0" * n
-                  
                   result.removeSuffix(".") 
                       
           else:   # so must be some float
               
                 if not result.contains("e"):
-                  let c = rpartition($zz, ".")
+                  let c = rpartition(result, ".")
                   var cnew = ""
                   
                   for d in c[2]:
@@ -562,6 +561,7 @@ proc ff2*(zz: SomeNumber, n: int = 3):string =
             
                   if n == 0:
                         result = ff22(parseInt(c[0]))
+                        
                   else:
                         try:
                            if c[0] == "-0":
@@ -570,6 +570,11 @@ proc ff2*(zz: SomeNumber, n: int = 3):string =
                                 result = ff22(parseInt(c[0])) & c[1] & cnew
                         except:  # if there is nil ? we might get here
                             discard
+                else:
+                    # we have a scientific format containg e+ or e-
+                    # we just format according to desired decimals n
+                    result = zz.formatFloat(ffScientific, n)
+                            
 
 proc ff2Eu*(zzz: SomeNumber, n: int = 3):string =
      ## ff2Eu
@@ -656,10 +661,10 @@ proc seqLeft*[T](it: seq[T], n: int): seq[T] =
           ## 
           ## returns a new seq with n left end elements of the original seq
           try:
-                    result = it
-                    if it.len >= n: result = it[0..<n]
+               result = it
+               if it.len >= n: result = it[0..<n]
           except RangeError:
-                    discard
+               discard
 
 
 proc seqRight*[T](it: seq[T], n: int): seq[T] =
@@ -670,10 +675,10 @@ proc seqRight*[T](it: seq[T], n: int): seq[T] =
           ## 
 
           try:
-                result = it
-                if n <= it.len: result = it[it.len - n..<it.len]
+               result = it
+               if n <= it.len: result = it[it.len - n..<it.len]
           except RangeError:
-                discard
+               discard
 
 
 proc cxIsDigit*(s:string,sep:char = '.'):bool =

@@ -5,6 +5,7 @@
 #{.passC: "-march-native -O3"}
 #{.deadCodeElim: on, checks: off, hints: off, warnings: off, optimization: size.}
 #{.noforward: on.}   # future feature
+# check memory usage via -d:UseMalloc and Valgrind
 ## ::
 ## 
 ##     Library     : nimcx.nim
@@ -19,7 +20,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-08-20
+##     Latest      : 2019-08-30
 ##
 ##     Compiler    : Nim >= 0.19.x devel branch
 ##

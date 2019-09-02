@@ -81,7 +81,7 @@ const
       cfb2* = "△"
       # circles
       cfb4* = "⭕"   # shadowed circle
-      cfb5* = "⬤"      # black circle
+      cfb5* = "⬤"    # black circle
 
 const
 
@@ -101,7 +101,7 @@ const
 
 const
 
-      # Terminal consts for bash movements ( still testing )
+      # Terminal consts for bash movements ( still testing ,not working on some terminals )
       cup*      = "\x1b[A"      # ok
       cdown*    = "\x1b[B"      # ok
       cright*   = "\x1b[C"      # ok
@@ -115,8 +115,9 @@ const
       csave*    = "\x1b[s"      # ok saves last xpos (but not ypos)
       crestore* = "\x1b[u"      # ok restores saved xpos
       chide*    = "\x1b[?25l"   # ok hide 
-      cshow*    = "\x1b[?25h"   # ok show 
-
+      cshow*    = "\x1b[?25h"   # ok show
+   
+      
 const
       euro*   = "€"
       dollar* = "$"
