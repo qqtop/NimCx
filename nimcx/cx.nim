@@ -20,7 +20,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-08-30
+##     Latest      : 2019-09-19
 ##
 ##     Compiler    : Nim >= 0.19.x devel branch
 ##
@@ -1210,18 +1210,19 @@ template uname*(): untyped = unameRelease("uname -a", unameRes)
 template release*(): untyped = unameRelease("lsb_release -a", releaseRes)
 # end of borrow
 
-template doByeBye*() =
-        ## doByeBye
-  ##
-  ## a simple end program routine do give some feedback when exiting
-        decho()
-        rmTmpFilenames()
-        print("Exiting now !  ", lime)
-        printLn("Bye-Bye from " & extractFileName(getAppFilename()), red)
-        printLn(yellowgreen & "Mem -> " & lightsteelblue & "Used : " & white &
-               ff2(getOccupiedMem()) & lightsteelblue & "  Free : " & white & ff2(getFreeMem()) &
-               lightsteelblue & "  Total : " & white & ff2(getTotalMem()))
-        
+proc doByeBye*(xpos:int = 1) =
+     ## doByeBye
+     ##
+     ## a simple end program routine do give some feedback when exiting
+     decho()
+     hlineln(40)
+     rmTmpFilenames()
+     printLn(pastelBlue & extractFileName(getAppFilename()) & " " &
+             pastelgreen & ff2(epochtime() - cxstart) & " secs " & gold &
+             " Bye-Bye "  , gold,xpos = xpos)
+     system.addQuitProc(resetAttributes)
+     echo()
+     quit(0)        
 
 proc doFinish*() =
         ## doFinish

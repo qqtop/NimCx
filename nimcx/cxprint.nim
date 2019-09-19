@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-08-15 
+##     Latest      : 2019-09-19 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -303,8 +303,9 @@ proc hlineLn*(n:int = tw,
      ##    hlineLn(30,green)
      ##
      
-     let res = hline(n,col,xpos,lt) 
-     result = res & newLine()
+     let res = hline(n,col,xpos,lt)
+     echo()
+     result = res
      
 
 proc dline*(n:int = tw,

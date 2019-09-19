@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-09-02 
+##     Latest      : 2019-09-19 
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -274,6 +274,7 @@ proc rndSample*[T](asq: seq[T]): T =
           ## 
           randomize()
           result = sample(asq)
+          
 
 proc rndRGB*(): auto =
           ## rndRGB
@@ -1527,7 +1528,6 @@ template hdx*(code: typed, frm: string = "+", width: int = tw, nxpos: int = 0): 
           code
           printLn(lx, xpos = xpos)
           echo()
-
 
 
 # end of cxglobal.nim

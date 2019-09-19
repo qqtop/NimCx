@@ -13,7 +13,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-08-03
+##     Latest      : 2019-09-18
 ##
 ##     OS          : Linux
 ##
@@ -146,6 +146,16 @@ proc getPassword*(ahash:int64 = 0i64):string =
            decho(2)
            quit(1)
     
+
+proc cxInput*(prompt: string,promptColor:string=greenyellow,xpos:int = 0): string =
+     ## cxInput
+     ##
+     ## simple input function with desired color and position
+     ##
+     ## result is a string for further processing as needed.
+     ##
+     cxprint(xpos,promptColor,prompt)
+     stdin.readLine()
   
     
 proc cxDayOfWeek*(datestr:string):string = 
