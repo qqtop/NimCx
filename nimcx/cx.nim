@@ -161,8 +161,9 @@ export unicode except strip, split, splitWhitespace
 # or see the stacktrace with writeStackTrace()
 # or compile with  --debugger:on 
 # or see infoproc() in cxglobal.nim
-
-# const someGcc = defined(gcc) or defined(llvm_gcc) or defined(clang)  # idea for backend info ex nimforum
+# or try compilation with and without var debug options
+# nim c --threads:on -d:useGcAssert -d:nimBurnFree -d:useSysAssert  --tlsEmulation:on  --gc:boehm cx
+# or try --gc:none or --gc:refc or --gc:markAndSweep
 
 var someGcc = ""
 if defined(gcc): someGcc = "gcc"
@@ -183,16 +184,20 @@ when defined(windows):
         {.hint: "NimCx compiles on windows but not all functions are available ".}
 
 when defined(posix):
+
+        {.hint: "\x1b[38;2;154;205;50m ╭──────────────────────── NIMCX ─────────────────────────────────────╮ " .}
+    
         {.hint: "\x1b[38;2;154;205;50m \u2691  NimCx  V. " & CXLIBVERSION &
                 "  :" & "\x1b[38;2;255;215;0m Officially made for Linux only." & 
-                spaces(13) & "\x1b[38;2;154;205;50m \u2691".}
+                spaces(15) & "\x1b[38;2;154;205;50m \u2691 ".}
                 
         {.hint: "\x1b[38;2;154;205;50m \u2691  Compiling        :" &
                 "\x1b[38;2;255;100;0m Please wait , Nim will be right back ! \xE2\x9A\xAB" &
-                " " & "\xE2\x9A\xAB" & spaces(2) & "\x1b[38;2;154;205;50m \u2691".}
-                
-        {.hints: on.}  # turn on off as per requirement
+                " " & "\xE2\x9A\xAB" & spaces(2) & "\x1b[38;2;154;205;50m \u2691 ".}
+         
+        {.hint: "\x1b[38;2;154;205;50m ╰────────────────────────────────────────────────────────────────────╯ " .}
 
+        {.hints: on.}  # turn on off as per requirement
 
 let cxstart* = epochTime() # simple execution timing with one line see doFinish()
 let cxstartgTime = getTime() 

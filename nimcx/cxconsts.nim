@@ -12,7 +12,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-08-14
+##     Latest      : 2019-09-21
 ##
 ##     Compiler    : Nim >= 0.19.x dev branch
 ##
@@ -242,16 +242,20 @@ const
       # TODO :  more colors
       
       # other colors of interest
+      # https://www.colorbox.io/
+      # http://www.javascripter.net/faq/hextorgb.htm
       # https://www.w3schools.com/colors/colors_trends.asp
       # http://www.javascripter.net/faq/hextorgb.htm
       truetomato*           =  "\x1b[38;2;255;100;0m"
       bigdip*               =  "\x1b[38;2;156;37;66m"
       greenery*             =  "\x1b[38;2;136;176;75m"     
-      bluey*                =  "\x1b[38;2;41;194;102m"     # not displaying , showing default bluishgreen
+      bluey*                =  "\x1b[38;2;0;189;183m"     
       trueblue*             =  "\x1b[38;2;0;115;207m"
       yaleblue*             =  "\x1b[38;2;15;77;146m"
+      satblue*              =  "\x1b[38;2;0;148;255m"
+      brightsatblue*        =  "\x1b[38;2;0;176;241m"    
       zcolor*               =  "\x1b[38;2;255;111;210m"
-      zippi*                =  "\x1b[38;2;79;196;132m"     # maybe not displaying , showing default blueish green
+      zippi*                =  "\x1b[38;2;0;151;120m"
 
       
       # other colors of interest with background bit set
@@ -259,11 +263,13 @@ const
       truetomatobg*         =  "\x1b[48;2;255;100;0m"
       bigdipbg*             =  "\x1b[48;2;156;37;66m"
       greenerybg*           =  "\x1b[48;2;136;176;75m"
-      blueybg*              =  "\x1b[48;2;41;194;102m"
+      blueybg*              =  "\x1b[48;2;0;189;183m"
       truebluebg*           =  "\x1b[48;2;0;115;207m"
       yalebluebg*           =  "\x1b[48;2;15;77;146m"
+      satbluebg*            =  "\x1b[48;2;0;148;255m"
+      brightsatbluebg*      =  "\x1b[48;2;0;176;241m"
       zcolorbg*             =  "\x1b[48;2;255;111;210m"
-      zippibg*              =  "\x1b[48;2;79;196;132m"     # maybe not displaying , showing default blueish green
+      zippibg*              =  "\x1b[48;2;0;151;120m"     
 
       
       # colors lifted from colors.nim and massaged into rgb escape seqs

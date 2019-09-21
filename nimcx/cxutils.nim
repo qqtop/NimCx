@@ -92,12 +92,13 @@ proc cxVideoInfo*():string =
    ## 
    ## executes a system command to get video setup information
    ## may show warning on certain systems to run as super user
-   ## 
+   ##
+   ## lshw needs to be installed on your system
+   ## see lshw man pages for much more
+   ##
    var (output,error) = execCmdEx("lshw -c video")
-   if error <> 0:
-     result = $error
-   else:  
-     result = output   
+   if error <> 0: result = $error
+   else: result = output   
    
 
 proc showCpuCores*() =
