@@ -28,7 +28,7 @@ Shades of rgb grey
 | Docu-Index     | [Documentation for nimcx.nim](https://qqtop.github.io/theindex.html)      | 
 
 
-Requires     : Latest Nim 1.0 up 
+Requires     : Nim 1.0 up 
 
 Installation : 
 
