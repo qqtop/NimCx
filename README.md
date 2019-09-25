@@ -13,44 +13,22 @@ Shades of rgb grey
 
 
 
-| Code  Modules  | Demos & Tests    |
-|----------------|------------------|
-| cx.nim         | cxtest.nim       |
-| cxconsts.nim   |                  |                  
-| cxglobal.nim   |                  |                  
-| cxprint.nim    |                  |                  
-| cxfont.nim     |                  |                  
-| cxnetwork.nim  |                  |                                
-| cxhash.nim     |                  |                  
-| cxtime.nim     |                  |                  
-| cxutils.nim    |                  |                  
-| cxstats.nim    |                  |                  
+| Code  Modules  |Documentation                                                             |
+|----------------|------------------|-------------------------------------------------------|
+| cx.nim         |[Documentation for cx.nim](https://qqtop.github.io/cx.html)               |
+| cxconsts.nim   |[Documentation for cxconsts.nim](https://qqtop.github.io/cxconsts.html)   |                
+| cxglobal.nim   |[Documentation for cxglobal.nim](https://qqtop.github.io/cxglobal.html)   |               
+| cxprint.nim    |[Documentation for cxprint.nim](https://qqtop.github.io/cxprint.html)     |             
+| cxfont.nim     |[Documentation for cxfont.nim](https://qqtop.github.io/cxfont.html)       |           
+| cxnetwork.nim  |[Documentation for cxnetwork.nim](https://qqtop.github.io/cxnetwork.html) |                               
+| cxhash.nim     |[Documentation for cxhash.nim](https://qqtop.github.io/cxhash.html)       |           
+| cxtime.nim     |[Documentation for cxtime.nim](https://qqtop.github.io/cxtime.html)       |          
+| cxutils.nim    |[Documentation for cxutils.nim](https://qqtop.github.io/cxutils.html)     |             
+| cxstats.nim    |[Documentation for cxstats.nim](https://qqtop.github.io/cxstats.html)     |             
+| Docu-Index     |[Documentation for nimcx.nim](https://qqtop.github.io/theindex.html)      | 
 
 
-[Documentation for nimcx.nim](https://qqtop.github.io/theindex.html)
-
-[Documentation for cx.nim](https://qqtop.github.io/cx.html)
-
-[Documentation for cxglobal.nim](https://qqtop.github.io/cxglobal.html)
-
-[Documentation for cxprint.nim](https://qqtop.github.io/cxprint.html)
-
-[Documentation for cxtime.nim](https://qqtop.github.io/cxtime.html)
-
-[Documentation for cxnetwork.nim](https://qqtop.github.io/cxnetwork.html)
-
-[Documentation for cxfont.nim](https://qqtop.github.io/cxfont.html)
-
-[Documentation for cxhash.nim](https://qqtop.github.io/cxhash.html)
-
-[Documentation for cxutils.nim](https://qqtop.github.io/cxutils.html)
-
-[Documentation for cxconsts.nim](https://qqtop.github.io/cxconsts.html)
-                           
-[Documentation for cxstats.nim](https://qqtop.github.io/cxstats.html)
-
-
-Requires     : Latest Nim devel version and best used in a konsole for full color effects
+Requires     : Latest Nim 1.0 up 
 
 Installation : 
 
