@@ -1,4 +1,4 @@
-import cxprint,hashes,strutils
+import hashes,strutils
 
 ## cxhashes.nim
 ## 
@@ -9,6 +9,9 @@ import cxprint,hashes,strutils
 
 export hashes
 
+template cxprintLn(xpos:int, args: varargs[untyped]) =
+    setCursorXPos(xpos)
+    styledEcho(args)
       
 proc checkHash*[T](kata:string,hsx:T)  =
   ## checkHash

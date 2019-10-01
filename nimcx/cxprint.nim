@@ -3,15 +3,15 @@
 ## 
 ##     Library     : nimcx.nim
 ##     
-##     Module      : cprint.nim
+##     Module      : cxprint.nim
 ##
 ##     Status      : stable
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-09-19 
+##     Latest      : 2019-10-01 
 ##
-##     Compiler    : Nim >= 0.19.x dev branch
+##     Compiler    : Nim >= 1.0.0  or 1.0.99 dev branch
 ##
 ##     OS          : Linux
 ##
@@ -19,7 +19,11 @@
 ##              
 ## 
 ## 
-import cxconsts,cxglobal,terminal,strutils,macros
+import cxconsts,terminal,strutils,sequtils,macros,random
+
+randomize()
+
+template tw: int = terminalWidth()
 
 proc print*[T](astring:T,fgr:string = getFg(fgDefault) ,bgr: string = getBg(bgDefault),xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {})
 proc printLn*[T](astring:T,fgr:string = getFg(fgDefault) ,bgr: string = getBg(bgDefault),xpos:int = 0,fitLine:bool = false,centered:bool = false,styled : set[Style]= {})
@@ -30,6 +34,7 @@ proc hline*(n:int = tw,col:string = white,xpos:int = 0,lt:string = "-") : string
 proc hlineLn*(n:int = tw,col:string = white,xpos:int = 0,lt:string = "-") : string {.discardable.} ## forward declaration
 proc printErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} 
 proc printLnErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} 
+
 
 
 template cxprint*(xpos:int,args:varargs[untyped]) =
@@ -205,7 +210,7 @@ proc print*[T](astring  : T,
                     setCursorXPos(npos)
         else:
             # centered == true
-            npos = centerX() - ($astring).len div 2 - 1
+            npos = tw div 2 + 2 - ($astring).len div 2 - 1
             setCursorXPos(npos)
 
         stdout.styledwrite(fgr,bgr,styled,$astring)
@@ -285,8 +290,8 @@ proc hline*(n:int = tw,
      ##.. code-block:: nim
      ##    hline(30,green,xpos=xpos)
      ##
-     print(lt * n,col,xpos = xpos)
-     result = lt * n     # we return the line string without color and pos formating in case needed
+     print(lt.repeat(n),col,xpos = xpos)
+     result = lt.repeat(n)     # we return the line string without color and pos formating in case needed
 
 
 proc hlineLn*(n:int = tw,
@@ -321,7 +326,7 @@ proc dline*(n:int = tw,
      ##    dline(30,"/+")
      ##    dline(30,col= yellow)
      ##
-     if lt.len <= n: print(lt * (n div lt.len),col)
+     if lt.len <= n: print(lt.repeat(n div lt.len),col)
 
 
 proc dlineLn*(n:int = tw,
@@ -340,7 +345,7 @@ proc dlineLn*(n:int = tw,
      ##    dlineLn(30,"/+/")
      ##    dlineLn(60,col = salmon)
      ##
-     if lt.len <= n: print(lt * (n div lt.len),col)
+     if lt.len <= n: print(lt.repeat(n div lt.len),col)
      writeLine(stdout,"")
 
 
@@ -367,7 +372,7 @@ proc printRainbow*(astr : string,styled:set[Style] = {}) =
 
     var c = 0
     for x in 0..<astr.len:
-        c = rxcol[getRndInt(ma=rxcol.len - 1)]
+        c = rxcol[sample(toSeq(1..rxcol.len - 1))]
         print($astr[x],colorNames[c][1],styled = styled)
 
 
@@ -391,6 +396,17 @@ proc printLnRainbow*[T](s : T,styled:set[Style] = {}) =
     ##
     ##
     printRainBow($(s) & "\L",styled)
+
+
+
+proc splitty(txt: string, sep: string): seq[string] =
+          var rx = newSeq[string]()
+          let z = txt.split(sep)
+          for xx in 0..<z.len:
+                 if z[xx] != txt and z[xx] != "":
+                         if xx < z.len-1: rx.add(z[xx] & sep)
+                         else: rx.add(z[xx])
+          result = rx
 
 
 proc printBiCol*[T](s:varargs[T,`$`],
@@ -431,7 +447,7 @@ proc printBiCol*[T](s:varargs[T,`$`],
                     print(z[0],fgr = colLeft,bgr = getBg(bgDefault),xpos = xpos,styled = styled)
                     print(z[1],fgr = colRight,bgr = getBg(bgDefault),styled = styled)
                 else:  # centered == true
-                    let npos = centerX() - (zz).len div 2 - 1
+                    let npos = tw div 2 + 2 - (zz).len div 2 - 1
                     print(z[0],fgr = colLeft,bgr = getBg(bgDefault),xpos = npos,styled = styled)
                     print(z[1],fgr = colRight,bgr = getBg(bgDefault),styled = styled)
 
@@ -509,7 +525,7 @@ proc printLnBiCol*[T](s:varargs[T,`$`],
                   printLn(z[1],fgr = colRight,bgr = getBg(bgDefault),styled = styled)
 
             else:  # centered == true
-                  let npos = centerX() - zz.len div 2 - 1
+                  let npos = tw div 2 + 2 - zz.len div 2 - 1
                   print(z[0],fgr = colLeft,bgr = getBg(bgDefault),xpos = npos)
                   printLn(z[1],fgr = colRight,bgr = getBg(bgDefault),styled = styled)
                         
@@ -556,6 +572,89 @@ proc printLnHL*(s      : string,
 
       printHL($(s) & "\L",substr,col,bgr)
 
+   
+# cxLine is a experimental line creation object with several properties 
+# up to 12 CxlineText objects can be placed into a cxline
+# also see printCxLine in cxprint.nim.nim for possible usage
+
+type
+
+          CxLineType* = enum
+                    cxHorizontal = "horizontal" # works ok
+                    cxVertical = "vertical" # not yet implemented
+
+
+          CxlineText* = object
+                    text*: string # text                               default none
+                    textcolor*: string # text color                    default termwhite
+                    textstyle*: set[Style] # text styled
+                    textpos*: int # position of text from startpos     default 3
+                    textbracketopen*: string # open bracket surounding the text     default [
+                    textbracketclose*: string # close bracket surrounding the text  default ]
+                    textbracketcolor*: string # color of the open,close bracket     default dodgerblue
+
+
+          Cxline* {.inheritable.} = object # a line type object startpos= = leftdot, endpos == rightdot
+                    startpos*: int # xpos leftdot                      default 1
+                    endpos*: int # xpos rightdot == width of cxline    default 2
+                    toppos*: int # ypos of top dot                     default 1
+                    botpos*: int # ypos of bottom dot                  default 1
+                    cxlinetext*: CxLinetext # cxlinetext object
+                    cxlinetext2*: CxlineText # cxlinetext object
+                    cxLinetext3*: CxlineText # cxlinetext object
+                    cxlinetext4*: CxlineText # cxlinetext object
+                    cxlinetext5*: CxLinetext # cxlinetext object
+                    cxlinetext6*: CxlineText # cxlinetext object
+                    cxLinetext7*: CxlineText # cxlinetext object
+                    cxlinetext8*: CxlineText # cxlinetext object
+                    cxlinetext9*: CxLinetext # cxlinetext object
+                    cxlinetext10*: CxlineText # cxlinetext object
+                    cxLinetext11*: CxlineText # cxlinetext object
+                    cxlinetext12*: CxlineText # cxlinetext object
+                    showbrackets*: bool # showbrackets trye or false       default true
+                    linecolor*: string # color of the line char            default aqua
+                    linechar*: string # line char                          default efs2    # see cxconsts.nim
+                    dotleftcolor*: string # color of left dot              default yellow
+                    dotrightcolor*: string # color of right dot            default magenta
+                    linetype*: CxLineType # cxHorizontal,cxVertical,cxS    default cxHorizontal
+                    newline*: string # new line char                       default \L
+
+proc newCxlineText*(): CxlineText =
+          result.text = ""
+          result.textcolor = termwhite
+          result.textstyle = {}
+          result.textpos = 3
+          result.textbracketopen = "["
+          result.textbracketclose = "]"
+          result.textbracketcolor = dodgerblue
+
+proc newCxLine*(): Cxline =
+          ## newCxLine 
+          ## 
+          ## creates a new cxLine object with some defaults , ready to be changed according to needs
+          ##
+          result.startpos = 1
+          result.endpos = 1
+          result.toppos = 1
+          result.botpos = 1
+          result.cxlinetext = newCxlineText()
+          result.cxlinetext2 = newCxlineText()
+          result.cxlinetext3 = newCxlineText()
+          result.cxlinetext4 = newCxlineText()
+          result.cxlinetext5 = newCxlineText()
+          result.cxlinetext6 = newCxlineText()
+          result.cxlinetext7 = newCxlineText()
+          result.cxlinetext8 = newCxlineText()
+          result.cxlinetext9 = newCxlineText()
+          result.cxlinetext10 = newCxlineText()
+          result.cxlinetext11 = newCxlineText()
+          result.cxlinetext12 = newCxlineText()
+          result.showbrackets = true
+          result.linecolor = aqua
+          result.linechar = efs2
+          result.dotleftcolor = yellow
+          result.dotrightcolor = magenta
+          result.newline = "\L"
       
 proc printCxLine*(aline:var Cxline) =
      ## printCxLine

@@ -2,11 +2,12 @@
 # rough and ready testing of some of available functions in nimcx library
 # see docs for more examples 
 #
-# Latest      : 2019-08-15   
+# Latest      : 2019-10-01   
  
 #import nimcx
 import "/data5/NimStuff/NimCxDevel/cx.nim"
- 
+import cxfontconsts,cxfont             
+
 var testno = newCxcounter()
 
 let s = "nimcx Testing "

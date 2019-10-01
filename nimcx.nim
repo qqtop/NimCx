@@ -10,13 +10,15 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-06-10
+##     Latest      : 2019-10-01
 ##
-##     Compiler    : Nim >= 0.19.x dev branch
+##     Compiler    : Nim >= 1.0.0  or 1.0.99 devel branch
 ##
 ##     Description : Utiliy functions for the linux terminal
 ##
 import nimcx/cx
+import nimcx/cxfontconsts
+import nimcx/cxfont
 
 export cx
 

@@ -1,5 +1,5 @@
-import cxglobal,cxprint,cxconsts
-import os,terminal,times,strutils
+import os,terminal,times,strutils,sequtils,random
+import cxconsts
 
 # cxtime.nim
 # 
@@ -9,7 +9,7 @@ import os,terminal,times,strutils
 # 
 # 
 # 
-# Last : 2019-07-27
+# Last : 2019-09-30
 # 
 # 
 
@@ -37,7 +37,18 @@ type
     Cxcounter* =  object
             value*: int                        
 
-            
+randomize()
+
+template cxprint(xpos:int,args:varargs[untyped]) =
+    setCursorXPos(xpos)
+    stdout.styledWrite(args)  
+    
+       
+template cxprintLn(xpos:int, args: varargs[untyped]) =
+    setCursorXPos(xpos)
+    styledEcho(args)
+
+                
 template cxLocal* : string = $now()
      ## cxLocal
      ## 
@@ -77,6 +88,10 @@ template cxTime* : string = getClockStr()
      ## 
      ## eg : 16:48:50
      ##     
+
+template loopy2(mi: int = 0, ma: int = 5, st: untyped) =
+         for xloopy {.inject.} in mi ..< ma: st
+
 
 template cxDateTime* : string = getDateStr() & " " & getClockStr()
      ## cxDateTime           
@@ -147,8 +162,7 @@ proc toDateTime*(date:string = "2000-01-01"): DateTime =
       of  11: zmonth = mNov 
       of  12: zmonth = mDec 
       else:
-                 
-         printLnBiCol("Wrong Month in : " & adate[1],colLeft=red,colRight=yellowgreen,styled={styleReverse})
+         cxprintln(1,red,styleReverse,"Wrong Month in : ",yellowgreen,adate[1])
          quit(0)
    
    let zday = parseint(adate[2])
@@ -173,8 +187,6 @@ proc sleepy*[T:float|int](secs:T) =
   var milsecs = (secs * 1000).int
   sleep(milsecs)
 
-  
-  
   
 # Var. date and time handling procs mainly to provide convenience for
 # date format yyyy-MM-dd handling
@@ -295,7 +307,7 @@ proc plusDays*(aDate:string,days:int):string =
       rxs = fx(tifo + myinterval)
       result = rxs
    else:
-      printLnBiCol("Plusdays : " & adate,colLeft=red,colRight=yellowgreen,styled={styleReverse})
+      cxprintln(1,red,styleReverse,"Plusdays : ",yellowgreen,adate)
       result = "Error"
 
 
@@ -316,7 +328,7 @@ proc minusDays*(aDate:string,days:int):string =
       rxs = fx(tifo - myinterval)
       result = rxs
    else:
-      printLnBiCol("MinusDays : " & adate,colLeft=red,colRight=yellowgreen,styled={styleReverse})
+      cxprintln(1,red,styleReverse,"MinusDays : ",yellowgreen,adate)
       result = "Error"
 
     
@@ -384,15 +396,15 @@ proc getRndDate*(minyear:int = parseint(year(cxtoday())) - 50,maxyear:int = pars
                  
          while okflag == false:
             
-             var mmd = $getRndInt(1,13)
+             var mmd = $sample(toSeq(1..12))
              if mmd.len == 1:
                 mmd = "0" & $mmd
             
-             var ddd = $getRndInt(1,32)
+             var ddd = $sample(toSeq(1..31))
              if ddd.len == 1:
                 ddd = "0" & $ddd
             
-             let nd = $getRndInt(mminyear,mmaxyear) & "-" & mmd & "-" & ddd
+             let nd = $sample(toSeq(mminyear..mmaxyear)) & "-" & mmd & "-" & ddd
              if validDate(nd) == false:
                  okflag = false
              else : 
@@ -401,23 +413,22 @@ proc getRndDate*(minyear:int = parseint(year(cxtoday())) - 50,maxyear:int = pars
   
 
 proc printTimeMsg*(atext:string = cxTime,xpos:int = 1):string {.discardable.} =
-     printBiCol("[Time  ]" & spaces(1) & atext , colLeft = lightblue ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
+     cxprint(xpos,lightblue,styleReverse,"[Time  ]",lightgrey,spaces(1),atext)
 
 proc printLnTimeMsg*(atext:string = cxTime,xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[Time  ]" & spaces(1) & atext , colLeft = lightblue ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
+     cxprintLn(xpos,lightblue,styleReverse,"[Time  ]",lightgrey,spaces(1),atext) 
 
 proc printDTimeMsg*(atext:string = $toTime(now()),xpos:int = 1):string {.discardable.} =
-     printBiCol("[DTime ]" & spaces(1) & atext , colLeft = lightblue ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
+     cxprint(xpos,lightblue,styleReverse,"[DTime ]",lightgrey,spaces(1),atext)
 
 proc printLnDTimeMsg*(atext:string = $toTime(now()),xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[DTime ]" & spaces(1) & atext , colLeft = lightblue ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
+     cxprintLn(xpos,lightblue,styleReverse,"[DTime ]",lightgrey,spaces(1),atext)  
 
 proc printDateMsg*(atext:string = getDateStr(),xpos:int = 1):string {.discardable.} =
-     printBiCol("[Date  ]" & spaces(1) & atext , colLeft = lightblue ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})     
-
+     cxprint(xpos,lightblue,styleReverse,"[Date  ]",lightgrey,spaces(1),atext)
+  
 proc printLnDateMsg*(atext:string = getDateStr(),xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[Date  ]" & spaces(1) & atext , colLeft = lightblue ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})
-   
+     cxprintLn(xpos,lightblue,styleReverse,"[Date  ]",lightgrey,spaces(1),atext)
 
    
    
@@ -515,22 +526,24 @@ proc showTimerResults*(aname:string) =
      loopy2(0,cxtimerresults.len - 1):
        var b = cxtimerresults[xloopy]
        if b.tname == bname:
-          printLnBiCol("Timer    : " & $(b.tname))
-          printLnBiCol("Start    : " & $fromUnix(int(b.start)))
-          printLnBiCol("Stop     : " & $fromUnix(int(b.stop)))
-          printLnBiCol("Laptimes : ")
+          cxprintLn(1,yellowgreen,"Timer    : " ,lightgrey, $(b.tname))
+          cxprintLn(1,yellowgreen,"Start    : " ,lightgrey, $fromUnix(int(b.start)))
+          cxprintLn(1,"Stop     : " ,lightgrey, $fromUnix(int(b.stop)))
+          cxprintLn(1,yellowgreen,"Laptimes : ")
           if b.lap.len > 0:
              loopy2(0,b.lap.len):
-                if strutils.strip(($b.lap[xloopy])) <> "":
-                    printLnBiCol(fmtx([">7","",""],$(xloopy + 1), " : " , $b.lap[xloopy]),xpos = 8)
+                if strutils.strip(($b.lap[xloopy])) isNot "":
+                    #cxprintLn(8,fmtx([">7","",""],$(xloopy + 1), " : " , $b.lap[xloopy]))
+                    cxprintLn(8,$(xloopy + 1), " : " , $b.lap[xloopy])
                 else:
-                    curup(1)
-                    printLnBiCol(fmtx(["","",""],"", " : " , "none recorded"),xpos = 8)    
+                    cursorup(1)
+                    cxprintLn(8,"none recorded")
+                      
              echo()
           else:
-              curup(1)
-              printLnBiCol(fmtx(["","",""],"", " : " , "none recorded"),xpos = 8)
-          printLnBiCol("Duration : " & $(b.stop - b.start) & " secs.")   
+              cursorup(1)
+              cxprintLn(8,"none recorded")
+          cxprintLn(1,yellowgreen,"Duration : " ,lightgrey, $(b.stop - b.start) & " secs.")   
                         
                
 proc showTimerResults*() =  
@@ -542,22 +555,23 @@ proc showTimerResults*() =
      loopy2(0,cxtimerresults.len - 1):
        var b = cxtimerresults[xloopy]
        echo()
-       printLnBiCol("Timer    : " & $(b.tname))
-       printLnBiCol("Start    : " & $fromUnix(int(b.start)))
-       printLnBiCol("Stop     : " & $fromUnix(int(b.stop)))
-       printLnBiCol("Laptimes : ")
+       cxprintLn(1,yellowgreen,"Timer    : " ,lightgrey, $(b.tname))
+       cxprintLn(1,yellowgreen,"Start    : " ,lightgrey, $fromUnix(int(b.start)))
+       cxprintLn(1,"Stop     : " ,lightgrey, $fromUnix(int(b.stop)))
+       cxprintLn(1,yellowgreen,"Laptimes : ")
        if b.lap.len > 0:
              loopy2(0,b.lap.len):
-                if strutils.strip(($b.lap[xloopy])) <> "":
-                    printLnBiCol(fmtx([">7","",""],$(xloopy + 1), " : " , $b.lap[xloopy]),xpos = 8)
+                if strutils.strip(($b.lap[xloopy])) isNot "":
+                    #printLnBiCol(fmtx([">7","",""],$(xloopy + 1), " : " , $b.lap[xloopy]),xpos = 8)
+                    cxprintLn(8,$(xloopy + 1), " : " , $b.lap[xloopy])
                 else: # maybe not needed
-                    curup(1)
-                    printLnBiCol(fmtx(["","",""],"", " : " , "none recorded"),xpos = 8)    
+                    cursorup(1)
+                    cxprintLn(8, "none recorded")   
              echo()
        else:
-              curup(1)
-              printLnBiCol(fmtx(["","",""],"", " : " , "none recorded"),xpos = 8)
-       printLnBiCol("Duration : " & $(b.stop - b.start) & " secs.")
+              cursorup(1)
+              cxprintLn(8,"none recorded")
+       cxprintLn(1,yellowgreen,"Duration : " ,lightgrey, $(b.stop - b.start) & " secs.")
        echo()
        
 proc clearTimerResults*(aname:string = "",quiet:bool = true,xpos:int = 3) =
@@ -572,8 +586,7 @@ proc clearTimerResults*(aname:string = "",quiet:bool = true,xpos:int = 3) =
         if cxtimerresults[xloopy].tname == bname:
                if quiet == false:
                   echo()
-                  print("Timer deleted : " ,goldenrod,xpos = xpos)
-                  printLn(cxtimerresults[xloopy].tname ,tomato)
+                  cxprintLn(xpos,goldenrod,"Timer deleted : " ,tomato,cxtimerresults[xloopy].tname)
                   echo()
                cxtimerresults.delete(xloopy)  
         else:

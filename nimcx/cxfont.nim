@@ -1,6 +1,7 @@
 {.deadCodeElim: on , optimization: speed.}
-import cxglobal,cxconsts,cxprint
+import cxglobal,cxconsts,cxfontconsts,cxprint
 import strutils,terminal,sets
+
 # cxfont.nim
 #
 # Experimental font building 
@@ -10,9 +11,10 @@ import strutils,terminal,sets
 # 
 # slimfont and  bracketmatrix font 
 # 
-# currently some print functions here may have same/similar functionality as in cxprint 
+# currently some print functions here may have same/similar functionality as in cxprint but
+# are specialized for font printing use.
 # 
-# Last : 2019-06-10  
+# Last : 2019-09-30  
 # 
 # 
 # Examples :
@@ -1445,13 +1447,13 @@ proc showCxFont*(name:string) =
              decho(5)
              
           of "sideways":   
-             var sidewaysfont = createCxFont(name)
+             let sidewaysfont = createCxFont(name)
              #echo "bracketmatrix len : ", dotmatrixfont.len   
              #echo dotmatrixfont[5]
              var xpos = 2
              for x in 0 ..< sidewaysfont.len:
                 for y in 0 ..< sidewaysfont[x].len:
-                   printLnBiCol(sidewaysfont[x][y] & cxlpad(":" & $x,3),colLeft=randcol(),colRight = lightgrey,xpos = xpos)                                                                                 
+                    cxprintLn(xpos,rndCol(),sidewaysfont[x][y] ,lightgrey, cxlpad(":" & $x,3))
                 curup(5)
                 xpos = xpos + 27
                 if xpos > 110: 
@@ -1460,13 +1462,11 @@ proc showCxFont*(name:string) =
              decho(5)
              
           of "swamp":   
-             var swampfont = createCxFont(name)
-             #echo "bracketmatrix len : ", dotmatrixfont.len   
-             #echo dotmatrixfont[5]
+             let swampfont = createCxFont(name)
              var xpos = 2
              for x in 0 ..< swampfont.len:
                 for y in 0 ..< swampfont[x].len:
-                   printlnBiCol(swampfont[x][y] & cxlpad(":" & $x,5),colLeft=randcol(),colRight = lightgrey,xpos = xpos)                                                                                 
+                   cxprintLn(xpos,rndCol(),swampfont[x][y] ,lightgrey, cxlpad(":" & $x,5))
                 curup(7)
                 xpos = xpos + 27
                 if xpos > 110: 
@@ -1816,7 +1816,16 @@ proc bracketMatrixTyper*(s:string,xpos:int = 1,color:string = randcol()) =
     nxpos = nxpos + 19  
     curup(5)       
     
-
+when isMainModule:
+    cleanScreen()
+    decho(3)
+    bracketmatrixtyper("cxfont",xpos=10,gold)
+    decho(10)
+    dotmatrixtyper("cxfont",xpos=10,satblue)
+    decho(10)
+    showCxFont("swamp") 
+    decho(10)
+    showCxFont("sideways")
     
 # end of dotmatrix and bracketmatrix related functions        
 

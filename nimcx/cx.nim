@@ -111,6 +111,11 @@
 ##     Latest      : Restructuring and cleanup to adjust to the newest nim release.
 ##                   Deprecating/removing unused or unnecessary code due to improvements in stdlib
 ##
+##                   cxfont.nim and cxfontconsts.nim are available for import , but not longer
+##                   included in nimcx to avoid code bloat , cxutils.nim code has been moved into
+##                   cxglobal.nim 
+##
+##
 ##     Funding     : Here are three excellent reasons :
 ##     
 ##                   You are happy              ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
@@ -123,7 +128,7 @@
 ##
 
 import
-        cxconsts, cxglobal, cxtime, cxprint, cxhash, cxfont, cxutils, cxnetwork, cxstats
+        cxconsts, cxglobal, cxtime, cxprint, cxhash, cxnetwork, cxstats
 import 
         std/[os, osproc, times, random, strutils,strmisc, strformat, strscans, parseutils,
         sequtils, parseopt,tables, sets, macros,posix,posix_utils, htmlparser, terminal,
@@ -135,7 +140,7 @@ import
 import strutils except align
 
 export
-        cxconsts, cxglobal, cxtime, cxprint, cxhash, cxfont,cxutils, cxnetwork, cxstats,
+        cxconsts, cxglobal, cxtime, cxprint, cxhash, cxnetwork, cxstats,
         os, osproc, times, random, strmisc,strformat, strscans, parseutils,
         sequtils, parseopt,tables, sets, macros,posix, posix_utils,htmlparser,terminal,
         math, stats, json, streams, options, memfiles,
@@ -382,7 +387,6 @@ proc nimcat*(curFile: string, countphrase: varargs[string, `$`] = "") =
             dlineLn()
             echo()
             var phraseinline = newSeqWith(countphrase.len, newSeq[int](0)) # holds the line numbers where a phrase to be counted was found
-            #var line = ""
             var c = 1
             for line in memSlices(memfiles.open(ccurFile)):
                 echo yellowgreen, strutils.align($c, 6), termwhite,":", spaces(1), wrapWords($line, maxLineWidth = tw - 8, splitLongWords = false, newLine = "\x0D\x0A" & spaces(8))

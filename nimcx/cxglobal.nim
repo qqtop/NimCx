@@ -10,18 +10,21 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-09-19 
+##     Latest      : 2019-10-01 
 ##
-##     Compiler    : Nim >= 0.19.x dev branch
+##     Compiler    : Nim >= 1.0.0 or 1.0.99 
 ##
 ##     OS          : Linux
 ##
-##     Description : provides many basic utility functions required by other modules
+##     Description : provides many basic utility functions of the library
 ##
 
 
 import
           cxconsts,
+          cxtime,
+          cxprint,
+          cxhash,
           terminal,
           strutils,
           sequtils,
@@ -33,7 +36,13 @@ import
           macros,
           colors,
           json,
-          streams
+          streams,
+          os,
+          osproc,
+          cpuinfo,
+          rdstdin,
+          times,
+          unicode
           
 
 # forward declarations
@@ -986,90 +995,7 @@ template rndCol*(r: int = getRndInt(0, 254), g: int = getRndInt(0, 254),b: int =
         ##
         
     
-    
-# cxLine is a experimental line creation object with several properties 
-# up to 12 CxlineText objects can be placed into a cxline
-# also see printCxLine in cxprint.nim.nim for possible usage
-
-type
-
-          CxLineType* = enum
-                    cxHorizontal = "horizontal" # works ok
-                    cxVertical = "vertical" # not yet implemented
-
-
-          CxlineText* = object
-                    text*: string # text                               default none
-                    textcolor*: string # text color                    default termwhite
-                    textstyle*: set[Style] # text styled
-                    textpos*: int # position of text from startpos     default 3
-                    textbracketopen*: string # open bracket surounding the text     default [
-                    textbracketclose*: string # close bracket surrounding the text  default ]
-                    textbracketcolor*: string # color of the open,close bracket     default dodgerblue
-
-
-          Cxline* {.inheritable.} = object # a line type object startpos= = leftdot, endpos == rightdot
-                    startpos*: int # xpos leftdot                      default 1
-                    endpos*: int # xpos rightdot == width of cxline    default 2
-                    toppos*: int # ypos of top dot                     default 1
-                    botpos*: int # ypos of bottom dot                  default 1
-                    cxlinetext*: CxLinetext # cxlinetext object
-                    cxlinetext2*: CxlineText # cxlinetext object
-                    cxLinetext3*: CxlineText # cxlinetext object
-                    cxlinetext4*: CxlineText # cxlinetext object
-                    cxlinetext5*: CxLinetext # cxlinetext object
-                    cxlinetext6*: CxlineText # cxlinetext object
-                    cxLinetext7*: CxlineText # cxlinetext object
-                    cxlinetext8*: CxlineText # cxlinetext object
-                    cxlinetext9*: CxLinetext # cxlinetext object
-                    cxlinetext10*: CxlineText # cxlinetext object
-                    cxLinetext11*: CxlineText # cxlinetext object
-                    cxlinetext12*: CxlineText # cxlinetext object
-                    showbrackets*: bool # showbrackets trye or false       default true
-                    linecolor*: string # color of the line char            default aqua
-                    linechar*: string # line char                          default efs2    # see cxconsts.nim
-                    dotleftcolor*: string # color of left dot              default yellow
-                    dotrightcolor*: string # color of right dot            default magenta
-                    linetype*: CxLineType # cxHorizontal,cxVertical,cxS    default cxHorizontal
-                    newline*: string # new line char                       default \L
-
-proc newCxlineText*(): CxlineText =
-          result.text = ""
-          result.textcolor = termwhite
-          result.textstyle = {}
-          result.textpos = 3
-          result.textbracketopen = "["
-          result.textbracketclose = "]"
-          result.textbracketcolor = dodgerblue
-
-proc newCxLine*(): Cxline =
-          ## newCxLine 
-          ## 
-          ## creates a new cxLine object with some defaults , ready to be changed according to needs
-          ##
-          result.startpos = 1
-          result.endpos = 1
-          result.toppos = 1
-          result.botpos = 1
-          result.cxlinetext = newCxlineText()
-          result.cxlinetext2 = newCxlineText()
-          result.cxlinetext3 = newCxlineText()
-          result.cxlinetext4 = newCxlineText()
-          result.cxlinetext5 = newCxlineText()
-          result.cxlinetext6 = newCxlineText()
-          result.cxlinetext7 = newCxlineText()
-          result.cxlinetext8 = newCxlineText()
-          result.cxlinetext9 = newCxlineText()
-          result.cxlinetext10 = newCxlineText()
-          result.cxlinetext11 = newCxlineText()
-          result.cxlinetext12 = newCxlineText()
-          result.showbrackets = true
-          result.linecolor = aqua
-          result.linechar = efs2
-          result.dotleftcolor = yellow
-          result.dotrightcolor = magenta
-          result.newline = "\L"
-
+ 
 # string splitters with additional capabilities to original split()
 
 proc fastsplit*(s: string, sep: char): seq[string] =
@@ -1529,5 +1455,1387 @@ template hdx*(code: typed, frm: string = "+", width: int = tw, nxpos: int = 0): 
           printLn(lx, xpos = xpos)
           echo()
 
+# code from former cxutils.nim here below
 
-# end of cxglobal.nim
+# type used in getRandomPoint
+type
+    RpointInt*   = tuple[x, y : int]
+    RpointFloat* = tuple[x, y : float]
+
+ 
+proc fibi*(n: int): uint64 =
+  # ex nim forum super fast fibonacci 
+  if n > 1 and n != 30: return fibi(n - 1) + fibi(n - 2)
+  if n <= 1: return 1
+  let x {.global.}: auto = fibi(29) + fibi(28)
+  return x 
+       
+       
+proc pswwaux*() =
+   ## pswwaux
+   ## 
+   ## utility bash command :  ps -ww aux | sort -nk3 | tail
+   ## displays output in console
+   ## 
+   let pswwaux = execCmdEx("ps -ww aux | sort -nk3 | tail ")
+   printLn("ps -ww aux | sort -nk3 | tail ",yellowgreen)
+   echo  pswwaux.output
+   decho()
+                
+proc cxCpuInfo*():string = 
+   ## cxCpuInfo
+   ## 
+   ## executes a system command to get cpu information
+   ## 
+   var (output,error) = execCmdEx("cat /proc/cpuinfo | grep name |cut -f2 -d:")
+   if error <> 0:
+     result = $error
+   else:  
+     result = output
+
+proc cpuInfo*():seq[string] {.discardable.} =
+   # cpuInfo
+   # requires lscpu available on system
+  
+   try:
+       result = execProcess("lscpu").splitLines()
+   except:
+       printLnErrorMsg("lscpu command my not be available on this system") 
+       result = @["lscpu command my not be available on this system"]
+
+proc showCpuInfo*() =
+   echo()
+   printLn("CPU Information" & spaces(40) , skyblue,yalebluebg)
+   try:
+      #let lscp = execProcess("lscpu")
+      #let lscp1 = lscp.splitLines()
+      for x in cpuInfo():
+          if not x.startswith("Flags:"): printLnBiCol(x)
+   except:
+       printLnErrorMsg("lscpu command my not be available on this system") 
+   echo()   
+         
+
+proc cxVideoInfo*():string = 
+   ## cxVideoInfo
+   ## 
+   ## executes a system command to get video setup information
+   ## may show warning on certain systems to run as super user
+   ##
+   ## lshw needs to be installed on your system
+   ## see lshw man pages for much more
+   ##
+   var (output,error) = execCmdEx("lshw -c video")
+   if error <> 0: result = $error
+   else: result = output   
+   
+
+proc showCpuCores*() =
+    ## showCpuCores
+    ## 
+    printLnBiCol("System CPU cores : " & $cpuInfo.countProcessors())
+   
+
+proc getAmzDateString*():string =
+    ## getAmzDateString
+    ## 
+    ## get current GMT date time in amazon format  
+    ## 
+    return format(utc(getTime()), iso_8601_aws) 
+    
+
+proc getUserName*():string =
+     # just a simple user name prompt 
+     result = readLineFromStdin(" Enter your user name    : ")
+        
+
+proc getPassword*(ahash:int64 = 0i64):string =
+     ## getPassword
+     ## 
+     ## convenience function, prompts user for a password
+     ## to be checked against a passwordhash which could come 
+     ## from a security database or other source
+     ## 
+     #  using a hash to confirm the password
+     #  this is a skeleton password function        
+     result = ""
+     curfw(1)
+     let zz = readPasswordFromStdin("Enter Password : ")
+     if verifyHash(zz,ahash) :
+           curup(1)
+           print(cleareol)
+           # following could also be send to a logger
+           cxprintLn(1,white,darkslategraybg,"Access granted at : " , limegreen,truebluebg, cxnow)
+           echo()
+           result = zz
+     else:
+           curup(1)
+           let dn = "Access denied at : " & cxnow
+           cxprintln(1,yellow,redbg,dn)
+           cxprintln(1,pastelWhite,yalebluebg,cxpad("Exiting now . Bye Bye.",dn.len))
+           decho(2)
+           quit(1)
+    
+
+proc cxInput*(prompt: string,promptColor:string=greenYellow,xpos:int = 0,
+               allowBlank:bool = false): string =
+               
+     ## cxInput
+     ##
+     ## simple input function with desired color and position
+     ## if allowBlank is false then an alert message will be shown
+     ## and function will wait for input again 
+     ##
+     ## allowBlank if set to true will allow "" as result
+     ##
+     ## result is a string for further processing as needed.
+     ##
+     ##.. code-block:: nim    
+     ##   cleanScreen()
+     ##   curset(1,5)
+     ##   var name = cxInput("Enter your name : ",yellowgreen,xpos=1)
+     ##   curset(30,5)
+     ##   var age = cxInput("Enter your age : ",yellowgreen,xpos=30)
+     ##   curset(60,5)
+     ##   var wallet = cxInput("Enter your Bitcoin wallet No : ",yellowgreen,xpos=60)
+     ##   decho(2)
+     ##   cxprintLn 1,satBlue,styleReverse,"Results "
+     ##   cxprintln 1,yellowgreen,"Replies given : " ,termwhite, name,"  ",age," ",wallet
+      
+     while (cxprint(xpos,promptColor,prompt);result = stdin.readLine();result.len == 0):
+            if allowBlank == false:
+               cxprintLn(xpos,truetomato ,"No Input. Try again.")
+               curup(2)
+             
+     echo clearLine;curup()
+
+    
+proc cxDayOfWeek*(datestr:string):string = 
+    ## cxDayOfWeek
+    ## 
+    ## returns day of week from a date in format yyyy-MM-dd
+    ## 
+    ##.. code-block:: nim    
+    ##    echo cxDayOfWeek(cxtoday())
+    ##    echo getNextMonday("2017-07-15"),"  ",cxDayOfWeek(getNextMonday("2017-07-15"))
+
+    if datestr.len==10:
+       result = $(getDayOfWeek(parseInt(day(datestr)),parseInt(month(datestr)).Month,parseInt(year(datestr))))      
+    else:
+       cxprintln(5,white,bgred,"Invalid date received . Required format is yyyy-MM-dd. --> cxUtils : cxDayOfWeek")
+       result=""
+       
+
+proc getNextMonday*(adate:string):string =
+    ## getNextMonday
+    ##
+    ##.. code-block:: nim
+    ##    echo  getNextMonday(getDateStr())
+    ##
+    ##
+    ##.. code-block:: nim
+    ##      import nimcx
+    ##      # get next 10 mondays
+    ##      var dw = getdatestr()
+    ##      echo dw
+    ##      for x in 1..10:
+    ##         dw = getnextmonday(dw)
+    ##         echo dw
+    ##         dw = plusDays(dw,1)
+    ##
+        
+    var ndatestr = ""
+    if adate == "" :
+        cxprintln(2,black,redbg,"Received an invalid date.")
+    else:
+        if validdate(adate) == true:
+            var z = cxdayofweek(adate)
+            if z == "Monday":
+                # so the datestr points to a monday we need to add a
+                # day to get the next one calculated
+                ndatestr = plusDays(adate,1)
+            ndatestr = adate
+            for x in 0..<7:
+                if validdate(ndatestr) == true:
+                    z =  cxDayOfWeek(ndatestr)
+                if strutils.strip(z) != "Monday":
+                    ndatestr = plusDays(ndatestr,1)
+                else:
+                    result = ndatestr
+
+   
+proc getRandomPointInCircle*(radius:float = 1.0) : seq[float] =
+    ## getRandomPointInCircle
+    ##
+    ## based on answers found in
+    ##
+    ## http://stackoverflow.com/questions/5837572/generate-a-random-point-within-a-circle-uniformly
+    ##
+    ##
+    ##
+    ## .. code-block:: nim
+    ##    import nimcx
+    ##    # get randompoints in a circle
+    ##    var crad:float = 2.1
+    ##    for x in 0..100:
+    ##        var k = getRandomPointInCircle(crad)
+    ##        assert k[0] <= crad and k[1] <= crad
+    ##        if k[0] <= crad and k[1] <= crad:
+    ##            printLnBiCol(fmtx([">25","<6",">10"],ff2(k[0])," :",ff2(k[1])))
+    ##        else:
+    ##            printLnBiCol(fmtx([">25","<6",">10"],ff2(k[0])," :",ff2(k[1])),colLeft=red,colRight=red)
+    ##
+    ##
+    let r = radius * sqrt(abs(getrndfloat()))      # polar
+    let theta = getrndfloat() * 2 * math.Pi        # polar
+    let x = r * cos(theta)                         # cartesian
+    let y = r * sin(theta)                         # cartesian
+    var z = newSeq[float]()   
+    z.add(x)
+    z.add(y)
+    return z
+
+
+proc getRandomPoint*(minx:float = -500.0,maxx:float = 500.0,miny:float = -500.0,maxy:float = 500.0) : RpointFloat =
+    ## getRandomPoint
+    ##
+    ## generate a random x,y float point pair and return it as RpointFloat
+    ## 
+    ## minx  min x  value
+    ## maxx  max x  value
+    ## miny  min y  value
+    ## maxy  max y  value
+    ##
+    ## .. code-block:: nim
+    ##
+    ##  for x in 1..10:
+    ##      let n = getRandomPoint(-500.00,200.0,-100.0,300.00)
+    ##      cxwriteln(fmtx(["",">3","",">4","",">7.2","","",">4","",">7.2"],
+    ##      "point ",$x,
+    ##      yellowgreen," x:",termwhite,ff2(n.x,4),
+    ##      spaces(3),
+    ##      yellowgreen," y:",termwhite,ff2(n.y,4)))
+    ##  decho(2)
+    ##  
+
+    var point : RpointFloat
+    var rx    : float
+    var ry    : float
+      
+    if minx < 0.0:   rx = minx - 1.0 
+    else        :    rx = minx + 1.0  
+    if maxy < 0.0:   rx = maxx - 1.0 
+    else        :    rx = maxx + 1.0 
+    if miny < 0.0:   ry = miny - 1.0 
+    else        :    ry = miny + 1.0  
+    if maxy < 0.0:   ry = maxy - 1.0 
+    else        :    ry = maxy + 1.0         
+        
+    var mpl = abs(maxx) * 1000     
+    while rx < minx or rx > maxx:
+       rx =  getRandomSignF() * mpl * getRandomFloat()  
+       
+    mpl = abs(maxy) * 1000   
+    while ry < miny or ry > maxy:  
+          ry =  getRandomSignF() * mpl * getRandomFloat()
+        
+    point.x = rx
+    point.y = ry  
+    result =  point
+      
+  
+proc getRandomPoint*(minx:int = -500 ,maxx:int = 500 ,miny:int = -500 ,maxy:int = 500 ) : RpointInt =
+    ## getRandomPoint 
+    ##
+    ## generate a random x,y int point pair and return it as RpointInt
+    ## 
+    ## min    x or y value
+    ## max    x or y value
+    ##
+    ## .. code-block:: nim
+    ##    for x in 0..10:
+    ##        var n = getRandomPoint(-500,500,-500,200)
+    ##        cxwriteln(fmtx([">4",">5","",">6",">5"],"x:",$n.x,spaces(7),"y:",$n.y),spaces(7))
+    ## 
+    var point : RpointInt
+    point.x = getRandomSignI() * getRndInt(minx,maxx) 
+    point.y = getRandomSignI() * getRndInt(miny,maxy)  
+    result = point
+
+
+proc getPointInSphere*():auto =
+    ## getPointInSphere
+    ## 
+    ## returns x,y,z coordinates for a point in sphere with max size  1,1,1
+    ## 
+    ## https://karthikkaranth.me/blog/generating-random-points-in-a-sphere/#better-choice-of-spherical-coordinates
+    ## 
+    ## .. code-block:: nim
+    ##    # display 100 coordinates of in sphere points
+    ##    for x in countup(0,99,1):      
+    ##       let b = getPointinSphere()  
+    ##       cxwriteln(fmtx(["","","",">7","","","",">7","","","",">7"],limegreen, "  x: ",white, b[0],limegreen,"  y: ",white,b[1],limegreen,"  z: ",white,b[2]))
+    ##       
+    ##       
+    let u = rand(1.0);
+    let v = rand(1.0);
+    let theta = u * 2.0 * PI;
+    let phi = arccos(2.0 * v - 1.0);
+    let r = cbrt(rand(1.0));
+    let sinTheta = sin(theta);
+    let cosTheta = cos(theta);
+    let sinPhi = sin(phi);
+    let cosPhi = cos(phi);
+    let x = r * sinPhi * cosTheta;
+    let y = r * sinPhi * sinTheta;
+    let z = r * cosPhi;
+    result = @[x,y,z]
+    
+        
+proc randpos*():int =
+    ## randpos
+    ##
+    ## sets to a random position in the visible terminal window
+    ##
+    ## returns x position
+    ##
+    ##.. code-block:: nim
+    ##
+    ##    while 1 == 1:
+    ##       for z in 1.. 50:
+    ##          print($z,randcol(),xpos = randpos())
+    ##       sleepy(0.0015)
+    ##
+    curset()
+    let x = getRndInt(0, tw - 1)
+    let y = getRndInt(0, th - 1)
+    curdn(y)
+    result = x
+
+template getCard* :auto =
+    ## getCard
+    ##
+    ## gets a random card from the Cards seq
+    ##
+    ## .. code-block:: nim
+    ##    import nimcx
+    ##    printLn(getCard(),randCol(),xpos = centerX())  # get card and print in random color at xpos
+    ##    doFinish()
+    ##
+    cards[sample(rxCards)]
+    
+
+proc showRandomCard*(xpos:int = centerX()) = 
+    ## showRandomCard
+    ##
+    ## shows a random card at xpos from the cards set in cxconstant.nim, default is centered
+    ##
+    print(getCard(),randCol(),xpos = xpos)
+
+
+proc showRuler* (xpos:int=0,xposE:int=0,ypos:int = 0,fgr:string = white,bgr:string = getBg(bgDefault), vert:bool = false) =
+     ## ruler
+     ##
+     ## simple terminal ruler indicating dot x positions starts with position 1
+     ##
+     ## horizontal --> vert = false
+     ## 
+     ## for vertical   --> vert = true
+     ##
+     ##
+     ## .. code-block::nim
+     ##   # this will show a full terminal width ruler
+     ##   showRuler(fgr=pastelblue)
+     ##   decho(3)
+     ##   # this will show a specified position only
+     ##   showRuler(xpos =22,xposE = 55,fgr=pastelgreen)
+     ##   decho(3)
+     ##   # this will show a full terminal width ruler starting at a certain position
+     ##   showRuler(xpos = 75,fgr=pastelblue)
+     ##
+     echo()
+     var fflag:bool = false
+     var npos  = xpos
+     var nposE = xposE
+     if xpos == 0: npos  = 0
+     if xposE == 0: nposE = tw - 3
+     if vert == false :  # horizontalruler
+          for x in npos .. nposE:
+            if x == 0:
+                curup(1)
+                print(".",lime,bgr,xpos = 0)
+                curdn(1)
+                print(1,fgr,bgr,xpos = 0)
+                curup(1)
+                fflag = true
+
+            elif x mod 5 > 0 and fflag == false:
+                curup(1)
+                print(".",goldenrod,bgr,xpos = x)
+                curdn(1)
+
+            elif x mod 5 == 0:
+                if fflag == false:
+                  curup(1)
+                print(".",lime,bgr,xpos = x)
+                curdn(1)
+                print(x,fgr,bgr,xpos = x)
+                curup(1)
+                fflag = true
+
+            else:
+                fflag = true
+                print(".",truetomato,bgr,xpos = x)
+
+     else : # vertical ruler
+
+            if  ypos >= th : curset()
+            else: curup(ypos + 2)
+
+            for x in 0..ypos:
+                  if x == 0: printLn(".",lime,bgr,xpos = xpos + 3)
+                  elif x mod 2 == 0:
+                         print(x,fgr,bgr,xpos = xpos)
+                         printLn(".",fgr,bgr,xpos = xpos + 3)
+                  else: printLn(".",truetomato,bgr,xpos = xpos + 3)
+     decho(3)
+
+
+proc centerMark*(showpos :bool = false) =
+     ## centerMark
+     ##
+     ## draws a red dot in the middle of the screen xpos only
+     ## and also can show pos
+     ##
+     centerPos(".")
+     print(".",truetomato)
+     if showpos == true:  print "x" & $(tw/2)
+
+
+# Framed headers with var. colorising options
+
+proc superHeader*(bstring:string) =
+      ## superheader
+      ##
+      ## a framed header display routine
+      ##
+      ## suitable for one line headers , overlong lines will
+      ##
+      ## be cut to terminal window width without ceremony
+      ##
+      ##
+      var astring = bstring
+      # minimum default size that is string max len = 43 and
+      # frame = 46
+      let mmax = 43
+      var mddl = 46
+      ## max length = tw-2
+      let okl = tw - 6
+      let astrl = astring.len
+      if astrl > okl :
+          astring = astring[0.. okl]
+          mddl = okl + 5
+      elif astrl > mmax :
+          mddl = astrl + 4
+      else :
+          # default or smaller
+          let n = mmax - astrl
+          for x in 0..<n:
+              astring = astring & " "
+          mddl = mddl + 1
+      # some framechars choose depending on what the system has installed
+      #let framechar = "▒"
+      let framechar = "⌘"
+      #let framechar = "⏺"
+      #let framechar = "~"
+      let pdl = framechar.repeat(mddl)
+      # now show it with the framing in yellow and text in white
+      # really want a terminal color checker to avoid invisible lines
+      echo()
+      printLn(pdl,yellowgreen)
+      print(cleareol)
+      print(spaces(1))
+      printLn(astring,dodgerblue)
+      printLn(pdl,yellowgreen)
+      echo()
+
+proc superHeader*(bstring:string,strcol:string,frmcol:string) =
+        ## superheader
+        ##
+        ## a framed header display routine
+        ##
+        ## suitable for one line headers , overlong lines will
+        ##
+        ## be cut to terminal window size without ceremony
+        ##
+        ##.. code-block:: nim
+        ##    import nimcx
+        ##
+        ##    superheader("Ok That's it for Now !",skyblue,lightslategray)
+        ##    echo()
+        ##
+        var astring = bstring
+        # minimum default size that is string max len = 43 and
+        # frame = 46
+        let mmax = 43
+        var mddl = 46
+        let okl = tw - 6
+        let astrl = astring.len
+        if astrl > okl :
+          astring = astring[0.. okl]
+          mddl = okl + 5
+        elif astrl > mmax :
+            mddl = astrl + 4
+        else :
+            # default or smaller
+            let n = mmax - astrl
+            for x in 0..<n:
+                astring = astring & spaces(1)
+            mddl = mddl + 1
+
+        let framechar = "⌘"
+        #let framechar = "~"
+        let pdl = framechar.repeat(mddl)
+        # now show it with the framing in yellow and text in white
+        # really want to have a terminal color checker to avoid invisible lines
+        echo()
+
+        # frame line
+        proc frameline(pdl:string) =
+            print(pdl,frmcol)
+            echo()
+
+        proc framemarker(am:string) =
+            print(am,frmcol)
+
+        proc headermessage(astring:string)  =
+            print(astring,strcol)
+            
+        # draw everything
+        frameline(pdl)
+        #left marker
+        framemarker(framechar & spaces(1))
+        # header message sring
+        headermessage(astring)
+        # right marker
+        framemarker(spaces(1) & framechar)
+        # we need a new line
+        echo()
+        # bottom frame line
+        frameline(pdl)
+        # finished drawing
+
+# Unicode random word creators
+
+proc newWordCJK*(minwl:int = 3 ,maxwl:int = 10):string =
+      ## newWordCJK
+      ##
+      ## creates a new random string consisting of n chars default = max 10
+      ##
+      ## with chars from the cjk unicode set
+      ##
+      ## http://unicode-table.com/en/#cjk-unified-ideographs
+      ##
+      ## requires unicode
+      ##
+      ## .. code-block:: nim
+      ##    # create a string of chinese or CJK chars with length 20 
+      ##    echo newWordCJK(20,20)
+      ##
+      result = ""
+      if minwl <= maxwl:
+         let c5 = toSeq(minwl..maxwl)
+         let chc = toSeq(parsehexint("3400")..parsehexint("4DB5"))
+         for xx in 0..<sample(c5): result = result & $Rune(sample(chc))
+      else:
+        cxprintln(2,black,redbg,"Error : minimum word length larger than maximum word length")
+        result = ""
+
+        
+proc newWord*(minwl:int=3,maxwl:int = 10):string =
+    ## newWord
+    ##
+    ## creates a new lower case random word with chars from Letters set
+    ##
+    ## default min word length minwl = 3
+    ##
+    ## default max word length maxwl = 10
+    ##
+
+    if minwl <= maxwl:
+        var nw = ""
+        # words with length range 3 to maxwl
+        let maxws = toSeq(minwl..maxwl)
+        # get a random length for a new word
+        let nwl = sample(maxws)
+        let chc = toSeq(33..126)
+        while nw.len < nwl:
+           var x = sample(chc)
+           if char(x) in Letters:
+              nw = nw & $char(x)
+        result = normalize(nw)   # return in lower case , cleaned up
+    else:
+        cxprintln(2,black,redbg,"Error : minimum word length larger than maximum word length")
+        result = ""
+
+
+proc newWord2*(minwl:int=3,maxwl:int = 10 ):string =
+    ## newWord2
+    ##
+    ## creates a new lower case random word with chars from IdentChars set
+    ##
+    ## default min word length minwl = 3
+    ##
+    ## default max word length maxwl = 10
+    ##
+    if minwl <= maxwl:
+        var nw = ""
+        # words with length range 3 to maxwl
+        let maxws = toSeq(minwl..maxwl)
+        # get a random length for a new word
+        let nwl = sample(maxws)
+        let chc = toSeq(33..126)
+        while nw.len < nwl:
+          var x = sample(chc)
+          if char(x) in IdentChars:
+              nw = nw & $char(x)
+        result = normalize(nw)   # return in lower case , cleaned up
+    else:
+         cxprintln(2,black,redbg,"Error : minimum word length larger than maximum word length")
+         result = ""
+
+
+proc newWord3*(minwl:int=3,maxwl:int = 10 ,nflag:bool = true):string =
+    ## newWord3
+    ##
+    ## creates a new lower case random word with chars from AllChars set if nflag = true
+    ##
+    ## creates a new anycase word with chars from AllChars set if nflag = false
+    ##
+    ## default min word length minwl = 3
+    ##
+    ## default max word length maxwl = 10
+    ##
+    if minwl <= maxwl:
+        var nw = ""
+        # words with length range 3 to maxwl
+        let maxws = toSeq(minwl..maxwl)
+        # get a random length for a new word
+        let nwl = sample(maxws)
+        let chc = toSeq(33..126)
+        while nw.len < nwl:
+          var x = sample(chc)
+          if char(x) in AllChars:
+              nw = nw & $char(x)
+        if nflag == true:
+           result = normalize(nw)   # return in lower case , cleaned up
+        else :
+           result = nw
+    else:
+         cxprintln(2,black,redbg,"Error : minimum word length larger than maximum word length")
+         result = ""
+
+
+proc newHiragana*(minwl:int=3,maxwl:int = 10 ):string =
+    ## newHiragana
+    ##
+    ## creates a random hiragana word without meaning from the hiragana unicode set
+    ##
+    ## default min word length minwl = 3
+    ##
+    ## default max word length maxwl = 10
+    ##
+    if minwl <= maxwl:
+        result = ""
+        var rhig = toSeq(12353..12436)  
+        var zz = sample(toSeq(minwl..maxwl))
+        while result.len < zz:
+              var hig = sample(rhig)  
+              result = result & $Rune(hig)
+       
+    else:
+         cxprintln(2,black,redbg,"Error : minimum word length larger than maximum word length")
+         result = ""
+
+
+proc newKatakana*(minwl:int=3,maxwl:int = 10 ):string =
+    ## newKatakana
+    ##
+    ## creates a random katakana word without meaning from the katakana unicode set
+    ##
+    ## default min word length minwl = 3
+    ##
+    ## default max word length maxwl = 10
+    ##
+    if minwl <= maxwl:
+        result  = ""
+        while result.len < sample(toSeq(minwl..maxwl)):
+              result = result & $Rune(sample(toSeq(parsehexint("30A0")..parsehexint("30FF"))))  
+    else:
+        cxprintln(2,black,redbg,"Error : minimum word length larger than maximum word length")
+        result = ""
+
+proc newText*(textLen:int = 1000,textgen:string = "newWord"):string = 
+     ## newText
+     ## 
+     ## creates random text made up of random chars from 
+     ## 
+     ## var. newWord procs 
+     ## 
+     ## textgen can be one of :
+     ## 
+     ##  newWord
+     ##  newWord2
+     ##  newWord3 
+     ##  newHiragana
+     ##  newKatakana
+     ##  newWordCJK
+     ##  
+     ##.. code-block:: nim
+     ##  printLn(newText(10000,"newHiragana"),rndcol)
+     ##    
+     ##
+     
+     var tres = ""
+     case toLowerAscii(textgen) 
+       of "newword":
+             tres = ""
+             while result.len < textLen:
+                if tres.len < 100: # line length
+                       tres = tres & " " & newWord()
+                else:
+                       result = result & newline() & tres
+                       tres = ""
+       of "newword2":
+             tres = ""
+             while result.len < textLen:
+                if tres.len < 100: # line length
+                       tres = tres & " " & newWord2()
+                else:
+                       result = result & newline() & tres
+                       tres = ""
+       
+       of "newword3":
+             tres = ""
+             while result.len < textLen:
+                if tres.len < 100: # line length
+                       tres = tres & " " & newWord3()
+                else:
+                       result = result & newline() & tres
+                       tres = ""
+                       
+       of "newhiragana":
+             tres = ""
+             while result.len < textLen:
+                if tres.len < 100: # line length
+                       tres = tres & " " & newHiragana()
+                else:
+                       result = result & newline() & tres
+                       tres = ""
+       
+       of "newkatakana":
+             tres = ""
+             while result.len < textLen:
+                if tres.len < 100: # line length
+                       tres = tres & " " & newKatakana()
+                else:
+                       result = result & newline() & tres
+                       tres = ""
+                       
+       of "newwordcjk":
+             tres = ""
+             while result.len < textLen:
+                if tres.len < 100: # line length
+                       tres = tres & " " & newWordCJK()
+                else:
+                       result = result & newline() & tres
+                       tres = ""     
+       else:
+            decho()
+            cxprintLn(2,black,redbg,"newText() ")
+            cxprintLn(2,black,redbg,"Error : " & textgen & " generator proc not available !")
+            discard                
+                     
+proc rndStr*(n:int = 20): string =
+  ## rndStr
+  ## 
+  ## random string with len n between 0 and hex 4DB5
+  ## 
+ 
+  for _ in 0 ..< n:
+    let s = sample([1,2,3])
+    case s 
+      of 1 : add(result, char(rand(int('0') ..< parsehexint("4DB5"))))
+      of 2 : add(result,newWordCJK(1,1))
+      of 3 : add(result, char(rand(int('0') ..< int('z'))))
+      else: add(result,'0')    
+      
+      
+
+proc createRandomDataFile*(filename:string = "randomdata.dat") =
+    ## createRandomDataFile
+    ## 
+    ## this will create a file with given filename and size 1 MB
+    ## filled with strong random data
+    ## 
+    ## .. code-block:: nim
+    ##    
+    ##    createRandomDataFile("niip2.wsx")
+    ##    var bc = 0
+    ##    var b = @[100,200,300,700,800,3000]
+    ##    withFile(fs,"niip2.wsx",fmRead):
+    ##      var line =""
+    ##      while fs.readLine(line):
+    ##         inc bc
+    ##         if bc in b:
+    ##           printLn($bc & rightarrow & spaces(3) & wrapwords(line.replace(" ",""),(tw - 5)),yellowgreen)
+    ##    echo bc     
+    ##
+    discard  execCmd("dd if=/dev/urandom of=$1 bs=1M count=1" % filename)
+      
+                                    
+proc cxBinomialCoeff*(n, k:int): int =
+    # cxBinomialCoeff
+    # 
+    # function returns BinomialCoefficient
+    # 
+    result = 1
+    var kk = k
+    if kk < 0 or kk  >  n: result = 0
+    if kk == 0 or kk == n: result = 1
+    kk = min(kk, n - kk) 
+    for i in 0..<kk: result = result * (n - i) div (i + 1)
+ 
+ 
+template bitCheck*(a, b: untyped): bool =
+    ## bitCheck
+    ## 
+    ## check bitsets 
+    ##  
+    (a and (1 shl b)) != 0    
+      
+
+proc createSeqAll*(min:int = 0,max:int = 40878):seq[string] =
+     # for testing purpose only in the future the unicodedb by nitely is the way to go
+     var gs = newSeq[string]()
+     for j in min ..< max :        # depending on whats installed  
+     
+            # there are more chars up to maybe 120150 some
+            # maybe for indian langs,iching, some special arab and koran symbols if installed on the system
+            # if not installed on your system you will see the omnious rectangle char  0xFFFD
+            # https://www.w3schools.com/charsets/ref_html_utf8.asp
+            # tablerune(createSeqAll(),cols=6,maxitemwidth=12)  
+            # 
+            gs.add($Rune(j)) 
+     result = gs    
+   
+    
+proc createSeqGeoshapes*():seq[string] =
+     ## createSeqGeoshapes
+     ## 
+     ## returns a seq containing geoshapes unicode chars
+     ## 
+     var gs = newSeq[string]()
+     for j in 9632..9727: gs.add($Rune(j))
+     result = gs
+     
+proc createSeqHiragana*():seq[string] =
+    ## hiragana
+    ##
+    ## returns a seq containing hiragana unicode chars
+    var hir = newSeq[string]()
+    for j in 12353..12436: hir.add($Rune(j)) 
+    result = hir
+    
+   
+proc createSeqKatakana*():seq[string] =
+    ## full width katakana
+    ##
+    ## returns a seq containing full width katakana unicode chars
+    ##
+    var kat = newSeq[string]()
+    # s U+30A0–U+30FF.
+    for j in parsehexint("30A0")..parsehexint("30FF"): kat.add($Rune(j))
+    for j in parsehexint("31F0")..parsehexint("31FF"): kat.add($Rune(j))  # Katakana Phonetic Extensions
+    result = kat
+
+proc createSeqCJK*():seq[string] =
+    ## full cjk unicode range returned in a seq
+    ##
+    ##.. code-block:: nim
+    ##   import nimcx    
+    ##   var b = createSeqCJK()   
+    ##   var col = 0
+    ##   for x in 0 ..< b.len:
+    ##      printbicol(fmtx(["<6","",""],$x," : ", b[x]))
+    ##      inc col 
+    ##      if col > 10:
+    ##         col = 0
+    ##         echo()
+    ##   echo()
+    ##  
+    
+    # just iter of the chars if no seq required
+    #var col = 0
+    #for num in 0x2E80..0xFF60:
+    #  printbicol(fmtx(["<6","","<4"],$num," : ", fmt"{toUTF8(Rune(num))}"),colRight=pink)
+    #  inc col 
+    #  if col > 10:
+    #    col = 0
+    #    echo()
+    
+    var chzh = newSeq[string]()
+    #for j in parsehexint("3400").. parsehexint("4DB5"): chzh.add($Rune(j))   # chars
+    for j in parsehexint("2E80") .. parsehexint("2EFF"): chzh.add($Rune(j))   # CJK Radicals Supplement
+    for j in parsehexint("2F00") .. parsehexint("2FDF"): chzh.add($Rune(j))   # Kangxi Radicals
+    for j in parsehexint("2FF0") .. parsehexint("2FFF"): chzh.add($Rune(j))   # Ideographic Description Characters
+    for j in parsehexint("3000") .. parsehexint("303F"): chzh.add($Rune(j))   # CJK Symbols and Punctuation
+    for j in parsehexint("31C0") .. parsehexint("31EF"): chzh.add($Rune(j))   # CJK Strokes
+    for j in parsehexint("3200") .. parsehexint("32FF"): chzh.add($Rune(j))   # Enclosed CJK Letters and Months
+    for j in parsehexint("3300") .. parsehexint("33FF"): chzh.add($Rune(j))   # CJK Compatibility
+    for j in parsehexint("3400") .. parsehexint("4DBF"): chzh.add($Rune(j))   # CJK Unified Ideographs Extension A
+    for j in parsehexint("4E00") .. parsehexint("9FBF"): chzh.add($Rune(j))   # CJK Unified Ideographs
+    #for j in parsehexint("F900").. parsehexint("FAFF"): chzh.add($Rune(j))   # CJK Compatibility Ideographs
+    for j in parsehexint("FF00").. parsehexint("FF60"): chzh.add($Rune(j))   # Fullwidth Forms of Roman Letters
+    result = chzh    
+    
+
+proc createSeqFractur*():seq[string] =
+    ## createSeqFracture
+    ## Fractur chars returned in a seq
+    var fra = newSeq[string]()
+    for j in parsehexint("1D56C") .. parsehexint("1D59F"): fra.add($Rune(j)) 
+    result = fra                 
+
+
+proc createSeqIching*():seq[string] =
+    ## createSeqIching
+    ##
+    ## returns a seq containing iching unicode chars
+    var ich = newSeq[string]()
+    for j in 119552..119638: ich.add($Rune(j))
+    result = ich
+
+
+proc createSeqApl*():seq[string] =
+    ## createSeqApl
+    ##
+    ## returns a seq containing apl language symbols
+    ##
+    var adx = newSeq[string]()
+    # s U+30A0–U+30FF.
+    for j in parsehexint("2300").. parsehexint("23FF"): adx.add($Rune(j))
+    result = adx
+    
+          
+proc createSeqBoxChars*():seq[string] =
+
+    ## chars to draw a box
+    ##
+    ## returns a seq containing unicode box drawing chars
+    ##
+    var boxy = newSeq[string]()
+    # s U+2500–U+257F.
+    for j in parsehexint("2500").. parsehexint("257F"):
+        boxy.add($RUne(j))
+    result = boxy
+    
+    
+proc boxy*(w:int = 20, h:int = 5,fgr=randcol(),xpos:int=1) =
+    ## boxy
+    ## 
+    ## draws a box with width w , height h , color color at position xpos
+    ## 
+    printLn(lefttop & linechar * w & righttop,fgr = fgr,xpos=xpos)
+    for x in 0..h:
+        printLn(vertlinechar & spaces(w) & vertlinechar,fgr = fgr,xpos=xpos)
+    printLn(leftbottom & linechar * w & rightbottom,fgr = fgr,xpos=xpos)
+ 
+    
+proc boxy2*(w:int = 20, h:int = 5,fgr=randcol(),xpos:int=1) =
+    ## boxy2
+    ## 
+    ## draws a box with width w , height h , color color at position xpos
+    ## 
+    ## similar to boxy but with random color for each element rather than each box
+    ## 
+    printLn(lefttop & linechar * w & righttop,fgr = randcol(),xpos=xpos)
+    for x in 0..h:
+        printLn(vertlinechar & spaces(w) & vertlinechar,fgr = randcol(),xpos=xpos)
+    printLn(leftbottom & linechar * w & rightbottom,fgr = randcol(),xpos=xpos)     
+    
+ 
+proc spiralBoxy*(w:int = 20, h:int = 20,xpos:int = 1) =
+     ## spiralBoxy
+     var ww = w
+     var hh = h
+     var xxpos = xpos
+     for x in countdown(h,h div 2):
+       boxy(ww,hh,randcol(),xxpos)
+       dec ww
+       dec ww
+       dec hh
+       dec hh
+       inc xxpos
+       curup(hh + 4) 
+ 
+ 
+proc spiralBoxy2*(w:int = 20, h:int = 20,xpos:int = 1) =
+     ## spiralBoxy2   uses boxy2
+     var ww = w
+     var hh = h
+     var xxpos = xpos
+     for x in countdown(h,h div 2):
+       boxy2(ww,hh,randcol(),xxpos)
+       dec ww
+       dec ww
+       dec hh
+       dec hh
+       inc xxpos
+       curup(hh + 4)
+       
+    
+    
+proc showSeq*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5,displayflag : bool = true):string {.discardable.} = 
+    ## showSeq
+    ##
+    ## simple table routine with default 6 cols for displaying various unicode sets
+    ## fgr allows color display and fgr = "rand" displays in rand color and maxwidth for displayable items
+    ## this can also be used to show items of a sequence
+    ## displayflag == true means to show the output
+    ## displayflag == false means do not show output , but return it as a string
+    ##
+    ##.. code-block:: nim
+    ##      showSeq(createSeqCJK(),"rand")
+    ##      showSeq(createSeqKatakana(),yellowgreen)
+    ##      showSeq(createSeqCJK(),"rand")
+    ##      showSeq(createSeqGeoshapes(),randcol())
+    ##      showSeq(createSeqint(1000,10000,100000))
+    ##      
+    ## 
+    runnableExamples:
+        showSeq(createSeqCJK(),"rand")
+        
+    result = ""
+    var c = 0
+    for x in 0 ..< z.len:
+      result = result & $z[x] & spaces(1)
+      if displayflag == true:
+        
+        if c < cols: 
+            if fgr == "rand":
+                  printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$x , " : ",  $z[x] , spaces(1)) ,colLeft=gold,colRight=randcol(),0,false,{}) 
+            else:
+                  printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$x , " : ",  $z[x] , spaces(1)) ,colLeft=fgr,colRight=gold,0,false,{})     
+            inc c
+        else:
+             c = 0
+             echo()
+             if fgr == "rand":
+                  printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$x , " : ",  $z[x] , spaces(1)) ,colLeft=gold,colRight=randcol(),0,false,{}) 
+             else:
+                  printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$x , " : ",  $z[x] , spaces(1)) ,colLeft=fgr,colRight=gold,0,false,{})     
+             inc c     
+    
+    if displayflag == true:
+      decho()      
+      let msg1 = "0 - " & $(z.len - 1) & spaces(3)
+      cxprintLn(3,limegreen,darkslategraybg," Item Count : ",cxpad($z.len,msg1.len)) 
+      decho()          
+ 
+
+       
+proc seqHighLite*[T](b:seq[T],b1:seq[T],col:string=gold) =
+   ## seqHighLite
+   ## 
+   ## displays the passed in seq with highlighting of subsequence
+   ## 
+   ##.. code-block:: nim
+   ##   import nimcx
+   ##   var b = createSeqInt(30,1,10)
+   ##   seqHighLite(b,@[5])   # subseq will be highlighted if found
+   ## 
+   ## 
+   var bs:string = $b1
+   bs = bs.replace("@[","")
+   bs.removesuffix(']')
+   printLn(b,col,styled = {styleReverse},substr = bs)       
+       
+
+proc shift*[T](x: var seq[T], zz: Natural = 0): T =
+     ## shift takes a seq and returns the first item, and deletes it from the seq
+     ##
+     ## build in pop does the same from the other side
+     ##
+     ##.. code-block:: nim
+     ##    var a: seq[float] = @[1.5, 23.3, 3.4]
+     ##    echo shift(a)
+     ##    echo a
+     ##
+     ##
+     result = x[zz]
+     x.delete(zz) 
+ 
+iterator reverseIter*[T](a: openArray[T]): T =
+      ## reverse iterator  
+      ##
+      ##.. code-block:: nim
+      ##   
+      ##   let a = createseqfloat(10)
+      ##   for b in reverse(a): echo b
+      ##
+      for i in countdown(a.high,0): yield a[i] 
+     
+template withFile*(f,fn, mode, actions: untyped): untyped =
+      ## withFile
+      ## 
+      ## easy file handling template , which is using fileStreams
+      ## 
+      ## f is a file handle
+      ## fn is the filename
+      ## mode is fmWrite,fmRead,fmReadWrite,fmAppend or fmReadWriteExisiting
+      ## 
+      ## 
+      ## Example 1
+      ## 
+      ##.. code-block:: nim
+      ##   let curFile="/data5/notes.txt"    # some file
+      ##   withFile(fs, curFile, fmRead):
+      ##       var line = ""
+      ##       while fs.readLine(line):
+      ##           printLn(line,yellowgreen)
+      ##           
+      block:
+            var f = streamfile(fn,mode)    # streamfile is in cxglobal.nim
+            try:
+                actions
+            except:    
+                echo()
+                echo getCurrentExceptionMsg()                
+                cxprintLn(2,white,bgred,"Error : Cannot open file " & fn & ". Please check ! ")
+                echo()
+                discard
+            finally:
+                close(f)
+                            
+                        
+proc checkMemFull*(xpos:int = 2) =
+       ## checkMemFull
+       ## 
+       ## full 45 lines output of system memory status
+       ## 
+       var seqline = newSeq[string]()
+       let n = "HardwareCorrupted ".len
+       withFile(f,"/proc/meminfo",fmRead):
+              seqline = f.readAll().splitLines()
+       for aline in 0 ..< seqline.len - 1:  # note omitting last as usually empty
+               let zline = seqline[aline].split(":")
+               try:
+                  if zline.len > 0: 
+                      cxprintLn(xpos,yellowgreen,cxpad(zline[0],n),fmtx([">15"],strutils.strip(zline[1])))
+               except IndexError as ex:
+                      discard
+ 
+
+proc checkMem*(xpos:int=2) = 
+       ## checkMem
+       ## 
+       ## reads meminfo to give memory status for memtotal,memfree and memavailable
+       ## maybe usefull during debugging of a function to see how memory is consumed 
+       ## 
+       
+       var seqline = newSeq[string]()
+       let n = "MemAvailable ".len
+       withFile(f,"/proc/meminfo",fmRead):
+            seqline = f.readAll().splitLines()
+       for aline in seqline:
+            if aline.startswith("Mem"):
+               let zline = aline.split(":")
+               cxprintLn(xpos,yellowgreen,cxpad(zline[0],n),fmtx([">15"],strutils.strip(zline[1])))
+              
+
+proc fullGcStats*(xpos:int = 2):int {.discardable.} =
+     let gcs = GC_getStatistics()
+     let gcsl = gcs.splitlines()
+     for agcl in gcsl:
+         let agcls = agcl.split("] ")
+         if agcls.len > 1:
+           let agcls1 = agcls[1].split(":")
+           cxprintln(xpos,agcls[0],cxpad(agcls1[0],20) & cxlpad(agcls1[1],15))
+     result = gcsl.len  
+     
+proc memCheck*(stats:bool = false) =
+      ## memCheck
+      ## 
+      ## memCheck shows memory before and after a GC_FullCollect run
+      ## 
+      ## set stats to true for full GC_getStatistics
+      ## @[1, 2, 4, 8, 16, 32]
+      echo()
+      if stats == true:
+         cxprintln(2,skyblue,"MemCheck",cxpad("GC and System",30))
+      else:
+         cxprintln(2,skyblue,"MemCheck",cxpad("System",30))
+      printLnBiCol("Status : Current ",colLeft=salmon,xpos = 2)
+      var b = 0
+      if stats == true:
+          b = fullgcstats(2)
+      checkmem()
+      GC_fullCollect()
+      sleepy(0.5)
+      if stats == true:
+          curup(b + 3)
+      else:
+          curup(b + 4)
+      printLnBiCol("Status : GC_FullCollect executed",colLeft=salmon,colRight=pink,xpos=55)
+      if stats == true:
+          fullgcstats(xpos=55)
+      checkmem(xpos=55)
+      echo()
+              
+     
+proc distanceTo*(origin:(float,float),dest:(float,float)):float =
+        ## distanceTo
+        ## 
+        ## calculates distance on the great circle using haversine formular
+        ## 
+        ## input is 2 tuples of (longitude,latitude)      
+        ## 
+        ## Example
+        ## 
+        ## also see https://github.com/qqtop/Nim-Snippets/blob/master/geodistance.nim
+        ## 
+        ##.. code-block:: nim
+        ##  import nimcx 
+        ##  echo "Hongkong - London"
+        ##  echo distanceto((114.109497,22.396427),(-0.126236,51.500153)) , " km"
+        ##  echo distanceto((114.109497,22.396427),(-0.126236,51.500153)) / 1.609345 ," miles"
+        ##  decho()
+
+        let r = 6371.0    # mean Earth radius in kilometers  6371.0
+        let lam_1 = degtorad(origin[0])
+        let lam_2 = degtorad(dest[0])
+        let phi_1 = degtorad(origin[1])
+        let phi_2 = degtorad(dest[1])
+        let h = (sin((phi_2 - phi_1) / 2) ^ 2 + cos(phi_1) * cos(phi_2) * sin((lam_2 - lam_1) / 2) ^ 2)
+        return 2 * r * arcsin(sqrt(h))
+
+proc getEmojisSmall*(): seq[string] =
+       ## getEmojisSmall
+       ## 
+       ## a seq with 246 emojis will be returned 
+       ## 
+       ## for easy use in your text strings
+       ## 
+       var emojisSmall = newSeq[string]()
+       for x in 0..<ejm4.len: emojisSmall.add($Rune(ejm4[x]))
+       result = emojisSmall
+ 
+proc showEmojisSmall*() = 
+       ## showEmojisSmall
+       ## 
+       ## show a table of small emojis
+       ## 
+       ## Example
+       ## 
+       ##.. code-block:: nim
+       ##   showEmojisSmall()
+       ##   let es = getemojisSmall()
+       ##   loopy(0..10,printLn((es[197] & es[244] & es[231] ) * 20,rndcol))
+       ## 
+       ## 
+       showSeq(getEmojisSmall(),rndcol,maxitemwidth=4)      
+
+ 
+proc genMacAddress*(): string =
+   ## generates a random MacAddress
+   ## 
+   ##.. code-block:: nim
+   ##   loopy(1..10,echo genMacAddress())
+   ## 
+   randomize()
+   let m = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"]
+   [sample(m) & sample(m), sample(m) & sample(m), sample(m) & sample(m),sample(m) & sample(m), sample(m) & sample(m), sample(m) & sample(m)].join(":")
+
+proc quickPw*():string =   
+   ## quickPw
+   ## 
+   ## quick strong password generator
+   ##  
+   for i in 1..100: result.add(rand(33..128).char)
+
+proc quickLargeInt*():string =   
+  ## quickLargeInt
+  ## 
+  ## returns a random large int string
+  ##  
+  ##
+  result =  repeat($rand(int.high div 2..int.high), 2)   
+      
+   
+proc quickBinaryString*(width:int=10):string =
+     ## quickBinaryString
+     ## 
+     ## returns a random binary string with desired width
+     ## 
+     for x in 0..<width: result.add($rand(0..1))
+   
+ 
+iterator span*(s: string; first: int, last: BackwardsIndex): char =
+     ## span
+     ## 
+     ## iterator for strings
+     ## 
+     ##.. code-block:: nim 
+     ##
+     ##   let s = ".something"
+     ##   for c in s.span(1, ^1):
+     ##       print c 
+     ##   echo()
+     ##       
+     for i in first .. s.len - last.int: yield s[i]
+
+
+proc checkPrime*(a: int): bool =
+     ## checkPrime
+     ## 
+     ## within maxinteger range
+     ## 
+     ## checks an int for primeness and returns true or false
+     ## 
+     if a == 2: return true
+     if a < 2 or a mod 2 == 0: return false
+     for i in countup(3, sqrt(a.float).int, 2):
+       if a mod i == 0:
+         return false
+     return true
+  
+iterator primey*(s:int = 0,e:int):int =
+     ## primey
+     ## 
+     ## yields prime numbers from s to e within maxinteger range
+     ## 
+     ##.. code-block:: nim
+     ##   var cp = 0
+     ##   for xxx in primey(s=100_000_000,e=100_005_000):
+     ##      inc cp 
+     ##      echo xxx
+     ##   echo cp," primes found" 
+     ## 
+     for i in s .. e: 
+        if checkprime(i): yield i 
+  
+proc getPrimeSeq*(x,y:int):seq[int]=
+     ## getPrimeSeq
+     ## 
+     ## returns all primes from x to y in a seq[int]
+     ## 
+     ##.. code-block:: nim
+     ## showSeq(getPrimeSeq(5000,10000))
+     ## 
+     ## 
+     for p in primey(x,y): result.add(p)  
+
+
+             
+# END OF CXGLOBAL.NIM #
