@@ -18,7 +18,7 @@
 ##     Description : provides most printing functions for the library
 ##              
 ## 
-## 
+ 
 import cxconsts,terminal,strutils,sequtils,macros,random
 
 randomize()

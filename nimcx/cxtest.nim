@@ -4,9 +4,11 @@
 #
 # Latest      : 2019-10-01   
  
-#import nimcx
-import "/data5/NimStuff/NimCxDevel/cx.nim"
-import cxfontconsts,cxfont             
+import nimcx
+
+# to use functions from cxfont do this
+#import "nimcx/cxfontconsts"
+import "nimcx/cxfont"             
 
 var testno = newCxcounter()
 

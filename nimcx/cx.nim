@@ -20,9 +20,9 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-09-19
+##     Latest      : 2019-10-01
 ##
-##     Compiler    : Nim >= 0.19.x devel branch
+##     Compiler    : Nim >= 1.0.0 or 1.0.99  devel branch
 ##
 ##     OS          : Linux
 ##
@@ -36,11 +36,13 @@
 ##                   
 ##                   Currently the library consists of 
 ##                   
-##                   cx.nim , cxconsts.nim , cxglobal, cxprint.nim , cxfont , cxhash ,
+##                   cx.nim , cxconsts.nim , cxglobal, cxprint.nim , cxhash ,
 ##                   
-##                   cxtime , cxstats and cxutils.nim , 
+##                   cxtime , cxstats  , cxfont , cxfontconsts
 ##                   
-##                   all files are automatically imported with : import nimcx
+##                   except cxfont and cxconsts all files automatically
+##
+##                   imported with : import nimcx
 ## 
 ##
 ##     Usage       : import nimcx
