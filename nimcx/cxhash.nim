@@ -4,7 +4,7 @@ import hashes,strutils
 ## 
 ## convenience functions for hashes 
 ## 
-## Last 2019-07-02
+## Last 2019-10-02
 ## 
 
 export hashes
@@ -19,9 +19,9 @@ proc checkHash*[T](kata:string,hsx:T)  =
   ## checks hash of a string and print status
   ## 
   if hash(kata) == hsx:
-        cxprintln(5,white,darkslategraybg,"Hash Status : Ok ")
+        cxprintln(2,white,darkslategraybg,"Hash Status : Ok ")
   else:
-        cxprintln(5,white,bgred,"Hash Status :  Failed ! ")
+        cxprintln(2,white,bgred,"Hash Status :  Failed ! ")
 
 
 proc verifyHash*[T](kata:string,hsx:T):bool  =

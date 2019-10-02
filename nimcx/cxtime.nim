@@ -3,13 +3,11 @@ import cxconsts
 
 # cxtime.nim
 # 
-# time/date related procs including printDTimeMsg etc.
+# time/date related conevenience procs including printDTimeMsg etc.
 # 
 # some of it similar to stdlib functions or in different output format
-# 
-# 
-# 
-# Last : 2019-09-30
+#
+# Last : 2019-10-02
 # 
 # 
 
@@ -413,24 +411,23 @@ proc getRndDate*(minyear:int = parseint(year(cxtoday())) - 50,maxyear:int = pars
   
 
 proc printTimeMsg*(atext:string = cxTime,xpos:int = 1):string {.discardable.} =
-     cxprint(xpos,lightblue,styleReverse,"[Time  ]",lightgrey,spaces(1),atext)
+     cxprint(xpos,gold,darkslategraybg,"[Time  ]",lightgrey,spaces(1),atext)
 
 proc printLnTimeMsg*(atext:string = cxTime,xpos:int = 1):string {.discardable.} =
-     cxprintLn(xpos,lightblue,styleReverse,"[Time  ]",lightgrey,spaces(1),atext) 
+     cxprintLn(xpos,gold,darkslategraybg,"[Time  ]",lightgrey,spaces(1),atext) 
 
 proc printDTimeMsg*(atext:string = $toTime(now()),xpos:int = 1):string {.discardable.} =
-     cxprint(xpos,lightblue,styleReverse,"[DTime ]",lightgrey,spaces(1),atext)
+     cxprint(xpos,gold,darkslategraybg,"[DTime ]",lightgrey,spaces(1),atext)
 
 proc printLnDTimeMsg*(atext:string = $toTime(now()),xpos:int = 1):string {.discardable.} =
-     cxprintLn(xpos,lightblue,styleReverse,"[DTime ]",lightgrey,spaces(1),atext)  
+     cxprintLn(xpos,gold,darkslategraybg,"[DTime ]",lightgrey,spaces(1),atext)  
 
 proc printDateMsg*(atext:string = getDateStr(),xpos:int = 1):string {.discardable.} =
-     cxprint(xpos,lightblue,styleReverse,"[Date  ]",lightgrey,spaces(1),atext)
+     cxprint(xpos,gold,darkslategraybg,"[Date  ]",lightgrey,spaces(1),atext)
   
 proc printLnDateMsg*(atext:string = getDateStr(),xpos:int = 1):string {.discardable.} =
-     cxprintLn(xpos,lightblue,styleReverse,"[Date  ]",lightgrey,spaces(1),atext)
-
-   
+     cxprintLn(xpos,gold,darkslategraybg,"[Date  ]",lightgrey,spaces(1),atext)
+  
    
 # cxtimer functions
 
@@ -618,6 +615,17 @@ proc cxHRTimer*(tstart:Time = getTime() ,tend:Time = getTime()):auto =
    ##
    result = initDuration(seconds=tend.toUnix(), nanoseconds=tend.nanosecond) - initDuration(seconds=tstart.toUnix(), nanoseconds=tstart.nanosecond)
      
-   
-   
+when isMainModule:
+      let currenttime = getTime() 
+      cxprintLn(1,"cxLocal           : ",cxLocal)
+      cxprintLn(1,"cxNow             : ",cxNow)  
+      cxprintLn(1,"cxTime            : ",cxTime) 
+      cxprintLn(1,"cxToday           : ",cxToday)
+      cxprintLn(1,"cxTimeZone(long)  : ",cxTimezone(long))
+      cxprintLn(1,"cxTimeZone(short) : ",cxTimezone(short))
+      printLnDTimeMsg() 
+      cxprintLn(1,"Running Time      : ",$cxHRTimer(currenttime,getTime()))
+      echo()
+
+      
 # end of module cxtime.nim   

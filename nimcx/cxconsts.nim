@@ -12,9 +12,9 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-09-21
+##     Latest      : 2019-10-02
 ##
-##     Compiler    : Nim >= 0.19.x dev branch
+##     Compiler    : Nim >= 1.0.0  or 1.0.99  dev branch
 ##
 ##     OS          : Linux
 ##
@@ -29,7 +29,7 @@
 ##                   
 ## 
 
-import terminal,colors,sequtils,strutils ,htmlparser
+import terminal,colors,sequtils,strutils,htmlparser
  
 const cxcodestart* = "cxcodestart"
 const cxcodeend*   = "cxcodeend"
@@ -67,6 +67,8 @@ const
       cxReverseDim* = {styleReverse,styleDim}      
       cxBlink* = {styleBlink}
       cxItalic* = {styleItalic}
+      cxUnderscore* = {styleUnderscore}
+      
 const
       # block chars for font building with some easy to remember names
       efb1* = "▀"

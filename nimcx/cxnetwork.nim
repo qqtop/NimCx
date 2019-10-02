@@ -1,16 +1,18 @@
+# cxnetwork.nim
+# 
+# Var. internet related procs and experiments 
+# nmap , ip , lsof etc. needs to be installed if relevant procs to be used.
+# 
+# 
+# Last 2019-10-02
+# 
+
+
 import os,osproc,json,httpclient,strutils,strscans
 import nativesockets,sets,terminal
 import cxconsts,cxglobal,cxprint
-# cxnetwork.nim
-# 
-# Var. internet related procs and experiments
-# nmap , ss needs to be installed if relevant procs to be used.
-# 
-# 
-# Last 2019-08-12
-# 
 
-  
+ 
 iterator parseIps*(soup: string): string =
   ##  parseIps  
   ##  for ipv4 addresses only
@@ -92,9 +94,9 @@ proc showIpInfo*(ip:string) =
         dlineln(40,col = yellow)
         for x in jj.mpairs() :
             echo fmtx(["<15","",""],$x.key ," : " ,unquote($x.val))
-        printLnBiCol(fmtx(["<15","",""],"Source"," : ","ip-api.com"),yellowgreen,salmon,":",0,false,{})
+        printLnBiCol(fmtx(["<15","",""],"Source"," : ","ip-api.com"),white,darkslategray,":",0,false,{})
       except:
-          printLnBiCol("IpInfo   : unavailable",lightgreen,red,":",0,false,{})  
+          printLnBiCol("IpInfo   : unavailable",white,red,":",0,false,{})  
 
 proc localIp*():string =
    # localIp
@@ -112,9 +114,11 @@ proc localRouterIp*():string =
    
 
 proc showLocalIpInfo*() =
-     cxprintln(2,white,darkslategraybg,"Machine " ,styleReverse, localIp())
-     cxprintln(2,white,darkslategraybg,"Router  " ,stylereverse, strip(localRouterIp()))
-     echo()
+     cxprintln(1,white,darkslategraybg,"Machine " ,styleReverse, cxpad(localIp(),16))
+     cxprintln(1,white,darkslategraybg,"Router  " ,stylereverse, cxpad(strip(localRouterIp()),16))
+     
+proc showWanIpInfo*() =     
+     cxprintln(1,white,darkslategraybg,"Wan Ip  " ,stylereverse, cxpad(strip(getwanIp()),16))
 
 
 proc pingy*(dest:string,pingcc:int = 3,col:string = termwhite) = 
@@ -133,7 +137,7 @@ proc pingy*(dest:string,pingcc:int = 3,col:string = termwhite) =
         if err > 0:
             cxprintln(2,white,bgred,$err) 
         else:        
-            printLnBiCol("Pinging : " & dest,yellowgreen,truetomato,":",0,false,{})
+            printLnBiCol("Pinging : " & dest,white,truetomato,":",0,false,{})
             printLnBiCol("Expected: " & pingc & " pings")
             printLn("")
             let p = startProcess(outp2,args=["-c",pingc,dest] , options={poParentStreams})
@@ -161,7 +165,7 @@ proc cxPortCheck*(cmd:string = "lsof -i") =
      let pcl = pc[0].splitLines()
          
      if pcl.len > 1:
-         printLn(pcl[0],yellowgreen,styled={styleUnderscore})
+         printLn(pcl[0],yellowgreen,styled=cxUnderscore)
          for x in 1..pcl.len - 1:
             if pcl[x].contains("UDP "):
                var pclt = pcl[x].split(spaces(1))
@@ -170,16 +174,16 @@ proc cxPortCheck*(cmd:string = "lsof -i") =
                for xx in 1 ..< pclt.len:
                  try:
                    if pclt[xx].contains("IPv4") :
-                      print(pclt[xx],trueblue,styled={styleReverse})
+                      print(pclt[xx],trueblue,styled=cxReverse)
                       print(spaces(1))
                    elif pclt[xx].contains("IPv6") :
-                      print(pclt[xx],truetomato,styled={styleReverse})
+                      print(pclt[xx],truetomato,styled=cxReverse)
                       print(spaces(1))   
                    elif pclt[xx].contains("UDP") :
-                      print(pclt[xx],sandybrown,styled={styleReverse})
+                      print(pclt[xx],sandybrown,styled=cxReverse)
                       print(spaces(1))
                    elif pclt[xx].contains("root") :
-                      print(pclt[xx],darkred,styled={styleReverse})
+                      print(pclt[xx],darkred,styled=cxReverse)
                       print(spaces(1))   
                    else:
                       print(pclt[xx],skyblue)
@@ -195,16 +199,16 @@ proc cxPortCheck*(cmd:string = "lsof -i") =
                for xx in 1..<pclt.len:
                  try:
                    if pclt[xx].contains("IPv4") :
-                      print(pclt[xx],dodgerblue,styled={styleReverse})
+                      print(pclt[xx],dodgerblue,styled=cxReverse)
                       print(spaces(1))
                    elif pclt[xx].contains("IPv6") :
-                      print(pclt[xx],truetomato,styled={styleReverse})
+                      print(pclt[xx],truetomato,styled=cxReverse)
                       print(spaces(1))   
                    elif pclt[xx].contains("TCP") :
-                      print(pclt[xx],pastelblue,styled={styleReverse})
+                      print(pclt[xx],pastelblue,styled=cxReverse)
                       print(spaces(1))
                    elif pclt[xx].contains("root") :
-                      print(pclt[xx],darkred,styled={styleReverse})
+                      print(pclt[xx],darkred,styled=cxReverse)
                       print(spaces(1))   
                    else:
                       print(pclt[xx],pastelpink)
@@ -240,9 +244,9 @@ proc cxDig*(ipadd:string):tuple =
 
     
 proc cxDns*(dns:string):tuple =    
-     ## cxHost
+     ## cxDns
      ## 
-     ## see showHost()
+     ## also see showHosts()
      ## 
      let acmd = "host " & dns
      result = execCmdEx(acmd) 
@@ -255,18 +259,18 @@ proc showDig*(hostip:string = $"172.217.5.14") =
         ## 
         ## 
         decho(2)
-        var z = cxDig(hostip)
-        var zz = z.output.splitLines()
-        var zze = z.exitCode
-        cxprintLn(2,white,yellowgreenbg,"HostIp ",hostip & spaces(10))
+        let z = cxDig(hostip)
+        let zz = z.output.splitLines()
+        let zze = z.exitCode
+        cxprintLn(2,white,darkslategraybg,"HostIp ",hostip & spaces(10))
         echo()
         for x in 0 ..< zz.len:
           if strutils.strip(zz[x]).len() > 0:
             let zzz = zz[x].replace(";;","").replace(";","")
-            cxprintLn(2,white,yellowgreenbg,(fmtx(["<4","",""],$x," : ",zzz)))
+            cxprintLn(2,yellow,darkslategraybg,(fmtx(["<4","","","",""],$x," :",white,blackbg,spaces(2) & zzz)))
         decho(1)
         if zze > 0:
-            cxprintLn(8,white,yellowgreenbg,"Exitcode   ",fmtx(["<8"],$zze))
+            cxprintLn(8,black,satbluebg,"Exitcode   ",fmtx(["<8"],$zze))
 
 
 proc showDns*(hostdns:string = "google.com") =   
@@ -285,7 +289,7 @@ proc showDns*(hostdns:string = "google.com") =
         var hh = h.output.splitlines()
         var hhe = h.exitCode
 
-        cxprintLn(2,white,yellowgreenbg,"HostDns",hostdns & spaces(10))
+        cxprintLn(2,white,darkslategraybg,"HostDns",hostdns & spaces(10))
         echo()
         for x in 0 ..< hh.len:
           if strutils.strip(hh[x]).len() > 0:
@@ -321,11 +325,11 @@ proc getHosts*(dm:string):seq[string] =
                     s.add(",")
                     cc = 0
                   else:
-                    cc += 1
+                    inc cc
                     s.add('.')
               s.add($int(c))
           var ss = s.split(",")
-          for x in 0..<ss.len:
+          for x in 0 ..< ss.len:
               rx.add(ss[x])
 
         else:
@@ -360,7 +364,17 @@ proc showHosts*(dm:string) =
        for x in z:
          printLn(x)
 
-
+when isMainModule:
+    echo()
+    cxportCheck()
+    echo()
+    cxprintln(0,white,darkslategraybg,cxpad("System IP Information",60))
+    echo()
+    showLocalIpInfo()
+    showWanIpInfo()
+    echo()
+    echo()
+    
 
          
 # end of cxnetwork.nim          

@@ -10,9 +10,9 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-07-13 
+##     Latest      : 2019-10-02 
 ##
-##     Compiler    : Nim >= 0.19.x dev branch
+##     Compiler    : Nim >= 1.0.0 or 1.0.99 devel branch
 ##
 ##     OS          : Linux
 ##
@@ -164,7 +164,7 @@ proc calculate_zscore(average:float, sq_average:float, value:float,avg:float):fl
 
 proc rolling_zscore*(data:seq[float],observed_window:seq[float],decay:float = 0.9):float =
     #
-    # The lowest the decay, the more important the new points
+    # The lower the decay, the more important the new points
     # Decay is there to ensure that new data is worth more than old data
     # in terms of trendiness
     #

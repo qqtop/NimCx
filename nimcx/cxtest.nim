@@ -328,7 +328,7 @@ nexttest()
 showCpuInfo()
 
 
-
+superheader("Ok , that's it for now ! Have a nice day .",skyblue,lightslategray)
 
          
 doFinish()
