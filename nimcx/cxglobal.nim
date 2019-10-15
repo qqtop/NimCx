@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-10-01 
+##     Latest      : 2019-10-15
 ##
 ##     Compiler    : Nim >= 1.0.0 or 1.0.99 
 ##
@@ -44,6 +44,17 @@ import
           times,
           unicode
           
+{.hint: "\x1b[38;2;154;205;50m ╭──────────────────────── NIMCX ─────────────────────────────────────╮ " .}
+    
+{.hint: "\x1b[38;2;154;205;50m \u2691  NimCx  V. " & "\x1b[38;2;255;215;0m Officially made for Linux only." & 
+                spaces(23) & "\x1b[38;2;154;205;50m \u2691 ".}
+                
+{.hint: "\x1b[38;2;154;205;50m \u2691  Compiling        :" &
+        "\x1b[38;2;255;100;0m cxglobal \xE2\x9A\xAB" &
+        " " & "\xE2\x9A\xAB" & spaces(32) & "\x1b[38;2;154;205;50m \u2691 ".}
+         
+{.hint: "\x1b[38;2;154;205;50m ╰────────────────────────────────────────────────────────────────────╯ " .}
+
 
 # forward declarations
 proc ff*(zz: float, n: int = 5): string

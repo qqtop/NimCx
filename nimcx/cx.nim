@@ -20,7 +20,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-10-01
+##     Latest      : 2019-10-15
 ##
 ##     Compiler    : Nim >= 1.0.0 or 1.0.99  devel branch
 ##
@@ -40,7 +40,7 @@
 ##                   
 ##                   cxtime , cxstats  , cxfont , cxfontconsts
 ##                   
-##                   except cxfont and cxconsts all files automatically
+##                   except cxfont and cxfontconsts all files are automatically
 ##
 ##                   imported with : import nimcx
 ## 
@@ -124,10 +124,8 @@
 ##                   
 ##                   You are not happy          ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
 ##                 
-##                   You are in any other state ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
+##                   You want qqtop to be happy ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
 ##                                       
-##                   
-##
 
 import
         cxconsts, cxglobal, cxtime, cxprint, cxhash, cxnetwork, cxstats
@@ -406,7 +404,7 @@ proc nimcat*(curFile: string, countphrase: varargs[string, `$`] = "") =
             for x in countphrase:
                 if x.len > maxphrasewidth: maxphrasewidth = x.len
             if countphrase.len > 0:
-                printLn("\nPhraseCount stats :    \n", gold, styled = {styleUnderScore})
+                printLn("\nPhraseCount Stats :    \n", gold, styled = {styleUnderScore})
                 for x in 0..<countphrase.len:
                     printLnBiCol(fmtx(["<" & $maxphrasewidth, "",""], countphrase[x]," : " & rightarrow & " Count: ", phraseinline[x].len), xpos = 4)
                     printLnBiCol("Occurence : Line No.", colLeft = truetomato, colRight = yellow, sep = ":", 4, false, {})
@@ -415,7 +413,7 @@ proc nimcat*(curFile: string, countphrase: varargs[string, `$`] = "") =
 
 template repeats(count: int, statements: untyped) =
         # used by benchmark
-        for i in 0..<count:
+        for i in 0 ..< count:
             statements
 
 
@@ -1166,14 +1164,14 @@ proc doInfo*() =
     printLnBiCol("Terminal encoding             : " & $getCurrentEncoding())
 
 
-proc infoLine*() =
+proc infoLine*(xpos:int = 0) =
      ## infoLine
      ##
      ## prints some info for current application
      ##
      hlineLn()
      echo()
-     printBiCol(fmtx(["<14"], "Application:"), colLeft = yellowgreen)
+     printBiCol(fmtx(["<14"], "Application:"), colLeft = yellowgreen,xpos = xpos)
      printBiCol(extractFileName(getAppFilename()), colLeft = skyblue)
      printBiCol(" | ",colLeft = brightblack)
      printBiCol("Pid : " & $getCurrentProcessId())
@@ -1184,7 +1182,6 @@ proc infoLine*() =
      printBiCol(CXLIBVERSION, colLeft = brightblack)
      printBiCol(" | ", colLeft = brightblack)
      #printBiCol($someGcc & " | ",colLeft = brightblack)
-     
      printBiCol("Size: " & formatSize(getFileSize(getAppFilename())),colLeft=peru,colRight=brightblack)
      #printBiCol(" | ", colLeft = brightblack)
         
