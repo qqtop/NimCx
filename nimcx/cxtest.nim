@@ -22,7 +22,7 @@ let l = @[1234,4567,890]
 proc nextTest() =
      testno.add
      decho(3)
-     cxPrintLn( 1,orange,darkslategraybg,cxBright,"nimCx   TEST No. :   " & $testno.value & spaces(1) & red & downarrow & spaces(2))   # random cols
+     cxPrintLn(1,orange,darkslategraybg,cxBright,"nimCx   TEST No. :   " & $testno.value & spaces(1) & red & downarrow & spaces(2))   # random cols
      decho(1)
 
 # testing the help generator proc
@@ -330,5 +330,7 @@ showCpuInfo()
 
 superheader("Ok , that's it for now ! Have a nice day .",skyblue,lightslategray)
 
-         
+# another way to call nim  procs
+#"Ok , that's it for now ! Have a nice day .".superHeader(skyblue,lightslategray)
+
 doFinish()

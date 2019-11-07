@@ -1,5 +1,5 @@
 {.deadCodeElim: on, optimization: speed.}
-
+# {.experimental: "codeReordering".}  # does this have any effect forward declarations are still needed
 ## ::
 ## 
 ##     Library     : nimcx.nim
@@ -10,9 +10,9 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-10-15
+##     Latest      : 2019-11-07
 ##
-##     Compiler    : Nim >= 1.0.0 or 1.0.99 
+##     Compiler    : Nim >= 1.0.0 or 1.1.1 
 ##
 ##     OS          : Linux
 ##
@@ -46,14 +46,14 @@ import
           
 {.hint: "\x1b[38;2;154;205;50m ╭──────────────────────── NIMCX ─────────────────────────────────────╮ " .}
     
-{.hint: "\x1b[38;2;154;205;50m \u2691  NimCx  V. " & "\x1b[38;2;255;215;0m Officially made for Linux only." & 
+{.hint: "\x1b[38;2;154;205;50m \u2691  NimCx     " & "\x1b[38;2;255;215;0m Officially made for Linux only." & 
                 spaces(23) & "\x1b[38;2;154;205;50m \u2691 ".}
                 
-{.hint: "\x1b[38;2;154;205;50m \u2691  Compiling        :" &
-        "\x1b[38;2;255;100;0m cxglobal \xE2\x9A\xAB" &
-        " " & "\xE2\x9A\xAB" & spaces(32) & "\x1b[38;2;154;205;50m \u2691 ".}
+{.hint: "\x1b[38;2;154;205;50m \u2691  Compiling " &
+        "\x1b[38;2;255;100;0m cxglobal.nim \xE2\x9A\xAB" &
+        " " & "\xE2\x9A\xAB" & spaces(36) & "\x1b[38;2;154;205;50m \u2691 ".}
          
-{.hint: "\x1b[38;2;154;205;50m ╰────────────────────────────────────────────────────────────────────╯ " .}
+{.hint: "\x1b[38;2;154;205;50m ╰──────────────────────── CXGLOBAL ──────────────────────────────────╯ " .}
 
 
 # forward declarations
@@ -408,6 +408,12 @@ proc reverseMe*[T](xs: openarray[T]): seq[T] =
           result = newSeq[T](xs.len)
           for i, x in xs: result[xs.high - i] = x
 
+proc reverse*[T](s: var seq[T]) =
+  ## reverse
+  ##
+  ## in place reverse sequence
+  ## 
+  for i in 0 .. (s.high - 1) shr 1: swap(s[i], s[s.high - i])
 
 proc reverseText*(text: string): string =
           ## reverseText
@@ -2644,7 +2650,7 @@ proc checkMemFull*(xpos:int = 2) =
                try:
                   if zline.len > 0: 
                       cxprintLn(xpos,yellowgreen,cxpad(zline[0],n),fmtx([">15"],strutils.strip(zline[1])))
-               except IndexError as ex:
+               except IndexError:
                       discard
  
 

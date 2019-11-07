@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-10-02 
+##     Latest      : 2019-11-07 
 ##
 ##     Compiler    : Nim >= 1.0.0 or 1.0.99 devel branch
 ##
@@ -21,6 +21,21 @@
 
 import terminal,stats,math,algorithm
 import cxconsts,cxglobal,cxprint
+
+{.hint: "\x1b[38;2;154;205;50m ╭──────────────────────── NIMCX ─────────────────────────────────────╮ " .}
+    
+{.hint: "\x1b[38;2;154;205;50m \u2691  NimCx     " & "\x1b[38;2;255;215;0m Officially made for Linux only." & 
+                " " * 23 & "\x1b[38;2;154;205;50m \u2691 ".}
+                
+{.hint: "\x1b[38;2;154;205;50m \u2691  Compiling " &
+        "\x1b[38;2;255;100;0m cxstats.nim \xE2\x9A\xAB" &
+        " " & "\xE2\x9A\xAB" & " " * 37 & "\x1b[38;2;154;205;50m \u2691 ".}
+         
+{.hint: "\x1b[38;2;154;205;50m ╰──────────────────────── CXSTATS ───────────────────────────────────╯ " .}
+
+
+
+
   
 # proc returnStat(x:Runningstat,stat : seq[string]):float =
 #      ## returnStat

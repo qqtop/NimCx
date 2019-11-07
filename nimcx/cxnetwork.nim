@@ -4,13 +4,26 @@
 # nmap , ip , lsof etc. needs to be installed if relevant procs to be used.
 # 
 # 
-# Last 2019-10-02
+# Last 2019-11-07
 # 
-
 
 import os,osproc,json,httpclient,strutils,strscans
 import nativesockets,sets,terminal
 import cxconsts,cxglobal,cxprint
+
+
+{.hint: "\x1b[38;2;154;205;50m ╭──────────────────────── NIMCX ─────────────────────────────────────╮ " .}
+    
+{.hint: "\x1b[38;2;154;205;50m \u2691  NimCx     " & "\x1b[38;2;255;215;0m Officially made for Linux only." & 
+                spaces(23) & "\x1b[38;2;154;205;50m \u2691 ".}
+                
+{.hint: "\x1b[38;2;154;205;50m \u2691  Compiling " &
+        "\x1b[38;2;255;100;0m cxnetwork.nim \xE2\x9A\xAB" &
+        " " & "\xE2\x9A\xAB" & spaces(35) & "\x1b[38;2;154;205;50m \u2691 ".}
+         
+{.hint: "\x1b[38;2;154;205;50m ╰──────────────────────── CXNETWORK ─────────────────────────────────╯ " .}
+
+
 
  
 iterator parseIps*(soup: string): string =
