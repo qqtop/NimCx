@@ -4,7 +4,7 @@
 # nmap , ip , lsof etc. needs to be installed if relevant procs to be used.
 # 
 # 
-# Last 2019-11-07
+# Last 2019-11-17
 # 
 
 import os,osproc,json,httpclient,strutils,strscans
@@ -376,6 +376,19 @@ proc showHosts*(dm:string) =
     else:
        for x in z:
          printLn(x)
+         
+
+proc wifistatus*() =
+    # experimental
+    # runs nmcli wifi scanner if installed and shows found wifi connections
+    # requires nmcli installed and wifi  interface available
+    # on many systems this may require to be run under sudo to show
+    # other access point
+    var (output,error) = execCmdEx("sudo nmcli -p -c yes  -m multiline -f ALL dev wifi")
+    echo output
+    if error > 0: echo error
+         
+         
 
 when isMainModule:
     echo()

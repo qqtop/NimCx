@@ -20,9 +20,9 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-10-15
+##     Latest      : 2019-11-19
 ##
-##     Compiler    : Nim >= 1.0.0 or 1.0.99  devel branch
+##     Compiler    : Nim >=  1.0.2 or  1.1.1  devel branch
 ##
 ##     OS          : Linux
 ##
@@ -61,9 +61,7 @@
 ##                   
 ##                   however for maximum color support use konsole 
 ##                   
-##     Important   : Konsole , which can be installed in gnome,mate etc.and comes standard in KDE environments.
-##
-##                   If the color effects are not here ... change the terminal.
+##     Important   : If the color effects are not here ... change the terminal.
 ##                   
 ##                   Gnome terminals auto adjust colors not in colorNames see cxConsts.nim
 ##
@@ -71,7 +69,7 @@
 ##                   
 ##                   printLn("Nice color 123",newColor(990,9483,88))
 ##                   
-##                   may give you a deep red fontcolor in konsole , but will only show in
+##                   may give you a deep red fontcolor in konsole , but may only show in
 ##                   
 ##                   boring white on a gnome based terminal.
 ##                   
@@ -114,8 +112,7 @@
 ##                   Deprecating/removing unused or unnecessary code due to improvements in stdlib
 ##
 ##                   cxfont.nim and cxfontconsts.nim are available for import , but not longer
-##                   included in nimcx to avoid code bloat , cxutils.nim code has been moved into
-##                   cxglobal.nim 
+##                   included in nimcx to avoid code bloat  
 ##
 ##
 ##     Funding     : Here are three excellent reasons :
@@ -137,18 +134,17 @@ import
         unicode, typeinfo, typetraits, cpuinfo, colors, encodings, distros,
         rdstdin, sugar , wordwrap]
         
-import strutils except align
 
 export
         cxconsts, cxglobal, cxtime, cxprint, cxhash, cxnetwork, cxstats,
-        os, osproc, times, random, strmisc,strformat, strscans, parseutils,
+        os, osproc, times, random,strutils, strmisc,strformat, strscans, parseutils,
         sequtils, parseopt,tables, sets, macros,posix, posix_utils,htmlparser,terminal,
         math, stats, json, streams, options, memfiles,
         httpclient, nativesockets, browsers, intsets, algorithm, net,
         typeinfo, typetraits, cpuinfo, colors, encodings, distros,
         rdstdin, sugar ,wordwrap
 
-export strutils except align        
+        
 export unicode except strip, split, splitWhitespace
 
 # Profiling       
@@ -158,6 +154,10 @@ export unicode except strip, split, splitWhitespace
 # nim c -d:release <source file>
 # valgrind --tool=callgrind -v ./<program file> <arguments>
 # kcachegrind callgrind.out.<some number>    # or maybe qcachegrind
+
+# Running with perf
+# nim c --passC:"-Og -ggdb -g3 -fno-omit-frame-pointer" cx.nim
+# perf report -i cx
 
 # Memory usage
 # --profiler:off, --stackTrace:on -d:memProfiler  
@@ -364,7 +364,7 @@ proc nimcat*(curFile: string, countphrase: varargs[string, `$`] = "") =
     ## It also allows counting of tokens.
     ## A file name without extension will be assuemed to be .nim 
     ## Countphrase is case sensitive
-    ## This proc uses memslices and memfiles for speed
+    ## This proc uses memfiles for speed
     ##  
     ##  
     ##.. code-block:: nim
@@ -374,6 +374,7 @@ proc nimcat*(curFile: string, countphrase: varargs[string, `$`] = "") =
     ##   nimcat("/data5/notes.txt",countphrase = "nice" , "hanya", 88) # also count how often a token appears in the file
     ##
     var ccurFile = curFile
+    echo countphrase.len
     let (dir, name, ext) = splitFile(ccurFile)
     if ext == "": ccurFile = ccurFile & ".nim"
     if not fileExists(ccurfile):
@@ -388,18 +389,17 @@ proc nimcat*(curFile: string, countphrase: varargs[string, `$`] = "") =
             echo()
             var phraseinline = newSeqWith(countphrase.len, newSeq[int](0)) # holds the line numbers where a phrase to be counted was found
             var c = 1
-            for line in memSlices(memfiles.open(ccurFile)):
+            for line in lines(memfiles.open(ccurFile)):
                 echo yellowgreen, strutils.align($c, 6), termwhite,":", spaces(1), wrapWords($line, maxLineWidth = tw - 8, splitLongWords = false, newLine = "\x0D\x0A" & spaces(8))
                 if ($line).len > 0:
-                        var lc = 0
-                        for mc in 0..<countphrase.len:
-                                lc = ($line).count(countphrase[mc])
-                                if lc > 0: phraseinline[mc].add(c)
+                   var lc = 0
+                   for mc in 0 ..< countphrase.len:
+                        lc = ($line).count(countphrase[mc])
+                        if lc > 0: phraseinline[mc].add(c)
                 inc c
-
             echo()
             printLnBiCol("File       : " & ccurFile)
-            printLnBiCol("Lines Shown: " & ff2(c - 1))
+            printLnBiCol("Lines Shown: " & ff2(c - 1,0))
             var maxphrasewidth = 0
             for x in countphrase:
                 if x.len > maxphrasewidth: maxphrasewidth = x.len
@@ -1173,7 +1173,7 @@ proc infoLine*(xpos:int = 0) =
      echo()
      printBiCol(fmtx(["<14"], "Application:"), colLeft = yellowgreen,xpos = xpos)
      printBiCol(extractFileName(getAppFilename()), colLeft = skyblue)
-     printBiCol(" | ",colLeft = brightblack)
+     printBiCol(" | ",colLeft = brightblack)    
      printBiCol("Pid : " & $getCurrentProcessId())
      printBiCol("| ", colLeft = brightblack)
      printBiCol("Nim : ", colLeft = greenyellow)

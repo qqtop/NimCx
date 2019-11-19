@@ -1594,8 +1594,7 @@ proc getPassword*(ahash:int64 = 0i64):string =
            quit(1)
     
 
-proc cxInput*(prompt: string,promptColor:string=greenYellow,xpos:int = 0,
-               allowBlank:bool = false): string =
+proc cxInput*(prompt: string,promptColor:string=greenYellow,xpos:int = 0,allowBlank:bool = false): string =
                
      ## cxInput
      ##
@@ -2541,17 +2540,17 @@ proc showSeq*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5,di
         
         if c < cols: 
             if fgr == "rand":
-                  printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$x , " : ",  $z[x] , spaces(1)) ,colLeft=gold,colRight=randcol(),0,false,{}) 
+                  printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$(x + 1) , " : ",  $z[x] , spaces(1)) ,colLeft=gold,colRight=randcol(),0,false,{}) 
             else:
-                  printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$x , " : ",  $z[x] , spaces(1)) ,colLeft=fgr,colRight=gold,0,false,{})     
+                  printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$(x + 1), " : ",  $z[x] , spaces(1)) ,colLeft=fgr,colRight=gold,0,false,{})     
             inc c
         else:
              c = 0
              echo()
              if fgr == "rand":
-                  printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$x , " : ",  $z[x] , spaces(1)) ,colLeft=gold,colRight=randcol(),0,false,{}) 
+                  printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$(x + 1), " : ",  $z[x] , spaces(1)) ,colLeft=gold,colRight=randcol(),0,false,{}) 
              else:
-                  printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$x , " : ",  $z[x] , spaces(1)) ,colLeft=fgr,colRight=gold,0,false,{})     
+                  printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$(x + 1) , " : ",  $z[x] , spaces(1)) ,colLeft=fgr,colRight=gold,0,false,{})     
              inc c     
     
     if displayflag == true:
