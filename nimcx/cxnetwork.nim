@@ -4,7 +4,7 @@
 # nmap , ip , lsof etc. needs to be installed if relevant procs to be used.
 # 
 # 
-# Last 2019-11-17
+# Last 2019-12-06
 # 
 
 import os,osproc,json,httpclient,strutils,strscans
@@ -387,8 +387,7 @@ proc wifistatus*() =
     var (output,error) = execCmdEx("sudo nmcli -p -c yes  -m multiline -f ALL dev wifi")
     echo output
     if error > 0: echo error
-         
-         
+
 
 when isMainModule:
     echo()
@@ -401,6 +400,5 @@ when isMainModule:
     echo()
     echo()
     
-
          
 # end of cxnetwork.nim          

@@ -10,17 +10,21 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-11-07 
+##     Latest      : 2019-12-06 
 ##
-##     Compiler    : Nim >= 1.0.0 or 1.0.99 devel branch
+##     Compiler    : Nim >= 1.0.4 or 1.1.1 devel branch
 ##
 ##     OS          : Linux
 ##
 ##     Description : provides some functions pertaining to statistcs and calculations
 ## 
 
-import terminal,stats,math,algorithm
+import std/terminal,std/stats,std/math,std/algorithm
 import cxconsts,cxglobal,cxprint
+
+# Add OpenMP to compilation flags
+{.passC:"-fopenmp".}
+{.passL:"-fopenmp".}
 
 {.hint: "\x1b[38;2;154;205;50m ╭──────────────────────── NIMCX ─────────────────────────────────────╮ " .}
     

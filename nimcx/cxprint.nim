@@ -9,9 +9,9 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-11-07 
+##     Latest      : 2019-12-06 
 ##
-##     Compiler    : Nim >= 1.0.0  or 1.1.1 dev branch
+##     Compiler    : Nim >= 1.0.4  or 1.1.1 dev branch
 ##
 ##     OS          : Linux
 ##

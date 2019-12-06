@@ -12,9 +12,9 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-11-07
+##     Latest      : 2019-12-06
 ##
-##     Compiler    : Nim >= 1.0.0  or 1.1.1  dev branch
+##     Compiler    : Nim >= 1.0.4  or 1.1.1  dev branch
 ##
 ##     OS          : Linux
 ##
@@ -182,14 +182,14 @@ const
 const
       # Terminal ForegroundColor Normal
 
-      termred*              = getfg(fgRed)
-      termgreen*            = getfg(fgGreen)
-      termblue*             = getfg(fgBlue)
-      termcyan*             = getfg(fgCyan)
-      termyellow*           = getfg(fgYellow)
-      termwhite*            = getfg(fgWhite)
-      termblack*            = getfg(fgBlack)
-      termmagenta*          = getfg(fgMagenta)
+      termred*              = getFg(fgRed)
+      termgreen*            = getFg(fgGreen)
+      termblue*             = getFg(fgBlue)
+      termcyan*             = getFg(fgCyan)
+      termyellow*           = getFg(fgYellow)
+      termwhite*            = getFg(fgWhite)
+      termblack*            = getFg(fgBlack)
+      termmagenta*          = getFg(fgMagenta)
 
       # Terminal ForegroundColor Bright
 

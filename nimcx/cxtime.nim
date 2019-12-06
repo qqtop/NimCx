@@ -15,14 +15,13 @@ import cxconsts
 
 
 
-
 # cxtime.nim
 # 
 # time/date related conevenience procs including printDTimeMsg etc.
 # 
 # some of it similar to stdlib functions or in different output format
 #
-# Last : 2019-11-07
+# Last : 2019-12-06
 # 
 # 
 

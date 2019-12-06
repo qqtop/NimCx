@@ -10,21 +10,22 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-11-07
+##     Latest      : 2019-12-06
 ##
-##     Compiler    : Nim >= 1.0.0 or 1.1.1 
+##     Compiler    : Nim >= 1.0.4 or 1.1.1 
 ##
 ##     OS          : Linux
 ##
 ##     Description : provides many basic utility functions of the library
 ##
 
-
 import
           cxconsts,
           cxtime,
           cxprint,
           cxhash,
+          os,
+          osproc,
           terminal,
           strutils,
           sequtils,
@@ -37,8 +38,6 @@ import
           colors,
           json,
           streams,
-          os,
-          osproc,
           cpuinfo,
           rdstdin,
           times,
@@ -281,12 +280,16 @@ func cxLpadN*(s: SomeNumber, padlen: int, paddy: string = "0"): string =
               
 
 proc waitOn*(alen: int = 1) =
-          ## waiton
-          ## 
-          ## stops program to wait for one or more keypresses. default = 1
-          ##
-          discard readBuffer(stdin, cast[pointer](newString(1)), alen)
-          
+           # waiton
+           # 
+           # stops program to wait for one or more keypresses. default = 1
+           # currently fails with --gc:arc
+           # to not compile this proc when --gc:arc is defined compile like so
+           # nim c -d:arc --gc:arc myprog.nim 
+           when not defined(arc):
+             discard stdin.readBuffer(cast[pointer](newString(1)), alen)
+           
+             
 
 proc rndSample*[T](asq: seq[T]): T =
           ## rndSample  
@@ -2512,7 +2515,7 @@ proc spiralBoxy2*(w:int = 20, h:int = 20,xpos:int = 1) =
        
     
     
-proc showSeq*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5,displayflag : bool = true):string {.discardable.} = 
+proc showSeq*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5,displayflag : bool = true,indexstart = 0):string {.discardable.} = 
     ## showSeq
     ##
     ## simple table routine with default 6 cols for displaying various unicode sets
@@ -2520,9 +2523,9 @@ proc showSeq*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5,di
     ## this can also be used to show items of a sequence
     ## displayflag == true means to show the output
     ## displayflag == false means do not show output , but return it as a string
-    ##
+    ## indexstart == 0 displays item index from 0 or from whatever indexstart is set to
     ##.. code-block:: nim
-    ##      showSeq(createSeqCJK(),"rand")
+    ##      showSeq(createSeqCJK(),"rand",indexstart=1)
     ##      showSeq(createSeqKatakana(),yellowgreen)
     ##      showSeq(createSeqCJK(),"rand")
     ##      showSeq(createSeqGeoshapes(),randcol())
@@ -2534,25 +2537,45 @@ proc showSeq*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5,di
         
     result = ""
     var c = 0
-    for x in 0 ..< z.len:
-      result = result & $z[x] & spaces(1)
-      if displayflag == true:
-        
-        if c < cols: 
-            if fgr == "rand":
-                  printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$(x + 1) , " : ",  $z[x] , spaces(1)) ,colLeft=gold,colRight=randcol(),0,false,{}) 
+    if indexstart == 0:
+        for x in 0 ..< z.len:
+          result = result & $z[x] & spaces(1)
+          if displayflag == true:
+            
+            if c < cols: 
+                if fgr == "rand":
+                      printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$(x + 1) , " : ",  $z[x] , spaces(1)) ,colLeft=gold,colRight=randcol(),0,false,{}) 
+                else:
+                      printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$(x + 1), " : ",  $z[x] , spaces(1)) ,colLeft=fgr,colRight=gold,0,false,{})     
+                inc c
             else:
-                  printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$(x + 1), " : ",  $z[x] , spaces(1)) ,colLeft=fgr,colRight=gold,0,false,{})     
-            inc c
-        else:
-             c = 0
-             echo()
-             if fgr == "rand":
-                  printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$(x + 1), " : ",  $z[x] , spaces(1)) ,colLeft=gold,colRight=randcol(),0,false,{}) 
-             else:
-                  printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$(x + 1) , " : ",  $z[x] , spaces(1)) ,colLeft=fgr,colRight=gold,0,false,{})     
-             inc c     
-    
+                 c = 0
+                 echo()
+                 if fgr == "rand":
+                      printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$(x + 1), " : ",  $z[x] , spaces(1)) ,colLeft=gold,colRight=randcol(),0,false,{}) 
+                 else:
+                      printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$(x + 1) , " : ",  $z[x] , spaces(1)) ,colLeft=fgr,colRight=gold,0,false,{})     
+                 inc c     
+    else:
+        for x in indexstart .. z.len:
+          result = result & $z[x - 1] & spaces(1)
+          if displayflag == true:
+            
+            if c < cols: 
+                if fgr == "rand":
+                      printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$x , " : ",  $z[x-1] , spaces(1)) ,colLeft=gold,colRight=randcol(),0,false,{}) 
+                else:
+                      printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$x, " : ",  $z[x-1] , spaces(1)) ,colLeft=fgr,colRight=gold,0,false,{})     
+                inc c
+            else:
+                 c = 0
+                 echo()
+                 if fgr == "rand":
+                      printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$x, " : ",  $z[x-1] , spaces(1)) ,colLeft=gold,colRight=randcol(),0,false,{}) 
+                 else:
+                      printBiCol(fmtx([">" & $6,"",">" & $maxitemwidth ,""] ,$x, " : ",  $z[x-1] , spaces(1)) ,colLeft=fgr,colRight=gold,0,false,{})     
+                 inc c   
+                   
     if displayflag == true:
       decho()      
       let msg1 = "0 - " & $(z.len - 1) & spaces(3)

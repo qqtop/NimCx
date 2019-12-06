@@ -5,6 +5,8 @@
 #{.passC: "-march-native -O3"}
 #{.deadCodeElim: on, checks: off, hints: off, warnings: off, optimization: size.}
 #{.noforward: on.}   # future feature
+
+
 # check memory usage via -d:UseMalloc and Valgrind
 ## ::
 ## 
@@ -20,9 +22,9 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-11-19
+##     Latest      : 2019-12-06
 ##
-##     Compiler    : Nim >=  1.0.2 or  1.1.1  devel branch
+##     Compiler    : Nim >=  1.0.4 or  1.1.1  devel branch
 ##
 ##     OS          : Linux
 ##
@@ -142,7 +144,7 @@ export
         math, stats, json, streams, options, memfiles,
         httpclient, nativesockets, browsers, intsets, algorithm, net,
         typeinfo, typetraits, cpuinfo, colors, encodings, distros,
-        rdstdin, sugar ,wordwrap
+        rdstdin, sugar , wordwrap
 
         
 export unicode except strip, split, splitWhitespace
@@ -209,9 +211,9 @@ let cxstartgTime = getTime()
 randomize()                # seed rand number generator
 enableTrueColors()         # enable truecolorsupport
 
-# type used in Benchmark
+
 type
-      Benchmarkres* = tuple[bname, cpu, epoch, gett, repeats: string]
+     Benchmarkres* = tuple[bname, cpu, epoch, gett, repeats: string]
 
 # used to store all benchmarkresults
 var benchmarkresults* = newSeq[Benchmarkres]()
