@@ -22,9 +22,9 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-12-06
+##     Latest      : 2019-12-22
 ##
-##     Compiler    : Nim >=  1.0.4 or  1.1.1  devel branch
+##     Compiler    : Nim >=  1.0.4 or 1.1.1  devel branch
 ##
 ##     OS          : Linux
 ##
@@ -220,6 +220,7 @@ var benchmarkresults* = newSeq[Benchmarkres]()
 # global used to store tmpfilenames , all tmpfilenames will be deleted if progs exit
 var cxtmpfilenames* = newSeq[string]()
 
+
 proc newCxCounter*(): ref(Cxcounter) =
     ## newCxcounter
     ## 
@@ -301,6 +302,11 @@ func checkColor*(colname: string): bool =
         if x[0] == colname or x[1] == colname:
            result = true
 
+func newColor3*() : Color = 
+     #WIP
+     discard
+
+
 proc showColors*() =
     ## showColors
     ##
@@ -317,14 +323,15 @@ proc showColors*() =
           echo() 
     echo()
 
-proc makeColor*(r:int=getrndint(0,2550),g:int=getrndint(0,2550),b:int=getrndint(1000,2550),xpos:int=1) =
+proc makeColor*(r:int=getrndint(0,256),g:int=getrndint(0,256),b:int=getrndint(0,256),xpos:int=1) =
     ## makeColor
     ## 
     ## a utility function to show random effect of rgb changes
     ## see makeColorTest or makeGreyScaleTest for example use
     ## 
+    let yess = @[efb1,efb2,efb3,efr1,efr2]
     let nc = newcolor(r,g,b)
-    print(cxlpad($r & " " & $g & " " & $b,15) & " " & efb2 * 20,nc,xpos=xpos)
+    cxprint(xpos,nc,cxlpad($r & " " & $g & " " & $b,15) & " " & lcross & " " & efr1 * 3 & " NIM " &  efr1 * 3 & " " & rcross)
     echo()
 
  
@@ -339,6 +346,8 @@ proc makeColorTest*() =
           makecolor(xpos = 40)       
           curup(1)
           makecolor(xpos = 80)   
+          curup(1)
+          makecolor(xpos = 120) 
       
  
 proc makeGreyScaleTest*(astart:int = 0, aend:int = 255 ,astep:int = 5) =
@@ -1325,6 +1334,8 @@ proc doCxEnd*() =
     qqtop()
     echo("  -  " & year(getDateStr()))
     doInfo()
+    decho(2)
+    colorio()
     clearup()
     decho(3)
     showcolors()
