@@ -13,8 +13,10 @@ import strutils,terminal,sets
 # 
 # currently some print functions here may have same/similar functionality as in cxprint but
 # are specialized for font printing use.
+#
+# usage : import nimcx/cxfont
 # 
-# Last : 2019-09-30  
+# Last : 2020-02-13  
 # 
 # 
 # Examples :

@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-12-17
+##     Latest      : 2020-01-29
 ##
 ##     Compiler    : Nim >= 1.0.4 or 1.1.1 
 ##
@@ -279,15 +279,15 @@ func cxLpadN*(s: SomeNumber, padlen: int, paddy: string = "0"): string =
 
               
 
-proc waitOn*(alen: int = 1) =
+#proc waitOn*(alen: int = 1) =
            # waiton
            # 
            # stops program to wait for one or more keypresses. default = 1
            # currently fails with --gc:arc
            # to not compile this proc when --gc:arc is defined compile like so
-           # nim c -d:arc --gc:arc myprog.nim 
-           when not defined(arc):
-             discard stdin.readBuffer(cast[pointer](newString(1)), alen)
+           # nim c # --gc:arc myprog.nim 
+           #when not defined(arc):
+           #   discard stdin.readBuffer(cast[pointer](newString(1)), alen)
            
              
 
@@ -374,7 +374,7 @@ proc getRndInt*(mi: int = 0, ma: int = int.high): int {.noInit, inline.} =
 proc getRndBool*(): bool =
           ## getRndBool
           ##
-          if rand(0..1) == 0:
+          if getRndInt(0, 1) == 0:
                     result = false
           else:
                     result = true
@@ -385,7 +385,7 @@ proc getRandomSignI*(): int =
           ## returns -1 or 1 integer  to have a rand positive or negative multiplier
           ##
           result = 1
-          if rand(0..1) == 0: result = -1
+          if 0 == getRndInt(0, 1): result = -1
 
 
 proc getRandomSignF*(): float =
@@ -394,7 +394,7 @@ proc getRandomSignF*(): float =
           ## returns -1.0 or 1.0 float  to have a rand positive or negative multiplier
           ##
           result = 1.0
-          if rand(0..1) == 0: result = -1.0
+          if 0 == getRndInt(0, 1): result = -1.0
 
 
 proc reverseMe*[T](xs: openarray[T]): seq[T] =
@@ -479,8 +479,13 @@ proc createSeqInt*(n: int = 10, mi: int = 0, ma: int = 1000): seq[int] {.inline.
           ##    # create a seq with 50 rand integers ,of set 100.. 2000
           ##    # including the limits 100 and 2000
           ##    echo createSeqInt(50,100,2000)
-          result = newSeqWith(n, rand(mi..ma))
-          
+          # result = newSeqofCap[int](n)  # slow use if memory considerations are of top importance
+          result = newSeq[int]() # faster
+          # as we do not want any print commands in this module we change
+          case mi <= ma
+             of true: result.add(newSeqWith(n, getRndInt(mi, ma)))
+             else: result.add(newSeqWith(n, getRndInt(mi, mi)))
+
 
 proc ff*(zz: float, n: int = 5): string =
           ## ff
@@ -534,8 +539,6 @@ proc ff2*(zz: SomeNumber, n: int = 3):string =
           ## TODO: better accomodate ints or floats represented with e notation like 1.23456e-05
           ##       currently nothing will be done to automatically converted numbers containg e
           ##
-          ##       will not work directly with with uint64 and friends see below for workaround
-          ##
           ## ff2(12345,0)   ==> 12,345     # display an integer with thousands seperator as we know it
           ## 
           ## ff2(12345,1)   ==> 12,345.0   # display an integer but like a float with 1 decimal place
@@ -546,10 +549,6 @@ proc ff2*(zz: SomeNumber, n: int = 3):string =
           ## 
           ## ff2(12.3,4)    ==> 12.3000    # display the float with 4 decimal places
           ## 
-          ## Example if the number actually is uint64
-          ## var b:uint64 = 999999999999999u64
-          ## echo ff2(float(b),0) ==> 999,999,999,999,999  #  convert uint64 to float and display with 0 decimal places
-          ##
           ## precision after comma is given by n with default set to 3
           ## 
           ##.. code-block:: nim
@@ -562,9 +561,6 @@ proc ff2*(zz: SomeNumber, n: int = 3):string =
           ##       printLnBiCol(fmtx(["",">6","",">20"],"NZ ",$x," : ",ff2(z)))
           ##  
           ##
-          
-          
-          
           when zz is SomeSignedInt == false:
              result = zz.formatFloat()   # cannot use $ as it introduces rounding errors
                        
@@ -576,9 +572,8 @@ proc ff2*(zz: SomeNumber, n: int = 3):string =
                        result = rresult & "." & "0" * n
                   result.removeSuffix(".") 
                       
-          else:   # so must be some float or unsigned int like uint,uint64
-                
-                                                
+          else:   # so must be some float
+              
                 if not result.contains("e"):
                   let c = rpartition(result, ".")
                   var cnew = ""
@@ -603,7 +598,7 @@ proc ff2*(zz: SomeNumber, n: int = 3):string =
                                 result = "-" & ff22(parseInt(c[0])) & c[1] & cnew
                            else:     
                                 result = ff22(parseInt(c[0])) & c[1] & cnew
-                        except:  # if there is nil we might get here
+                        except:  # if there is nil ? we might get here
                             discard
                 else:
                     # we have a scientific format containg e+ or e-
@@ -647,13 +642,12 @@ proc getRndFloat*():float = rand(1.0) * getRandomSignF()
           ##
           ## same as getrandFloat()
 
-
-proc createSeqFloat*(n: int = 10, prec: int = 3): seq[float] =    # orig
+proc createSeqFloat*(n: int = 10, prec: int = 3): seq[float] =
           ## createSeqFloat
           ##
           ## convenience proc to create an unsorted seq of rand floats with
           ##
-          ## default width ma = 10 ( always consider how much memory is in the system )
+          ## default length ma = 10 ( always consider how much memory is in the system )
           ##
           ## prec enables after comma precision up to 16 positions after comma
           ##
@@ -676,42 +670,20 @@ proc createSeqFloat*(n: int = 10, prec: int = 3): seq[float] =    # orig
           if ffnz > 16: ffnz = 16
           result = newSeq[float]()
           for wd in 0..<n:
-            var x = 0
-            while x <= prec:
-              let afloat = parseFloat(ff2(getRndFloat(), prec))
-                       
-              if ($afloat).len > prec + 2:
-                            x = x - 1
-                            if x < 0: x = 0
-              else:
-                            inc x
-                            if result.len <= n - 1:
-                               result.add(afloat)
-              if result.len == n: break
+                    var x = 0
+                    while x < prec:
+                              let afloat = parseFloat(ff2(getRndFloat(), prec))
+                              if ($afloat).len > prec + 2:
+                                        x = x - 1
+                                        if x < 0: x = 0
+                              else:
+                                        inc x
+                                        result.add(afloat)
 
+                              if result.len == n: break
 
-proc createSeqFloatRange*(n: int = 10,mi: float = -1.0,ma: float = 1.0): seq[float] =
-          ## createSeqFloatRange
-          ##
-          ## convenience proc to create an unsorted seq of rand floats with
-          ##
-          ## form @[0.34,0.056,...] or similar
-          ##
-          ##.. code-block:: nim
-          ##    # create a seq with 50 rand floats
-          ##    showSeq(createSeqFloatRange(100),maxitemwidth=6)
-          ##
-          ##
-          ##.. code-block:: nim
-          ##    # create a seq with 50 rand floats between -100.0 and 100.0
-          ##    showSeq(createSeqFloatRange(50,-100.0,100.0),maxitemwidth=6)
-          ##
+                    if result.len == n: break
                     
-          result = newSeqWith(n, rand(mi..ma))
-          
-                    
-        
- 
    
 
 proc seqLeft*[T](it: seq[T], n: int): seq[T] =
@@ -1510,14 +1482,8 @@ type
     RpointInt*   = tuple[x, y : int]
     RpointFloat* = tuple[x, y : float]
 
- 
-proc fibi*(n: int): uint64 =
-  # ex nim forum super fast fibonacci 
-  if n > 1 and n != 30: return fibi(n - 1) + fibi(n - 2)
-  if n <= 1: return 1
-  let x {.global.}: auto = fibi(29) + fibi(28)
-  return x 
-       
+proc fibi*(n:int):int64 = (var(a,b)=(0, 1);(for x in 0..<n:(a,b)=(b,a+b));a)
+    # ex nim forum super fast fibonacci up to n = 91   
        
 proc pswwaux*() =
    ## pswwaux
@@ -2674,6 +2640,9 @@ template withFile*(f,fn, mode, actions: untyped): untyped =
       ##           
       block:
             var f = streamfile(fn,mode)    # streamfile is in cxglobal.nim
+            #if isNil(f):
+            #   raise newException(IOError, "Problem to open file")
+
             try:
                 actions
             except:    
@@ -2903,6 +2872,13 @@ proc getPrimeSeq*(x,y:int):seq[int]=
      ## 
      for p in primey(x,y): result.add(p)  
 
-
-             
+when isMainModule:
+    echo()
+    echo "Test   : Show primes between 2120000 and 2120030" 
+    echo "Primes : ", getPrimeSeq(212_000_0,212_003_0)
+    echo "Test   : GeoShapes"
+    showSeq(createSeqGeoshapes(),randcol())
+    echo "Test ended"
+    decho(2)
+     
 # END OF CXGLOBAL.NIM #

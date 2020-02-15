@@ -22,7 +22,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-12-22
+##     Latest      : 2020-02-06
 ##
 ##     Compiler    : Nim >=  1.0.4 or 1.1.1  devel branch
 ##
@@ -53,7 +53,7 @@
 ##
 ##     Docs        : `Documentation <https://qqtop.github.io/cx.html>`_
 ##
-##     Tested      : OpenSuse Tumbleweed (KDE) , Parrotsec (Debian Testing)
+##     Tested      : Debian , Parrot (Debian Testing)
 ##       
 ##                   Terminal set encoding to UTF-8  
 ##
@@ -101,6 +101,7 @@
 ##                   
 ##                   Due to the flurry of updates in the development branch occasional carnage may occure.
 ##
+##                   Nimcx compiles with --gc:arc
 ##
 ##     Installation: nimble install nimcx
 ##
@@ -131,7 +132,7 @@ import
 import 
         std/[os, osproc, times, random, strutils,strmisc, strformat, strscans, parseutils,
         sequtils, parseopt,tables, sets, macros,posix,posix_utils, htmlparser, terminal,
-        math, stats, json, streams, options, memfiles,
+        math, stats, json, streams, options, memfiles,monotimes,
         httpclient, nativesockets, browsers, intsets, algorithm, net,
         unicode, typeinfo, typetraits, cpuinfo, colors, encodings, distros,
         rdstdin, sugar , wordwrap]
@@ -141,7 +142,7 @@ export
         cxconsts, cxglobal, cxtime, cxprint, cxhash, cxnetwork, cxstats,
         os, osproc, times, random,strutils, strmisc,strformat, strscans, parseutils,
         sequtils, parseopt,tables, sets, macros,posix, posix_utils,htmlparser,terminal,
-        math, stats, json, streams, options, memfiles,
+        math, stats, json, streams, options, memfiles, monotimes,
         httpclient, nativesockets, browsers, intsets, algorithm, net,
         typeinfo, typetraits, cpuinfo, colors, encodings, distros,
         rdstdin, sugar , wordwrap
@@ -219,7 +220,6 @@ type
 var benchmarkresults* = newSeq[Benchmarkres]()
 # global used to store tmpfilenames , all tmpfilenames will be deleted if progs exit
 var cxtmpfilenames* = newSeq[string]()
-
 
 proc newCxCounter*(): ref(Cxcounter) =
     ## newCxcounter
@@ -302,11 +302,6 @@ func checkColor*(colname: string): bool =
         if x[0] == colname or x[1] == colname:
            result = true
 
-func newColor3*() : Color = 
-     #WIP
-     discard
-
-
 proc showColors*() =
     ## showColors
     ##
@@ -323,15 +318,14 @@ proc showColors*() =
           echo() 
     echo()
 
-proc makeColor*(r:int=getrndint(0,256),g:int=getrndint(0,256),b:int=getrndint(0,256),xpos:int=1) =
+proc makeColor*(r:int=getrndint(0,2550),g:int=getrndint(0,2550),b:int=getrndint(1000,2550),xpos:int=1) =
     ## makeColor
     ## 
     ## a utility function to show random effect of rgb changes
     ## see makeColorTest or makeGreyScaleTest for example use
     ## 
-    let yess = @[efb1,efb2,efb3,efr1,efr2]
     let nc = newcolor(r,g,b)
-    cxprint(xpos,nc,cxlpad($r & " " & $g & " " & $b,15) & " " & lcross & " " & efr1 * 3 & " NIM " &  efr1 * 3 & " " & rcross)
+    print(cxlpad($r & " " & $g & " " & $b,15) & " " & efb2 * 20,nc,xpos=xpos)
     echo()
 
  
@@ -346,8 +340,6 @@ proc makeColorTest*() =
           makecolor(xpos = 40)       
           curup(1)
           makecolor(xpos = 80)   
-          curup(1)
-          makecolor(xpos = 120) 
       
  
 proc makeGreyScaleTest*(astart:int = 0, aend:int = 255 ,astep:int = 5) =
@@ -1244,44 +1236,44 @@ proc doByeBye*(xpos:int = 1) =
      quit(0)        
 
 proc doFinish*() =
-        ## doFinish
-        ##
-        ## a end of program routine which displays some information
-        ##
-        ## can be changed to anything desired
-        ##
-        ## and should be the last line of the application
-        ##
-        {.gcsafe.}:
-                decho()
-                infoLine()
-                echo()
-                printBiCol(fmtx(["<14"], "Elapsed    :"), colLeft=yellowgreen)
-                printBiCol(fmtx(["<", ">5"], ff(epochtime() - cxstart, 3), " secs"), colLeft=goldenrod)
-                printLn(" -> " & $cxHRTimer(cxstartgTime,getTime())) # displays micro,milli,nanoseconds
-                printBiCol("Compile UTC:  " & CompileDate & spaces(1) & CompileTime & spaces(1) & "in " & cxTimeZone() &  " | ")
-                printLnBiCol(execCmdEx("gcc --version")[0].splitLines()[0] ,colLeft = peru, colright = brightblack,sep = spaces(1))
-                if detectOs(OpenSUSE) or detectOs(Parrot): # some additional data if on openSuse or parrotOs systems
-                    let ux1 = uname().split("#")[0].split(" ")
-                    printLnBiCol("Kernel     :  " & ux1[2] & " | Computer: " & ux1[1] & " | Os: " & ux1[0] & " | CPU Threads: " & $(
-                                    osproc.countProcessors()), yellowgreen, lightslategray, ":", 0, false, {})
-                    let rld = release().splitLines()
-                    let rld3 = rld[2].splitty(":")
-                    let rld4 = rld3[0] & spaces(2) & strutils.strip(rld3[1])
-                    printBiCol(rld4, yellowgreen, lightslategray, ":", 0,false, {})
-                    printBiCol(spaces(2) & "Release: " & strutils.strip((
-                                    split(rld[3], ":")[1])), yellowgreen,
-                                    lightslategray, ":", 0, false, {})
-                    printBiCol("  NimCx by   : ",colLeft=yellowgreen)                
-                    qqTop()  # put your own name/linelogo here
-                    printLnBiCol(" - " & year(getDateStr()), colLeft = lightslategray)
-                    echo()
-                else:
-                    let un = execCmdEx("uname -v")
-                    cxprintLn(2,white,"uname -v ", un.output)
-                rmTmpFilenames()
-                GC_fullCollect() # just in case anything hangs around
-                quit(0)
+     ## doFinish
+     ##
+     ## a end of program routine which displays some information
+     ##
+     ## can be changed to anything desired
+     ##
+     ## and should be the last line of the application
+     ##
+     {.gcsafe.}:
+        decho()
+        infoLine()
+        echo()
+        printBiCol(fmtx(["<14"], "Elapsed    :"), colLeft=yellowgreen)
+        printBiCol(fmtx(["<", ">5"], ff(epochtime() - cxstart, 3), " secs"), colLeft=goldenrod)
+        printLn(" -> " & $cxHRTimer(cxstartgTime,getTime())) # displays micro,milli,nanoseconds
+        printBiCol("Compile UTC:  " & CompileDate & spaces(1) & CompileTime & spaces(1) & "in " & cxTimeZone() &  " | ")
+        printLnBiCol(execCmdEx("gcc --version")[0].splitLines()[0] ,colLeft = peru, colright = brightblack,sep = spaces(1))
+        if detectOs(OpenSUSE) or detectOs(Parrot): # some additional data if on openSuse or parrotOs systems
+            let ux1 = uname().split("#")[0].split(" ")
+            printLnBiCol("Kernel     :  " & ux1[2] & " | Computer: " & ux1[1] & " | Os: " & ux1[0] & " | CPU Threads: " & $(
+                            osproc.countProcessors()), yellowgreen, lightslategray, ":", 0, false, {})
+            let rld = release().splitLines()
+            let rld3 = rld[2].splitty(":")
+            let rld4 = rld3[0] & spaces(2) & strutils.strip(rld3[1])
+            printBiCol(rld4, yellowgreen, lightslategray, ":", 0,false, {})
+            printBiCol(spaces(2) & "Release: " & strutils.strip((
+                            split(rld[3], ":")[1])), yellowgreen,
+                            lightslategray, ":", 0, false, {})
+            printBiCol("  NimCx by   : ",colLeft=yellowgreen)                
+            qqTop()  # put your own name/linelogo here
+            printLnBiCol(" - " & year(getDateStr()), colLeft = lightslategray)
+            echo()
+        else:
+            let un = execCmdEx("uname -v")
+            cxprintLn(2,white,"uname -v ", un.output)
+        rmTmpFilenames()
+        GC_fullCollect() # just in case anything hangs around
+        quit(0)
 
 
 
@@ -1334,8 +1326,6 @@ proc doCxEnd*() =
     qqtop()
     echo("  -  " & year(getDateStr()))
     doInfo()
-    decho(2)
-    colorio()
     clearup()
     decho(3)
     showcolors()
