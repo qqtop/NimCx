@@ -1,12 +1,10 @@
 import nimcx
 
 # cctest.nim
-# testing of creating new colors by mixing using colors.nim mix template
+# creating new colors by mixing using colors.nim mix template
 # 
-# mix template must be referenced in top level or crash -- see issues opened in nim tracker
-# 
-# idea: improve newcolor to set intensity
-# 
+
+import nimcx
 hdx(println("Color Mixology",newcolor(200,255,57),truebluebg))
 randomize()
 
@@ -33,25 +31,28 @@ b = d.intensity(ib)
  
 proc myMix(x, y: int): int =  x * 2 - y * 3 
 
-let tb:Color = mix(a, b, myMix)
-println("  Generated Color Details")
-echo "  Color 1 : ",parseColor($a),"  with intensity ", $ia
-echo "  Color 2 : ",parseColor($b),"  with intensity ", $ib
-echo "  Mixed   : ",parseColor($tb) 
-
-let tbb1 = extractrgb(tb)
-echo "  RGB     : ",tbb1
-if tbb1[0] > 0 xor tbb1[1] > 0 xor tbb1[2] > 0 == false:
-    echo "  Only colors with rgb values > 0 will be shown."
-    echo "  Rerun test. "
-    
-echo()
-    
+   
 proc doit(a,b:Color):auto =
+  let tb:Color = mix(a, b, myMix)
+  println("  Generated Color Details")
+  echo "  Color 1 : ",parseColor($a),"  with intensity ", $ia
+  echo "  Color 2 : ",parseColor($b),"  with intensity ", $ib
+  echo "  Mixed   : ",parseColor($tb) 
+    
+  let tbb1 = extractrgb(tb)
+  echo "  RGB     : ",tbb1
+  if tbb1[0] > 0 xor tbb1[1] > 0 xor tbb1[2] > 0 == false:
+        echo "  Only colors with rgb values > 0 will be shown."
+        echo "  Rerun program several times for different effect. "
+        
+  echo()
+        
+  
   var tbb = extractrgb(tb)  # colors are not interesting if all 0 or 255
   var anewcol = newcolor(tbb[0],tbb[1],tbb[2])
   
-  if tbb[0] > 0 xor tbb[1] > 0 xor tbb[2] > 0:
+  if tbb[0] > 0 and tbb[1] > 0 and tbb[2] > 0:
+   if tbb[0] < 255 and tbb[1] < 255 and tbb[2] > 255:   
     #echo tbb
     hdx(printLn("       RGB               styleBright               Yaleblue Back unstyled          styleBright,styleReverse          styleDim,styleReverse",greenyellow))
     for x in countup(0,99,2):
@@ -64,7 +65,7 @@ proc doit(a,b:Color):auto =
          print(" Bright & Reverse " & "Intensity" & " " & ff2(float(x)/100,3) & spaces(1), anewcol,styled={styleBright,styleReverse})
          print(" | ",lime)
          printLn(" Dim & Reverse " & "Intensity" & " " & ff2(float(x)/100,3) & spaces(1) , anewcol,styled={styleDim,styleReverse})
-  result = tb         
+  result = (tb,tbb1)
            
 # maybe add nice colors to our database
 # #6495ED   a
@@ -75,7 +76,10 @@ proc doit(a,b:Color):auto =
 
 when isMainModule: 
  
-     var natb = doit(a,b)
+     var natb0 = doit(a,b)
+     var natb = natb0[0]
+     var tbb1 = natb0[1]
+     
      var atb = extractrgb(natb)
      if atb[0] > 0 xor atb[1] > 0 xor atb[2] > 0:
         echo() 
