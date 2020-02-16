@@ -1,10 +1,9 @@
-import nimcx
-
 # cctest.nim
 # creating new colors by mixing using colors.nim mix template
 # 
 
 import nimcx
+
 hdx(println("Color Mixology",newcolor(200,255,57),truebluebg))
 randomize()
 
@@ -46,8 +45,7 @@ proc doit(a,b:Color):auto =
         echo "  Rerun program several times for different effect. "
         
   echo()
-        
-  
+      
   var tbb = extractrgb(tb)  # colors are not interesting if all 0 or 255
   var anewcol = newcolor(tbb[0],tbb[1],tbb[2])
   
