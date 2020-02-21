@@ -85,3 +85,5 @@ doFinish()
 ![Image](http://qqtop.github.io/nimcolors8.png?raw=true)
      
 ![Image](http://qqtop.github.io/qqtop1.png?raw=true)
+
+![Image](http://qqtop.github.io/nim.gif?raw=true)
