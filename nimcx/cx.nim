@@ -22,7 +22,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2020-02-06
+##     Latest      : 2020-03-27
 ##
 ##     Compiler    : Nim >=  1.0.4 or 1.1.1  devel branch
 ##
@@ -229,11 +229,11 @@ proc newCxCounter*(): ref(Cxcounter) =
     ## simple counter with add,dec and reset procs
     ## 
     ##.. code-block:: nim
-    ## var counter1 = newCxcounter()
-    ## counter1.add   # add 1
-    ## counter1.dec   # dec 1
-    ## counter1.reset # set to 0
-    ## echo counter1.value # show current value
+    ##   var counter1 = newCxcounter()
+    ##   counter1.add   # add 1
+    ##   counter1.dec   # dec 1
+    ##   counter1.reset # set to 0
+    ##   echo counter1.value # show current value
     ##
     result = (ref CxCounter)(value: 0)
 
@@ -257,7 +257,14 @@ template cxDoubleDown*:untyped = red & "↓↓" & termwhite
 template cx45Up*:untyped       = cyan & "→↑" & termwhite
 template cx45Down*:untyped     = yellow & "→↓" & termwhite
 
-
+template `as`*[T, U](x: T, _: typedesc[U]): U = U(x)
+    ##  as type change template 
+    ##
+    ##  .. code-block:: nim
+    ##    for x in 33..126:
+    ##      echo(fmtx(["<3","","","",""],x,spaces(2),x as char,spaces(2),ff2(x as float,3)))
+    ##
+    
 func newColor*(r, g, b: int): string =
     ##   newColor
     ##   
@@ -287,7 +294,7 @@ func newColor2*(r, g, b: int): string = "\x1b[48;2;$1;$2;$3m" % [$r, $g, $b]
     ##   newColor2
     ##   
     ##   creates a new color string from r,g,b values passed in with styleReverse effect for text
-    ##   best used as backroundcolor in print, printLn routines
+    ##   best used as backgroundcolor in print, printLn routines
     ##
     
 
@@ -581,7 +588,7 @@ proc showBench*() =
                     printLn(fmtx(["<$1" % $bnamesize, "", ""],aa1, spaces(3), cgt)) 
 
                     if dd1.contains("Inf") or ee1.contains("Inf"):
-                            cxprintLn(2,yaleblue,limegreenbg,"Inf - To measure something increase the loop count.")
+                        cxprintLn(2,yaleblue,limegreenbg,"Inf - To measure something increase the loop count.")
 
         echo()
         benchmarkresults = @[]
@@ -1176,19 +1183,17 @@ proc infoLine*(xpos:int = 0) =
      echo()
      printBiCol(fmtx(["<14"], "Application:"), colLeft = yellowgreen,xpos = xpos)
      printBiCol(extractFileName(getAppFilename()), colLeft = skyblue)
-     printBiCol(" | ",colLeft = brightblack)    
+     printBiCol("|",colLeft = brightblack)    
      printBiCol("Pid : " & $getCurrentProcessId())
-     printBiCol("| ", colLeft = brightblack)
+     printBiCol("|", colLeft = brightblack)
      printBiCol("Nim : ", colLeft = greenyellow)
-     printBiCol(NimVersion & " | ", colLeft = brightblack)
+     printBiCol(NimVersion & " |", colLeft = brightblack)
      printBiCol("nimcx : ", colLeft = peru)
      printBiCol(CXLIBVERSION, colLeft = brightblack)
-     printBiCol(" | ", colLeft = brightblack)
-     #printBiCol($someGcc & " | ",colLeft = brightblack)
+     printBiCol("|", colLeft = brightblack)
      printBiCol("Size: " & formatSize(getFileSize(getAppFilename())),colLeft=peru,colRight=brightblack)
-     #printBiCol(" | ", colLeft = brightblack)
-        
-
+     #printBiCol("|", colLeft = brightblack)
+     
 proc printTest*(astring:string="") =
      ## printTest
      ## 

@@ -1,10 +1,9 @@
-import hashes,strutils
-
+import hashes,strutils,rdstdin
 ## cxhashes.nim
 ## 
 ## convenience functions for hashes 
 ## 
-## Last 2019-12-06
+## Last 2020-03-26
 ## 
 
 export hashes
@@ -20,11 +19,6 @@ export hashes
          
 {.hint: "\x1b[38;2;154;205;50m ╰──────────────────────── CXHASH ────────────────────────────────────╯ " .}
 
-
-
-template cxprintLn(xpos:int, args: varargs[untyped]) =
-    setCursorXPos(xpos)
-    styledEcho(args)
       
 proc checkHash*[T](kata:string,hsx:T)  =
   ## checkHash
@@ -32,10 +26,9 @@ proc checkHash*[T](kata:string,hsx:T)  =
   ## checks hash of a string and print status
   ## 
   if hash(kata) == hsx:
-        cxprintln(2,white,darkslategraybg,"Hash Status : Ok ")
+        echo("Hash status : Ok ")
   else:
-        cxprintln(2,white,bgred,"Hash Status :  Failed ! ")
-
+        echo("Hash status : Failed ! " )
 
 proc verifyHash*[T](kata:string,hsx:T):bool  =
   ## verifyHash
@@ -72,5 +65,15 @@ proc getGitHash*():string =
    if githash.startswith("fatal") : result = ""
    else: result = githash    
 
-   
+if isMainModule:
+    echo()
+    echo "NimCx  - Hash Utility "
+    let zz = readLineFromStdin("Hash a string    : ")
+    #var zz = readPasswordFromStdin("Hash a string  : ")   # to do not show input string
+    let ahash = createHash(zz)
+    echo "Hash             : ",ahash
+    echo "Hash verified Ok : ",verifyHash(zz,ahash)
+    checkHash(zz, ahash) 
+    echo()  
+    
 # end of cxhash.nim   

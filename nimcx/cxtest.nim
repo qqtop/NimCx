@@ -2,7 +2,7 @@
 # rough and ready testing of some of available functions in nimcx library
 # see docs for more examples 
 #
-# Latest      : 2019-10-01   
+# Latest      : 2020-02-29   
  
 import nimcx
 
@@ -326,7 +326,8 @@ cxprintln(0,trueblue,bgwhite," Yes ! ",
             
 nexttest()
 showCpuInfo()
-
+nexttest()
+showHostNameCtl()
 
 superheader("Ok , that's it for now ! Have a nice day .",skyblue,lightslategray)
 

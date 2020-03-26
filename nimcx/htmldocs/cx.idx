@@ -1,0 +1,64 @@
+CXLIBVERSION	/home/lxuser/data5/NimStuff/NimCx/cx.html#CXLIBVERSION	cx: CXLIBVERSION	
+cxstart	/home/lxuser/data5/NimStuff/NimCx/cx.html#cxstart	cx: cxstart	
+Benchmarkres	/home/lxuser/data5/NimStuff/NimCx/cx.html#Benchmarkres	cx: Benchmarkres	
+benchmarkresults	/home/lxuser/data5/NimStuff/NimCx/cx.html#benchmarkresults	cx: benchmarkresults	
+cxtmpfilenames	/home/lxuser/data5/NimStuff/NimCx/cx.html#cxtmpfilenames	cx: cxtmpfilenames	
+newCxCounter	/home/lxuser/data5/NimStuff/NimCx/cx.html#newCxCounter	cx: newCxCounter(): ref (Cxcounter)	
+add	/home/lxuser/data5/NimStuff/NimCx/cx.html#add,ref.Cxcounter	cx: add(co: ref Cxcounter)	
+dec	/home/lxuser/data5/NimStuff/NimCx/cx.html#dec,ref.Cxcounter	cx: dec(co: ref Cxcounter)	
+reset	/home/lxuser/data5/NimStuff/NimCx/cx.html#reset,ref.Cxcounter	cx: reset(co: ref Cxcounter)	
+toInt	/home/lxuser/data5/NimStuff/NimCx/cx.html#toInt.c,char	cx: toInt(x: char): int	
+toChar	/home/lxuser/data5/NimStuff/NimCx/cx.html#toChar.c,int	cx: toChar(x: int): char	
+cxflat	/home/lxuser/data5/NimStuff/NimCx/cx.html#cxflat.t	cx: cxflat(): untyped	
+cxSingleUp	/home/lxuser/data5/NimStuff/NimCx/cx.html#cxSingleUp.t	cx: cxSingleUp(): untyped	
+cxSingleDown	/home/lxuser/data5/NimStuff/NimCx/cx.html#cxSingleDown.t	cx: cxSingleDown(): untyped	
+cxDoubleUp	/home/lxuser/data5/NimStuff/NimCx/cx.html#cxDoubleUp.t	cx: cxDoubleUp(): untyped	
+cxDoubleDown	/home/lxuser/data5/NimStuff/NimCx/cx.html#cxDoubleDown.t	cx: cxDoubleDown(): untyped	
+cx45Up	/home/lxuser/data5/NimStuff/NimCx/cx.html#cx45Up.t	cx: cx45Up(): untyped	
+cx45Down	/home/lxuser/data5/NimStuff/NimCx/cx.html#cx45Down.t	cx: cx45Down(): untyped	
+`as`	/home/lxuser/data5/NimStuff/NimCx/cx.html#as.t,T,typedesc[U]	cx: `as`[T; U; ](x: T; _: typedesc[U]): U	
+newColor	/home/lxuser/data5/NimStuff/NimCx/cx.html#newColor,int,int,int	cx: newColor(r, g, b: int): string	
+newColor2	/home/lxuser/data5/NimStuff/NimCx/cx.html#newColor2,int,int,int	cx: newColor2(r, g, b: int): string	
+checkColor	/home/lxuser/data5/NimStuff/NimCx/cx.html#checkColor,string	cx: checkColor(colname: string): bool	
+showColors	/home/lxuser/data5/NimStuff/NimCx/cx.html#showColors	cx: showColors()	
+makeColor	/home/lxuser/data5/NimStuff/NimCx/cx.html#makeColor,int,int,int,int	cx: makeColor(r: int = getrndint(0, 2550); g: int = getrndint(0, 2550);\n          b: int = getrndint(1000, 2550); xpos: int = 1)	
+makeColorTest	/home/lxuser/data5/NimStuff/NimCx/cx.html#makeColorTest	cx: makeColorTest()	
+makeGreyScaleTest	/home/lxuser/data5/NimStuff/NimCx/cx.html#makeGreyScaleTest,int,int,int	cx: makeGreyScaleTest(astart: int = 0; aend: int = 255; astep: int = 5)	
+nimcat	/home/lxuser/data5/NimStuff/NimCx/cx.html#nimcat,string,varargs[string,]	cx: nimcat(curFile: string; countphrase: varargs[string, `$`] = &quot;&quot;)	
+benchmark	/home/lxuser/data5/NimStuff/NimCx/cx.html#benchmark.t,string,int,typed	cx: benchmark(benchmarkName: string; repeatcount: int = 1; code: typed)	
+benchmark	/home/lxuser/data5/NimStuff/NimCx/cx.html#benchmark.t,string,typed	cx: benchmark(benchmarkName: string; code: typed)	
+showBench	/home/lxuser/data5/NimStuff/NimCx/cx.html#showBench	cx: showBench()	
+showPalette	/home/lxuser/data5/NimStuff/NimCx/cx.html#showPalette,string	cx: showPalette(coltype: string = &quot;white&quot;)	
+colorio	/home/lxuser/data5/NimStuff/NimCx/cx.html#colorio	cx: colorio()	
+spellInteger	/home/lxuser/data5/NimStuff/NimCx/cx.html#spellInteger,int64	cx: spellInteger(n: int64): string	
+spellInteger2	/home/lxuser/data5/NimStuff/NimCx/cx.html#spellInteger2,string	cx: spellInteger2(n: string): string	
+spellFloat	/home/lxuser/data5/NimStuff/NimCx/cx.html#spellFloat,float64,bool,string,string	cx: spellFloat(n: float64; currency: bool = false; sep: string = &quot;.&quot;;\n           sepname: string = &quot; dot &quot;): string	
+currentFile	/home/lxuser/data5/NimStuff/NimCx/cx.html#currentFile.t	cx: currentFile(): string	
+zipWith	/home/lxuser/data5/NimStuff/NimCx/cx.html#zipWith.t,untyped,openArray[T1],openArray[T2]	cx: zipWith[T1; T2](f: untyped; xs: openArray[T1]; ys: openArray[T2]): untyped	
+newDir	/home/lxuser/data5/NimStuff/NimCx/cx.html#newDir,string	cx: newDir(dirname: string)	
+remDir	/home/lxuser/data5/NimStuff/NimCx/cx.html#remDir,string	cx: remDir(dirname: string): bool	
+checkClip	/home/lxuser/data5/NimStuff/NimCx/cx.html#checkClip,string	cx: checkClip(sel: string = &quot;primary&quot;): string	
+toClip	/home/lxuser/data5/NimStuff/NimCx/cx.html#toClip,T	cx: toClip[T](s: T)	
+getColorName	/home/lxuser/data5/NimStuff/NimCx/cx.html#getColorName,T	cx: getColorName[T](sc: T): string	
+showTerminalSize	/home/lxuser/data5/NimStuff/NimCx/cx.html#showTerminalSize	cx: showTerminalSize()	
+cxAlert	/home/lxuser/data5/NimStuff/NimCx/cx.html#cxAlert,int	cx: cxAlert(xpos: int = 1)	
+also available printLnAlertMsg see cxprint.nim	cx.html#also-available-printlnalertmsg-see-cxprintdotnim	  also available printLnAlertMsg see cxprint.nim	
+cxAlertLn	/home/lxuser/data5/NimStuff/NimCx/cx.html#cxAlertLn,int	cx: cxAlertLn(xpos: int = 1)	
+cxHelp	/home/lxuser/data5/NimStuff/NimCx/cx.html#cxHelp,openArray[string],int	cx: cxHelp(s: openArray[string]; xpos: int = 2)	
+infoProc	/home/lxuser/data5/NimStuff/NimCx/cx.html#infoProc.t,untyped	cx: infoProc(code: untyped)	
+checkLocals	/home/lxuser/data5/NimStuff/NimCx/cx.html#checkLocals.t	cx: checkLocals()	
+qqTop	/home/lxuser/data5/NimStuff/NimCx/cx.html#qqTop	cx: qqTop()	
+tmpFilename	/home/lxuser/data5/NimStuff/NimCx/cx.html#tmpFilename	cx: tmpFilename(): string	
+tmpFilename	/home/lxuser/data5/NimStuff/NimCx/cx.html#tmpFilename,string	cx: tmpFilename(filename: string): string	
+rmTmpFilenames	/home/lxuser/data5/NimStuff/NimCx/cx.html#rmTmpFilenames	cx: rmTmpFilenames()	
+cxBell	/home/lxuser/data5/NimStuff/NimCx/cx.html#cxBell	cx: cxBell()	
+cxSound	/home/lxuser/data5/NimStuff/NimCx/cx.html#cxSound,string	cx: cxSound(soundfile: string = &quot;/usr/share/sounds/purple/receive.wav&quot;)	
+doInfo	/home/lxuser/data5/NimStuff/NimCx/cx.html#doInfo	cx: doInfo()	
+infoLine	/home/lxuser/data5/NimStuff/NimCx/cx.html#infoLine,int	cx: infoLine(xpos: int = 0)	
+printTest	/home/lxuser/data5/NimStuff/NimCx/cx.html#printTest,string	cx: printTest(astring: string = &quot;&quot;)	
+uname	/home/lxuser/data5/NimStuff/NimCx/cx.html#uname.t	cx: uname(): untyped	
+release	/home/lxuser/data5/NimStuff/NimCx/cx.html#release.t	cx: release(): untyped	
+doByeBye	/home/lxuser/data5/NimStuff/NimCx/cx.html#doByeBye,int	cx: doByeBye(xpos: int = 1)	
+doFinish	/home/lxuser/data5/NimStuff/NimCx/cx.html#doFinish	cx: doFinish()	
+handler	/home/lxuser/data5/NimStuff/NimCx/cx.html#handler	cx: handler()	
+doCxEnd	/home/lxuser/data5/NimStuff/NimCx/cx.html#doCxEnd	cx: doCxEnd()	

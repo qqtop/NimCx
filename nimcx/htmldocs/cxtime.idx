@@ -1,0 +1,45 @@
+long	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#long	cxTz.long	
+short	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#short	cxTz.short	
+cxTz	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#cxTz	cxtime: cxTz	
+CxTimer	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#CxTimer	cxtime: CxTimer	
+Cxtimerres	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#Cxtimerres	cxtime: Cxtimerres	
+Cxcounter	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#Cxcounter	cxtime: Cxcounter	
+cxLocal	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#cxLocal.t	cxtime: cxLocal(): string	
+cxNow	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#cxNow.t	cxtime: cxNow(): string	
+cxToday	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#cxToday.t	cxtime: cxToday(): string	
+cxTime	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#cxTime.t	cxtime: cxTime(): string	
+cxDateTime	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#cxDateTime.t	cxtime: cxDateTime(): string	
+cxDuration	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#cxDuration,,	cxtime: cxDuration(tstart: int | float; tend: int | float): string	
+cxTimeZone	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#cxTimeZone,cxTz	cxtime: cxTimeZone(amode: cxTz = long): string	
+toDateTime	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#toDateTime,string	cxtime: toDateTime(date: string = &quot;2000-01-01&quot;): DateTime	
+epochSecs	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#epochSecs,string	cxtime: epochSecs(date: string = &quot;2000-01-01&quot;): auto	
+sleepy	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#sleepy,T	cxtime: sleepy[T: float | int](secs: T)	
+validDate	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#validDate,string	cxtime: validDate(adate: string): bool	
+day	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#day,string	cxtime: day(aDate: string): string	
+month	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#month,string	cxtime: month(aDate: string): string	
+year	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#year,string	cxtime: year(aDate: string): string	
+compareDates	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#compareDates,string,string	cxtime: compareDates(startDate, endDate: string): int	
+plusDays	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#plusDays,string,int	cxtime: plusDays(aDate: string; days: int): string	
+minusDays	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#minusDays,string,int	cxtime: minusDays(aDate: string; days: int): string	
+createSeqDate	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#createSeqDate,string,string	cxtime: createSeqDate(fromDate: string; toDate: string): seq[string]	
+createSeqDate	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#createSeqDate,string,int	cxtime: createSeqDate(fromDate: string; days: int = 1): seq[string]	
+getRndDate	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#getRndDate,int,int	cxtime: getRndDate(minyear: int = parseInt(year(getDateStr(now()))) - 50;\n           maxyear: int = parseInt(year(getDateStr(now()))) + 50): string	
+printTimeMsg	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#printTimeMsg,string,int	cxtime: printTimeMsg(atext: string = cxTime; xpos: int = 1): string	
+printLnTimeMsg	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#printLnTimeMsg,string,int	cxtime: printLnTimeMsg(atext: string = cxTime; xpos: int = 1): string	
+printDTimeMsg	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#printDTimeMsg,string,int	cxtime: printDTimeMsg(atext: string = $toTime(now()); xpos: int = 1): string	
+printLnDTimeMsg	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#printLnDTimeMsg,string,int	cxtime: printLnDTimeMsg(atext: string = $toTime(now()); xpos: int = 1): string	
+printDateMsg	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#printDateMsg,string,int	cxtime: printDateMsg(atext: string = getDateStr(); xpos: int = 1): string	
+printLnDateMsg	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#printLnDateMsg,string,int	cxtime: printLnDateMsg(atext: string = getDateStr(); xpos: int = 1): string	
+cxtimerresults	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#cxtimerresults	cxtime: cxtimerresults	
+newCxtimer	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#newCxtimer,string	cxtime: newCxtimer(aname: string = &quot;cxtimer&quot;): ref (CxTimer)	
+resetTimer	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#resetTimer,ref.	cxtime: resetTimer(co: ref (CxTimer))	
+startTimer	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#startTimer,ref.	cxtime: startTimer(co: ref (CxTimer))	
+lapTimer	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#lapTimer,ref.	cxtime: lapTimer(co: ref (CxTimer)): auto	
+stopTimer	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#stopTimer,ref.	cxtime: stopTimer(co: ref (CxTimer))	
+duration	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#duration,ref.	cxtime: duration(co: ref (CxTimer)): float	
+saveTimerResults	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#saveTimerResults,ref.	cxtime: saveTimerResults(b: ref (CxTimer))	
+showTimerResults	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#showTimerResults,string	cxtime: showTimerResults(aname: string)	
+showTimerResults	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#showTimerResults	cxtime: showTimerResults()	
+clearTimerResults	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#clearTimerResults,string,bool,int	cxtime: clearTimerResults(aname: string = &quot;&quot;; quiet: bool = true; xpos: int = 3)	
+clearAllTimerResults	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#clearAllTimerResults,bool,int	cxtime: clearAllTimerResults(quiet: bool = true; xpos: int = 3)	
+cxHRTimer	/home/lxuser/data5/NimStuff/NimCx/cxtime.html#cxHRTimer,Time,Time	cxtime: cxHRTimer(tstart: Time = getTime(); tend: Time = getTime()): auto	

@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2020-01-29
+##     Latest      : 2020-03-27
 ##
 ##     Compiler    : Nim >= 1.0.4 or 1.1.1 
 ##
@@ -795,12 +795,11 @@ proc fmtEngine[T](a: string, astring: T): string =
           # this cuts the okstring to size for display , not wider than dg parameter passed in
           # if the format string is "" no op no width than this will not be attempted
           if okstring.len > parseInt(dg) and parseInt(dg) > 0:
-                    var dps = ""
-                    for x in 0..<parseInt(dg):
-                           dps = dps & okstring[x]
-                    okstring = dps
+            var dps = ""
+            for x in 0..<parseInt(dg):
+               dps = dps & okstring[x]
+            okstring = dps
           result = okstring
-
 
 
 proc fmtx*[T](fmts: openarray[string], fstrings: varargs[T, `$`]): string =
@@ -1029,16 +1028,16 @@ proc fastsplit*(s: string, sep: char): seq[string] =
           ##
           var count = 1
           for ch in s:
-                    if ch == sep:
-                              count += 1
+            if ch == sep:
+                count += 1
           result = newSeq[string](count)
           var fieldNum = 0
           var start = 0
           for i in 0..high(s):
-                    if s[i] == sep:
-                              result[fieldNum] = s[start .. i - 1]
-                              start = i + 1
-                              fieldNum += 1
+              if s[i] == sep:
+                 result[fieldNum] = s[start .. i - 1]
+                 start = i + 1
+                 fieldNum += 1
           result[fieldNum] = s[start..^1]
 
 
@@ -1068,11 +1067,11 @@ proc splitty*(txt: string, sep: string): seq[string] =
           var rx = newSeq[string]()
           let z = txt.split(sep)
           for xx in 0..<z.len:
-                 if z[xx] != txt and z[xx] != "":
-                         if xx < z.len-1:
-                               rx.add(z[xx] & sep)
-                         else:
-                               rx.add(z[xx])
+             if z[xx] != txt and z[xx] != "":
+                 if xx < z.len-1:
+                       rx.add(z[xx] & sep)
+                 else:
+                       rx.add(z[xx])
           result = rx
 
 
@@ -1100,7 +1099,7 @@ proc doFlag*[T](flagcol: string = yellowgreen,
 proc getAscii*(s: string): seq[int] =
           ## getAsciicode
           ## 
-          ## returns a seq[int]  with ascii integer codes of every character in a string 
+          ## returns a seq[int] with ascii integer codes of every character in a string 
           ##
           result = @[]
           for c in s: result.add(c.int)
@@ -1549,14 +1548,21 @@ proc showCpuCores*() =
     ## 
     printLnBiCol("System CPU cores : " & $cpuInfo.countProcessors())
    
-
-proc getAmzDateString*():string =
-    ## getAmzDateString
-    ## 
-    ## get current GMT date time in amazon format  
-    ## 
-    return format(utc(getTime()), iso_8601_aws) 
-    
+proc showHostNameCtl*() = 
+    ## showHostNameCtl
+    ##
+    ## output of system hostnamectl command
+    ##
+    println(spaces(3) & "SystemInfo - hostNameCtl",limegreen)
+    print(spaces(2))
+    hlineln(55)
+    let hc = execCmdEx("hostnamectl")
+    if hc.exitCode == 0:
+     if hc.output.len > 0:
+       for line in hc.output.splitLines():
+           printLnBiCol(line)
+    else:
+        printlnErrorMsg("hostnamectl command may not be available on this system.")       
 
 proc getUserName*():string =
      # just a simple user name prompt 
@@ -1622,61 +1628,19 @@ proc cxInput*(prompt: string,promptColor:string=greenYellow,xpos:int = 0,allowBl
              
      echo clearLine;curup()
 
-    
-proc cxDayOfWeek*(datestr:string):string = 
-    ## cxDayOfWeek
-    ## 
-    ## returns day of week from a date in format yyyy-MM-dd
-    ## 
-    ##.. code-block:: nim    
-    ##    echo cxDayOfWeek(cxtoday())
-    ##    echo getNextMonday("2017-07-15"),"  ",cxDayOfWeek(getNextMonday("2017-07-15"))
 
-    if datestr.len==10:
-       result = $(getDayOfWeek(parseInt(day(datestr)),parseInt(month(datestr)).Month,parseInt(year(datestr))))      
-    else:
-       cxprintln(5,white,bgred,"Invalid date received . Required format is yyyy-MM-dd. --> cxUtils : cxDayOfWeek")
-       result=""
-       
-
-proc getNextMonday*(adate:string):string =
-    ## getNextMonday
+proc cxYesNo*(prompt: string = "Continue ",promptColor:string=greenYellow,xpos:int = 0,allowBlank:bool = false):bool =
+    ## cxYesNo
     ##
-    ##.. code-block:: nim
-    ##    echo  getNextMonday(getDateStr())
+    ## returns a bool , any reply other than y , yes is false
     ##
-    ##
-    ##.. code-block:: nim
-    ##      import nimcx
-    ##      # get next 10 mondays
-    ##      var dw = getdatestr()
-    ##      echo dw
-    ##      for x in 1..10:
-    ##         dw = getnextmonday(dw)
-    ##         echo dw
-    ##         dw = plusDays(dw,1)
-    ##
-        
-    var ndatestr = ""
-    if adate == "" :
-        cxprintln(2,black,redbg,"Received an invalid date.")
-    else:
-        if validdate(adate) == true:
-            var z = cxdayofweek(adate)
-            if z == "Monday":
-                # so the datestr points to a monday we need to add a
-                # day to get the next one calculated
-                ndatestr = plusDays(adate,1)
-            ndatestr = adate
-            for x in 0..<7:
-                if validdate(ndatestr) == true:
-                    z =  cxDayOfWeek(ndatestr)
-                if strutils.strip(z) != "Monday":
-                    ndatestr = plusDays(ndatestr,1)
-                else:
-                    result = ndatestr
-
-   
+    result = false
+    let cxi = cxInput(prompt & "[Yes/No] : ",yellowgreen,xpos = xpos)
+    case lowercase(cxi)
+      of "yes" : result = true
+      of "y"   : result = true
+      else     : result = false    
+ 
 proc getRandomPointInCircle*(radius:float = 1.0) : seq[float] =
     ## getRandomPointInCircle
     ##
