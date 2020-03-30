@@ -12,9 +12,9 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-12-06
+##     Latest      : 2020-03-30
 ##
-##     Compiler    : Nim >= 1.0.4  or 1.1.1  dev branch
+##     Compiler    : Nim >= 1.0.6  or 1.1.1  dev branch
 ##
 ##     OS          : Linux
 ##
@@ -114,6 +114,14 @@ const
       clearbos*      =   "\x1b[1J"         ## clear to begin of screen
       cleareos*      =   "\x1b[J"          ## clear to end of screen
       resetcols*     =   "\x1b[0m"         ## reset colors
+
+const 
+      # standard terminal for line feeds , space
+      CRLF* = "\x0D\x0A"  # Internet standard newline
+      SP*   = "\x20"      # space
+      CR*   = "\x0D"      # ctrl
+      LF*   = "\x0A"      # standard newline
+
 
 const
 

@@ -22,9 +22,9 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2020-03-27
+##     Latest      : 2020-03-30
 ##
-##     Compiler    : Nim >=  1.0.4 or 1.1.1  devel branch
+##     Compiler    : Nim >=  1.0.6 or 1.1.1  devel branch
 ##
 ##     OS          : Linux
 ##

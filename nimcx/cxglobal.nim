@@ -10,9 +10,9 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2020-03-27
+##     Latest      : 2020-03-30
 ##
-##     Compiler    : Nim >= 1.0.4 or 1.1.1 
+##     Compiler    : Nim >= 1.0.6 or 1.1.1 
 ##
 ##     OS          : Linux
 ##
@@ -157,7 +157,7 @@ template toki*(s: untyped): untyped =
 
 proc newLine*(n: int = 1): string =
           ## issues n newLines , default = 1
-          result = "\n" * n
+          result = LF * n     # LF is a const declared in cxconsts.nim
 
 proc cxtoLower*(c: char): char =
           ## cxtoLower
@@ -2842,6 +2842,7 @@ when isMainModule:
     echo "Primes : ", getPrimeSeq(212_000_0,212_003_0)
     echo "Test   : GeoShapes"
     showSeq(createSeqGeoshapes(),randcol())
+    showHostNameCtl()
     echo "Test ended"
     decho(2)
      
