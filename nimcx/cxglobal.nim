@@ -557,7 +557,7 @@ proc ff2*(zz: SomeNumber, n: int = 3):string =
           ##    # floats example
           ##    for x in 1 .. 2000:
           ##       # generate some positve and negative rand float
-          ##       var z = getrandfloat() * 2345243.132310 * getRandomSignF()
+          ##       var z = getrndfloat() * 2345243.132310 * getRandomSignF()
           ##       printLnBiCol(fmtx(["",">6","",">20"],"NZ ",$x," : ",ff2(z)))
           ##  
           ##
@@ -1456,7 +1456,7 @@ template currentLine*() =
           printLnInfoMsg("CurrentLine"," File: " & pos.filename & "  Line:" & $(pos.line) & " Column:" & $(pos.column), truetomato, xpos = 1)
           
 
-template hdx*(code: typed, frm: string = "+", width: int = tw, nxpos: int = 0): void =
+template hdx*(code: untyped, frm: string = "+", width: int = tw, nxpos: int = 0): void =
           ## hdx
           ##
           ## a simple sandwich frame made with + default or any string passed in
@@ -1596,6 +1596,21 @@ proc getPassword*(ahash:int64 = 0i64):string =
            decho(2)
            quit(1)
     
+
+proc getPwd*():string = 
+    ## getPwd
+    ##
+    ## utility function to get password via zenity which is installed
+    ## in many linux systems and provides GTK dialog boxes in command-line
+    ## and shell scripts
+    ##
+    ##
+    var result1 = ""
+    result1 = execCmdEx("""zenity --password --title="Enter Password" """).output
+    result1.removeSuffix('\n')
+    return result1
+
+
 
 proc cxInput*(prompt: string,promptColor:string=greenYellow,xpos:int = 0,allowBlank:bool = false): string =
                

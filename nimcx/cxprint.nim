@@ -9,9 +9,9 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2019-12-06 
+##     Latest      : 2020-04-16 
 ##
-##     Compiler    : Nim >= 1.0.4  or 1.1.1 dev branch
+##     Compiler    : Nim >= 1.0.6  or 1.1.1 dev branch
 ##
 ##     OS          : Linux
 ##
@@ -48,7 +48,6 @@ proc printErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.}
 proc printLnErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} 
 
 
-
 template cxprint*(xpos:int,args:varargs[untyped]) =
     ## cxprint
     ##
@@ -76,7 +75,8 @@ template cxprintLn*(xpos:int, args: varargs[untyped]) =
     ## Backgroundcolors defined in cxconsts.nim colorNames can be used , that is 
     ## any color ending with xxxxxxbg  like pastelpinkbg
     ## 
-    ## remember that first item must be xpos
+    ## remember that first item must be xpos and that wide unicode chars or Rune may not
+    ## give desired result if written close to each other
     ##
     ##.. code-block:: nim
     ##   cxprintLn(5,yaleblue,pastelbluebg,"this is a test  ",trueblue,pastelpinkbg,styleReverse,stylebright," needed somme color change"
@@ -289,7 +289,7 @@ proc printLn*[T](astring: T,
     stdout.write cleareol
 
 # output  horizontal lines
-proc hline*(n:int = tw,
+proc hLine*(n:int = tw,
             col:string = white,
             xpos:int = 0,
             lt:string = "-"):string {.discardable.} =
@@ -306,21 +306,21 @@ proc hline*(n:int = tw,
      result = lt.repeat(n)     # we return the line string without color and pos formating in case needed
 
 
-proc hlineLn*(n:int = tw,
+proc hLineLn*(n:int = tw,
               col:string = white,
               xpos:int = 0,
               lt:string = "-"):string {.discardable.} =
-     ## hlineLn
+     ## hLineLn
      ##
      ## draw a full line in stated length and color a linefeed will be issued
      ##
      ## defaults full terminal width and white
      ##
      ##.. code-block:: nim
-     ##    hlineLn(30,green)
+     ##    hLineLn(30,green)
      ##
      
-     let res = hline(n,col,xpos,lt)
+     let res = hLine(n,col,xpos,lt)
      echo()
      result = res
      
@@ -903,4 +903,12 @@ macro pdebug*(n: varargs[typed]): untyped =
       result.add(newCall("writeLine", newIdentNode("stdout"), newStrLitNode("")))     
 
 
+if isMainModule:
+    cxprintLn(10,yellowgreen,"This is cxprint", red,".nim")
+    printLn(CRLF)
+    for x in 0..<10:print SP
+    printLnRainbow("Rainbow - Temple of the King")
+    decho(2)
+    printLnInfoMsg("Nimcx","Just a message for a rainy day")
+    echo()
 # end of cxprint.nim      

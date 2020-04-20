@@ -118,7 +118,7 @@
 ##                   included in nimcx to avoid code bloat  
 ##
 ##
-##     Funding     : Here are three excellent reasons :
+##     Funding     : Here are three excellent choices :
 ##     
 ##                   You are happy              ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
 ##                   
@@ -1317,6 +1317,7 @@ proc handler*() {.noconv.} =
     cxprint(78,yaleblue,limegreenbg,cxbright,"Info", " Have a Nice Day !") ## change or add custom messages as required
     decho()
     system.addQuitProc(resetAttributes)
+    curon()
     quit(0)
 
 proc doCxEnd*() =
