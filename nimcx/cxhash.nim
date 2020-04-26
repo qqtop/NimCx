@@ -1,9 +1,22 @@
 import hashes,strutils,rdstdin
-## cxhashes.nim
+## ::
 ## 
-## convenience functions for hashes 
-## 
-## Last 2020-03-26
+##     Library     : nimcx.nim
+##     
+##     Module      : cxhashes.nim
+##
+##     Status      : stable
+##
+##     License     : MIT opensource
+##   
+##     Latest      : 2020-04-24 
+##
+##     Compiler    : latest stable or devel branch
+##
+##     OS          : Linux
+##
+##     Description : provides convenience functions for hashes 
+##              
 ## 
 
 export hashes

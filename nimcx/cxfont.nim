@@ -2,22 +2,32 @@
 import cxglobal,cxconsts,cxfontconsts,cxprint
 import strutils,terminal,sets
 
-# cxfont.nim
-#
-# Experimental font building 
-#
-#
-# experimental font, slim numbers , swampfont , dotmatrix ,
-# 
-# slimfont and  bracketmatrix font 
-# 
-# currently some print functions here may have same/similar functionality as in cxprint but
-# are specialized for font printing use.
-#
-# usage : import nimcx/cxfont
-# 
-# Last : 2020-02-13  
-# 
+## ::
+## 
+##     Library     : nimcx.nim
+##     
+##     Module      : cxfont.nim
+##
+##     Status      : stable
+##
+##     License     : MIT opensource
+##   
+##     Latest      : 2020-04-24 
+##
+##     Compiler    : latest stable or devel branch
+##
+##     OS          : Linux
+##
+##     Description : Experimental font building 
+##                   provides most printing functions for the library
+##                   experimental font, slim numbers , swampfont , dotmatrix
+##                   slimfont and  bracketmatrix font 
+##
+##     Usage : import nimcx/cxfont
+##
+##     Notes : experimental! your results may depend on terminal in use.
+##             Use konsole for best effect with truecolor, 
+##             adjust terminal width and char size for desired effect
 # 
 # Examples :
 #     let myfont = createCxFont("bracketmatrix")
@@ -48,12 +58,7 @@ type
     T7 = object  
       zx : seq[string] 
       
-# experimental your results may depend on terminal in use
-# 
-# suggested : konsole for best effect with truecolor , adjust terminal width 
-# 
-# and char size for desired effect
-# 
+
 proc fprint*[T](astring:T,
                fgr:string = getFg(fgDefault),
                xpos:int = 0,

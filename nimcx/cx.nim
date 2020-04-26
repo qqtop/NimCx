@@ -22,9 +22,9 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2020-03-30
+##     Latest      : 2020-04-26
 ##
-##     Compiler    : Nim >=  1.0.6 or 1.1.1  devel branch
+##     Compiler    : latest stable or devel branch
 ##
 ##     OS          : Linux
 ##
@@ -118,6 +118,10 @@
 ##                   included in nimcx to avoid code bloat  
 ##
 ##
+##     Compile idea : nim c -d:threads:on -d:danger --gc:arc -d:useMalloc -r -f cx
+##
+##
+##
 ##     Funding     : Here are three excellent choices :
 ##     
 ##                   You are happy              ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
@@ -132,7 +136,7 @@ import
 import 
         std/[os, osproc, times, random, strutils,strmisc, strformat, strscans, parseutils,
         sequtils, parseopt,tables, sets, macros,posix,posix_utils, htmlparser, terminal,
-        math, stats, json, streams, options, memfiles,monotimes,
+        logic, math, stats, json, streams, options, memfiles, monotimes,
         httpclient, nativesockets, browsers, intsets, algorithm, net,
         unicode, typeinfo, typetraits, cpuinfo, colors, encodings, distros,
         rdstdin, sugar , wordwrap]
@@ -142,7 +146,7 @@ export
         cxconsts, cxglobal, cxtime, cxprint, cxhash, cxnetwork, cxstats,
         os, osproc, times, random,strutils, strmisc,strformat, strscans, parseutils,
         sequtils, parseopt,tables, sets, macros,posix, posix_utils,htmlparser,terminal,
-        math, stats, json, streams, options, memfiles, monotimes,
+        logic, math, stats, json, streams, options, memfiles, monotimes,
         httpclient, nativesockets, browsers, intsets, algorithm, net,
         typeinfo, typetraits, cpuinfo, colors, encodings, distros,
         rdstdin, sugar , wordwrap
@@ -170,16 +174,8 @@ export unicode except strip, split, splitWhitespace
 # or compile with  --debugger:on 
 # or see infoproc() in cxglobal.nim
 # or try compilation with and without var debug options
-# nim c --threads:on -d:useGcAssert -d:nimBurnFree -d:useSysAssert  --tlsEmulation:on  --gc:boehm cx
-# or try --gc:none or --gc:refc or --gc:markAndSweep
+# nim c --threads:on -d:ssl --gc:arc -r cx
 
-var someGcc = ""
-if defined(gcc): someGcc = "gcc"
-# below needs to be tested
-elif defined(llvm_gcc): someGcc = "llvm_gcc"
-elif defined(clang): someGcc = "clang"
-elif defined(cpp): someGcc = "c++ target"
-else: someGcc = "undefined"
 
 const CXLIBVERSION* = "1.0.0"
 discard setLocale(LC_ALL, "") # init utf8 
@@ -339,7 +335,8 @@ proc makeColor*(r:int=getrndint(0,2550),g:int=getrndint(0,2550),b:int=getrndint(
 proc makeColorTest*() = 
     ## makeColorTest
     ## 
-    ## testing makeColor proc
+    ## testing makeColor proc need to be run in konsole
+    ## to see the colors
     ## 
     loopy2(0,30):
           makecolor()
@@ -751,12 +748,10 @@ proc spellFloat*(n: float64, currency: bool = false, sep: string = ".", sepname:
                 # but we may also want 
                 # two hundred fifty dollars and thirty four cents
                 if currency == false:
-                        result = spellInteger(parseInt(nss[
-                                        0])) & sepname & spellInteger2(nss[1])
+                    result = spellInteger(parseInt(nss[0])) & sepname & spellInteger2(nss[1])
                 else:
-                        # we assume its a currency float value
-                        result = spellInteger(parseInt(nss[
-                                        0])) & sepname & spellInteger(parseInt(nss[1]))
+                    # we assume its a currency float value
+                    result = spellInteger(parseInt(nss[0])) & sepname & spellInteger(parseInt(nss[1]))
 
 template currentFile*: string =
       ## currentFile
@@ -791,18 +786,18 @@ proc newDir*(dirname: string) =
      ##
      ## creates a new directory and provides some feedback
      if not existsDir(dirname):
-            try:
-                createDir(dirname)
-                printLn("Directory " & dirname & " created ok", green)
-            except OSError:
-                cxprintLn(2,white,bgred,dirname & " creation failed. Check permissions.")
+         try:
+             createDir(dirname)
+             cxprintLn(0,green,"Directory " & dirname & " created ok")
+         except OSError:
+             cxprintLn(2,white,bgred,dirname & " creation failed. Check permissions.")
      else:
-            cxprintLn(2,white,bgred,"Directory " & dirname & " already exists !")
+         cxprintLn(2,white,bgred,"Directory " & dirname & " already exists !")
 
 proc remDir*(dirname: string): bool {.discardable.} =
     ## remDir
     ##
-    ## deletes an existing directory , all subdirectories and files  and provides some feedback
+    ## deletes an existing directory , all subdirectories and files and provides some feedback
     ##
     ## root and home directory removal is disallowed 
     ## 
@@ -814,13 +809,13 @@ proc remDir*(dirname: string): bool {.discardable.} =
     else:
         if existsDir(dirname):
             try:
-                    removeDir(dirname)
-                    cxprintLn(2,yaleblue,limegreenbg,"Directory " & dirname & " deleted")
-                    result = true
+                 removeDir(dirname)
+                 cxprintLn(2,yaleblue,limegreenbg,"Directory " & dirname & " deleted")
+                 result = true
             except OSError:
-                    cxprintLn(2,white,bgred,"Directory " & dirname & " deletion failed")
-                    cxprintLn(2,white,bgred,"System    " & getCurrentExceptionMsg())
-                    result = false
+                 cxprintLn(2,white,bgred,"Directory " & dirname & " deletion failed")
+                 cxprintLn(2,white,bgred,"System    " & getCurrentExceptionMsg())
+                 result = false
         else:
             cxprintLn(2,white,bgred,"Directory " & dirname & " does not exists !")
             result = false
@@ -838,10 +833,10 @@ proc checkClip*(sel: string = "primary"): string =
     let (outp, errC) = execCmdEx("xclip -selection $1 -quiet -silent -o" % $sel)
     var rx = ""
     if errC == 0:
-            let r = split($outp, " ")
-            for x in 0..<r.len: rx = rx & " " & r[x]
+         let r = split($outp, " ")
+         for x in 0..<r.len: rx = rx & " " & r[x]
     else:
-            rx = "xclip returned errorcode : " & $errC & ". Clipboard not accessed correctly."
+         rx = "xclip returned errorcode : " & $errC & ". Clipboard not accessed correctly."
     result = rx
 
 
@@ -864,7 +859,8 @@ proc getColorName*[T](sc: T): string =
      ## 
      ## usually used with randcol() to see what color was actually returned
      ## 
-     ## 
+     ## referenced colornames defined in cxconstants.nim 
+     ##
      ##.. code-block:: nim
      ##  import nimcx
      ##  for x in 0.. 10: 
@@ -996,39 +992,39 @@ proc cxHelp*(s: openarray[string], xpos: int = 2) =
 
 
 template infoProc*(code: untyped) =
-          ## infoProc
-          ## 
-          ## shows from where a specific function has been called and combined with checkLocals gives
-          ## a nice formatted output for debugging
-          ##
-          ##.. code-block:: nim
-          ##    proc test1[T](ff:varargs[T,`$`]) =
-          ##      let yu1 = @["test"]
-          ##      var yu2 = "sdfsdf"
-          ##      var yu3 = parseInt(ff[1]) * 3  # ff[1] has been converted to string we change it back to int and multiply
-          ##      print("test output    : ",lime)
-          ##      for x in ff: print(x & spaces(1)) # print the passed in varargs
-          ##      checklocals()
-          ##      
-          ##    proc test2(s:string,b:int) : string =   
-          ##       var bb = b * getRndInt(10,200)
-          ##       result = s & $bb
-          ##       checklocals()
-          ##      
-          ##    infoproc(test1("zz",1234,789.88))
-          ##    infoproc:
-          ##        printLnBiCol(fmtx(["","",""],"Test2 output  : ",rightarrow & spaces(1),test2("nice",2000)),colLeft = cyan,colRight=gold,":",0,false,{})
-          ##    doFinish()
-          ##
-          ##
-          ##
-          try:
-              let pos = instantiationInfo()
-              code
-              cxprintLn(2,yaleblue,goldenrodbg," Infoproc ",getFg(fgDefault),getbg(bgDefault), " $1 Line: $2 with: '$3'" % [pos.filename, $pos.line, astToStr(code)])
-          except:
-              cxprintLn(2,white,bgred,"Checking instantiationInfo ")
-              discard
+        ## infoProc
+        ## 
+        ## shows from where a specific function has been called and combined with checkLocals gives
+        ## a nice formatted output for debugging
+        ##
+        ##.. code-block:: nim
+        ##    proc test1[T](ff:varargs[T,`$`]) =
+        ##      let yu1 = @["test"]
+        ##      var yu2 = "sdfsdf"
+        ##      var yu3 = parseInt(ff[1]) * 3  # ff[1] has been converted to string we change it back to int and multiply
+        ##      print("test output    : ",lime)
+        ##      for x in ff: print(x & spaces(1)) # print the passed in varargs
+        ##      checklocals()
+        ##      
+        ##    proc test2(s:string,b:int) : string =   
+        ##       var bb = b * getRndInt(10,200)
+        ##       result = s & $bb
+        ##       checklocals()
+        ##      
+        ##    infoproc(test1("zz",1234,789.88))
+        ##    infoproc:
+        ##        printLnBiCol(fmtx(["","",""],"Test2 output  : ",rightarrow & spaces(1),test2("nice",2000)),colLeft = cyan,colRight=gold,":",0,false,{})
+        ##    doFinish()
+        ##
+        ##
+        ##
+        try:
+            let pos = instantiationInfo()
+            code
+            cxprintLn(2,yaleblue,goldenrodbg," Infoproc ",getFg(fgDefault),getbg(bgDefault), " $1 Line: $2 with: '$3'" % [pos.filename, $pos.line, astToStr(code)])
+        except:
+            cxprintLn(2,white,bgred,"Checking instantiationInfo ")
+            discard
 
 
 template checkLocals*() =
@@ -1052,7 +1048,7 @@ proc qqTop*() =
      ##
      ## prints qqTop in custom color
      ##
-     cxwrite(cyan,"qq",greenyellow , "T" , brightred , "o", gold , "p")
+     cxwrite(cyan,"qq",greenyellow ,"T",brightred ,"o",gold,"p")
 
 
 proc tmpFilename*(): string =
@@ -1077,7 +1073,7 @@ proc tmpFilename*(filename: string): string =
      # a filename will look like so: /tmp/filename.tmp  
      #
      let tfn = getTempDir() & $epochTime() & "-" & filename & ".tmp"
-     cxTmpFileNames.add(tfn) # add filename to seq
+     cxTmpFileNames.add(tfn) # add filename to a global seq
      result = tfn
 
 
@@ -1172,7 +1168,7 @@ proc doInfo*() =
     printLnBiCol("CPU Cores                     : " & $cpuInfo.countProcessors())
     printLnBiCol("Current pid                   : " & $getpid(), yellowgreen, lightgrey, sep, 0, false, {})
     printLnBiCol("Terminal encoding             : " & $getCurrentEncoding())
-
+    printLnBiCol("Compiler used                 : " & getCurrentCompilerExe())
 
 proc infoLine*(xpos:int = 0) =
      ## infoLine
@@ -1207,7 +1203,7 @@ proc printTest*(astring:string="") =
      printLn("")
      printLn("   " & extractFileName(getAppFilename()),truetomato)
      if astring != "":
-         echo("  ",skyblue,rightarrow,white,astring)
+         echo(spaces(2),skyblue,rightarrow,white,astring)
      decho(2)
  
 
@@ -1231,7 +1227,7 @@ proc doByeBye*(xpos:int = 1) =
      ##
      ## a simple end program routine do give some feedback when exiting
      decho()
-     hlineln(40)
+     hlineLn(40)
      rmTmpFilenames()
      printLn(pastelBlue & extractFileName(getAppFilename()) & " " &
              pastelgreen & ff2(epochtime() - cxstart) & " secs " & gold &
@@ -1245,9 +1241,9 @@ proc doFinish*() =
      ##
      ## a end of program routine which displays some information
      ##
-     ## can be changed to anything desired
+     ## can be changed to anything desired , like your info
      ##
-     ## and should be the last line of the application
+     ## this should be the last line of the application.
      ##
      {.gcsafe.}:
         decho()
@@ -1317,25 +1313,28 @@ proc handler*() {.noconv.} =
     cxprint(78,yaleblue,limegreenbg,cxbright,"Info", " Have a Nice Day !") ## change or add custom messages as required
     decho()
     system.addQuitProc(resetAttributes)
-    curon()
+    curon()  # turn cursor on in case it was off
     quit(0)
 
 proc doCxEnd*() =
     ## doCxEnd
     ## 
-    ## short testing routine if cx.nim is run as main
+    ## short testing routine of cx.nim if run as main
     ##
     clearup()
     decho()
     print(nimcxl & "  V. " & CXLIBVERSION,randcol(),styled={styleBright}) 
-    print(spaces(6))
+    print(spaces(3))
     qqtop()
-    echo("  -  " & year(getDateStr()))
+    printLn("  -  " & year(getDateStr()))
     doInfo()
-    clearup()
+    clearUp()
     decho(3)
-    showcolors()
-    print(nimcxl & "  V. " & CXLIBVERSION,randcol(),styled={styleBright})  
+    showColors()
+    print(nimcxl & "  V. " & CXLIBVERSION,randcol(),styled={styleBright}) 
+    print(spaces(3))
+    qqtop() 
+    printLn("  -  " & year(getDateStr()))
     doFinish()
 
 

@@ -4,7 +4,7 @@
 # nmap , ip , lsof etc. needs to be installed if relevant procs to be used.
 # 
 # 
-# Last 2019-12-06
+# Last 2020-04-24
 # 
 
 import os,osproc,json,httpclient,strutils,strscans
@@ -77,17 +77,32 @@ proc getIpInfo*(ip:string):JsonNode =
         except OSError:
             discard
 
-proc getWanIp*() : string =
-    ## getWanIP
+proc getWanIP*():string = 
+     ## getWanIP
+     ##
+     ## using curl and ifconfig to get the wanip 
+     ## alternatively use getWanIp2() .
+     ##
+     try:
+       let res = execCmdEx("curl ifconfig.me").output.splitLines()
+       result = res[res.len-2]
+     except:
+       result = "WanIp could not be retrieved . "  
+
+proc getWanIp2*() : string =
+    ## getWanIP2
     ## 
-    ## get your wanip from api.ipify.org
+    ## get your wanip from api.ipify.org if curl and/or ifconfig 
+    ## not installed
     ## 
-    var cxip = newhttpclient()
+    var cxip = newHttpClient()
     try:
        var eresult = parseJson(cxip.getcontent("https://api.ipify.org?format=json"))
        result = eresult["ip"].getStr
     except:
-       result = "Ip could not be retrieved . Check firewall or permissions."
+       result = "WanIp could not be retrieved . Check firewall or permissions."
+
+  
 
 proc showIpInfo*(ip:string) =
       ## showIpInfo
@@ -111,12 +126,22 @@ proc showIpInfo*(ip:string) =
       except:
           printLnBiCol("IpInfo   : unavailable",white,red,":",0,false,{})  
 
-proc localIp*():string =
+
+   
+proc localIp*():seq[string] =
    # localIp
    # 
-   # returns current machine ip
+   # returns current machine ip , there maybe more lines like if we have wireguard
+   # on 10.0.0.0/24 and the original 192.168.x.x , this routine returns both
    # 
-   result = (strip(split(execCmdEx("ip route | grep src").output,"src")[1])).split(spaces(1))[0]
+   let ips = split(execCmdEx("ip route | grep src").output,"src")
+   for ipsx in 0 .. ips.len - 1:
+       if ips[ipsx].contains(" wg0 "):
+           result.add(strip(ips[ipsx]).split(spaces(1))[0] & " wg0 ")
+       else:    
+           result.add(strip(ips[ipsx]).split(spaces(1))[0])
+   
+  
   
 proc localRouterIp*():string = 
    # localRouterIp
@@ -127,14 +152,15 @@ proc localRouterIp*():string =
    
 
 proc showLocalIpInfo*() =
-     cxprintln(1,white,darkslategraybg,"Machine " ,styleReverse, cxpad(localIp(),16))
      cxprintln(1,white,darkslategraybg,"Router  " ,stylereverse, cxpad(strip(localRouterIp()),16))
-     
+     for llipre in localIp():
+         cxprintln(1,white,darkslategraybg,"Machine " ,styleReverse, cxpad(llipre,16))    
+    
 proc showWanIpInfo*() =     
      cxprintln(1,white,darkslategraybg,"Wan Ip  " ,stylereverse, cxpad(strip(getwanIp()),16))
 
 
-proc pingy*(dest:string,pingcc:int = 3,col:string = termwhite) = 
+proc pingy*(dest:string,pingcc:int = 3,col:string = termwhite,show:bool=true):int {.discardable.} = 
         ## pingy
         ## 
         ## small utility to ping some server
@@ -147,16 +173,18 @@ proc pingy*(dest:string,pingcc:int = 3,col:string = termwhite) =
         let pingc = $pingcc
         let (outp,err) = execCmdEx("which ping")
         let outp2 = quoteshellposix(strutils.strip(outp,true,true))
-        if err > 0:
+        if err > 0 and show == true:
             cxprintln(2,white,bgred,$err) 
-        else:        
-            printLnBiCol("Pinging : " & dest,white,truetomato,":",0,false,{})
-            printLnBiCol("Expected: " & pingc & " pings")
-            printLn("")
-            let p = startProcess(outp2,args=["-c",pingc,dest] , options={poParentStreams})
-            printLn($p.waitForExit(parseInt(pingc) * 1000 + 500),truetomato)
-            decho(2)
-            
+        else: 
+            if show == true:       
+               printLnBiCol("Pinging : " & dest,white,truetomato,":",0,false,{})
+               printLnBiCol("Expected: " & pingc & " pings")
+               printLn("")
+               let p = startProcess(outp2,args=["-c",pingc,dest] , options={poParentStreams})
+               printLn($p.waitForExit(parseInt(pingc) * 1000 + 500),truetomato)
+               decho(2)
+               
+        result = err   
             
 proc cxPortCheck*(cmd:string = "lsof -i") =
      ## cxPortCheck
@@ -378,7 +406,7 @@ proc showHosts*(dm:string) =
          printLn(x)
          
 
-proc wifistatus*() =
+proc wifiStatus*() =
     # experimental
     # runs nmcli wifi scanner if installed and shows found wifi connections
     # requires nmcli installed and wifi  interface available
@@ -389,6 +417,7 @@ proc wifistatus*() =
     if error > 0: echo error
 
 
+
 when isMainModule:
     echo()
     cxportCheck()
@@ -397,7 +426,14 @@ when isMainModule:
     echo()
     showLocalIpInfo()
     showWanIpInfo()
+    echo "WanIp2 : ",getWanIP2()
     echo()
+    echo()
+    cxprintln(0,white,darkslategraybg,cxpad("Wifi Scanner (password required) ",60))
+    if cxYesNo() == true: # function in cxglobal
+       echo()
+       wifiStatus()
+       echo()
     echo()
     
          

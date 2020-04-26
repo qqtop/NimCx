@@ -12,12 +12,12 @@ import nimcx
 
 proc cxZDialog*(title:string="cxZDialog",text:string="Demo Text",hideText:bool=false ):string =
    if hideText == false:
-      var zs = """zenity --entry --title="$1" --text="$2" --no-wrap""" % [title,text]
+      let zs = """zenity --entry --title="$1" --text="$2" """ % [title,text]
       var dialg = execCmdEx(zs)
       dialg.output.removeSuffix('\n')
       result = dialg.output
    else:
-      var zs = """zenity --entry --title="$1" --text="$2" --hide-text""" % [title,text]
+      let zs = """zenity --entry --title="$1" --text="$2" --hide-text""" % [title,text]
       var dialg = execCmdEx(zs)
       dialg.output.removeSuffix('\n')
       result = dialg.output
@@ -141,13 +141,17 @@ proc formExample():seq[string] =
     forms2.output.removeSuffix('\n')
     var fs = forms2.output.split(";")
     result = fs   
+    
+    
+    
 
 if isMainModule:
   # test var functions
   # simple entry dialog
-  echo cxZdialog("Secret","Enter a secret",true) 
+  var cxz  = cxZDialog("Secret1","Enter a secret",false)
+  var cxz1 = cxZDialog("Secret2","Enter a secret",true) 
   
-  echo cxZdialog("Hello","Say something nice today !")
+  echo cxZdialog("Hello","Say something nice today !",false)
     
   # name,password,date dialog
   var login = cxLoginDateDialog()

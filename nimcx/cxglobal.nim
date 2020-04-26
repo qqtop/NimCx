@@ -10,9 +10,9 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2020-03-30
+##     Latest      : 2020-04-24
 ##
-##     Compiler    : Nim >= 1.0.6 or 1.1.1 
+##     Compiler    : latest stable or devel branch
 ##
 ##     OS          : Linux
 ##
@@ -616,7 +616,6 @@ proc ff2Eu*(zzz: SomeNumber, n: int = 3):string =
      ##.. code-block:: nim
      ##    echo ff2Eu(1234567.123)
      ##
-     
      var z = ff2(zzz,n) 
      var zz = z.replace(",",".").splitty(".")
      if zz.len > 0:
@@ -624,7 +623,7 @@ proc ff2Eu*(zzz: SomeNumber, n: int = 3):string =
         result.removeSuffix(".")    
         result = result & "," & zz[zz.high]
      else:
-         result = z   
+        result = z   
 
 
 
@@ -703,7 +702,6 @@ proc seqRight*[T](it: seq[T], n: int): seq[T] =
           ## returns a new seq with n right end elements of the original seq
           ## 
           ## 
-
           try:
                result = it
                if n <= it.len: result = it[it.len - n..<it.len]
@@ -785,7 +783,7 @@ proc fmtEngine[T](a: string, astring: T): string =
                           echo()
                           raise
 
-          var alx = spaces(max(0, pad - okstring.len))
+          let alx = spaces(max(0, pad - okstring.len))
 
           case op
                     of "<": okstring = okstring & alx
@@ -931,7 +929,7 @@ template colPaletteName*(coltype: string, n: int): auto =
                 ts.add(colorNames[colx][0])
 
           # simple error handling to avoid indexerrors if n too large we try 0
-          # if this fails too something will error out
+          # if this fails too then something will error out
           var m = n
           if m > colPaletteLen(coltype): m = 0
           ts[m]
@@ -960,8 +958,10 @@ template paletix*(pl: string): untyped =
           ## 
           ##.. code-block:: nim
           ##   loopy2(1,10):
-          ##      printLn(cxpad(" Hello from NimCx !  " & $xloopy,25),paletix("pastel"),styled={styleReverse,styleItalic,styleBright})
-
+          ##      var s = " Hello from NimCx !  " & $xloopy
+          ##      centerpos(s) 
+          ##      printLn(cxpad(s,25),paletix("blue"),styled={styleReverse,styleItalic,styleBright})
+          ##   echo()
           colPalette(pl, getRndInt(0, colPaletteLen(pl) - 1))
 
 
@@ -1066,7 +1066,7 @@ proc splitty*(txt: string, sep: string): seq[string] =
           ##
           var rx = newSeq[string]()
           let z = txt.split(sep)
-          for xx in 0..<z.len:
+          for xx in 0 ..< z.len:
              if z[xx] != txt and z[xx] != "":
                  if xx < z.len-1:
                        rx.add(z[xx] & sep)
@@ -1080,6 +1080,8 @@ proc doFlag*[T](flagcol: string = yellowgreen,
                 text: T = "",
                 textcol: string = termwhite): string {.discardable.} =
           ## doFlag
+          ##
+          ## prints a little flag
           ## 
           ##.. code-block:: nim
           ##   import nimcx
@@ -1090,7 +1092,6 @@ proc doFlag*[T](flagcol: string = yellowgreen,
           ##   print("Hello :  " & doflag(red,6,"alert",truetomato) & spaces(1) & doflag(red,6), dodgerblue)
           ##   
           ##
-
           result = ""
           for x in 0..<flags: result = result & flagcol & fullflag
           result = result & spaces(1) & textcol & $text & white
@@ -1140,6 +1141,7 @@ template curSetx*(x: int) =
          ##
          ## mirrors terminal setCursorXPos
          setCursorXPos(stdout, x)
+
 
 template cxPos*(x): string = "\e[" & $(x + 1) & "G"
          ## cxPos
@@ -2283,13 +2285,14 @@ proc createRandomDataFile*(filename:string = "randomdata.dat") =
     ##           printLn($bc & rightarrow & spaces(3) & wrapwords(line.replace(" ",""),(tw - 5)),yellowgreen)
     ##    echo bc     
     ##
-    discard  execCmd("dd if=/dev/urandom of=$1 bs=1M count=1" % filename)
+    discard execCmd("dd if=/dev/urandom of=$1 bs=1M count=1" % filename)
       
                                     
 proc cxBinomialCoeff*(n, k:int): int =
     # cxBinomialCoeff
     # 
     # function returns BinomialCoefficient
+    # choose an (unordered) subset of k elements from a fixed set of n elements
     # 
     result = 1
     var kk = k
@@ -2438,10 +2441,10 @@ proc boxy*(w:int = 20, h:int = 5,fgr=randcol(),xpos:int=1) =
     ## 
     ## draws a box with width w , height h , color color at position xpos
     ## 
-    printLn(lefttop & linechar * w & righttop,fgr = fgr,xpos=xpos)
+    cxprintLn(xpos,fgr,lefttop & linechar * w & righttop)
     for x in 0..h:
-        printLn(vertlinechar & spaces(w) & vertlinechar,fgr = fgr,xpos=xpos)
-    printLn(leftbottom & linechar * w & rightbottom,fgr = fgr,xpos=xpos)
+        cxprintLn(xpos,fgr,vertlinechar & spaces(w) & vertlinechar)
+    cxprintLn(xpos,fgr,leftbottom & linechar * w & rightbottom)
  
     
 proc boxy2*(w:int = 20, h:int = 5,fgr=randcol(),xpos:int=1) =
@@ -2451,10 +2454,10 @@ proc boxy2*(w:int = 20, h:int = 5,fgr=randcol(),xpos:int=1) =
     ## 
     ## similar to boxy but with random color for each element rather than each box
     ## 
-    printLn(lefttop & linechar * w & righttop,fgr = randcol(),xpos=xpos)
+    cxprintLn(xpos,fgr,lefttop & linechar * w & righttop)
     for x in 0..h:
-        printLn(vertlinechar & spaces(w) & vertlinechar,fgr = randcol(),xpos=xpos)
-    printLn(leftbottom & linechar * w & rightbottom,fgr = randcol(),xpos=xpos)     
+        cxprintLn(xpos,randcol(),vertlinechar & spaces(w) & vertlinechar)
+    cxprintLn(xpos,randcol(),leftbottom & linechar * w & rightbottom)     
     
  
 proc spiralBoxy*(w:int = 20, h:int = 20,xpos:int = 1) =
@@ -2488,7 +2491,7 @@ proc spiralBoxy2*(w:int = 20, h:int = 20,xpos:int = 1) =
        
     
     
-proc showSeq*[T](z:seq[T],fgr:string = truetomato,cols = 6,maxitemwidth:int=5,displayflag : bool = true,indexstart = 0):string {.discardable.} = 
+proc showSeq*[T](z:seq[T],fgr:string = pastelgreen,cols = 6,maxitemwidth:int=5,displayflag : bool = true,indexstart = 0):string {.discardable.} = 
     ## showSeq
     ##
     ## simple table routine with default 6 cols for displaying various unicode sets
@@ -2678,6 +2681,7 @@ proc fullGcStats*(xpos:int = 2):int {.discardable.} =
            let agcls1 = agcls[1].split(":")
            cxprintln(xpos,agcls[0],cxpad(agcls1[0],20) & cxlpad(agcls1[1],15))
      result = gcsl.len  
+     
      
 proc memCheck*(stats:bool = false) =
       ## memCheck

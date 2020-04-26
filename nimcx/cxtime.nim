@@ -1,6 +1,26 @@
 import os,terminal,times,strutils,sequtils,random
 import cxconsts
 
+## ::
+## 
+##     Library     : nimcx.nim
+##     
+##     Module      : cxtime.nim
+##
+##     Status      : stable
+##
+##     License     : MIT opensource
+##   
+##     Latest      : 2020-04-24 
+##
+##     Compiler    : latest stable or devel branch
+##
+##     OS          : Linux
+##
+##     Description : provides most time related functions for the library
+##              
+## 
+
 
 {.hint: " \x1b[38;2;154;205;50m ╭──────────────────────── NIMCX ─────────────────────────────────────╮ " .}
     
@@ -13,17 +33,6 @@ import cxconsts
          
 {.hint: "\x1b[38;2;154;205;50m ╰──────────────────────── CXTIME ────────────────────────────────────╯ " .}
 
-
-
-# cxtime.nim
-# 
-# time/date related conevenience procs including printDTimeMsg etc.
-# 
-# some of it similar to stdlib functions or in different output format
-#
-# Last : 2019-12-06
-# 
-# 
 
 type
   cxTz* = enum
@@ -108,7 +117,7 @@ template loopy2(mi: int = 0, ma: int = 5, st: untyped) =
 template cxDateTime* : string = getDateStr() & " " & getClockStr()
      ## cxDateTime           
      ## 
-     ## restunrs a date time string
+     ## returns a date time string
      ## 
      ## eg : 2018-08-23 16:48:50
      ## 
@@ -628,18 +637,88 @@ proc cxHRTimer*(tstart:Time = getTime() ,tend:Time = getTime()):auto =
    ##
    ##
    result = initDuration(seconds=tend.toUnix(), nanoseconds=tend.nanosecond) - initDuration(seconds=tstart.toUnix(), nanoseconds=tstart.nanosecond)
-     
+
+    
+proc cxDayOfWeek*(datestr:string):string = 
+    ## cxDayOfWeek
+    ## 
+    ## returns day of week from a date in format yyyy-MM-dd
+    ## 
+    ##.. code-block:: nim    
+    ##    echo cxDayOfWeek(cxtoday())
+    ##    echo getNextMonday("2017-07-15"),"  ",cxDayOfWeek(getNextMonday("2017-07-15"))
+
+    if datestr.len==10:
+       result = $(getDayOfWeek(parseInt(day(datestr)),parseInt(month(datestr)).Month,parseInt(year(datestr))))      
+    else:
+       cxprintln(5,white,bgred,"Invalid date received . Required format is yyyy-MM-dd. --> cxUtils : cxDayOfWeek")
+       result=""
+       
+
+proc getNextMonday*(adate:string):string =
+    ## getNextMonday
+    ##
+    ##.. code-block:: nim
+    ##    echo  getNextMonday(getDateStr())
+    ##
+    ##
+    ##.. code-block:: nim
+    ##      import nimcx
+    ##      # get next 10 mondays
+    ##      var dw = getdatestr()
+    ##      echo dw
+    ##      for x in 1..10:
+    ##         dw = getnextmonday(dw)
+    ##         echo dw
+    ##         dw = plusDays(dw,1)
+    ##
+        
+    var ndatestr = ""
+    if adate == "" :
+        cxprintln(2,black,redbg,"Received an invalid date.")
+    else:
+        if validdate(adate) == true:
+            var z = cxdayofweek(adate)
+            if z == "Monday":
+                # so the datestr points to a monday we need to add a
+                # day to get the next one calculated
+                ndatestr = plusDays(adate,1)
+            ndatestr = adate
+            for x in 0..<7:
+                if validdate(ndatestr) == true:
+                    z =  cxDayOfWeek(ndatestr)
+                if strutils.strip(z) != "Monday":
+                    ndatestr = plusDays(ndatestr,1)
+                else:
+                    result = ndatestr
+  
+
+proc getAmzDateString*():string =
+    ## getAmzDateString
+    ## 
+    ## get current GMT date time in amazon format  
+    ## 
+    return format(utc(getTime()), iso_8601_aws) 
+    
+    
 when isMainModule:
-      let currenttime = getTime() 
-      cxprintLn(1,"cxLocal           : ",cxLocal)
-      cxprintLn(1,"cxNow             : ",cxNow)  
-      cxprintLn(1,"cxTime            : ",cxTime) 
-      cxprintLn(1,"cxToday           : ",cxToday)
-      cxprintLn(1,"cxTimeZone(long)  : ",cxTimezone(long))
-      cxprintLn(1,"cxTimeZone(short) : ",cxTimezone(short))
-      printLnDTimeMsg() 
-      cxprintLn(1,"Running Time      : ",$cxHRTimer(currenttime,getTime()))
-      echo()
+    echo()
+    cxprintLn(0,"Display some usage of cxtime functions")
+    let currenttime = getTime() 
+    cxprintLn(1,"cxLocal           : ",cxLocal)
+    cxprintLn(1,"cxNow             : ",cxNow)  
+    cxprintLn(1,"cxTime            : ",cxTime) 
+    cxprintLn(1,"cxToday           : ",cxToday)
+    cxprintLn(1,"cxTimeZone(long)  : ",cxTimezone(long))
+    cxprintLn(1,"cxTimeZone(short) : ",cxTimezone(short))
+    printLnDTimeMsg() 
+    cxprintLn(1,"Date in 20 days   : ",plusDays(cxtoday(),20),yellowgreen)
+    cxprintLn(1,"Date 20 days ago  : ",minusDays(cxtoday(),20),yellowgreen)
+    assert plusDays(minusDays(cxtoday(),20),20) == cxtoday() 
+    cxprintLn(1,"Running Time      : ",$cxHRTimer(currenttime,getTime()))
+    cxprintLn(1,"Next Monday       : ",getNextMonday(cxtoday())," = ",cxDayOfWeek(getNextMonday(cxtoday())))
+    echo()
+      
 
       
 # end of module cxtime.nim   

@@ -1,5 +1,3 @@
-
-
 {.deadCodeElim: on , optimization: speed.}
 
 ##     Library     : nimcx.nim
@@ -14,9 +12,9 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2019-09-29
+##     Latest      : 2020-04-24
 ##
-##     Compiler    : Nim >= 1.0.0 
+##     Compiler    : latest stable or devel branch
 ##
 ##     OS          : Linux
 ##
