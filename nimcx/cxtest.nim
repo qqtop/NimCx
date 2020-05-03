@@ -327,12 +327,13 @@ cxprintln(0,trueblue,bgwhite," Yes ! ",
             
 nexttest()
 showCpuInfo()
+
 nexttest()
 showHostNameCtl()
 
-superheader("Ok , that's it for now ! Have a nice day .",skyblue,lightslategray)
-
 nexttest()
 colorio()
+
+superheader("Ok , that's it for now ! Have a nice day .",skyblue,lightslategray)
 
 doFinish()
