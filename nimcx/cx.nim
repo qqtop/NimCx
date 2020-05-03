@@ -22,7 +22,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2020-04-26
+##     Latest      : 2020-05-01
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -427,10 +427,8 @@ template repeats(count: int, statements: untyped) =
 template benchmark*(benchmarkName: string, repeatcount: int = 1, code: typed) =
         ## benchmark
         ## 
-        ## a quick benchmark template showing cpu and epoch times with repeat looping param
-        ## suitable for quick in-program timing of procs 
-        ## for in depth benchmarking use the nimbench module available via nimble
-        ## 
+        ## a quick benchmark template showing cpu and epoch times with
+        ## repeat looping param suitable for quick in-program timing of procs 
         ## 
         ##.. code-block:: nim
         ##    benchmark("whatever",1000):
@@ -493,23 +491,21 @@ template benchmark*(benchmarkName: string, code: typed) =
         ##.. code-block:: nim
         ##
         ##   proc doit() =
-        ##      var s = createSeqFloat(10,9)
-        ##      var c = 0
-        ##      s.sort(system.cmp,order = Descending)
-        ##      for x in s:
-        ##           inc c 
-        ##           printLnBiCol(fmtx([">4","<6","<f15.7"],$c," :",$x))
+        ##        var s = createSeqFloat(10,9)
+        ##        var cc = newCxCounter()
+        ##        s.sort(system.cmp,order = Descending)
+        ##        for x in s:
+        ##            cc.add 
+        ##            cxprintLn(0,fmtx(["",">4","<6","","<f15.7"],yellowgreen,cc.value," :",beige,$x))
         ##
-        ##    benchmark("doit"):
-        ##      for x in 0.. 100:
-        ##          doit()
-        ##          hline(30)
-        ##          printLn(" " & $x,randcol())
-        ##          echo()
-        ##          
+        ##    var bx = newCxCounter()
+        ##    benchmark("doit",10000):
+        ##            doit()
+        ##            bx.add
+        ##            cxprintLn(3,fmtx(["","","","",">8"],greenyellow, " " , uparrow , " Run " , bx.value))
+        ##            echo()
         ##    showBench() 
-        ##    
-        
+       
         var zbres: Benchmarkres
         let t0 = epochTime()
         let t1 = cpuTime()
@@ -537,60 +533,76 @@ proc showBench*() =
         var epochsize = 0
         var cpusize = 0
         var repeatsize = 0
+        var minepoch = 1000000000.000000000
 
         if benchmarkresults.len == 0:
-            printLn("Benchmark results emtpy. Nothing to show", red)
-        else:    
+              cxprintLn(0,red,"Benchmark results emtpy. Nothing to show")
+        else:  
+            
+          # lets find shortest time of all results to compare % wise
+          for x in benchmarkresults:
+              if  parseFloat(x.epoch) < minepoch:
+                  minepoch =  parseFloat(x.epoch) 
+              
           for x in benchmarkresults:
               var aa11 = spaces(1) & dodgerblue & "[" & salmon & x.bname & dodgerblue & "]"
               if len(aa11) > bnamesize: bnamesize = len(aa11)
               if bnamesize < 13: bnamesize = 13
               if len(x.epoch) > epochsize: epochsize = len(x.epoch) - bnamesize + 50
               if len(x.cpu) > cpusize: cpusize = len(x.cpu) + 26
-              if len(x.repeats) > repeatsize: repeatsize = len(x.repeats)
-                         
+              if len(x.repeats) > repeatsize: repeatsize = len(x.repeats)                        
+          
             
           for x in benchmarkresults:
-                    echo()
-                 
-                    let tit = fmtx(["", "<$1" % $(bnamesize - len(gold) * 3), "", "<28", "<55"], spaces(2),
-                                "BenchMark", spaces(4), "Timing", "Cycles : $1" % x.repeats)
+              echo()
+              let tit = fmtx(["", "<$1" % $(bnamesize - len(gold) * 3), "", "<28", "<45",">10"], spaces(2),
+                        "BenchMark", spaces(4), "Timing", "Cycles : $1" % x.repeats,"NimCx ")
 
 
-                    if parseInt(x.repeats) > 0:
-                            printLn(tit, skyblue,darkslategraybg, styled = {styleUnderScore})
-                            echo()
-                    else:
-                            printLn(tit, red, styled = {styleUnderScore})
+              if parseInt(x.repeats) > 0:
+                 cxprintLn(0,skyblue,darkslategraybg,styleUnderScore,tit)
+                 echo()
+              else:
+                 cxprintLn(0, red, styleUnderScore,tit)
 
-                    let aa1 = spaces(1) & gold & "[" & salmon & x.bname & gold & "]"
-                    let bb1 = cornflowerblue & "Epoch Time : " & oldlace & x.epoch & " secs"
-                    let cc1 = cornflowerblue & "Cpu Time   : " & oldlace & x.cpu & " secs"
-                    let cgt = cornflowerblue & "Get Time   : " & oldlace & x.gett 
-                    var dd1 = ""
-                    var ee1 = ""
+              let aa1 = spaces(1) & gold & "[" & salmon & x.bname & gold & "]"
+              let bb1 = cornflowerblue & "Epoch Time : " & oldlace & x.epoch & " secs"
+              let cc1 = cornflowerblue & "Cpu Time   : " & oldlace & x.cpu & " secs"
+              let cgt = cornflowerblue & "Get Time   : " & oldlace & x.gett 
+              var dd1 = ""
+              var ee1 = ""
 
-                    if parseFloat(x.epoch) > 0.00:
-                            dd1 = "Cycles/sec : " & ff2(parsefloat(x.repeats)/parsefloat(x.epoch))
-                    else:
-                            dd1 = "Cycles/sec : Inf"
+              if parseFloat(x.epoch) > 0.00:
+                 dd1 = "Cycles/sec : " & ff2(parsefloat(x.repeats)/parsefloat(x.epoch))
+              else:
+                 dd1 = "Cycles/sec : Inf"
+                 dd1 = strutils.strip(dd1)
+                    
+              if parseFloat(x.cpu) > 0.00:
+                 ee1 = "Cycles/sec : " & ff2(parsefloat(x.repeats)/parsefloat(x.cpu))
+              else:
+                 ee1 = "Cycles/sec : Inf"
+                 ee1 = strutils.strip(ee1)        
+                            
+              
+              cxprint(1,fmtx(["<$1" % $bnamesize, "", "<70", "<90"],aa1, spaces(3), bb1,dd1))
+              cxprintLn(1,fmtx(["<$1" % $bnamesize, "", "<70", "<50"],aa1, spaces(3), cc1, ee1))
+              cxprintLn(1,fmtx(["<$1" % $bnamesize, "", ""],aa1, spaces(3), cgt)) 
+                            
+              if dd1.contains("Inf") or ee1.contains("Inf"):
+                 cxprintLn(2,goldenrod,darkslategraybg,"Inf - To measure something increase the loop count.")
 
-                    if parseFloat(x.cpu) > 0.00:
-                            ee1 = "Cycles/sec : " & ff2(parsefloat(x.repeats)/parsefloat(x.cpu))
-                    else:
-                            ee1 = "Cycles/sec : Inf"
-
-                    printLn(fmtx(["<$1" % $bnamesize, "", "<70", "<90"],aa1, spaces(3), bb1,dd1))
-                    printLn(fmtx(["<$1" % $bnamesize, "", "<70", "<50"],aa1, spaces(3), cc1, ee1))
-                    printLn(fmtx(["<$1" % $bnamesize, "", ""],aa1, spaces(3), cgt)) 
-
-                    if dd1.contains("Inf") or ee1.contains("Inf"):
-                        cxprintLn(2,yaleblue,limegreenbg,"Inf - To measure something increase the loop count.")
-
+              else:
+               
+                 var pctdiff = (parsefloat(x.epoch) - minepoch) / minepoch * 100.00
+                 if pctdiff > 0.00:
+                     cxprintLn(1,fmtx(["<$1" % $bnamesize, "", ""],aa1, spaces(3), "Delta Time :" & spaces(1) & ff2(pctdiff,5) & & " % slower")) 
+                 else:
+                     cxprintLn(1,fmtx(["<$1" % $bnamesize, "", ""],aa1, spaces(3), "Delta Time :" & spaces(1) & ff2(pctdiff,5) & " % fastest")) 
         echo()
         benchmarkresults = @[]
-        printLn("Benchmark finished. Results cleared.", goldenrod)
-       
+        cxprintLn(2,goldenrod,"Benchmark finished. Results cleared.")
+        echo()
 
 
 proc showPalette*(coltype:string = "white" ) =
@@ -617,24 +629,26 @@ proc colorio*() =
     ## 
     ## Displays name,hex code and rgb of colors available in cx.nim
     ##
-    printLn(fmtx(["<20", "", "<20", "", ">5", "", ">5", "", ">5"],
+    cxprintLn(0,gold,truebluebg,fmtx(["<20", "", "<20", "", ">5", "", ">5", "", ">6"],
                     "ColorName in cx", spaces(2), "HEX Code", spaces(2),
-                    "R", spaces(1), "G", spaces(1), "B"), zippi)
+                    "R", spaces(1), "G", spaces(1), "B"))
     echo()
     for x in 0 ..< colorNames.len:
             try:
                     let zr = extractRgb(parsecolor(colorNames[x][0]))
-                    printLn(fmtx(["<20", "", "<20", "", ">5", "", ">5",
-                                    "", ">5"], colorNames[x][0], spaces(2), $(
-                                    parsecolor(colorNames[x][0])), spaces(
-                                    2), zr[0], spaces(1), zr[1], spaces(1),
-                                    zr[2]), fgr = colorNames[x][1])
+                    cxprintLn(1,colorNames[x][1],fmtx(["<20", "", "<20", "", ">5", "", ">5",
+                              "", ">5"], colorNames[x][0], spaces(2), $(
+                              parsecolor(colorNames[x][0])), spaces(2),
+                              zr[0], spaces(1), zr[1], spaces(1),zr[2]))
             except ValueError:
-                    printLn(fmtx(["<20", "", "<20"], colorNames[x][0],
-                                    spaces(2), "NIMCX CUSTOM COLOR "),
-                                    fgr = colorNames[x][1])
-
-
+                    cxprintLn(1,colorNames[x][1],fmtx(["<20", "", "<20",""], colorNames[x][0],
+                              spaces(2), "NIMCX CUSTOM COLOR " ,spaces(19)))
+    echo()
+    hlineLn(42,xpos=1)
+    cxprintLn(1,gold,darkslategraybg,"Colorio   -   A NimCx color view utility  ")
+    echo()
+    
+    
 # spellInteger
 proc nonzero(c: string, n: int64, connect = ""): string =
         # used by spellInteger
@@ -1226,12 +1240,11 @@ proc doByeBye*(xpos:int = 1) =
      ## doByeBye
      ##
      ## a simple end program routine do give some feedback when exiting
-     decho()
-     hlineLn(40)
+     #decho()
+     #hlineLn(40)
      rmTmpFilenames()
-     printLn(pastelBlue & extractFileName(getAppFilename()) & " " &
-             pastelgreen & ff2(epochtime() - cxstart) & " secs " & gold &
-             " Bye-Bye "  , gold,xpos = xpos)
+     cxprintLn(xpos,pastelBlue ,extractFileName(getAppFilename())," ",
+             pastelgreen,ff2(epochtime() - cxstart) ," secs ",gold ," Bye-Bye " )
      system.addQuitProc(resetAttributes)
      echo()
      quit(0)        

@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2020-04-24
+##     Latest      : 2020-04-28
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -162,7 +162,9 @@ proc newLine*(n: int = 1): string =
 proc cxtoLower*(c: char): char =
           ## cxtoLower
           ## 
-          ## same as toLowerAscii()
+          ## will be deprecated soon
+          ##
+          ## use toLowerAscii()
           ##
           result = c
           if c in {'A'..'Z'}: result = chr(ord(c) + (ord('a') - ord('A')))
@@ -277,20 +279,7 @@ func cxLpadN*(s: SomeNumber, padlen: int, paddy: string = "0"): string =
               result = (paddy * (max(0, padlen - result.len - 1))) & result
               result = "-" & result
 
-              
-
-#proc waitOn*(alen: int = 1) =
-           # waiton
-           # 
-           # stops program to wait for one or more keypresses. default = 1
-           # currently fails with --gc:arc
-           # to not compile this proc when --gc:arc is defined compile like so
-           # nim c # --gc:arc myprog.nim 
-           #when not defined(arc):
-           #   discard stdin.readBuffer(cast[pointer](newString(1)), alen)
-           
-             
-
+   
 proc rndSample*[T](asq: seq[T]): T =
           ## rndSample  
           ## returns one rand sample from a sequence

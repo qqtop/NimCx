@@ -104,7 +104,16 @@ proc cxZColorSelector*():string =
     var colo = execCmdEx("""zenity --color-selection --show-palette""")
     result = colo.output
 
-
+proc cxZIPort*():tuple[ip:string,port:string] =
+   var multicast = execCmdEx("""zenity --forms --title="Add Friend" --text="Enter Multicast address" --separator="," --add-entry="IP address" --add-entry="PORT" """)
+   if multicast.exitcode == 0:
+      multicast.output.removeSuffix('\n')
+      var mcs = multicast.output.split(",") 
+      result.ip = mcs[0]
+      result.port = mcs[1]
+   else:
+      discard
+   
 # Below WIP
 proc cxZCheckbox*():string = 
     ## with checkbox
@@ -149,43 +158,52 @@ if isMainModule:
   # test var functions
   # simple entry dialog
   var cxz  = cxZDialog("Secret1","Enter a secret",false)
-  var cxz1 = cxZDialog("Secret2","Enter a secret",true) 
+  echo cxz
+  #var cxz1 = cxZDialog("Secret2","Enter a secret",true) 
   
-  echo cxZdialog("Hello","Say something nice today !",false)
+  #echo cxZdialog("Hello","Say something nice today !",false)
     
   # name,password,date dialog
-  var login = cxLoginDateDialog()
-  echo "Name : ",login.name 
-  echo "Pwd  : ",login.password
-  echo "Date : ",login.date
+  #var login = cxLoginDateDialog()
+  #echo "Name : ",login.name 
+  #echo "Pwd  : ",login.password
+  #echo "Date : ",login.date
   
   
-  var login1 = cxLoginDialog()
-  echo "Name : ",login1.name 
-  echo "Pwd  : ",login1.password
+  #var login1 = cxLoginDialog()
+  #echo "Name : ",login1.name 
+  #echo "Pwd  : ",login1.password
   
   # small pop ups  
-  cxZinfo()
-  cxZinfo("Howdy, You made it")
+  #cxZinfo()
+  #cxZinfo("Howdy, You made it")
   
-  cxZWarn()
-  cxZWarn("Be more careful")
+  #cxZWarn()
+  #cxZWarn("Be more careful")
   
-  cxZError()
-  cxZError("Error B202, execution halted !")
+  #cxZError()
+  #cxZError("Error B202, execution halted !")
 
   # questions
-  echo cxZQuestion(cancel="Bad",ok="Good")
-  echo cxZQuestion("What's up","Nothing","Everything")
+  #echo cxZQuestion(cancel="Bad",ok="Good")
+  #echo cxZQuestion("What's up","Nothing","Everything")
 
   # formsExample like use for a database input etc
   #echo formExample()
 
   # display a file editable in a textbox
-  echo cxZDisplayFile("//home/lxuser/Sync/dbprivate/notes.txt")
+  #echo cxZDisplayFile("//home/lxuser/Sync/dbprivate/notes.txt")
 
-  echo cxZScale()
-  echo cxZScale(text="cxScale Test",value=100,min=0,max=1000,step=50)
+  #echo cxZScale()
+  #echo cxZScale(text="cxScale Test",value=100,min=0,max=1000,step=50)
+    
+  #let cip = cxZIPort()
+  #echo "Ip  : ",cip.ip
+  #echo "Port: ",cip.port
+  
+  
+  
+  #echo cxZDisplayFile(tmpFilename())
   
   # still WIP
   #echo cxZCheckbox()

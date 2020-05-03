@@ -904,6 +904,7 @@ macro pdebug*(n: varargs[typed]): untyped =
 
 
 if isMainModule:
+    
     cxprintLn(10,yellowgreen,"This is cxprint", red,".nim")
     printLn(CRLF)
     for x in 0..<10:print SP
