@@ -1,8 +1,9 @@
 # cxtest.nim
-# rough and ready testing of some of available functions in nimcx library
+#
+# very rough and ready testing of some of available functions in nimcx library
 # see docs for more examples 
 #
-# Latest      : 2020-02-29   
+# Latest      : 2020-05-03   
  
 import nimcx
 
@@ -331,7 +332,7 @@ showHostNameCtl()
 
 superheader("Ok , that's it for now ! Have a nice day .",skyblue,lightslategray)
 
-# another way to call nim  procs
-#"Ok , that's it for now ! Have a nice day .".superHeader(skyblue,lightslategray)
+nexttest()
+colorio()
 
 doFinish()

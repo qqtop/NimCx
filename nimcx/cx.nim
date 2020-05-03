@@ -641,10 +641,13 @@ proc colorio*() =
                               parsecolor(colorNames[x][0])), spaces(2),
                               zr[0], spaces(1), zr[1], spaces(1),zr[2]))
             except ValueError:
-                    cxprintLn(1,colorNames[x][1],fmtx(["<20", "", "<20",""], colorNames[x][0],
-                              spaces(2), "NIMCX CUSTOM COLOR " ,spaces(19)))
+                    if colorNames[x][0].endswith("bg"):
+                        cxprintLn(1,colorNames[x][1],fmtx(["<20", "", "<20",""], colorNames[x][0],
+                        spaces(2), "NIMCX BACKGROUND COLOR " ,spaces(19)))
+                    else:    
+                        cxprintLn(1,colorNames[x][1],fmtx(["<20", "", "<20",""], colorNames[x][0],
+                        spaces(2), "NIMCX CUSTOM COLOR " ,spaces(19)))
     echo()
-    hlineLn(42,xpos=1)
     cxprintLn(1,gold,darkslategraybg,"Colorio   -   A NimCx color view utility  ")
     echo()
     
