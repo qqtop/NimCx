@@ -655,7 +655,7 @@ proc colorio*() =
 # spellInteger
 proc nonzero(c: string, n: int64, connect = ""): string =
         # used by spellInteger
-        if n == 0: "" else: connect & c & spellInteger(n)
+        if n == 0: "" else: connect & c & spellInteger(n)        
 
 proc lastAnd[T](num: T): string =
         # used by spellInteger

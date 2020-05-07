@@ -31,7 +31,7 @@ Shades of rgb grey
 
 
 
-Requires     : Nim 1.0 up 
+Requires     : Nim 1.3.1 up 
 
 Installation : 
 

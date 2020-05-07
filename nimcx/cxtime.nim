@@ -11,7 +11,7 @@ import cxconsts
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2020-04-24 
+##     Latest      : 2020-05-06 
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -158,46 +158,46 @@ proc cxTimeZone*(amode:cxTz = long):string =
          
      
      
-proc toDateTime*(date:string = "2000-01-01"): DateTime =
-   ## toDateTime
+#proc toDateTime*(date:string = "2000-01-01"): DateTime =
+   ## toDateTime   epochSecs  deprecated since nim 1.3.1 due to chanes in times.nim
    ## 
    ## converts a date of format yyyy-mm-dd to DateTime
    ## time part still to be implemented
    ## 
-   result = now() # needs to be initialized or we get a warning during compile
-   var adate = date.split("-")
-   var zyear = parseint(adate[0])
-   var enzmonth = parseint(adate[1])
-   var zmonth : Month
-   case enzmonth 
-      of   1: zmonth = mJan
-      of   2: zmonth = mFeb
-      of   3: zmonth = mMar
-      of   4: zmonth = mApr
-      of   5: zmonth = mMay
-      of   6: zmonth = mJun
-      of   7: zmonth = mJul 
-      of   8: zmonth = mAug 
-      of   9: zmonth = mSep 
-      of  10: zmonth = mOct 
-      of  11: zmonth = mNov 
-      of  12: zmonth = mDec 
-      else:
-         cxprintln(1,red,styleReverse,"Wrong Month in : ",yellowgreen,adate[1])
-         quit(0)
+#   result = now() # needs to be initialized or we get a warning during compile
+#   var adate = date.split("-")
+#   var zyear = parseint(adate[0])
+#   var enzmonth = parseint(adate[1])
+#   var zmonth : Month
+#   case enzmonth 
+#      of   1: zmonth = mJan
+#      of   2: zmonth = mFeb
+#      of   3: zmonth = mMar
+#     of   4: zmonth = mApr
+#      of   5: zmonth = mMay
+#      of   6: zmonth = mJun
+#      of   7: zmonth = mJul 
+#      of   8: zmonth = mAug 
+#      of   9: zmonth = mSep 
+#      of  10: zmonth = mOct 
+#      of  11: zmonth = mNov 
+#      of  12: zmonth = mDec 
+#      else:
+#         cxprintln(1,red,styleReverse,"Wrong Month in : ",yellowgreen,adate[1])
+#         quit(0)
    
-   let zday = parseint(adate[2])
-   result.year = zyear
-   result.month = zmonth
-   result.monthday = zday
+#   let zday = parseint(adate[2])
+#   result.year = zyear
+#   result.month = zmonth
+#   result.monthday = zday
      
    
-proc epochSecs*(date:string="2000-01-01"):auto =
-   ## epochSecs
+#proc epochSecs*(date:string="2000-01-01"):auto =
+   ## epochSecs  deprecated since nim 1.3.1 due to chanes in times.nim
    ##
    ## converts a date into secs since unix time 0
    ##
-   result  =  toUnix(toTime(toDateTime(date)))
+#   result  =  toUnix(toTime(toDateTime(date)))
    
 proc sleepy*[T:float|int](secs:T) =
   ## sleepy
@@ -706,17 +706,18 @@ when isMainModule:
     cxprintLn(0,"Display some usage of cxtime functions")
     let currenttime = getTime() 
     cxprintLn(1,"cxLocal           : ",cxLocal)
-    cxprintLn(1,"cxNow             : ",cxNow)  
+    cxprintLn(1,"cxNow             : ",cxNow) 
+    cxprintLn(1,"DST Time          : ",$isDst(now()))
     cxprintLn(1,"cxTime            : ",cxTime) 
     cxprintLn(1,"cxToday           : ",cxToday)
     cxprintLn(1,"cxTimeZone(long)  : ",cxTimezone(long))
     cxprintLn(1,"cxTimeZone(short) : ",cxTimezone(short))
-    printLnDTimeMsg() 
     cxprintLn(1,"Date in 20 days   : ",plusDays(cxtoday(),20),yellowgreen)
     cxprintLn(1,"Date 20 days ago  : ",minusDays(cxtoday(),20),yellowgreen)
     assert plusDays(minusDays(cxtoday(),20),20) == cxtoday() 
     cxprintLn(1,"Running Time      : ",$cxHRTimer(currenttime,getTime()))
     cxprintLn(1,"Next Monday       : ",getNextMonday(cxtoday())," = ",cxDayOfWeek(getNextMonday(cxtoday())))
+    printLnDTimeMsg()  # datetime message
     echo()
       
 
