@@ -18,11 +18,11 @@
 ##     
 ##     License     : MIT opensource
 ##
-##     Version     : 1.0.0
+##     Version     : 1.0.7
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2020-05-01
+##     Latest      : 2020-05-14
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -177,7 +177,7 @@ export unicode except strip, split, splitWhitespace
 # nim c --threads:on -d:ssl --gc:arc -r cx
 
 
-const CXLIBVERSION* = "1.0.0"
+const CXLIBVERSION* = "1.0.7"
 discard setLocale(LC_ALL, "") # init utf8 
 
 when defined(macosx):
@@ -663,7 +663,7 @@ proc lastAnd[T](num: T): string =
         if "," in num:
                 let pos = num.rfind(",")
                 var (pre, last) =
-                        if pos >= 0: (num[0 .. pos-1], num[pos+1 .. num.high])
+                        if pos >= 0: (num[0 .. pos - 1], num[pos + 1 .. num.high])
                         else: ("", num)
                 if " and " notin last:
                         last = " and" & last

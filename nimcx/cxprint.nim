@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2020-04-24 
+##     Latest      : 2020-05-14 
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -675,7 +675,6 @@ proc printCxLine*(aline:var Cxline) =
      ## with or without brackets around the text as specified in an Cxline object
      ## the underlaying CxLine object is still further developed.
      ## cxline object is defined in cxglobal.nim
-     ## see cxlineobjectE1.nim for an example
      ## 
      
      case aline.linetype 
@@ -761,8 +760,8 @@ proc doty*(d   :int,
      cxprint(xpos,fgr,bgr,astr)
 
 
-proc dotyLn*(d    :int,
-             fgr  :string = white,
+proc dotyLn*(dots :int,
+             fgr  :string = termwhite,
              bgr  :string = black, 
              xpos :int = 1) = 
      ## dotyLn
@@ -774,10 +773,9 @@ proc dotyLn*(d    :int,
      ## each dot is of char length 4
      ##.. code-block:: nim
      ##      import nimcx
-     ##      dotyLn(18 ,salmon,white,10)
-     ##      loopy(0.. 100,loopy(1 .. tw div 2, doty(1,randcol(),rndcol(),xpos = rand(tw - 1))))
+     ##      dotyLn(18,red,limebg,10)
      ##
-     doty(d=d,fgr=fgr,bgr=bgr,xpos=xpos)
+     doty(d=dots,fgr=fgr,bgr=bgr,xpos=xpos)
      writeLine(stdout,"")
 
        

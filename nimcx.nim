@@ -6,22 +6,23 @@
 ##
 ##     License     : MIT opensource
 ##
-##     Version     : 1.0.0
+##     Version     : 1.0.7
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2020-03-30
+##     Latest      : 2020-05-14
 ##
-##     Compiler    : Nim >= 1.0.6  or 1.1.1 devel branch
+##     Compiler    : latest stable or devel branch
 ##
-##     Description : Utiliy functions for the linux terminal
+##     Description : Utility functions for the linux terminal
 ##
 import nimcx/cx
 # uncomment if you want to play with cxfonts
-# note that best results will be with konsole other terminals may
-# or may not display all colors
 #import nimcx/cxfontconsts
 #import nimcx/cxfont
+
+# note that best results will be with konsole other terminals may
+# or may not display all colors
 
 export cx
 

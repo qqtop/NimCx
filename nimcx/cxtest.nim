@@ -3,7 +3,7 @@
 # very rough and ready testing of some of available functions in nimcx library
 # see docs for more examples 
 #
-# Latest      : 2020-05-03   
+# Latest      : 2020-05-14   
  
 import nimcx
 
@@ -222,6 +222,25 @@ proc doNimUp*(xpos = 5, rev:bool = true) =
 
 doNimUp()     
 
+nexttest()
+# dots
+
+decho(5)
+curoff()
+for x in 0 .. 10:
+  for y in 0 .. 10:  
+     var l = y - 1 
+     doty(y,rndcol(),randcol(),xpos = 15 + 3*l)
+     var m = y - 1
+     doty(y,rndcol(),randcol(),xpos = 55 - m)
+     sleepy(0.01)
+     var n = y - 1
+     doty(y,rndcol(),randcol(),xpos = 90 - 3*n)
+     echo() 
+  curup(11)
+cxprintLn(57,gold,lightslategraybg,"NIMCX")  
+decho(14)  
+curon() 
 
 # ruler demo
 nexttest()

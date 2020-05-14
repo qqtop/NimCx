@@ -12,7 +12,7 @@ import strutils,terminal,sets
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2020-04-24 
+##     Latest      : 2020-05-14 
 ##
 ##     Compiler    : latest stable or devel branch
 ##

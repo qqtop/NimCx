@@ -159,7 +159,7 @@ proc cxTimeZone*(amode:cxTz = long):string =
      
      
 #proc toDateTime*(date:string = "2000-01-01"): DateTime =
-   ## toDateTime   epochSecs  deprecated since nim 1.3.1 due to chanes in times.nim
+   ## toDateTime   epochSecs  deprecated since nim 1.3.1 due to changes in times.nim
    ## 
    ## converts a date of format yyyy-mm-dd to DateTime
    ## time part still to be implemented
@@ -173,7 +173,7 @@ proc cxTimeZone*(amode:cxTz = long):string =
 #      of   1: zmonth = mJan
 #      of   2: zmonth = mFeb
 #      of   3: zmonth = mMar
-#     of   4: zmonth = mApr
+#      of   4: zmonth = mApr
 #      of   5: zmonth = mMay
 #      of   6: zmonth = mJun
 #      of   7: zmonth = mJul 

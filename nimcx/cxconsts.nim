@@ -8,11 +8,11 @@
 ##
 ##     License     : MIT opensource
 ##
-##     Version     : 1.0.0
+##     Version     : 1.0.7
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2020-04-24
+##     Latest      : 2020-05-14
 ##
 ##     Compiler    : latest stable or devel branch
 ##

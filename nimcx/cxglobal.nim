@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2020-04-28
+##     Latest      : 2020-05-14
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -1234,12 +1234,10 @@ template loopy2*(mi: int = 0, ma: int = 5, st: untyped) =
          ## if called without parameters xloopy will not be injected .
          ## 
          ##.. code-block:: nim
-         ##   loopy2(1,10):
-         ##     block:
-         ##        printLnBiCol(xloopy , "  The house is in the back.",randcol(),randcol(),":",0,false,{})
-         ##        printLn("Some integer : " & $getRndInt())
+         ##      # create 10 random passwords and show the index on left
+         ##      loopy2(1,10,printLnBiCol(fmtx([">3","","",],xloopy,": ",quickPw())))
          ##
-         for xloopy {.inject.} in mi ..< ma: st
+         for xloopy {.inject.} in mi .. ma: st
 
 
 proc fromCString*(p: pointer, len: int): string =
@@ -2547,7 +2545,6 @@ proc showSeq*[T](z:seq[T],fgr:string = pastelgreen,cols = 6,maxitemwidth:int=5,d
       cxprintLn(3,limegreen,darkslategraybg," Item Count : ",cxpad($z.len,msg1.len)) 
       decho()          
  
-
        
 proc seqHighLite*[T](b:seq[T],b1:seq[T],col:string=gold) =
    ## seqHighLite
@@ -2649,8 +2646,7 @@ proc checkMem*(xpos:int=2) =
        ## 
        ## reads meminfo to give memory status for memtotal,memfree and memavailable
        ## maybe usefull during debugging of a function to see how memory is consumed 
-       ## 
-       
+       ##       
        var seqline = newSeq[string]()
        let n = "MemAvailable ".len
        withFile(f,"/proc/meminfo",fmRead):
@@ -2765,6 +2761,7 @@ proc genMacAddress*(): string =
    let m = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"]
    [sample(m) & sample(m), sample(m) & sample(m), sample(m) & sample(m),sample(m) & sample(m), sample(m) & sample(m), sample(m) & sample(m)].join(":")
 
+
 proc quickPw*():string =   
    ## quickPw
    ## 
@@ -2851,7 +2848,7 @@ when isMainModule:
     echo "Test   : GeoShapes"
     showSeq(createSeqGeoshapes(),randcol())
     showHostNameCtl()
-    echo "Test ended"
     decho(2)
-     
+    cxprintln(3,goldenrod,"cxglobal.nim - a part of nimcx library")
+    decho(2) 
 # END OF CXGLOBAL.NIM #

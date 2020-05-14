@@ -9,11 +9,14 @@ import hashes,strutils,rdstdin
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2020-04-24 
+##     Latest      : 2020-05-14 
 ##
 ##     Compiler    : latest stable or devel branch
 ##
 ##     OS          : Linux
+##
+##     Note        : for more on hashes see
+##                   https://github.com/c-blake/adix/blob/master/althash.nim
 ##
 ##     Description : provides convenience functions for hashes 
 ##              
