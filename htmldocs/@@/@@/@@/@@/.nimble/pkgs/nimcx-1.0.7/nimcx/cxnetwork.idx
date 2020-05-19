@@ -1,0 +1,18 @@
+parseIps	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxnetwork.html#parseIps.i,string	cxnetwork: parseIps(soup: string): string	
+getIpInfo	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxnetwork.html#getIpInfo,string	cxnetwork: getIpInfo(ip: string): JsonNode	
+getWanIP	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxnetwork.html#getWanIP	cxnetwork: getWanIP(): string	
+getWanIp2	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxnetwork.html#getWanIp2	cxnetwork: getWanIp2(): string	
+showIpInfo	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxnetwork.html#showIpInfo,string	cxnetwork: showIpInfo(ip: string)	
+localIp	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxnetwork.html#localIp	cxnetwork: localIp(): seq[string]	
+localRouterIp	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxnetwork.html#localRouterIp	cxnetwork: localRouterIp(): string	
+showLocalIpInfo	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxnetwork.html#showLocalIpInfo	cxnetwork: showLocalIpInfo()	
+showWanIpInfo	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxnetwork.html#showWanIpInfo	cxnetwork: showWanIpInfo()	
+pingy	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxnetwork.html#pingy,string,int,string,bool	cxnetwork: pingy(dest: string; pingcc: int = 3; col: string = termwhite; show: bool = true): int	
+cxPortCheck	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxnetwork.html#cxPortCheck,string	cxnetwork: cxPortCheck(cmd: string = &quot;lsof -i&quot;)	
+cxDig	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxnetwork.html#cxDig,string	cxnetwork: cxDig(ipadd: string): tuple	
+cxDns	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxnetwork.html#cxDns,string	cxnetwork: cxDns(dns: string): tuple	
+showDig	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxnetwork.html#showDig,string	cxnetwork: showDig(hostip: string = $&quot;172.217.5.14&quot;)	
+showDns	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxnetwork.html#showDns,string	cxnetwork: showDns(hostdns: string = &quot;google.com&quot;)	
+getHosts	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxnetwork.html#getHosts,string	cxnetwork: getHosts(dm: string): seq[string]	
+showHosts	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxnetwork.html#showHosts,string	cxnetwork: showHosts(dm: string)	
+wifiStatus	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxnetwork.html#wifiStatus	cxnetwork: wifiStatus()	

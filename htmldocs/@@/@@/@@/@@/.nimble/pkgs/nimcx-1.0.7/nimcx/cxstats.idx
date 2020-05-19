@@ -1,0 +1,6 @@
+showStats	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxstats.html#showStats,RunningStat,int,int	cxstats: showStats(x: RunningStat; n: int = 3; xpos: int = 1)	
+showRegression	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxstats.html#showRegression,seq[],seq[],int,int	cxstats: showRegression(x, y: seq[float | int]; n: int = 5; xpos: int = 1)	
+showRegression	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxstats.html#showRegression,RunningRegress,int,int	cxstats: showRegression(rr: RunningRegress; n: int = 5; xpos: int = 1)	
+zscore	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxstats.html#zscore,seq[SomeNumber]	cxstats: zscore(data: seq[SomeNumber]): seq[float]	
+rolling_zscore	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxstats.html#rolling_zscore,seq[float],seq[float],float	cxstats: rolling_zscore(data: seq[float]; observed_window: seq[float]; decay: float = 0.9): float	
+median	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxstats.html#median,seq[float]	cxstats: median(xs: seq[float]): float	

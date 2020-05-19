@@ -1,0 +1,46 @@
+long	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#long	cxTz.long	
+short	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#short	cxTz.short	
+cxTz	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#cxTz	cxtime: cxTz	
+CxTimer	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#CxTimer	cxtime: CxTimer	
+Cxtimerres	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#Cxtimerres	cxtime: Cxtimerres	
+Cxcounter	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#Cxcounter	cxtime: Cxcounter	
+cxLocal	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#cxLocal.t	cxtime: cxLocal(): string	
+cxNow	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#cxNow.t	cxtime: cxNow(): string	
+cxToday	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#cxToday.t	cxtime: cxToday(): string	
+cxTime	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#cxTime.t	cxtime: cxTime(): string	
+cxDateTime	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#cxDateTime.t	cxtime: cxDateTime(): string	
+cxDuration	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#cxDuration,,	cxtime: cxDuration(tstart: int | float; tend: int | float): string	
+cxTimeZone	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#cxTimeZone,cxTz	cxtime: cxTimeZone(amode: cxTz = long): string	
+sleepy	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#sleepy,T	cxtime: sleepy[T: float | int](secs: T)	
+validDate	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#validDate,string	cxtime: validDate(adate: string): bool	
+day	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#day,string	cxtime: day(aDate: string): string	
+month	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#month,string	cxtime: month(aDate: string): string	
+year	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#year,string	cxtime: year(aDate: string): string	
+compareDates	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#compareDates,string,string	cxtime: compareDates(startDate, endDate: string): int	
+plusDays	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#plusDays,string,int	cxtime: plusDays(aDate: string; days: int): string	
+minusDays	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#minusDays,string,int	cxtime: minusDays(aDate: string; days: int): string	
+createSeqDate	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#createSeqDate,string,string	cxtime: createSeqDate(fromDate: string; toDate: string): seq[string]	
+createSeqDate	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#createSeqDate,string,int	cxtime: createSeqDate(fromDate: string; days: int = 1): seq[string]	
+getRndDate	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#getRndDate,int,int	cxtime: getRndDate(minyear: int = parseInt(year(getDateStr(now()))) - 50;\n           maxyear: int = parseInt(year(getDateStr(now()))) + 50): string	
+printTimeMsg	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#printTimeMsg,string,int	cxtime: printTimeMsg(atext: string = cxTime; xpos: int = 1): string	
+printLnTimeMsg	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#printLnTimeMsg,string,int	cxtime: printLnTimeMsg(atext: string = cxTime; xpos: int = 1): string	
+printDTimeMsg	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#printDTimeMsg,string,int	cxtime: printDTimeMsg(atext: string = $toTime(now()); xpos: int = 1): string	
+printLnDTimeMsg	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#printLnDTimeMsg,string,int	cxtime: printLnDTimeMsg(atext: string = $toTime(now()); xpos: int = 1): string	
+printDateMsg	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#printDateMsg,string,int	cxtime: printDateMsg(atext: string = getDateStr(); xpos: int = 1): string	
+printLnDateMsg	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#printLnDateMsg,string,int	cxtime: printLnDateMsg(atext: string = getDateStr(); xpos: int = 1): string	
+cxtimerresults	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#cxtimerresults	cxtime: cxtimerresults	
+newCxtimer	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#newCxtimer,string	cxtime: newCxtimer(aname: string = &quot;cxtimer&quot;): ref (CxTimer)	
+resetTimer	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#resetTimer,ref.	cxtime: resetTimer(co: ref (CxTimer))	
+startTimer	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#startTimer,ref.	cxtime: startTimer(co: ref (CxTimer))	
+lapTimer	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#lapTimer,ref.	cxtime: lapTimer(co: ref (CxTimer)): auto	
+stopTimer	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#stopTimer,ref.	cxtime: stopTimer(co: ref (CxTimer))	
+duration	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#duration,ref.	cxtime: duration(co: ref (CxTimer)): float	
+saveTimerResults	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#saveTimerResults,ref.	cxtime: saveTimerResults(b: ref (CxTimer))	
+showTimerResults	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#showTimerResults,string	cxtime: showTimerResults(aname: string)	
+showTimerResults	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#showTimerResults	cxtime: showTimerResults()	
+clearTimerResults	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#clearTimerResults,string,bool,int	cxtime: clearTimerResults(aname: string = &quot;&quot;; quiet: bool = true; xpos: int = 3)	
+clearAllTimerResults	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#clearAllTimerResults,bool,int	cxtime: clearAllTimerResults(quiet: bool = true; xpos: int = 3)	
+cxHRTimer	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#cxHRTimer,Time,Time	cxtime: cxHRTimer(tstart: Time = getTime(); tend: Time = getTime()): auto	
+cxDayOfWeek	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#cxDayOfWeek,string	cxtime: cxDayOfWeek(datestr: string): string	
+getNextMonday	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#getNextMonday,string	cxtime: getNextMonday(adate: string): string	
+getAmzDateString	@@/@@/@@/@@/.nimble/pkgs/nimcx-1.0.7/nimcx/cxtime.html#getAmzDateString	cxtime: getAmzDateString(): string	
