@@ -11,7 +11,7 @@ import cxconsts
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2020-05-06 
+##     Latest      : 2020-05-27 
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -155,49 +155,8 @@ proc cxTimeZone*(amode:cxTz = long):string =
         result = "UTC" & $ltt[(($ltt).len - 6) ..< ($ltt).len] 
      of short:
         result = cxnow()[19 .. ^1]       
-         
-     
-     
-#proc toDateTime*(date:string = "2000-01-01"): DateTime =
-   ## toDateTime   epochSecs  deprecated since nim 1.3.1 due to changes in times.nim
-   ## 
-   ## converts a date of format yyyy-mm-dd to DateTime
-   ## time part still to be implemented
-   ## 
-#   result = now() # needs to be initialized or we get a warning during compile
-#   var adate = date.split("-")
-#   var zyear = parseint(adate[0])
-#   var enzmonth = parseint(adate[1])
-#   var zmonth : Month
-#   case enzmonth 
-#      of   1: zmonth = mJan
-#      of   2: zmonth = mFeb
-#      of   3: zmonth = mMar
-#      of   4: zmonth = mApr
-#      of   5: zmonth = mMay
-#      of   6: zmonth = mJun
-#      of   7: zmonth = mJul 
-#      of   8: zmonth = mAug 
-#      of   9: zmonth = mSep 
-#      of  10: zmonth = mOct 
-#      of  11: zmonth = mNov 
-#      of  12: zmonth = mDec 
-#      else:
-#         cxprintln(1,red,styleReverse,"Wrong Month in : ",yellowgreen,adate[1])
-#         quit(0)
-   
-#   let zday = parseint(adate[2])
-#   result.year = zyear
-#   result.month = zmonth
-#   result.monthday = zday
-     
-   
-#proc epochSecs*(date:string="2000-01-01"):auto =
-   ## epochSecs  deprecated since nim 1.3.1 due to chanes in times.nim
-   ##
-   ## converts a date into secs since unix time 0
-   ##
-#   result  =  toUnix(toTime(toDateTime(date)))
+    
+
    
 proc sleepy*[T:float|int](secs:T) =
   ## sleepy
@@ -301,7 +260,6 @@ proc compareDates*(startDate,endDate:string) : int =
           result = -1
      else:
           result = -2
-
 
 
 

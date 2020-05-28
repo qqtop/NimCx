@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2020-05-14
+##     Latest      : 2020-05-27
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -42,7 +42,9 @@ import
           rdstdin,
           times,
           unicode
-          
+
+# show something during compile using hint system
+#------------------------------------------------------------------------          
 {.hint: "\x1b[38;2;154;205;50m ╭──────────────────────── NIMCX ─────────────────────────────────────╮ " .}
     
 {.hint: "\x1b[38;2;154;205;50m \u2691  NimCx     " & "\x1b[38;2;255;215;0m Officially made for Linux only." & 
@@ -54,17 +56,22 @@ import
          
 {.hint: "\x1b[38;2;154;205;50m ╰──────────────────────── CXGLOBAL ──────────────────────────────────╯ " .}
 
+#-------------------------------------------------------------------------
 
-# forward declarations
+# Forward declarations
+# ----------------------------------------------------------------------
 proc ff*(zz: float, n: int = 5): string
 proc ff2*(zz: SomeNumber, n: int = 3): string
+#-----------------------------------------------------------------------
 
 # procs lifted from an early version of terminal.nim
+#-----------------------------------------------------------------------
 proc styledEchoProcessArg(s: string) = write stdout, s
 proc styledEchoProcessArg(style: Style) = setStyle({style})
 proc styledEchoProcessArg(style: set[Style]) = setStyle style
 proc styledEchoProcessArg(color: ForegroundColor) = setForegroundColor color
 proc styledEchoProcessArg(color: BackgroundColor) = setBackgroundColor color
+#-----------------------------------------------------------------------
 
 # macros
 
@@ -1553,6 +1560,10 @@ proc showHostNameCtl*() =
     else:
         printlnErrorMsg("hostnamectl command may not be available on this system.")       
 
+proc getProjectDir*(): string {.compileTime.} =
+     currentSourcePath.rsplit(Dirsep,1)[0]
+
+
 proc getUserName*():string =
      # just a simple user name prompt 
      result = readLineFromStdin(" Enter your user name    : ")
@@ -2762,12 +2773,15 @@ proc genMacAddress*(): string =
    [sample(m) & sample(m), sample(m) & sample(m), sample(m) & sample(m),sample(m) & sample(m), sample(m) & sample(m), sample(m) & sample(m)].join(":")
 
 
-proc quickPw*():string =   
+proc quickPw*(l:int = 1):string =   
    ## quickPw
    ## 
    ## quick strong password generator
-   ##  
-   for i in 1..100: result.add(rand(33..128).char)
+   ##
+   var x = 0
+   while x <= l:  
+       result.add(rand(33..128).char)
+       inc x
 
 proc quickLargeInt*():string =   
   ## quickLargeInt

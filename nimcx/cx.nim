@@ -22,7 +22,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2020-05-14
+##     Latest      : 2020-05-27
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -118,9 +118,11 @@
 ##                   included in nimcx to avoid code bloat  
 ##
 ##
-##     Compile idea : nim c -d:threads:on -d:danger --gc:arc -d:useMalloc -r -f cx
+##     Compile idea : nim c -d:threads:on -d:ssl -d:danger --gc:arc -d:useMalloc -r -f cx
 ##
+##     Fast         : nim c --gc:arc --threads:on -d:ssl --stackTrace:off -d:release --d:nimdrnim --passC:-flto -f -r cx
 ##
+##     Hardcore     : nim c --gc:arc --debuginfo -d:useMalloc cx.nim && valgrind -s --leak-check=full ./cx
 ##
 ##     Funding     : Here are three excellent choices :
 ##     
@@ -252,6 +254,15 @@ template cxDoubleUp*:untyped   = lime & "↑↑" & termwhite
 template cxDoubleDown*:untyped = red & "↓↓" & termwhite
 template cx45Up*:untyped       = cyan & "→↑" & termwhite
 template cx45Down*:untyped     = yellow & "→↓" & termwhite
+template cxrv*(s:untyped):string = 
+    ## cxrv 
+    ##
+    ## color reverser
+    ##
+    ##  Example:
+    ##  .. code-block:: nim
+    ##    cxprintln(0,"Nice number ",white,redbg,78.cxrv," test finished !  ",truetomato,"Good test .".cxrv, yellowgreen,"OK".cxrv ) 
+    "\e[7m$1\e[m " % $s   # color reverser
 
 template `as`*[T, U](x: T, _: typedesc[U]): U = U(x)
     ##  as type change template 
@@ -364,7 +375,7 @@ proc makeGreyScaleTest*(astart:int = 0, aend:int = 255 ,astep:int = 5) =
 # Misc. routines
 
 
-proc nimcat*(curFile: string, countphrase: varargs[string, `$`] = "") =
+proc nimcat*(curFile: string, countphrase: seq[string] = @[]) =
     ## nimcat
     ## 
     ## A simple file lister which shows all rows and some stats.
@@ -378,16 +389,15 @@ proc nimcat*(curFile: string, countphrase: varargs[string, `$`] = "") =
     ## 
     ##   nimcat("notes.txt")                   # show all lines
     ##   nimcat("bigdatafile.csv")
-    ##   nimcat("/data5/notes.txt",countphrase = "nice" , "hanya", 88) # also count how often a token appears in the file
+    ##   nimcat("/data5/notes.txt",countphrase = @["nice" , "hanya", "88"]) # also count how often a token appears in the file
     ##
     var ccurFile = curFile
-    echo countphrase.len
+    #echo countphrase.len
     let (dir, name, ext) = splitFile(ccurFile)
     if ext == "": ccurFile = ccurFile & ".nim"
     if not fileExists(ccurfile):
             echo()
             cxprintLn(2,white,bgred,ccurfile & " not found !")
-            printLn(spaces(8) & " Check input path and filename ", dir & "/" & name & "." & ext)
             echo()
             discard
     else:
@@ -405,16 +415,16 @@ proc nimcat*(curFile: string, countphrase: varargs[string, `$`] = "") =
                         if lc > 0: phraseinline[mc].add(c)
                 inc c
             echo()
-            printLnBiCol("File       : " & ccurFile)
-            printLnBiCol("Lines Shown: " & ff2(c - 1,0))
+            printLnBiCol(" File       : " & ccurFile)
+            printLnBiCol(" Lines Shown: " & ff2(c - 1,0))
             var maxphrasewidth = 0
             for x in countphrase:
                 if x.len > maxphrasewidth: maxphrasewidth = x.len
             if countphrase.len > 0:
-                printLn("\nPhraseCount Stats :    \n", gold, styled = {styleUnderScore})
+                printLn("\n PhraseCount Stats :    \n", gold, styled = {styleUnderScore})
                 for x in 0..<countphrase.len:
-                    printLnBiCol(fmtx(["<" & $maxphrasewidth, "",""], countphrase[x]," : " & rightarrow & " Count: ", phraseinline[x].len), xpos = 4)
-                    printLnBiCol("Occurence : Line No.", colLeft = truetomato, colRight = yellow, sep = ":", 4, false, {})
+                    printLnBiCol(fmtx([""], "Phrase    : " & countphrase[x]), xpos = 3)
+                    printLnBiCol("Occurence : Line No.", colLeft = lightblue, colRight = yellow, sep = ":", 3, false, {})
                     showseq(phraseinline[x])
 
 

@@ -6,7 +6,7 @@ import nimcx
 # zenity can be installed on linux
 # maybe future part of nimcx
 #
-# Last  : 2020-04-08
+# Last  : 2020-05-24
 #
 
 
@@ -36,6 +36,24 @@ proc cxLoginDialog*(title:string="Login Dialog",text:string="Login"):tuple[name:
         let fs = forms.split(";")
         result.name = fs[0]
         result.password = fs[1] 
+
+
+proc cxLoginEncDialog*(title:string="Login Dialog",text:string="Login",enckeytext:string = ""):tuple[name:string,password:string,enckey:string] =
+     ## cxLoginEncDialog
+     ##
+     ## adds possibility to put in an encryption key
+     ## pressing cancel exits application
+     ##
+     var forms = execCmdEx("""zenity --forms --title="$1" --add-entry=Username --add-password=Password --text="$2" --add-password=Enckey --text="$3" --separator=';' """ % [title,text,enckeytext]).output
+     forms.removeSuffix('\n')
+     if forms == "":
+        printLnAlertMsg("Login failed ! Incorrect credentials supplied. ")
+        doFinish()
+     else:    
+        let fs = forms.split(";")
+        result.name = fs[0]
+        result.password = fs[1] 
+        result.enckey = fs[2]
 
 
 proc cxLoginDateDialog*(title:string="Login Dialog",text:string="Login"):tuple[name:string,password:string,date:string]=
