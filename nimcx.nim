@@ -6,11 +6,11 @@
 ##
 ##     License     : MIT opensource
 ##
-##     Version     : 1.0.7
+##     Version     : 1.0.8
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2020-05-14
+##     Latest      : 2020-06-09
 ##
 ##     Compiler    : latest stable or devel branch
 ##

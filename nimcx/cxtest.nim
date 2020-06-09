@@ -3,7 +3,7 @@
 # very rough and ready testing of some of available functions in nimcx library
 # see docs for more examples 
 #
-# Latest      : 2020-05-14   
+# Latest      : 2020-06-09   
  
 import nimcx
 
@@ -317,6 +317,16 @@ nextTest()
 # dotMatrixTyper(" of  the  world ",xpos = 6)
 # decho(12)
 # 
+
+nextTest()
+
+echo()
+cxprintLn(0,truetomato,"earthTones")
+showHexColors(earthTones)
+echo()
+cxprintLn(0,truetomato,"hexColorNames")
+showHexColors(hexColorNames)
+decho(2)
 
 nextTest()
 

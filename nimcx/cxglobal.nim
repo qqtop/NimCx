@@ -2648,7 +2648,7 @@ proc checkMemFull*(xpos:int = 2) =
                try:
                   if zline.len > 0: 
                       cxprintLn(xpos,yellowgreen,cxpad(zline[0],n),fmtx([">15"],strutils.strip(zline[1])))
-               except IndexError:
+               except Defect:
                       discard
  
 

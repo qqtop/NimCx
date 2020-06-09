@@ -8,11 +8,9 @@
 ##
 ##     License     : MIT opensource
 ##
-##     Version     : 1.0.7
-##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2020-05-14
+##     Latest      : 2020-06-09
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -1079,8 +1077,24 @@ const hexColorNames* = @[
         "#F5F5F5",
         "#FFFF00",
         "#9ACD32"]
- 
-      
+
+const earthTones* = @[
+        "#493829",
+        "#816C5B",
+        "#A9A18C",
+        "#613318",
+        "#B99C6B",
+        "#A15038",
+        "#8F3B1B",
+        "#D57500",
+        "#DBCA69",
+        "#404F24",
+        "#668D3C",
+        "#BDD09F",
+        "#4E6172",
+        "#83929F",
+        "#A3ADB8"]
+
 # Color reference in hex and rgb  for colors mentioned in colors.nim
 #       
 # aliceblue            #F0F8FF       240   248   255

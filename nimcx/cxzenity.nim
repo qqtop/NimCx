@@ -6,7 +6,7 @@ import nimcx
 # zenity can be installed on linux
 # maybe future part of nimcx
 #
-# Last  : 2020-05-24
+# Last  : 2020-06-09
 #
 
 

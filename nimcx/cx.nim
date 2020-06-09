@@ -18,8 +18,6 @@
 ##     
 ##     License     : MIT opensource
 ##
-##     Version     : 1.0.7
-##
 ##     ProjectStart: 2015-06-20
 ##   
 ##     Latest      : 2020-05-27
@@ -134,7 +132,7 @@
 ##                                       
 
 import
-        cxconsts, cxglobal, cxtime, cxprint, cxhash, cxnetwork, cxstats
+        cxversion,cxconsts, cxglobal, cxtime, cxprint, cxhash, cxnetwork, cxstats
 import 
         std/[os, osproc, times, random, strutils,strmisc, strformat, strscans, parseutils,
         sequtils, parseopt,tables, sets, macros,posix,posix_utils, htmlparser, terminal,
@@ -145,7 +143,7 @@ import
         
 
 export
-        cxconsts, cxglobal, cxtime, cxprint, cxhash, cxnetwork, cxstats,
+        cxversion,cxconsts, cxglobal, cxtime, cxprint, cxhash, cxnetwork, cxstats,
         os, osproc, times, random,strutils, strmisc,strformat, strscans, parseutils,
         sequtils, parseopt,tables, sets, macros,posix, posix_utils,htmlparser,terminal,
         logic, math, stats, json, streams, options, memfiles, monotimes,
@@ -179,7 +177,7 @@ export unicode except strip, split, splitWhitespace
 # nim c --threads:on -d:ssl --gc:arc -r cx
 
 
-const CXLIBVERSION* = "1.0.7"
+
 discard setLocale(LC_ALL, "") # init utf8 
 
 when defined(macosx):
@@ -301,7 +299,7 @@ func newColor2*(r, g, b: int): string = "\x1b[48;2;$1;$2;$3m" % [$r, $g, $b]
     ##   newColor2
     ##   
     ##   creates a new color string from r,g,b values passed in with styleReverse effect for text
-    ##   best used as backgroundcolor in print, printLn routines
+    ##   best used as backgroundcolor in print, printLn etc. routines
     ##
     
 
@@ -661,6 +659,16 @@ proc colorio*() =
     cxprintLn(1,gold,darkslategraybg,"Colorio   -   A NimCx color view utility  ")
     echo()
     
+proc showHexColors*[T](hcolors:seq[T]) =
+  ## showHexColors
+  ##
+  ## pass in a seq of hexcolors like: 
+  ## myhexcols = @["#F5F5F5","#FFFF00","#9ACD32"]
+  ##
+  for x in 0 ..< hcolors.len:
+    let b = extractRGB(parseColor(hcolors[x]))
+    let cxb = newcolor(b.r,b.g,b.b)
+    cxprintln(0,cxb,fmtx(["<25","","<9","",""],$b,spaces(3),$hcolors[x],spaces(3)," nimcx hex color test "))
     
 # spellInteger
 proc nonzero(c: string, n: int64, connect = ""): string =
@@ -779,6 +787,7 @@ proc spellFloat*(n: float64, currency: bool = false, sep: string = ".", sepname:
                 else:
                     # we assume its a currency float value
                     result = spellInteger(parseInt(nss[0])) & sepname & spellInteger(parseInt(nss[1]))
+
 
 template currentFile*: string =
       ## currentFile
@@ -1159,7 +1168,7 @@ proc doInfo*() =
     printLnBiCol("Config Dir                    : " & os.getConfigDir(), yellowgreen, lightgrey, sep, 0, false, {})
     printLnBiCol("Current Dir                   : " & os.getCurrentDir(), yellowgreen, lightgrey, sep, 0, false, {})
     let fi = getFileInfo(filename)
-    printLnBiCol("File Id                       : " & $(fi.id.device), yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("File Id.                      : " & $(fi.id.device), yellowgreen, lightgrey, sep, 0, false, {})
     printLnBiCol("File No.                      : " & $(fi.id.file), yellowgreen, lightgrey, sep, 0, false, {})
     printLnBiCol("Kind                          : " & $(fi.kind),yellowgreen, lightgrey, sep, 0, false, {})
     printLnBiCol("Size                          : " & $(float(fi.size) / float(1000)) & " kb", yellowgreen, lightgrey, sep, 0, false, {})
@@ -1196,6 +1205,7 @@ proc doInfo*() =
     printLnBiCol("Current pid                   : " & $getpid(), yellowgreen, lightgrey, sep, 0, false, {})
     printLnBiCol("Terminal encoding             : " & $getCurrentEncoding())
     printLnBiCol("Compiler used                 : " & getCurrentCompilerExe())
+    printLnBiCol("NimCx Version                 : " & CXLIBVERSION)
 
 proc infoLine*(xpos:int = 0) =
      ## infoLine

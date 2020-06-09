@@ -591,45 +591,45 @@ proc printLnHL*(s      : string,
 
 type
 
-          CxLineType* = enum
-                    cxHorizontal = "horizontal" # works ok
-                    cxVertical = "vertical" # not yet implemented
+  CxLineType* = enum
+            cxHorizontal = "horizontal" # works ok
+            cxVertical = "vertical" # not yet implemented
 
 
-          CxlineText* = object
-                    text*: string # text                               default none
-                    textcolor*: string # text color                    default termwhite
-                    textstyle*: set[Style] # text styled
-                    textpos*: int # position of text from startpos     default 3
-                    textbracketopen*: string # open bracket surounding the text     default [
-                    textbracketclose*: string # close bracket surrounding the text  default ]
-                    textbracketcolor*: string # color of the open,close bracket     default dodgerblue
+  CxlineText* = object
+            text*: string # text                               default none
+            textcolor*: string # text color                    default termwhite
+            textstyle*: set[Style] # text styled
+            textpos*: int # position of text from startpos     default 3
+            textbracketopen*: string # open bracket surounding the text     default [
+            textbracketclose*: string # close bracket surrounding the text  default ]
+            textbracketcolor*: string # color of the open,close bracket     default dodgerblue
 
 
-          Cxline* {.inheritable.} = object # a line type object startpos= = leftdot, endpos == rightdot
-                    startpos*: int # xpos leftdot                      default 1
-                    endpos*: int # xpos rightdot == width of cxline    default 2
-                    toppos*: int # ypos of top dot                     default 1
-                    botpos*: int # ypos of bottom dot                  default 1
-                    cxlinetext*: CxLinetext # cxlinetext object
-                    cxlinetext2*: CxlineText # cxlinetext object
-                    cxLinetext3*: CxlineText # cxlinetext object
-                    cxlinetext4*: CxlineText # cxlinetext object
-                    cxlinetext5*: CxLinetext # cxlinetext object
-                    cxlinetext6*: CxlineText # cxlinetext object
-                    cxLinetext7*: CxlineText # cxlinetext object
-                    cxlinetext8*: CxlineText # cxlinetext object
-                    cxlinetext9*: CxLinetext # cxlinetext object
-                    cxlinetext10*: CxlineText # cxlinetext object
-                    cxLinetext11*: CxlineText # cxlinetext object
-                    cxlinetext12*: CxlineText # cxlinetext object
-                    showbrackets*: bool # showbrackets trye or false       default true
-                    linecolor*: string # color of the line char            default aqua
-                    linechar*: string # line char                          default efs2    # see cxconsts.nim
-                    dotleftcolor*: string # color of left dot              default yellow
-                    dotrightcolor*: string # color of right dot            default magenta
-                    linetype*: CxLineType # cxHorizontal,cxVertical,cxS    default cxHorizontal
-                    newline*: string # new line char                       default \L
+  Cxline* {.inheritable.} = object # a line type object startpos= = leftdot, endpos == rightdot
+            startpos*: int # xpos leftdot                      default 1
+            endpos*: int # xpos rightdot == width of cxline    default 2
+            toppos*: int # ypos of top dot                     default 1
+            botpos*: int # ypos of bottom dot                  default 1
+            cxlinetext*: CxLinetext # cxlinetext object
+            cxlinetext2*: CxlineText # cxlinetext object
+            cxLinetext3*: CxlineText # cxlinetext object
+            cxlinetext4*: CxlineText # cxlinetext object
+            cxlinetext5*: CxLinetext # cxlinetext object
+            cxlinetext6*: CxlineText # cxlinetext object
+            cxLinetext7*: CxlineText # cxlinetext object
+            cxlinetext8*: CxlineText # cxlinetext object
+            cxlinetext9*: CxLinetext # cxlinetext object
+            cxlinetext10*: CxlineText # cxlinetext object
+            cxLinetext11*: CxlineText # cxlinetext object
+            cxlinetext12*: CxlineText # cxlinetext object
+            showbrackets*: bool # showbrackets trye or false       default true
+            linecolor*: string # color of the line char            default aqua
+            linechar*: string # line char                          default efs2    # see cxconsts.nim
+            dotleftcolor*: string # color of left dot              default yellow
+            dotrightcolor*: string # color of right dot            default magenta
+            linetype*: CxLineType # cxHorizontal,cxVertical,cxS    default cxHorizontal
+            newline*: string # new line char                       default \L
 
 proc newCxlineText*(): CxlineText =
           result.text = ""
@@ -643,7 +643,9 @@ proc newCxlineText*(): CxlineText =
 proc newCxLine*(): Cxline =
           ## newCxLine 
           ## 
-          ## creates a new cxLine object with some defaults , ready to be changed according to needs
+          ## creates a new cxLine object with some defaults , 
+          ##
+          ## ready to be changed according to needs
           ##
           result.startpos = 1
           result.endpos = 1
