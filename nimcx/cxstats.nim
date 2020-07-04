@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2020-04-24 
+##     Latest      : 2020-06-12 
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -19,7 +19,7 @@
 ##     Description : provides functions pertaining to statistcs and calculations
 ## 
 
-import std/terminal,std/stats,std/math,std/algorithm
+import std/terminal,std/stats,std/math,std/algorithm,std/sequtils
 import cxconsts,cxglobal,cxprint
 
 # Add OpenMP to compilation flags
@@ -93,7 +93,7 @@ proc showStats*(x:Runningstat,n:int = 3,xpos:int = 1) =
      cxprintLn(xpos,yellowgreen,"Max     : " ,white, ff(x.max,n))
      cxprintLn(xpos,peru,"S --> sample\n")
 
-proc showRegression*(x,y: seq[float | int],n:int = 5,xpos:int = 1) =
+proc showRegression*(x,y: openArray[float | int],n:int = 5,xpos:int = 1) =
      ## showRegression
      ##
      ## quickly display RunningRegress data based on input of two openarray data series
@@ -123,7 +123,7 @@ proc showRegression*(rr: RunningRegress,n:int = 5,xpos:int = 1) =
      cxprintLn(xpos,yellowgreen,"Correlation   : " ,white, ff(rr.correlation(),n))
      
 
-proc zscore*(data:seq[SomeNumber]):seq[float] {.inline.} =
+proc zscore*(data: openArray[SomeNumber]):seq[float] {.inline.} =
     ## zscore
     ## 
     ## returns the z-score in a seq[float] for each data point
@@ -177,7 +177,7 @@ proc calculate_zscore(average:float, sq_average:float, value:float,avg:float):fl
             return value - average
         return (value - average) / std
 
-proc rolling_zscore*(data:seq[float],observed_window:seq[float],decay:float = 0.9):float =
+proc rolling_zscore*(data:openArray[float],observed_window:openArray[float],decay:float = 0.9):float =
     #
     # The lower the decay, the more important the new points
     # Decay is there to ensure that new data is worth more than old data
@@ -265,16 +265,16 @@ proc rolling_zscore*(data:seq[float],observed_window:seq[float],decay:float = 0.
 # printLn("ZSCORE",salmon,xpos=2) 
 # showSeq(zscore(datai),maxitemwidth=8) 
 # 
-
-    
-proc median*(xs: seq[float]): float =
+   
+proc median*(xs: openArray[float]): float =
   # median
   # 
   # ex rosetta code receipe
   # 
-  var ys = xs
+  var ys = toSeq(xs)
   sort(ys, system.cmp[float])
-  0.5 * (ys[ys.high div 2] + ys[ys.len div 2])          
+  0.5 * (ys[ys.high div 2] + ys[ys.len div 2]) 
+           
   
 if isMainModule:
         
@@ -293,16 +293,16 @@ if isMainModule:
         let window_trending = @[5.0, 8, 10, 12, 15, 17, 20]
         
         printLn("Test 1")
-        printLn(rolling_zscore(data, window_not_trending))
+        printLn(rolling_zscore(data.toOpenarray(0, data.len - 1), window_not_trending))
         # -0.02257907513690587
         # 
         printLn("Test 2")
-        printLn(rolling_zscore(data, window_trending))
+        printLn(rolling_zscore(data.toOpenarray(0, data.len - 1), window_trending))
         # 2.185948961553206
         
         # And now with different decay, not linear relation
         printLn("Test 3")
-        printLn(rolling_zscore(data, window_trending, decay=0.5))
+        printLn(rolling_zscore(data.toOpenarray(0, data.len - 1), window_trending, decay=0.5))
         # 1.857409885787915 
         
         printLn("Test 4")

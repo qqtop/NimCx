@@ -20,7 +20,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2020-05-27
+##     Latest      : 2020-07-04
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -73,6 +73,10 @@
 ##                   
 ##                   boring white on a gnome based terminal.
 ##                   
+##                   a bash script to show colors
+##
+##                   for i in {0..255}; do     printf "\x1b[38;5;${i}mcolour${i}\x1b[0m\n"; done
+##
 ##
 ##     Related     :
 ##
@@ -144,7 +148,7 @@ import
 
 export
         cxversion,cxconsts, cxglobal, cxtime, cxprint, cxhash, cxnetwork, cxstats,
-        os, osproc, times, random,strutils, strmisc,strformat, strscans, parseutils,
+        os, osproc, times, random, strutils, strmisc,strformat, strscans, parseutils,
         sequtils, parseopt,tables, sets, macros,posix, posix_utils,htmlparser,terminal,
         logic, math, stats, json, streams, options, memfiles, monotimes,
         httpclient, nativesockets, browsers, intsets, algorithm, net,
@@ -269,7 +273,16 @@ template `as`*[T, U](x: T, _: typedesc[U]): U = U(x)
     ##    for x in 33..126:
     ##      echo(fmtx(["<3","","","",""],x,spaces(2),x as char,spaces(2),ff2(x as float,3)))
     ##
-    
+
+template toCxOpenarray*(aseq:seq[untyped]):untyped=
+     ## toCxOpenarray
+     ##
+     ## used to pass seqs to procs expecting
+     ## an openarray type as input, passing a seq would work too
+     ## but openarray is faster
+     ##
+     aseq.toOpenarray(0,aseq.len - 1)
+         
 func newColor*(r, g, b: int): string =
     ##   newColor
     ##   
@@ -1160,8 +1173,8 @@ proc doInfo*() =
     printLnBiCol("UTC Time                      : " & $now().utc, yellowgreen, lightgrey, sep, 0, false, {})
     printLnBiCol("Local Time                    : " & $now().local,yellowgreen, lightgrey, sep, 0, false, {})
     printLnBiCol("Environment Info              : " & os.getEnv("HOME"),yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("File exists                   : " & $(existsFile filename), yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("Dir exists                    : " & $(existsDir "/"),yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("File exists                   : " & $(fileExists filename), yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Dir exists                    : " & $(dirExists "/home"),yellowgreen, lightgrey, sep, 0, false, {})
     printLnBiCol("AppDir                        : " & getAppDir(),yellowgreen, lightgrey, sep, 0, false, {})
     printLnBiCol("App File Name                 : " & getAppFilename(),yellowgreen, lightgrey, sep, 0, false, {})
     printLnBiCol("User home  dir                : " & os.getHomeDir(),yellowgreen, lightgrey, sep, 0, false, {})
@@ -1258,6 +1271,20 @@ template unameRelease(cmd, cache): untyped =
 template uname*(): untyped = unameRelease("uname -a", unameRes)
 template release*(): untyped = unameRelease("lsb_release -a", releaseRes)
 # end of borrow
+
+proc cxhostnamectl*() =
+     ## cxhostnamectl
+     ##
+     ## wrapper to display hostnamectl output
+     ##
+     ## hostnamectl is available on many systems
+     ##
+     let hcl = execCmdEx("hostnamectl")
+     let hcls = hcl.output.splitLines()
+     echo()
+     for x in 0 ..< hcls.len:
+         printLnBiCol(hcls[x])
+     echo()
 
 proc doByeBye*(xpos:int = 1) =
      ## doByeBye
