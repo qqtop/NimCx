@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2020-05-27
+##     Latest      : 2020-08-09
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -2284,7 +2284,23 @@ proc createRandomDataFile*(filename:string = "randomdata.dat") =
     ##    echo bc     
     ##
     discard execCmd("dd if=/dev/urandom of=$1 bs=1M count=1" % filename)
-      
+
+
+proc utf8info*(s:string):string =
+   ## utf8info
+   ##
+   ## returns hex and int code for each char in
+   ## string in a vertical list
+   ##
+   ## .. code-block:: nim
+   ##    echo utf8info("すべての数字はどこですか？") 
+   ##    echo utf8info("我们希望情况会尽快好转。") 
+   ##
+   result = ""
+   for cp in s.utf8:
+     result = result & cp.toHex & spaces(1) & cp & spaces(1) &
+              $parsehexint(cp.toHex) & spaces(1) & newline()  
+           
                                     
 proc cxBinomialCoeff*(n, k:int): int =
     # cxBinomialCoeff
@@ -2859,10 +2875,16 @@ when isMainModule:
     echo()
     echo "Test   : Show primes between 2120000 and 2120030" 
     echo "Primes : ", getPrimeSeq(212_000_0,212_003_0)
+    echo()
     echo "Test   : GeoShapes"
     showSeq(createSeqGeoshapes(),randcol())
+    cxprintLn(3,plum,"Hongkong - London Distance")
+    cxprintLn(3,$distanceto((114.109497,22.396427),(-0.126236,51.500153)) , " km")
+    let hklm = distanceto((114.109497,22.396427),(-0.126236,51.500153)) / 1.609345
+    cxprintLn(3,$hklm ,"  miles")
+    echo()
     showHostNameCtl()
     decho(2)
-    cxprintln(3,goldenrod,"cxglobal.nim - a part of nimcx library")
+    cxprintln(3,goldenrod,styleUnderscore,"cxglobal.nim - a module of nimcx library")
     decho(2) 
 # END OF CXGLOBAL.NIM #

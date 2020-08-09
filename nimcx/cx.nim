@@ -3,7 +3,6 @@
 #{.passC: "-msse -msse2 -msse3 -mssse3 -march=native -mtune=native -flto".}
 #{.passL: "-msse -msse2 -msse3 -mssse3 -flto".}
 #{.passC: "-march-native -O3"}
-#{.deadCodeElim: on, checks: off, hints: off, warnings: off, optimization: size.}
 #{.noforward: on.}   # future feature
 
 
@@ -20,7 +19,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2020-07-04
+##     Latest      : 2020-08-09
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -126,19 +125,12 @@
 ##
 ##     Hardcore     : nim c --gc:arc --debuginfo -d:useMalloc cx.nim && valgrind -s --leak-check=full ./cx
 ##
-##     Funding     : Here are three excellent choices :
-##     
-##                   You are happy              ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
-##                   
-##                   You are not happy          ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
-##                 
-##                   You want qqtop to be happy ==> send BTC to : 194KWgEcRXHGW5YzH1nGqN75WbfzTs92Xk
-##                                       
+                            
 
 import
         cxversion,cxconsts, cxglobal, cxtime, cxprint, cxhash, cxnetwork, cxstats
 import 
-        std/[os, osproc, times, random, strutils,strmisc, strformat, strscans, parseutils,
+        std/[os, osproc, exitprocs, times, random, strutils,strmisc, strformat, strscans, parseutils,
         sequtils, parseopt,tables, sets, macros,posix,posix_utils, htmlparser, terminal,
         logic, math, stats, json, streams, options, memfiles, monotimes,
         httpclient, nativesockets, browsers, intsets, algorithm, net,
@@ -148,7 +140,7 @@ import
 
 export
         cxversion,cxconsts, cxglobal, cxtime, cxprint, cxhash, cxnetwork, cxstats,
-        os, osproc, times, random, strutils, strmisc,strformat, strscans, parseutils,
+        os, osproc, exitprocs, times, random, strutils, strmisc,strformat, strscans, parseutils,
         sequtils, parseopt,tables, sets, macros,posix, posix_utils,htmlparser,terminal,
         logic, math, stats, json, streams, options, memfiles, monotimes,
         httpclient, nativesockets, browsers, intsets, algorithm, net,
@@ -209,6 +201,7 @@ when defined(posix):
 
 let cxstart* = epochTime() # simple execution timing with one line see doFinish()
 let cxstartgTime = getTime() 
+
 randomize()                # seed rand number generator
 enableTrueColors()         # enable truecolorsupport
 
@@ -266,8 +259,20 @@ template cxrv*(s:untyped):string =
     ##    cxprintln(0,"Nice number ",white,redbg,78.cxrv," test finished !  ",truetomato,"Good test .".cxrv, yellowgreen,"OK".cxrv ) 
     "\e[7m$1\e[m " % $s   # color reverser
 
+
+template cxRegion*(name, body: untyped) = 
+   ## cxRegion
+   # idea is that we can use ide code folding 
+   # in large files and do not loose our way 
+   # and see what is going on
+   echo()
+   cxprintLn(0,styleUnderscore,yellowgreen,"cxRegion : ",pink,name & spaces(2))
+   echo()
+   body
+
+
 template `as`*[T, U](x: T, _: typedesc[U]): U = U(x)
-    ##  as type change template 
+    ##  as  a type change template 
     ##
     ##  .. code-block:: nim
     ##    for x in 33..126:
@@ -282,6 +287,7 @@ template toCxOpenarray*(aseq:seq[untyped]):untyped=
      ## but openarray is faster
      ##
      aseq.toOpenarray(0,aseq.len - 1)
+         
          
 func newColor*(r, g, b: int): string =
     ##   newColor
@@ -612,9 +618,7 @@ proc showBench*() =
                             
               if dd1.contains("Inf") or ee1.contains("Inf"):
                  cxprintLn(2,goldenrod,darkslategraybg,"Inf - To measure something increase the loop count.")
-
               else:
-               
                  var pctdiff = (parsefloat(x.epoch) - minepoch) / minepoch * 100.00
                  if pctdiff > 0.00:
                      cxprintLn(1,fmtx(["<$1" % $bnamesize, "", ""],aa1, spaces(3), "Delta Time :" & spaces(1) & ff2(pctdiff,5) & & " % slower")) 
@@ -692,31 +696,31 @@ proc lastAnd[T](num: T): string =
         # used by spellInteger
         var num = num
         if "," in num:
-                let pos = num.rfind(",")
-                var (pre, last) =
-                        if pos >= 0: (num[0 .. pos - 1], num[pos + 1 .. num.high])
-                        else: ("", num)
-                if " and " notin last:
-                        last = " and" & last
-                num = [pre, ",", last].join()
+            let pos = num.rfind(",")
+            var (pre, last) =
+                if pos >= 0: (num[0 .. pos - 1], num[pos + 1 .. num.high])
+                else: ("", num)
+            if " and " notin last:
+                last = " and" & last
+            num = [pre, ",", last].join()
         return num
 
 proc big(e: int, n: int64): string =
         # used by spellInteger
         if e == 0:
-                spellInteger(n)
+             spellInteger(n)
         elif e == 1:
-                spellInteger(n) & " thousand"
+             spellInteger(n) & " thousand"
         else:
-                spellInteger(n) & " " & huge[e]
+             spellInteger(n) & " " & huge[e]
 
 iterator base1000Rev(n: int64): int64 =
         # used by spellInteger
         var n1 = n
         while n1 != 0:
-                let r = n1 mod 1000
-                n1 = n1 div 1000
-                yield r
+            let r = n1 mod 1000
+            n1 = n1 div 1000
+            yield r
 
 proc spellInteger*(n: int64): string =
         ## spellInteger
@@ -834,7 +838,7 @@ proc newDir*(dirname: string) =
      ## newDir
      ##
      ## creates a new directory and provides some feedback
-     if not existsDir(dirname):
+     if not dirExists(dirname):
          try:
              createDir(dirname)
              cxprintLn(0,green,"Directory " & dirname & " created ok")
@@ -856,7 +860,7 @@ proc remDir*(dirname: string): bool {.discardable.} =
     if dirname == "/home" or dirname == "/":
         printLn("Directory " & dirname & " removal not allowed !",brightred)
     else:
-        if existsDir(dirname):
+        if dirExists(dirname):
             try:
                  removeDir(dirname)
                  cxprintLn(2,yaleblue,limegreenbg,"Directory " & dirname & " deleted")
@@ -1085,11 +1089,11 @@ template checkLocals*() =
         ##
         echo()
         dlineLn(tw() - 1)
-        printLn("[checkLocals -->] ", gold)
+        cxprintLn(0,gold,"[checkLocals -->] ")
         for name, value in fieldPairs(locals()):
-               printLnBiCol(fmtx(["", "<20", "", "", "", "", "<25", "", "", "", "", ""],
-                                  "Variable : ", $name, spaces(3), peru, "Type : ", termwhite,
-                                  $type(value), spaces(1), aqua, "Value : ", termwhite,$value))
+            printLnBiCol(fmtx(["", "<20", "", "", "", "", "<25", "", "", "", "", ""],
+                         "Variable : ", $name, spaces(3), peru, "Type : ", termwhite,
+                         $type(value), spaces(1), aqua, "Value : ", termwhite,$value))
         dlineLn(tw() - 1)
 
 proc qqTop*() =
@@ -1130,8 +1134,8 @@ proc rmTmpFilenames*() =
      # rmTmpFilenames
      # 
      # this will remove all temporary files created with the tmpFilename function
-     # and is automatically called by exit handlers doFinish(),doByeBye() and if Ctrl-C
-     # is pressed . 
+     # and is automatically called by exit handlers doFinish(),doByeBye()
+     # and if Ctrl-C is pressed . 
      #
      for fn in cxTmpFileNames:
           try:
@@ -1165,13 +1169,14 @@ proc doInfo*() =
     ##
     let filename = extractFileName(getAppFilename())
     let modTime = getLastModificationTime(filename)
+    let fi = getFileInfo(filename)
     let sep = ":"
     superHeader("Information for file " & filename & " and System " & spaces(22))
     printLnBiCol("Last compilation on           : " & CompileDate & " at " & CompileTime & " UTC", yellowgreen, lightgrey, sep, 0, false, {})
     printLnBiCol("Last modificaton time of file : " & filename & " " & $modTime, yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("Offset from UTC in hours      : " & cxTimeZone(), yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("UTC Time                      : " & $now().utc, yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("Offset from UTC in hours      : " & cxTimeZone(long), yellowgreen, lightgrey, sep, 0, false, {})
     printLnBiCol("Local Time                    : " & $now().local,yellowgreen, lightgrey, sep, 0, false, {})
+    printLnBiCol("UTC Time                      : " & $now().utc, yellowgreen, lightgrey, sep, 0, false, {})
     printLnBiCol("Environment Info              : " & os.getEnv("HOME"),yellowgreen, lightgrey, sep, 0, false, {})
     printLnBiCol("File exists                   : " & $(fileExists filename), yellowgreen, lightgrey, sep, 0, false, {})
     printLnBiCol("Dir exists                    : " & $(dirExists "/home"),yellowgreen, lightgrey, sep, 0, false, {})
@@ -1180,7 +1185,6 @@ proc doInfo*() =
     printLnBiCol("User home  dir                : " & os.getHomeDir(),yellowgreen, lightgrey, sep, 0, false, {})
     printLnBiCol("Config Dir                    : " & os.getConfigDir(), yellowgreen, lightgrey, sep, 0, false, {})
     printLnBiCol("Current Dir                   : " & os.getCurrentDir(), yellowgreen, lightgrey, sep, 0, false, {})
-    let fi = getFileInfo(filename)
     printLnBiCol("File Id.                      : " & $(fi.id.device), yellowgreen, lightgrey, sep, 0, false, {})
     printLnBiCol("File No.                      : " & $(fi.id.file), yellowgreen, lightgrey, sep, 0, false, {})
     printLnBiCol("Kind                          : " & $(fi.kind),yellowgreen, lightgrey, sep, 0, false, {})
@@ -1256,8 +1260,6 @@ proc printTest*(astring:string="") =
          echo(spaces(2),skyblue,rightarrow,white,astring)
      decho(2)
  
-
-   
 # code below borrowed from distros.nim and made exportable
 # there is now a new posix_utils module which also can give 
 # uname -a results
@@ -1295,12 +1297,14 @@ proc doByeBye*(xpos:int = 1) =
      rmTmpFilenames()
      cxprintLn(xpos,pastelBlue ,extractFileName(getAppFilename())," ",
              pastelgreen,ff2(epochtime() - cxstart) ," secs ",gold ," Bye-Bye " )
-     system.addQuitProc(resetAttributes)
+     addExitproc(resetAttributes)
      echo()
      quit(0)        
 
 proc doFinish*() =
      ## doFinish
+     ## 
+     ## use cxFinish() name doFinish will be deprecated soon
      ##
      ## a end of program routine which displays some information
      ##
@@ -1339,7 +1343,7 @@ proc doFinish*() =
         GC_fullCollect() # just in case anything hangs around
         quit(0)
 
-
+proc cxFinish*() = doFinish()
 
 proc handler*() {.noconv.} =
     ## handler
@@ -1361,21 +1365,19 @@ proc handler*() {.noconv.} =
     rmTmpFilenames()      # clean up if possible
     echo()
     hlineLn()
-    printLn( "Thank you for using        : " & getAppFilename(),yellowgreen)
-    hlineLn()
-    printLnBiCol(fmtx(["<", "<11", ">9",""], "Last compilation on        : ",
-                    CompileDate, CompileTime," UTC"), brightcyan, termwhite, ":", 0, false, {styleBright})
-    printLnBiCol(fmtx(["<", "<11", ">9"], "Exit handler invocation at : ",
+    printLnBiCol(fmtx(["<", "<11", ">9"], "  Exit handler invocation at : ",
                     cxtoday, getClockStr()), pastelorange, termwhite,":", 0, false, {styleBright})
+    cxprintLn(0,greenyellow,cxbright,"  Thank you for using        : " & getAppFilename())
+    printLnBiCol(fmtx(["<", "<11", ">9",""], "  Last compilation on        : ",
+                    CompileDate, CompileTime," UTC"), brightcyan, termwhite, ":", 0, false, {styleBright})
     hlineLn()
-    echo()
-    cxprint(2,yaleblue,limegreenbg,cxbright,"Nim Version ", NimVersion)
-    print(" | ", brightblack)
-    cxprint(25,yaleblue,limegreenbg,cxbright,"NimCx Version", CXLIBVERSION)
-    cxprint(49,yaleblue,limegreenbg,cxbright,"Elapsed secs ", fmtx(["<10.3"], epochTime() - cxstart))
-    cxprint(78,yaleblue,limegreenbg,cxbright,"Info", " Have a Nice Day !") ## change or add custom messages as required
+    #echo()
+    cxprint(2,yaleblue,greenyellowbg,cxbright,"Nim Version ", NimVersion,spaces(1))
+    cxprint(23,yaleblue,pastelyellowbg,cxbright,"NimCx Version ", CXLIBVERSION,spaces(1))
+    cxprintLn(45,yaleblue,pastelorangebg,cxbright,"Elapsed secs ", fmtx(["<10.3"], epochTime() - cxstart))
+    cxprint(2,yaleblue,pastelgreenbg,cxbright," Have a Nice Day !") ## change or add custom messages as required
     decho()
-    system.addQuitProc(resetAttributes)
+    addExitproc(resetAttributes)
     curon()  # turn cursor on in case it was off
     quit(0)
 
@@ -1391,16 +1393,16 @@ proc doCxEnd*() =
     qqtop()
     printLn("  -  " & year(getDateStr()))
     doInfo()
-    clearUp()
-    decho(3)
-    showColors()
-    print(nimcxl & "  V. " & CXLIBVERSION,randcol(),styled={styleBright}) 
-    print(spaces(3))
-    qqtop() 
-    printLn("  -  " & year(getDateStr()))
-    doFinish()
-
-
+    echo()
+    cxhostnamectl() 
+    let pr = getProgramResult()
+    curup(2)
+    if pr == 0:
+       printLnBiCol("Program Result  : " & "Ok",xpos=2)
+    else:
+       printLnBiCol("Program Result  : " & "Fail",colRight = red,xpos=2) 
+    decho(2)   
+       
 # putting this here we can stop most programs which use this lib and get the
 # automatic exit messages , it may not work in tight loops involving execCMD or
 # waiting for readLine() inputs.
@@ -1408,8 +1410,11 @@ setControlCHook(handler)
 
 # this will reset any color changes in the terminal
 # so no need for this line in the calling prog
-system.addQuitProc(resetAttributes)
+addExitproc(resetAttributes)
 
-when isMainModule: doCxEnd()
+
+when isMainModule: 
+    colorio()
+    doCxEnd()
 
 # END OF CX.NIM #
