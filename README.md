@@ -31,7 +31,7 @@ Shades of rgb grey
 
 
 
-Requires     : Nim 1.3.1 up 
+Requires     : Nim 1.2.6 up   or  1.3.x up
 
 Installation : 
 
@@ -47,7 +47,7 @@ Test         :  Compile cxtest.nim  to see if any errors pop up
 ![Image](http://qqtop.github.io/nimfbm.png?raw=true)
 
 
-Only few examples of what can be done :
+A few examples of what can be done :
 
 ![Image](http://qqtop.github.io/nimspirals.png?raw=true)
 
@@ -89,3 +89,4 @@ doFinish()
 ![Image](http://qqtop.github.io/qqtop1.png?raw=true)
 
 
+Licensed MIT 2015-2021

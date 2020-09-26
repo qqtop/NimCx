@@ -11,7 +11,7 @@ import cxconsts
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2020-05-27 
+##     Latest      : 2020-09-26 
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -70,7 +70,7 @@ template cxprintLn(xpos:int, args: varargs[untyped]) =
     styledEcho(args)
 
                 
-template cxLocal* : string = $now()
+template cxLocal*() : untyped = $now()
      ## cxLocal
      ## 
      ## returns local datetime in a string same as now()
@@ -88,7 +88,7 @@ template cxLocal* : string = $now()
 
      
       
-template cxNow* : string = cxLocal.replace("T",spaces(1))
+template cxNow*() : untyped = ($now()).replace("T",spaces(1))
      ## cxnow
      ## 
      ## formated datetime without the T 
@@ -96,7 +96,7 @@ template cxNow* : string = cxLocal.replace("T",spaces(1))
      ## eg: 2018-08-23 16:48:50+08.00
      ##
      
-template cxToday* : string = getDateStr() 
+template cxToday* : untyped = getDateStr() 
      ## today
      ## 
      ## returns date string
@@ -104,7 +104,7 @@ template cxToday* : string = getDateStr()
      ## eg : 2018-08-23
      ##          
         
-template cxTime* : string = getClockStr()
+template cxTime* : untyped = getClockStr()
      ## cxTime
      ## 
      ## eg : 16:48:50
@@ -114,7 +114,7 @@ template loopy2(mi: int = 0, ma: int = 5, st: untyped) =
          for xloopy {.inject.} in mi ..< ma: st
 
 
-template cxDateTime* : string = getDateStr() & " " & getClockStr()
+template cxDateTime* : untyped = getDateStr() & " " & getClockStr()
      ## cxDateTime           
      ## 
      ## returns a date time string
@@ -155,9 +155,8 @@ proc cxTimeZone*(amode:cxTz = long):string =
         result = "UTC" & $ltt[(($ltt).len - 6) ..< ($ltt).len] 
      of short:
         result = cxnow()[19 .. ^1]       
-    
-
-   
+         
+ 
 proc sleepy*[T:float|int](secs:T) =
   ## sleepy
   ##
@@ -260,6 +259,7 @@ proc compareDates*(startDate,endDate:string) : int =
           result = -1
      else:
           result = -2
+
 
 
 
@@ -401,7 +401,7 @@ proc printDTimeMsg*(atext:string = $toTime(now()),xpos:int = 1):string {.discard
      cxprint(xpos,gold,darkslategraybg,"[DTime ]",lightgrey,spaces(1),atext)
 
 proc printLnDTimeMsg*(atext:string = $toTime(now()),xpos:int = 1):string {.discardable.} =
-     cxprintLn(xpos,gold,darkslategraybg,"[DTime ]",lightgrey,spaces(1),atext)  
+     cxprintLn(xpos,orange,darkslategraybg,"[DTime ]",lightgrey,spaces(1),atext)  
 
 proc printDateMsg*(atext:string = getDateStr(),xpos:int = 1):string {.discardable.} =
      cxprint(xpos,gold,darkslategraybg,"[Date  ]",lightgrey,spaces(1),atext)
@@ -658,6 +658,34 @@ proc getAmzDateString*():string =
     ## 
     return format(utc(getTime()), iso_8601_aws) 
     
+  
+## iso week number
+## borrowed from https://gist.github.com/pietroppeter/e6afa43318b202ef2a2a32e0fd3844bf
+## see https://en.wikipedia.org/wiki/ISO_week_date#Calculating_the_week_number_of_a_given_date
+
+type
+  WeekRange = range[1 .. 53]
+
+proc lastWeek(year: int): WeekRange =
+  ## The long years, with 53 weeks in them, can be described as any year starting on Thursday and any leap year starting on Wednesday
+  let firstWeekDay = initDateTime(1.MonthDayRange, mJan, year, 0, 0, 0).weekday
+  if firstWeekDay == dThu or (year.isLeapYear and firstWeekDay == dWed):
+    53
+  else:
+    52
+
+proc isoweek*(dt: DateTime): WeekRange =
+  ## returns isoweek for a given date
+  let
+    od = getDayOfYear(dt.monthday, dt.month, dt.year) + 1  # ordinal date
+    week = (od - dt.weekday.ord + 9) div 7
+  if week < 1:
+    lastWeek(dt.year - 1)
+  elif week > lastWeek(dt.year):
+    1
+  else:
+    week  
+  
     
 when isMainModule:
     echo()
@@ -665,7 +693,8 @@ when isMainModule:
     let currenttime = getTime() 
     cxprintLn(1,"cxLocal           : ",cxLocal)
     cxprintLn(1,"cxNow             : ",cxNow) 
-    cxprintLn(1,"DST Time          : ",$isDst(now()))
+    let idt = isDst(now())
+    cxprintLn(1,"DST Time          : ",$idt)
     cxprintLn(1,"cxTime            : ",cxTime) 
     cxprintLn(1,"cxToday           : ",cxToday)
     cxprintLn(1,"cxTimeZone(long)  : ",cxTimezone(long))
@@ -676,6 +705,11 @@ when isMainModule:
     cxprintLn(1,"Running Time      : ",$cxHRTimer(currenttime,getTime()))
     cxprintLn(1,"Next Monday       : ",getNextMonday(cxtoday())," = ",cxDayOfWeek(getNextMonday(cxtoday())))
     printLnDTimeMsg()  # datetime message
+    doAssert initDateTime(23, mDec, 2019, 0, 0, 0).isoweek == 52
+    doAssert initDateTime(30, mDec, 2019, 0, 0, 0).isoweek == 1
+    doAssert initDateTime(2, mFeb, 2020, 0, 0, 0).isoweek == 5
+    doAssert initDateTime(3, mFeb, 2020, 0, 0, 0).isoweek == 6
+    cxprintLn(1,"Current Isoweek   : ", $now().isoweek)
     echo()
       
 

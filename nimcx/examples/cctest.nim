@@ -23,7 +23,7 @@ var c = a + b
 var d = a - b 
 
 # we also can set the intensity 0.0 - 1.0
-let ia = 0.70
+let ia = 0.85
 let ib = 0.98
 a = c.intensity(ia)
 b = d.intensity(ib)

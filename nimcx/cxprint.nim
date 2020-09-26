@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2020-05-14 
+##     Latest      : 2020-09-26 
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -253,7 +253,7 @@ proc printLn*[T](astring: T,
     ##
     ##   Colornames supported for font colors     :  all
     ##  
-    ##   Colornames supported for background color: all colors ending with bg
+    ##   Colornames supported for background color:  all colors ending with bg
     ##   
     ##   - use styleBright and styleReverse for various effects
     ##   
@@ -858,11 +858,15 @@ proc printLnPassMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printLnBiCol("[Pass  ]" & spaces(1) & atext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
 
 # printInfoMsg and printLnInfoMsg can take two strings for more generic use     
-proc printInfoMsg*(info,atext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
-     printBiCol(["[$1]" % info , spaces(1) , atext] , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
+proc printInfoMsg*(info:string="",atext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
+     var infox = info
+     if infox == "":infox = "Info  "
+     printBiCol(["[$1]" % infox , spaces(1) , atext] , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
 # 
-proc printLnInfoMsg*(info,atext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[$1]" % info & spaces(1) & atext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
+proc printLnInfoMsg*(info:string,atext:string = "",colLeft:string = lightslategray  ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
+     var infox = info
+     if infox == "":infox = "Info  "
+     printLnBiCol("[$1]" % infox & spaces(1) & atext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
    
       
 template dprint*[T](s:T) = 
@@ -904,12 +908,22 @@ macro pdebug*(n: varargs[typed]): untyped =
 
 
 if isMainModule:
-    
-    cxprintLn(10,yellowgreen,"This is cxprint", red,".nim")
+    echo()
+    printLnBiCol("Test for  : cxprint",colLeft=pink,colRight=trueblue)
+    echo()
+    cxprintLn(10,yellowgreen,"This is cxprint at position ", red,"10")
     printLn(CRLF)
     for x in 0..<10:print SP
     printLnRainbow("Rainbow - Temple of the King")
-    decho(2)
-    printLnInfoMsg("Nimcx","Just a message for a rainy day")
+    echo()
+    printLnAlertMsg("Work not finished yet")
+    echo()
+    printLnStatusMsg("Still working on it ! ...")
+    echo()
+    printLnInfoMsg("Nimcx ","Just a message for a rainy day")
+    echo()
+    printLnInfoMsg("","Got the source,got the power",colLeft=orange)
+    echo()
+    printLnOkMsg("Finally it works !")
     echo()
 # end of cxprint.nim      

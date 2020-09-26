@@ -9,7 +9,7 @@ import hashes,strutils,rdstdin
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2020-05-14 
+##     Latest      : 2020-09-26 
 ##
 ##     Compiler    : latest stable or devel branch
 ##

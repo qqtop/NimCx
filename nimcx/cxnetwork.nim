@@ -1,10 +1,11 @@
 # cxnetwork.nim
 # 
-# Var. internet related procs and experiments 
-# nmap , ip , lsof etc. needs to be installed if relevant procs to be used.
+# Var. internet related utility procs and experiments 
+# nmap , ip , lsof etc. needs to be installed if 
+# relevant procs to be used.
 # 
 # 
-# Last 2020-04-24
+# Last 2020-09-26
 # 
 
 import os,osproc,json,httpclient,strutils,strscans

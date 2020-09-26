@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2020-08-09
+##     Latest      : 2020-09-26
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -1034,7 +1034,7 @@ proc fastsplit*(s: string, sep: char): seq[string] =
                  result[fieldNum] = s[start .. i - 1]
                  start = i + 1
                  fieldNum += 1
-          result[fieldNum] = s[start..^1]
+          result[fieldNum] = s[start .. ^1]
 
 
 
@@ -2885,6 +2885,6 @@ when isMainModule:
     echo()
     showHostNameCtl()
     decho(2)
-    cxprintln(3,goldenrod,styleUnderscore,"cxglobal.nim - a module of nimcx library")
+    cxprintln(3,goldenrod,styleUnderscore,"cxglobal.nim - a module of the nimcx library")
     decho(2) 
 # END OF CXGLOBAL.NIM #

@@ -7,7 +7,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2020-06-08
+##     Latest      : 2020-09-26
 ##
 ##     Note        : holds the current version of this library
 ##

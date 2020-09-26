@@ -4,9 +4,9 @@ import nimcx
 #
 # zenity driven interfaces 
 # zenity can be installed on linux
-# maybe future part of nimcx
+# maybe will become part of nimcx
 #
-# Last  : 2020-06-09
+# Last  : 2020-09-26
 #
 
 
