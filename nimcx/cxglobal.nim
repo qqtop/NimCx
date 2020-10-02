@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2020-09-26
+##     Latest      : 2020-10-02
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -175,7 +175,6 @@ proc cxtoLower*(c: char): char =
           ##
           result = c
           if c in {'A'..'Z'}: result = chr(ord(c) + (ord('a') - ord('A')))
-
 
 converter toTwInt*(x: cushort): int = result = int(x)
 
@@ -1596,21 +1595,6 @@ proc getPassword*(ahash:int64 = 0i64):string =
            decho(2)
            quit(1)
     
-
-proc getPwd*():string = 
-    ## getPwd
-    ##
-    ## utility function to get password via zenity which is installed
-    ## in many linux systems and provides GTK dialog boxes in command-line
-    ## and shell scripts
-    ##
-    ##
-    var result1 = ""
-    result1 = execCmdEx("""zenity --password --title="Enter Password" """).output
-    result1.removeSuffix('\n')
-    return result1
-
-
 
 proc cxInput*(prompt: string,promptColor:string=greenYellow,xpos:int = 0,allowBlank:bool = false): string =
                

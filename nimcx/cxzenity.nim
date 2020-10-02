@@ -6,12 +6,13 @@ import nimcx
 # zenity can be installed on linux , comes with many gnome based distros
 # has more options than whiptail a similar app
 #
-# Last  : 2020-09-30
+# Last  : 2020-10-02
 #
 
 
 proc cxZDialog*(title:string="cxZDialog",text:string="Demo Text",hideText:bool=false ):string =
    ## cxZDialog
+   ##
    if hideText == false:
       let zs = """zenity --entry --title="$1" --text="$2" """ % [title,text]
       var dialg = execCmdEx(zs)
@@ -38,6 +39,17 @@ proc cxZLoginDialog*(title:string="Login Dialog",text:string="Login"):tuple[name
         result.name = fs[0]
         result.password = fs[1] 
 
+
+proc cxZPwd*():string = 
+    ## cxZPwd
+    ##
+    ## password input dialog box
+    ##
+    ##
+    var result1 = ""
+    result1 = execCmdEx("""zenity --password --title="Enter Password" """).output
+    result1.removeSuffix('\n')
+    return result1
 
 
 
@@ -75,7 +87,7 @@ proc cxLoginDateDialog*(title:string="Login Dialog",text:string="Login"):tuple[n
         result.password = fs[1] 
         result.date = fs[2] 
         
-proc cxZInfo*(infotext:string="Yes Stay_calm_carry_on",width:int=300) = 
+proc cxZInfo*(infotext:string="Stay_calm_, carry_on",width:int=300) = 
    discard  execCmdEx("""zenity --info --text="$1" --no-wrap --width=$2""" % [infotext,$width])
  
 
@@ -83,7 +95,8 @@ proc cxZYesNo*(text:string="",width:int=300):string =
     let rp = execCmdEx("""zenity --question --text "$1 ?" --ok-label "Yes" --cancel-label="No" --width=$2 """ % [text,$width])  #.output
     result = if rp.exitcode == 0: "yes" else: "no"  # yes = 0 no = 1 
    
-proc cxZQuestion*(ask:string = "How Are you ?",cancel:string="No",ok:string="Yes"):bool =
+   
+proc cxZQuestion*(ask:string = "How Are you ?",cancel:string="Tired",ok:string="Energetic"):bool =
     ## cxZQuestion
     ##
     ##
