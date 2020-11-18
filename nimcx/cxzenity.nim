@@ -173,6 +173,39 @@ proc cxZRadio*():string =
     list3.output.removeSuffix('\n')
     result = list3.output
 
+proc cxProgress*():string =
+# below a script of a zenity progress bar 
+# need to translate to nim
+# #!/bin/sh
+#(
+#echo "10" ; sleep 1
+#echo "# Updating mail logs" ; sleep 1
+#echo "20" ; sleep 1
+#echo "# Resetting cron jobs" ; sleep 1
+#echo "50" ; sleep 1
+#echo "This line will just be ignored" ; sleep 1
+#echo "75" ; sleep 1
+#echo "# Rebooting system" ; sleep 1
+#echo "100" ; sleep 1
+#) |
+#zenity --progress \
+  #--title="Update System Logs" \
+  #--text="Scanning mail logs..." \
+  #--percentage=0
+
+#if [ "$?" = -1 ] ; then
+        #zenity --error \
+          #--text="Update canceled."
+#fi
+   printLnStatusMsg("Not yet implemented")
+   discard
+
+
+
+proc cxZprogress():string =
+     # nice but how to use with nim is not clear
+     var p = execCmd("(for i in `seq 1 100`;do echo $i;sleep 0.1;done ) | zenity --progress")
+     
 
 # larger example for further customisation
 proc formExample():seq[string] =       
@@ -199,6 +232,9 @@ if isMainModule:
   var yn = cxZYesNo("Overwrite the existing database.fdb file ")
   echo yn
   
+  echo cxZprogress()
+  
+  
   # simple entry dialog
   #var cxz  = cxZDialog("Secret1","Enter a secret",false)
   #echo cxz
@@ -213,9 +249,9 @@ if isMainModule:
   #echo "Date : ",login.date
   
   
-  var login1 = cxZLoginDialog()
-  echo "Name : ",login1.name 
-  echo "Pwd  : ",login1.password
+  #var login1 = cxZLoginDialog()
+  #echo "Name : ",login1.name 
+  #echo "Pwd  : ",login1.password
   
   # small pop ups  
   #cxZinfo()

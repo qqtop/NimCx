@@ -6,7 +6,7 @@
 #{.noforward: on.}   # future feature
 
 
-# check memory usage via -d:UseMalloc and Valgrind
+# check memory usage and other issues via -d:UseMalloc and Valgrind
 ## ::
 ## 
 ##     Library     : nimcx.nim
@@ -19,7 +19,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2020-09-26
+##     Latest      : 2020-11-18
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -31,7 +31,9 @@
 ##
 ##                   for easy colored display in a linux terminal and also contains
 ##                   
-##                   a wide selection of utility functions and useable snippets. 
+##                   a wide selection of utility functions and useable snippets for
+##
+##                   your projects and experimentations. 
 ##                   
 ##                   Currently the library consists of 
 ##                   
@@ -39,16 +41,19 @@
 ##                   
 ##                   cxtime , cxstats  , cxfont , cxfontconsts
 ##                   
-##                   except cxfont and cxfontconsts all files are automatically
+##                   except cxfont ,cxfontconsts and cxzenity all files are automatically
 ##
 ##                   imported with : import nimcx
+##
+##                   if you need cxzenity it can be imported with
 ## 
+##                   import nimcx/cxzenity
 ##
 ##     Usage       : import nimcx
 ##
-##     Project     : `NimCx <https://github.com/qqtop/NimCx>`_
+##     Project     : [NimCx](https://github.com/qqtop/NimCx)
 ##
-##     Docs        : `Documentation <https://qqtop.github.io/cx.html>`_
+##     Docs        : [Documentation](https://qqtop.github.io/cx.html)
 ##
 ##     Tested      : Debian , Parrot (Debian Testing)
 ##       
@@ -98,11 +103,14 @@
 ##
 ##                   for printing of multiple columns in the terminal the print,printLn,printBiCol,printLnBiCol
 ##                   
-##                   routines should be used.  
+##                   routines should be used for other printjobs see cxprint,cxprintLn  
 ##                   
-##                   Due to the flurry of updates in the development branch occasional carnage may occure.
+##                   Due to the flurry of updates in the development branch occasional carnage may occur.
 ##
-##                   Nimcx compiles with --gc:arc
+##                   Nimcx compiles with --gc:arc and --gc:orc
+##
+##                   Nimcx brings in most of the stdlib modules for convenience.
+##  
 ##
 ##     Installation: nimble install nimcx
 ##
@@ -116,12 +124,18 @@
 ##                   Deprecating/removing unused or unnecessary code due to improvements in stdlib
 ##
 ##                   cxfont.nim and cxfontconsts.nim are available for import , but not longer
-##                   included in nimcx to avoid code bloat  
+##                   imported in nimcx to avoid code bloat 
+##
+##                   cxzenity.nim is available but not imported with nimcx it utilises
+##
+##                   the OS zenity install do show graphical messageboxes etc 
 ##
 ##
 ##     Compile idea : nim c -d:threads:on -d:ssl -d:danger --gc:arc -d:useMalloc -r -f cx
 ##
 ##     Fast         : nim c --gc:arc --threads:on -d:ssl --stackTrace:off -d:release --d:nimdrnim --passC:-flto -f -r cx
+##
+##                    nim c -d:danger --panics:on  --threads:on   --passC:"-flto -fopt-info-missed" -r -f cx
 ##
 ##     Hardcore     : nim c --gc:arc --debuginfo -d:useMalloc cx.nim && valgrind -s --leak-check=full ./cx
 ##
@@ -199,7 +213,7 @@ when defined(posix):
 
         {.hints: on.}  # turn on off as per requirement
 
-let cxstart* = epochTime() # simple execution timing with one line see doFinish()
+let cxstart* = epochTime()   # simple execution timing with one line see doFinish()
 let cxstartgTime = getTime() 
 
 randomize()                # seed rand number generator
@@ -655,7 +669,7 @@ proc colorio*() =
     ## Displays name,hex code and rgb of colors available in cx.nim
     ##
     cxprintLn(0,gold,truebluebg,fmtx(["<20", "", "<20", "", ">5", "", ">5", "", ">6"],
-                    "ColorName in cx", spaces(2), "HEX Code", spaces(2),
+                    "Colornames in nimcx", spaces(2), "HEX Code", spaces(2),
                     "R", spaces(1), "G", spaces(1), "B"))
     echo()
     for x in 0 ..< colorNames.len:
@@ -675,6 +689,28 @@ proc colorio*() =
     echo()
     cxprintLn(1,gold,darkslategraybg,"Colorio   -   A NimCx color view utility  ")
     echo()
+   
+template hextoRGB*(hexstring:untyped):untyped = 
+    # hextoRGB
+    # convert a hex color string to rgb color string
+    # this function is for foreground color use
+    #
+    let b = extractRGB(parseColor(hexstring))
+    let cxb = newcolor(b.r,b.g,b.b)
+    cxb
+    
+
+template hextoRGBbg*(hexstring:untyped):untyped = 
+    # hextoRGBbg
+    # convert a hex color string to rgb color string
+    # this function is for background color use
+    #
+    #.. code-block:: nim
+    #   cxprintLn(1,hextoRGB("#F9DB6D"),hextoRGBbg("#464d77"),"  yellow on new blue test  ")  
+    #
+    let b = extractRGB(parseColor(hexstring))
+    let cxb = newcolor2(b.r,b.g,b.b)
+    cxb   
     
 proc showHexColors*[T](hcolors:seq[T]) =
   ## showHexColors
@@ -683,9 +719,8 @@ proc showHexColors*[T](hcolors:seq[T]) =
   ## myhexcols = @["#F5F5F5","#FFFF00","#9ACD32"]
   ##
   for x in 0 ..< hcolors.len:
-    let b = extractRGB(parseColor(hcolors[x]))
-    let cxb = newcolor(b.r,b.g,b.b)
-    cxprintln(0,cxb,fmtx(["<25","","<9","",""],$b,spaces(3),$hcolors[x],spaces(3)," nimcx hex color test "))
+    var hxb = hcolors[x]
+    cxprintln(0,hextorgb(hxb),fmtx(["","","<9",""],spaces(3),$hcolors[x],spaces(3)," nimcx hex color test "))
     
 # spellInteger
 proc nonzero(c: string, n: int64, connect = ""): string =
@@ -1165,65 +1200,68 @@ proc doInfo*() =
     ## doInfo
     ##
     ## A more than you want to know information proc
+    ## 
     ##
-    ##
-    let filename = extractFileName(getAppFilename())
-    let modTime = getLastModificationTime(filename)
-    let fi = getFileInfo(filename)
-    let sep = ":"
-    superHeader("Information for file " & filename & " and System " & spaces(22))
-    printLnBiCol("Last compilation on           : " & CompileDate & " at " & CompileTime & " UTC", yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("Last modificaton time of file : " & filename & " " & $modTime, yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("Offset from UTC in hours      : " & cxTimeZone(long), yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("Local Time                    : " & $now().local,yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("UTC Time                      : " & $now().utc, yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("Environment Info              : " & os.getEnv("HOME"),yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("File exists                   : " & $(fileExists filename), yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("Dir exists                    : " & $(dirExists "/home"),yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("AppDir                        : " & getAppDir(),yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("App File Name                 : " & getAppFilename(),yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("User home  dir                : " & os.getHomeDir(),yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("Config Dir                    : " & os.getConfigDir(), yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("Current Dir                   : " & os.getCurrentDir(), yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("File Id.                      : " & $(fi.id.device), yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("File No.                      : " & $(fi.id.file), yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("Kind                          : " & $(fi.kind),yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("Size                          : " & $(float(fi.size) / float(1000)) & " kb", yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("File Permissions              : ", yellowgreen, lightgrey, sep, 0, false, {})
-    for pp in fi.permissions:
-            printLnBiCol("                              : " & $pp, yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("Link Count                    : " & $(fi.linkCount), yellowgreen, lightgrey, sep, 0, false, {})
-    # these only make sense for non executable files
-    printLnBiCol("Last Access                   : " & $(fi.lastAccessTime), yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("Last Write                    : " & $(fi.lastWriteTime), yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("Creation                      : " & $(fi.creationTime), yellowgreen, lightgrey, sep, 0, false, {})
-
-    when defined windows:
-            printLnBiCol("System                        : Running on Windows", red, lightgrey, sep, 0, false, {})
-    elif defined linux:
-            printLnBiCol("System                        : Running on Linux", brightcyan, yellowgreen, sep, 0, false, {})
-    else:
-            printLnBiCol("System                        : Interesting Choice", yellowgreen, lightgrey, sep, 0, false, {})
-
-    when defined x86:
-            printLnBiCol("Code specifics                : x86", yellowgreen, lightgrey, sep, 0, false, {})
-
-    elif defined amd64:
-            printLnBiCol("Code specifics                : amd86",yellowgreen, lightgrey, sep, 0, false, {})
-    else:
-            printLnBiCol("Code specifics                : generic",yellowgreen, lightgrey, sep, 0, false, {})
-
-    printLnBiCol("Nim Version                   : " & $NimMajor & "." & $NimMinor & "." & $NimPatch, yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("Processor thread count        : " & $cpuInfo.countProcessors(), yellowgreen, lightgrey, sep, 0, false, {})
-    printBiCol("OS                            : " & hostOS, yellowgreen,lightgrey, sep, 0, false, {})  
-    printBiCol(" | CPU: " & hostCPU, yellowgreen, lightgrey, sep, 0,false, {})
-    printLnBiCol(" | cpuEndian: " & $cpuEndian, yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("CPU Cores                     : " & $cpuInfo.countProcessors())
-    printLnBiCol("Current pid                   : " & $getpid(), yellowgreen, lightgrey, sep, 0, false, {})
-    printLnBiCol("Terminal encoding             : " & $getCurrentEncoding())
-    printLnBiCol("Compiler used                 : " & getCurrentCompilerExe())
-    printLnBiCol("NimCx Version                 : " & CXLIBVERSION)
-
+    try:
+        let filename = extractFileName(getAppFilename())
+        let modTime = getLastModificationTime(filename)
+        let fi = getFileInfo(filename)
+        let sep = ":"
+        superHeader("Information for file " & filename & " and System " & spaces(22))
+        printLnBiCol("Last compilation on           : " & CompileDate & " at " & CompileTime & " UTC", yellowgreen, lightgrey, sep, 0, false, {})
+        printLnBiCol("Last modificaton time of file : " & filename & " " & $modTime, yellowgreen, lightgrey, sep, 0, false, {})
+        printLnBiCol("Offset from UTC in hours      : " & cxTimeZone(long), yellowgreen, lightgrey, sep, 0, false, {})
+        printLnBiCol("Local Time                    : " & $now().local,yellowgreen, lightgrey, sep, 0, false, {})
+        printLnBiCol("UTC Time                      : " & $now().utc, yellowgreen, lightgrey, sep, 0, false, {})
+        printLnBiCol("Environment Info              : " & os.getEnv("HOME"),yellowgreen, lightgrey, sep, 0, false, {})
+        printLnBiCol("File exists                   : " & $(fileExists filename), yellowgreen, lightgrey, sep, 0, false, {})
+        printLnBiCol("Dir exists                    : " & $(dirExists "/home"),yellowgreen, lightgrey, sep, 0, false, {})
+        printLnBiCol("AppDir                        : " & getAppDir(),yellowgreen, lightgrey, sep, 0, false, {})
+        printLnBiCol("App File Name                 : " & getAppFilename(),yellowgreen, lightgrey, sep, 0, false, {})
+        printLnBiCol("User home  dir                : " & os.getHomeDir(),yellowgreen, lightgrey, sep, 0, false, {})
+        printLnBiCol("Config Dir                    : " & os.getConfigDir(), yellowgreen, lightgrey, sep, 0, false, {})
+        printLnBiCol("Current Dir                   : " & os.getCurrentDir(), yellowgreen, lightgrey, sep, 0, false, {})
+        printLnBiCol("File Id.                      : " & $(fi.id.device), yellowgreen, lightgrey, sep, 0, false, {})
+        printLnBiCol("File No.                      : " & $(fi.id.file), yellowgreen, lightgrey, sep, 0, false, {})
+        printLnBiCol("Kind                          : " & $(fi.kind),yellowgreen, lightgrey, sep, 0, false, {})
+        printLnBiCol("Size                          : " & $(float(fi.size) / float(1000)) & " kb", yellowgreen, lightgrey, sep, 0, false, {})
+        printLnBiCol("File Permissions              : ", yellowgreen, lightgrey, sep, 0, false, {})
+        for pp in fi.permissions:
+                printLnBiCol("                              : " & $pp, yellowgreen, lightgrey, sep, 0, false, {})
+        printLnBiCol("Link Count                    : " & $(fi.linkCount), yellowgreen, lightgrey, sep, 0, false, {})
+        # these only make sense for non executable files
+        printLnBiCol("Last Access                   : " & $(fi.lastAccessTime), yellowgreen, lightgrey, sep, 0, false, {})
+        printLnBiCol("Last Write                    : " & $(fi.lastWriteTime), yellowgreen, lightgrey, sep, 0, false, {})
+        printLnBiCol("Creation                      : " & $(fi.creationTime), yellowgreen, lightgrey, sep, 0, false, {})
+    
+        when defined windows:
+                printLnBiCol("System                        : Running on Windows", red, lightgrey, sep, 0, false, {})
+        elif defined linux:
+                printLnBiCol("System                        : Running on Linux", brightcyan, yellowgreen, sep, 0, false, {})
+        else:
+                printLnBiCol("System                        : Interesting Choice", yellowgreen, lightgrey, sep, 0, false, {})
+    
+        when defined x86:
+                printLnBiCol("Code specifics                : x86", yellowgreen, lightgrey, sep, 0, false, {})
+    
+        elif defined amd64:
+                printLnBiCol("Code specifics                : amd86",yellowgreen, lightgrey, sep, 0, false, {})
+        else:
+                printLnBiCol("Code specifics                : generic",yellowgreen, lightgrey, sep, 0, false, {})
+    
+        printLnBiCol("Nim Version                   : " & $NimMajor & "." & $NimMinor & "." & $NimPatch, yellowgreen, lightgrey, sep, 0, false, {})
+        printLnBiCol("Processor thread count        : " & $cpuInfo.countProcessors(), yellowgreen, lightgrey, sep, 0, false, {})
+        printBiCol("OS                            : " & hostOS, yellowgreen,lightgrey, sep, 0, false, {})  
+        printBiCol(" | CPU: " & hostCPU, yellowgreen, lightgrey, sep, 0,false, {})
+        printLnBiCol(" | cpuEndian: " & $cpuEndian, yellowgreen, lightgrey, sep, 0, false, {})
+        printLnBiCol("CPU Cores                     : " & $cpuInfo.countProcessors())
+        printLnBiCol("Current pid                   : " & $getpid(), yellowgreen, lightgrey, sep, 0, false, {})
+        printLnBiCol("Terminal encoding             : " & $getCurrentEncoding())
+        printLnBiCol("Compiler used                 : " & getCurrentCompilerExe())
+        printLnBiCol("NimCx Version                 : " & CXLIBVERSION)
+    except:
+        discard
+        
 proc infoLine*(xpos:int = 0) =
      ## infoLine
      ##
@@ -1392,9 +1430,12 @@ proc doCxEnd*() =
     print(spaces(3))
     qqtop()
     printLn("  -  " & year(getDateStr()))
-    doInfo()
+    doInfo()   # available on a nim development system with nim compiler, nimcx source
     echo()
-    cxhostnamectl() 
+    try:
+      cxhostnamectl() 
+    except OSError:
+      discard    
     let pr = getProgramResult()
     curup(2)
     if pr == 0:
@@ -1414,7 +1455,11 @@ addExitproc(resetAttributes)
 
 
 when isMainModule: 
-    colorio()
-    doCxEnd()
+    decho(2)
+    #colorio()
+    #doCxEnd() 
+    showColors()
+    #printLnBiCol("Occupied Memory : " & formatSize getOccupiedMem())
+    doFinish()
 
 # END OF CX.NIM #

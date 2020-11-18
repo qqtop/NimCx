@@ -370,9 +370,10 @@ proc getRndBool*(): bool =
           ## getRndBool
           ##
           if getRndInt(0, 1) == 0:
-                    result = false
+               result = false
           else:
-                    result = true
+               result = true
+
 
 proc getRandomSignI*(): int =
           ## getRandomSignI
@@ -476,7 +477,6 @@ proc createSeqInt*(n: int = 10, mi: int = 0, ma: int = 1000): seq[int] {.inline.
           ##    echo createSeqInt(50,100,2000)
           # result = newSeqofCap[int](n)  # slow use if memory considerations are of top importance
           result = newSeq[int]() # faster
-          # as we do not want any print commands in this module we change
           case mi <= ma
              of true: result.add(newSeqWith(n, getRndInt(mi, ma)))
              else: result.add(newSeqWith(n, getRndInt(mi, mi)))
@@ -635,6 +635,7 @@ proc getRndFloat*():float = rand(1.0) * getRandomSignF()
           ## getRndFloat
           ##
           ## same as getrandFloat()
+
 
 proc createSeqFloat*(n: int = 10, prec: int = 3): seq[float] =
           ## createSeqFloat
@@ -1224,7 +1225,7 @@ proc `[]`*[T; U](a: seq[T], x: Slice[U]): seq[T] =
 template loopy*[T](ite: T, st: untyped) =
          ## loopy
          ##
-         ## the lazy programmer's quick simple for-loop template
+         ## simple for-loop template
          ##
          ##.. code-block:: nim
          ##       loopy(0..<10,printLn("The house is in the back.",randcol()))
@@ -1343,9 +1344,8 @@ template colPaletteLen*(coltype: string): auto =
           ##
           var ts = newseq[string]()
           for x in 0..<colorNames.len:
-                    if colorNames[x][0].startswith(coltype) or colorNames[x][
-                                        0].contains(coltype):
-                              ts.add(colorNames[x][1])
+             if colorNames[x][0].startswith(coltype) or colorNames[x][0].contains(coltype):
+                ts.add(colorNames[x][1])
           colPaletteIndexer(ts).len
 
 
@@ -1377,9 +1377,8 @@ template colPalette*(coltype: string, n: int): auto =
          var m = n
          var ts = newseq[string]()
          for colx in 0..<colorNames.len:
-                    if colorNames[colx][0].startswith(coltype) or colorNames[
-                                        colx][0].contains(coltype):
-                              ts.add(colorNames[colx][1])
+             if colorNames[colx][0].startswith(coltype) or colorNames[colx][0].contains(coltype):
+                ts.add(colorNames[colx][1])
          if m > colPaletteLen(coltype): m = 0
          ts[m]
 
@@ -1402,19 +1401,14 @@ template colorsPalette*(coltype: string): auto =
 
          var pal = newseq[(string, string)]()
          for colx in 0..<colorNames.len:
-                    if colorNames[colx][0].startswith(coltype) or colorNames[
-                                        colx][0].contains(coltype):
-                              pal.add((colorNames[colx][0], colorNames[colx][
-                                                  1]))
+             if colorNames[colx][0].startswith(coltype) or colorNames[colx][0].contains(coltype):
+                pal.add((colorNames[colx][0], colorNames[colx][1]))
 
          if pal.len < 1:
-                    printLnErrorMsg(colorsPalette)
-                    printLnBErrorMsg("Desired filter may not be available",
-                                        red)
-                    printLnBErrorMsg(
-                                        "        Try:  medium , dark, light, blue, yellow etc.",
-                                        red)
-                    doFinish()
+            printLnErrorMsg(colorsPalette)
+            printLnBErrorMsg("Desired filter may not be available",red)
+            printLnBErrorMsg(spaces(8) & "Try:  medium , dark, light, blue, yellow etc.",red)
+            doFinish()
          pal
 
 

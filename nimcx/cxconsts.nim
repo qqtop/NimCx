@@ -10,7 +10,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2020-09-26
+##     Latest      : 2020-06-09
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -1094,6 +1094,16 @@ const earthTones* = @[
         "#4E6172",
         "#83929F",
         "#A3ADB8"]
+        
+# how to display hex colors above       
+
+#for ll in earthtones:
+     #var lls = ll.split("#")
+     #r = parseHexInt(lls[1][0] & lls[1][1])
+     #g = parseHexInt(lls[1][2] & lls[1][3])
+     #b = parseHexInt(lls[1][4] & lls[1][5])
+     #var nc = newcolor(r,g,b)
+     #cxprintLn(1,nc,"earthtones") 
 
 # Color reference in hex and rgb  for colors mentioned in colors.nim
 #       
@@ -1379,6 +1389,8 @@ let nimcxl* = """
    | \|  |  |  |  |___  _/\_ 
       
  """    
+
+
 
 # Font constants have been moved to cxfontconsts.nim in order to shrink
 # binaries which do not use them

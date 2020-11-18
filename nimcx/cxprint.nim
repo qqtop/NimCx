@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2020-09-26 
+##     Latest      : 2020-10-19 
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -865,8 +865,11 @@ proc printInfoMsg*(info:string="",atext:string = "",colLeft:string = lightslateg
 # 
 proc printLnInfoMsg*(info:string,atext:string = "",colLeft:string = lightslategray  ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
      var infox = info
-     if infox == "":infox = "Info  "
-     printLnBiCol("[$1]" % infox & spaces(1) & atext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
+     if infox == "":
+         infox = "Info  "
+     else:
+         infox = infox & spaces(1) & atext
+     printLnBiCol("[$1]" % infox, colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
    
       
 template dprint*[T](s:T) = 
