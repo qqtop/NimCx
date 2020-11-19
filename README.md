@@ -2,6 +2,10 @@
 
 # NimCx   ![Image](https://camo.githubusercontent.com/b0224997019dec4e51d692c722ea9bee2818c837/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f6c6963656e73652f6d6173686170652f6170697374617475732e737667)   ![Image](https://raw.githubusercontent.com/yglukhov/nimble-tag/master/nimble.png)
 
+![Image](http://qqtop.github.io/cxpals.png?raw=true)
+Example ready pallets
+ 
+
 ![Image](http://qqtop.github.io/table0409.png?raw=true)
 Example 3D effect achieved with Nim truecolor support in terminal
 
@@ -19,19 +23,19 @@ Shades of rgb grey
 |------------------|-----------------------------------------------------|
 | Manual - Index   | [Index](https://qqtop.github.io/theindex.html)      | 
 | cx.nim           | [cx](https://qqtop.github.io/cx.html)               |
-| cxconsts.nim     | [cxconsts](https://qqtop.github.io/cxconsts.html)   |                
-| cxglobal.nim     | [cxglobal](https://qqtop.github.io/cxglobal.html)   |               
-| cxprint.nim      | [cxprint](https://qqtop.github.io/cxprint.html)     |             
+| cxconsts.nim     | [cxconsts](https://qqtop.github.io/cxconsts.html)   |
+| cxglobal.nim     | [cxglobal](https://qqtop.github.io/cxglobal.html)   |
+| cxprint.nim      | [cxprint](https://qqtop.github.io/cxprint.html)     |
 | cxfont.nim       | [cxfont](https://qqtop.github.io/cxfont.html)       |
-| cxfontconsts.nim |                                                     |     
-| cxnetwork.nim    | [cxnetwork](https://qqtop.github.io/cxnetwork.html) |                               
-| cxhash.nim       | [cxhash](https://qqtop.github.io/cxhash.html)       |           
-| cxtime.nim       | [cxtime](https://qqtop.github.io/cxtime.html)       |                   
-| cxstats.nim      | [cxstats](https://qqtop.github.io/cxstats.html)     |             
+| cxfontconsts.nim |                                                     |
+| cxnetwork.nim    | [cxnetwork](https://qqtop.github.io/cxnetwork.html) | 
+| cxhash.nim       | [cxhash](https://qqtop.github.io/cxhash.html)       | 
+| cxtime.nim       | [cxtime](https://qqtop.github.io/cxtime.html)       |
+| cxstats.nim      | [cxstats](https://qqtop.github.io/cxstats.html)     |
 
 
 
-Requires     : Nim 1.2.6 up   or  1.3.x up
+Requires     : Nim 1.4.x up
 
 Installation : 
 
@@ -61,7 +65,7 @@ A few examples of what can be done :
 ![Image](http://qqtop.github.io/nimblues.png?raw=true)
 
 
-```nimrod         
+```nim         
 
 import nimcx
 showColors()

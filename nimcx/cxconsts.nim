@@ -10,7 +10,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2020-06-09
+##     Latest      : 2020-11-19
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -1095,7 +1095,7 @@ const earthTones* = @[
         "#83929F",
         "#A3ADB8"]
         
-# how to display hex colors above       
+# how to display hex colors above or look into hextorgb()      
 
 #for ll in earthtones:
      #var lls = ll.split("#")
@@ -1390,7 +1390,116 @@ let nimcxl* = """
       
  """    
 
+# nice color palettes
+
+let cxgreypal* = @["#f7fafc",
+                "#edf2f7",  
+                "#e2e8f0",
+                "#cbd5e0",
+                "#a0aec0",
+                "#718096",
+                "#4a5568",
+                "#2d3748",
+                "#1a202c"]
+                
+var cxindigopal* = @["#ebf4ff",
+                  "#c3dafe",
+                  "#a3bffa",
+                  "#7f9cf5",
+                  "#667eea",
+                  "#5a67d8",
+                  "#4c51bf",
+                  "#434190",
+                  "#3c366b"]                
+
+let cxpurplepal* = @["#faf5ff",
+                  "#e9d8fd",
+                  "#d6bcfa",
+                  "#b794f4",
+                  "#9f7aea",
+                  "#805ad5",
+                  "#6b46c1",
+                  "#553c9a",
+                  "#44337a"]
 
 
+let cxpinkpal* = @["#fff5f7",
+                "#fed7e2",
+                "#fbb6ce",
+                "#f687b3",
+                "#ed64a6",
+                "#d53f8c",
+                "#b83280",
+                "#97266d",
+                "#702459"]
+                
+let cxredpal* = @["#fff5f5",
+               "#fed7d7",
+               "#feb2b2",
+               "#fc8181",
+               "#f56565",
+               "#e53e3e",
+               "#c53030",
+               "#9b2c2c",
+               "#742a2a"]                
+
+let cxorangepal* = @["#fffaf0",
+                  "#feebc8",
+                  "#fbd38d",
+                  "#f6ad55",
+                  "#ed8936",
+                  "#dd6b20",
+                  "#c05621",
+                  "#9c4221",
+                  "#7b341e"]
+                  
+let cxyellowpal* = @["#fffff0",
+                  "#fefcbf",
+                  "#faf089",
+                  "#f6e05e",
+                  "#ecc94b",
+                  "#d69e2e",
+                  "#b7791f",
+                  "#975a16",
+                  "#744210"]         
+                  
+let cxgreenpal* = @["#f0fff4",
+                 "#c6f6d5",
+                 "#9ae6b4",
+                 "#68d391",
+                 "#48bb78",
+                 "#38a169",
+                 "#2f855a",
+                 "#276749",
+                 "#22543d"]
+                 
+                                   
+let cxtealpal* = @["#e6fffa",
+                "#b2f5ea",
+                "#81e6d9",
+                "#4fd1c5",
+                "#38b2ac",
+                "#319795",
+                "#2c7a7b",
+                "#285e61",
+                "#234e52"]      
+                
+let cxbluepal* = @["#ebf8ff",
+                "#bee3f8",
+                "#90cdf4",
+                "#63b3ed",
+                "#4299e1",
+                "#3182ce",
+                "#2b6cb0",
+                "#2c5282",
+                "#2a4365"]
+ 
+
+let cxpals* = @[cxgreypal,cxindigopal,cxgreenpal,cxbluepal,cxredpal,cxpinkpal,cxorangepal,cxyellowpal,cxpurplepal,cxtealpal]
+  
+# show all pallets        showCxPallets()
+# show a single pallete   showhexcolors(cxbluepal)  
+                
+                
 # Font constants have been moved to cxfontconsts.nim in order to shrink
 # binaries which do not use them

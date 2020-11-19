@@ -3,7 +3,7 @@
 # very rough and ready testing of some of available functions in nimcx library
 # see docs for more examples 
 #
-# Latest      : 2020-06-09   
+# Latest      : 2020-11-19   
  
 import nimcx
 
@@ -17,7 +17,6 @@ let s = "nimcx Testing "
 let n = 1234567890
 let f = 123.4567890
 let l = @[1234,4567,890]
-
 
 
 proc nextTest() =
@@ -362,6 +361,50 @@ showHostNameCtl()
 
 nexttest()
 colorio()
+
+
+nexttest()
+echo()
+cxprintLn(3,cxsingledown(),cxsingleup(),cxdoubledown(),cxdoubleup(),cx45down(),cx45up())
+echo()
+
+nexttest()   #cxpals  --> pallets
+showHexcolors(@["#464d77","#845b8b","#c06a8c","#ed837e","#ffab6e","#F9DB6D"])
+
+cxprintLn(3,hextoRGB("#F9DB6D"),hextoRGBbg("#464d77"),"    yellow on -> new blue hex test   ")    
+echo()
+echo "cxgreypal"            
+showhexcolors(cxgreypal)            
+echo()                  
+echo "cxindigopal"      
+showhexcolors(cxindigopal)      
+echo()
+echo "cxpurplepal"
+showhexcolors(cxpurplepal)   
+echo()
+echo "cxpinkpal"
+showhexcolors(cxpinkpal)   
+echo()
+echo "cxredpal"
+showhexcolors(cxredpal)               
+echo()
+echo "cxorangepal"
+showhexcolors(cxorangepal)
+echo()
+echo "cxyellowpal"
+showhexcolors(cxyellowpal)
+echo()
+echo "cxgreenpal"  
+showhexcolors(cxgreenpal)  
+echo()
+echo "cxtealpal"
+showhexcolors(cxtealpal)      
+echo()
+echo "cxbluepal"
+showhexcolors(cxbluepal)
+echo()
+showCxpallets()
+
 
 superheader("Ok , that's it for now ! Have a nice day .",skyblue,lightslategray)
 

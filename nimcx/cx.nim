@@ -191,7 +191,7 @@ export unicode except strip, split, splitWhitespace
 discard setLocale(LC_ALL, "") # init utf8 
 
 when defined(macosx):
-        {.warning: " \u2691 nimCx is only tested on Linux ! Your mileage may vary".}
+        {.warning: " \u2691 NimCx is only tested on Linux ! Your mileage may vary".}
 
 when defined(windows):
         {.hint: "Time to switch to Linux !".}
@@ -215,6 +215,8 @@ when defined(posix):
 
 let cxstart* = epochTime()   # simple execution timing with one line see doFinish()
 let cxstartgTime = getTime() 
+
+
 
 randomize()                # seed rand number generator
 enableTrueColors()         # enable truecolorsupport
@@ -335,7 +337,28 @@ func newColor2*(r, g, b: int): string = "\x1b[48;2;$1;$2;$3m" % [$r, $g, $b]
     ##   best used as backgroundcolor in print, printLn etc. routines
     ##
     
+template hextoRGB*(hexstring:untyped):untyped = 
+    # hextoRGB
+    # convert a hex color string to rgb color string
+    # this function is for foreground color use
+    #
+    let b = extractRGB(parseColor(hexstring))
+    let cxb = newcolor(b.r,b.g,b.b)
+    cxb
+    
 
+template hextoRGBbg*(hexstring:untyped):untyped = 
+    # hextoRGBbg
+    # convert a hex color string to rgb color string
+    # this function is for background color use
+    #
+    #.. code-block:: nim
+    #   cxprintLn(1,hextoRGB("#F9DB6D"),hextoRGBbg("#464d77"),"  yellow on new blue test  ")  
+    #
+    let b = extractRGB(parseColor(hexstring))
+    let cxb = newcolor2(b.r,b.g,b.b)
+    cxb   
+    
 func checkColor*(colname: string): bool =
     ## checkColor
     ##
@@ -404,6 +427,18 @@ proc makeGreyScaleTest*(astart:int = 0, aend:int = 255 ,astep:int = 5) =
      
           
 # Misc. routines
+
+proc showCxPallets*() = 
+    # showPallets
+    # shows use of cxpals defined in cxconsts.nim
+    let spaltxt = smiley & "NimCx !"
+    var xpos = 3
+    for pxl in 0 ..< cxpals.len:
+      for x in 0..< cxpals[pxl].len:
+         cxprintln(xpos,hextoRGB(cxpals[pxl][x]),hextoRGBbg(cxpals[pxl][(cxpals[pxl].len-1) - x]),spaltxt)
+      curup(9)
+      xpos = xpos+10
+    decho(10)
 
 
 proc nimcat*(curFile: string, countphrase: seq[string] = @[]) =
@@ -690,27 +725,7 @@ proc colorio*() =
     cxprintLn(1,gold,darkslategraybg,"Colorio   -   A NimCx color view utility  ")
     echo()
    
-template hextoRGB*(hexstring:untyped):untyped = 
-    # hextoRGB
-    # convert a hex color string to rgb color string
-    # this function is for foreground color use
-    #
-    let b = extractRGB(parseColor(hexstring))
-    let cxb = newcolor(b.r,b.g,b.b)
-    cxb
-    
 
-template hextoRGBbg*(hexstring:untyped):untyped = 
-    # hextoRGBbg
-    # convert a hex color string to rgb color string
-    # this function is for background color use
-    #
-    #.. code-block:: nim
-    #   cxprintLn(1,hextoRGB("#F9DB6D"),hextoRGBbg("#464d77"),"  yellow on new blue test  ")  
-    #
-    let b = extractRGB(parseColor(hexstring))
-    let cxb = newcolor2(b.r,b.g,b.b)
-    cxb   
     
 proc showHexColors*[T](hcolors:seq[T]) =
   ## showHexColors
