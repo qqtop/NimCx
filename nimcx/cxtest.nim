@@ -3,7 +3,7 @@
 # very rough and ready testing of some of available functions in nimcx library
 # see docs for more examples 
 #
-# Latest      : 2020-11-19   
+# Latest      : 2020-11-20 
  
 import nimcx
 
@@ -402,6 +402,11 @@ showhexcolors(cxtealpal)
 echo()
 echo "cxbluepal"
 showhexcolors(cxbluepal)
+echo()
+print spaces(3)
+for x in cxpalnames:
+    var xx = x
+    print(fmtx(["<11",""],xx,spaces(1)),salmon)
 echo()
 showCxpallets()
 

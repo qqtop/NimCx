@@ -431,13 +431,22 @@ proc makeGreyScaleTest*(astart:int = 0, aend:int = 255 ,astep:int = 5) =
 proc showCxPallets*() = 
     # showPallets
     # shows use of cxpals defined in cxconsts.nim
-    let spaltxt = smiley & "NimCx !"
+    let spaltxt = smiley & "NimCx   "
     var xpos = 3
+    var x1 = 0
     for pxl in 0 ..< cxpals.len:
-      for x in 0..< cxpals[pxl].len:
-         cxprintln(xpos,hextoRGB(cxpals[pxl][x]),hextoRGBbg(cxpals[pxl][(cxpals[pxl].len-1) - x]),spaltxt)
+      for x in 0 ..< cxpals[pxl].len:
+         inc x1 
+         if x == 4:
+              cxprintLn(xpos,pastelBlue,hextoRGBbg(cxpals[pxl][(cxpals[pxl].len-1) - x]),spaltxt & $(cxpals[pxl].len-x-1))
+         else:     
+             cxprintLn(xpos,hextoRGB(cxpals[pxl][x]),hextoRGBbg(cxpals[pxl][(cxpals[pxl].len-1) - x]),spaltxt & $(cxpals[pxl].len-x-1))
+             
       curup(9)
-      xpos = xpos+10
+      xpos = xpos+12
+      
+      
+          
     decho(10)
 
 

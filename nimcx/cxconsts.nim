@@ -1496,7 +1496,7 @@ let cxbluepal* = @["#ebf8ff",
  
 
 let cxpals* = @[cxgreypal,cxindigopal,cxgreenpal,cxbluepal,cxredpal,cxpinkpal,cxorangepal,cxyellowpal,cxpurplepal,cxtealpal]
-  
+let cxpalnames* = @["cxgreypal","cxindigopal","cxgreenpal","cxbluepal","cxredpal","cxpinkpal","cxorangepal","cxyellowpal","cxpurplepal","cxtealpal"]  
 # show all pallets        showCxPallets()
 # show a single pallete   showhexcolors(cxbluepal)  
                 
