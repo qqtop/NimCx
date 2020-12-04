@@ -6,8 +6,27 @@ import nimcx
 # zenity can be installed on linux , comes with many gnome based distros
 # has more options than whiptail a similar app
 #
-# Last  : 2020-10-02
+# Last  : 2020-11-29
 #
+
+
+proc cxZFileSelection():string =
+     var zs = execCmdEx("""zenity --file-selection --title="Select a File" """)
+     result = zs.output
+     
+proc cxZCombobox(title:string="cxZComboBox",text:string="Selections available",cchoice:string="London|Birmingham|Paris|Dubai|Vienna|Hongkong",width:int=250):string = 
+   ## cxZCombobox
+   ##
+
+   # in order to display a default value
+   #var array="(a b c d e)"
+   #let zs = """$(zenity --entry --title "Window title" --entry-text "${array["$1"]}" --text "Insert your choice.""" % [array]
+
+   let zs = """zenity --width=$4 --forms --title "$1" --text "$2" --add-combo "Choose : " --combo-values "$3"  """  % [title,text,cchoice,$width]
+   #echo zs
+   var cbx = execCmdEx(zs)
+   cbx.output.removeSuffix('\n')
+   result = cbx.output
 
 
 proc cxZDialog*(title:string="cxZDialog",text:string="Demo Text",hideText:bool=false ):string =
@@ -38,6 +57,28 @@ proc cxZLoginDialog*(title:string="Login Dialog",text:string="Login"):tuple[name
         let fs = forms.split(";")
         result.name = fs[0]
         result.password = fs[1] 
+
+  
+proc cxZSSHLoginDialog*(title:string="SSH Login Dialog",text:string="Login"):tuple[host:string,port:int,username:string,password:string,command:string] =
+     ## cxZSSHLoginDialog
+     ##
+     ## pressing cancel exits application
+     ##
+     var forms = execCmdEx("""zenity --forms --title="$1" --add-entry=Host* --add-entry=Port* --add-entry=Username* --add-password=Password* --add-entry=Command --text="$2" --separator=';' """ % [title,text]).output
+     forms.removeSuffix('\n')
+     if forms == "":
+        printLnAlertMsg("Login failed ! Incorrect credentials supplied. ")
+        doFinish()
+     else:    
+        let fs = forms.split(";")
+        result.host = fs[0]
+        result.port = parseInt(fs[1])
+        result.username = fs[2]
+        result.password = fs[3]
+        result.command = fs[4] 
+
+
+
 
 
 proc cxZPwd*():string = 
@@ -229,10 +270,14 @@ proc formExample():seq[string] =
 if isMainModule:
   # test var functions
   
-  var yn = cxZYesNo("Overwrite the existing database.fdb file ")
-  echo yn
+  #var yn = cxZYesNo("Overwrite the existing database.fdb file ")
+  #echo yn
   
-  echo cxZprogress()
+  #echo cxZprogress()
+  
+  echo cxZComboBox(cchoice="123|1124|Bangkok")
+  
+  echo cxZFileSelection()
   
   
   # simple entry dialog

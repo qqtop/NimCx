@@ -217,7 +217,6 @@ let cxstart* = epochTime()   # simple execution timing with one line see doFinis
 let cxstartgTime = getTime() 
 
 
-
 randomize()                # seed rand number generator
 enableTrueColors()         # enable truecolorsupport
 
@@ -429,7 +428,7 @@ proc makeGreyScaleTest*(astart:int = 0, aend:int = 255 ,astep:int = 5) =
 # Misc. routines
 
 proc showCxPallets*() = 
-    # showPallets
+    # showCxPallets
     # shows use of cxpals defined in cxconsts.nim
     let spaltxt = smiley & "NimCx   "
     var xpos = 3
@@ -444,9 +443,7 @@ proc showCxPallets*() =
              
       curup(9)
       xpos = xpos+12
-      
-      
-          
+
     decho(10)
 
 

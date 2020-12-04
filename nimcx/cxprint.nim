@@ -9,7 +9,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2020-10-19 
+##     Latest      : 2020-12-04 
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -783,94 +783,91 @@ proc dotyLn*(dots :int,
        
 # convenience functions for var. messages
 # for time/date related see cxtimes.nim 
+
+# consider to have a max width for the left side of the msg
+ 
+var msgLeftWidth* = 8
        
 proc printErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printBiCol("[Error ] " & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
+     printBiCol("[Error   ]" & spaces(1) & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
  
 proc printBErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[      ] " & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})    
+     printLnBiCol("[        ]" & spaces(1) & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})    
      
 proc printLnErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-      printLnBiCol("[Error ] " & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
+      printLnBiCol("[Error   ]" & spaces(1) & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
       
 proc printLnBErrorMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[      ] " & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
+     printLnBiCol("[        ]" & spaces(1) & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
      
 proc printFailMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printBiCol("[Fail  ] " & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
+     printBiCol("[Fail    ]" & spaces(1) & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})
      
 proc printLnFailMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[Fail  ] " & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})     
+     printLnBiCol("[Fail    ]" & spaces(1) & atext , colLeft = red ,colRight = lightgoldenrodyellow,sep = "]",xpos = xpos,false,{stylereverse})     
    
 proc printAlertMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-      printBiCol("[Alert   ] " & atext , colLeft = truetomato ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})
+     printBiCol("[Alert   ]" & spaces(1) & atext , colLeft = truetomato ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})
     
 proc printLnAlertMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[Alert ] " & atext , colLeft = truetomato ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})        
+     printLnBiCol("[Alert   ]" & spaces(1) & atext , colLeft = truetomato ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})        
  
 proc printBAlertMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printBiCol("[        ] " & atext , colLeft = truetomato ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})
+     printBiCol("[        ]" & spaces(1) & atext , colLeft = truetomato ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})
      
 proc printLnBAlertMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[      ] " & atext , colLeft = truetomato ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})        
+     printLnBiCol("[        ]" & spaces(1) & atext , colLeft = truetomato ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})        
      
 proc printOKMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-      printBiCol("[OK    ]" & spaces(1) & atext , colLeft = limegreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
+      printBiCol("[OK      ]" & spaces(1) & atext , colLeft = limegreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
 #      
 proc printLnOkMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-      printLnBiCol("[OK    ]" & spaces(1) & atext , colLeft = limegreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})    
+      printLnBiCol("[OK      ]" & spaces(1) & atext , colLeft = limegreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})    
 #     
 proc printStatusMsg*(atext:string = "",xpos:int = 1,colLeft=lightseagreen) =
-     cxprint(xpos,colLeft,styleReverse,"[Status]",snow,stylereverse,spaces(1) & atext & spaces(1))
+     cxprint(xpos,colLeft,styleReverse,"[Status  ]",snow,stylereverse,spaces(1) & atext & spaces(1))
       
 proc printLnStatusMsg*(atext:string = "",xpos:int = 1,colLeft=lightseagreen) =
-      cxprintln(xpos,colLeft,styleReverse,"[Status]",snow,stylereverse,spaces(1) & atext & spaces(1))
+      cxprintln(xpos,colLeft,styleReverse,"[Status  ]",snow,stylereverse,spaces(1) & atext & spaces(1))
         
 proc printHelpMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printBiCol("[Help  ]" & spaces(1) & atext , colLeft = thistle ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
+     printBiCol("[Help    ]" & spaces(1) & atext , colLeft = thistle ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
      
 proc printLnHelpMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[Help  ]" & spaces(1) & atext , colLeft = limegreen ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})    
+     printLnBiCol("[Help    ]" & spaces(1) & atext , colLeft = limegreen ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})    
      
 #printLnBelpMsg used for inserting more help lines without Help word
 proc printBelpMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printBiCol("[      ]" & spaces(1) & atext , colLeft = thistle ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
+     printBiCol("[        ]" & spaces(1) & atext , colLeft = thistle ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
      
 proc printLnBelpMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[      ]" & spaces(1) & atext , colLeft = thistle ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})    
+     printLnBiCol("[        ]" & spaces(1) & atext , colLeft = thistle ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})    
  
 proc printCodeMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printBiCol("[Code  ]" & spaces(1) & atext , colLeft = lavender ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})    
+     printBiCol("[Code    ]" & spaces(1) & atext , colLeft = lavender ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})    
 
 proc printLnCodeMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[Code  ]" & spaces(1) & atext , colLeft = lavender ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})    
+     printLnBiCol("[Code    ]" & spaces(1) & atext , colLeft = lavender ,colRight = lightgrey,sep = "]",xpos = xpos,false,{stylereverse})    
 
 proc printEelpMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printBiCol("[End   ]" & spaces(1) & atext , colLeft = truetomato ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})    
+     printBiCol("[End     ]" & spaces(1) & atext , colLeft = truetomato ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})    
 
 proc printLnEelpMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[End   ]" & spaces(1) & atext , colLeft = truetomato ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})         
+     printLnBiCol("[End     ]" & spaces(1) & atext , colLeft = truetomato ,colRight = pastelyellow,sep = "]",xpos = xpos,false,{stylereverse})         
                 
 proc printPassMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printBiCol("[Pass  ]" & spaces(1) & atext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
+     printBiCol("[Pass    ]" & spaces(1) & atext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
    
 proc printLnPassMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
-     printLnBiCol("[Pass  ]" & spaces(1) & atext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
+     printLnBiCol("[Pass    ]" & spaces(1) & atext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
 
 # printInfoMsg and printLnInfoMsg can take two strings for more generic use     
-proc printInfoMsg*(info:string="",atext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
-     var infox = info
-     if infox == "":infox = "Info  "
-     printBiCol(["[$1]" % infox , spaces(1) , atext] , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
-# 
-proc printLnInfoMsg*(info:string,atext:string = "",colLeft:string = lightslategray  ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
-     var infox = info
-     if infox == "":
-         infox = "Info  "
-     else:
-         infox = infox & spaces(1) & atext
-     printLnBiCol("[$1]" % infox, colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
-   
+proc printInfoMsg*(info:string="Info    ",atext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
+     printBiCol("[" & alignLeft(info,msgLeftWidth) & "]" & spaces(1) & atext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
+
+proc printLnInfoMsg*(info:string="Info    ",atext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
+     printLnBiCol("[" & alignLeft(info,msgLeftWidth) & "]" & spaces(1) & atext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
+
       
 template dprint*[T](s:T) = 
      ## dprint
@@ -910,7 +907,8 @@ macro pdebug*(n: varargs[typed]): untyped =
       result.add(newCall("writeLine", newIdentNode("stdout"), newStrLitNode("")))     
 
 
-if isMainModule:
+when isMainModule:
+    import cx
     echo()
     printLnBiCol("Test for  : cxprint",colLeft=pink,colRight=trueblue)
     echo()
@@ -923,9 +921,18 @@ if isMainModule:
     echo()
     printLnStatusMsg("Still working on it ! ...")
     echo()
-    printLnInfoMsg("Nimcx ","Just a message for a rainy day")
+    printLnInfoMsg("Nimcx","Just a message for a rainy day")
     echo()
-    printLnInfoMsg("","Got the source,got the power",colLeft=orange)
+    printLnInfoMsg("Power","Got the source,got the power",colLeft=orange)
+    printLnInfoMsg("     ","Got the source,got the power",colLeft=orange)
+    echo()
+    let database = "somefile.fdb"
+    let backupfile = "somfile.fbk"
+    printLnInfoMsg("Firebird",cxpad("Backup ok      from : " & database,50),colLeft=pastelorange)
+    echo()
+    printLnInfoMsg("Firebird",cxpad("                 to : " & backupfile,50),colLeft=pastelorange)
+    echo()
+    printErrorMsg("a test error")
     echo()
     printLnOkMsg("Finally it works !")
     echo()

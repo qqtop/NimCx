@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2020-10-02
+##     Latest      : 2020-12-03
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -1480,9 +1480,10 @@ proc pswwaux*() =
    ## displays output in console
    ## 
    let pswwaux = execCmdEx("ps -ww aux | sort -nk3 | tail ")
-   printLn("ps -ww aux | sort -nk3 | tail ",yellowgreen)
-   echo  pswwaux.output
-   decho()
+   echo yellowgreen,"ps -ww aux | sort -nk3 | tail ",termwhite
+   echo pswwaux.output
+   echo()
+   echo()
                 
 proc cxCpuInfo*():string = 
    ## cxCpuInfo
