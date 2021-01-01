@@ -19,7 +19,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2020-11-18
+##     Latest      : 2021-01-01
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -110,6 +110,11 @@
 ##                   Nimcx compiles with --gc:arc and --gc:orc
 ##
 ##                   Nimcx brings in most of the stdlib modules for convenience.
+##
+##
+##                   if you have cloned nimcx lib somewhere you can try this
+##
+##                   nim c --cc:clang -d:danger --gc:arc -r cx.nim      
 ##  
 ##
 ##     Installation: nimble install nimcx
@@ -149,7 +154,7 @@ import
         logic, math, stats, json, streams, options, memfiles, monotimes,
         httpclient, nativesockets, browsers, intsets, algorithm, net,
         unicode, typeinfo, typetraits, cpuinfo, colors, encodings, distros,
-        rdstdin, sugar , wordwrap]
+        rdstdin, sugar , enumerate, wordwrap]
         
 
 export
@@ -159,7 +164,7 @@ export
         logic, math, stats, json, streams, options, memfiles, monotimes,
         httpclient, nativesockets, browsers, intsets, algorithm, net,
         typeinfo, typetraits, cpuinfo, colors, encodings, distros,
-        rdstdin, sugar , wordwrap
+        rdstdin, sugar , enumerate,wordwrap
 
         
 export unicode except strip, split, splitWhitespace
@@ -215,7 +220,7 @@ when defined(posix):
 
 let cxstart* = epochTime()   # simple execution timing with one line see doFinish()
 let cxstartgTime = getTime() 
-
+let cxstartmTime = getMonoTime()
 
 randomize()                # seed rand number generator
 enableTrueColors()         # enable truecolorsupport
@@ -399,8 +404,8 @@ proc makeColor*(r:int=getrndint(0,2550),g:int=getrndint(0,2550),b:int=getrndint(
 proc makeColorTest*() = 
     ## makeColorTest
     ## 
-    ## testing makeColor proc need to be run in konsole
-    ## to see the colors
+    ## testing makeColor proc need to be run in a KDE konsole
+    ## to see all the colors
     ## 
     loopy2(0,30):
           makecolor()
@@ -427,24 +432,74 @@ proc makeGreyScaleTest*(astart:int = 0, aend:int = 255 ,astep:int = 5) =
           
 # Misc. routines
 
+proc cxcolor*[T](apal:T):string = 
+     ## cxcolor
+     ##
+     ## returns a color from a cxpal , which can be used in cxprintLn
+     ## and other print routines
+     ##
+     ##.. code-block:: nim
+     ##
+     ##   cxprintln(3,cxcolor(cxredpal[8]),cxcolorBg(cxgreypal[6]),"NimCx Pallet") 
+     ##
+     result = hexToRgb(apal)
+
+proc cxcolorBg*[T](apal:T):string = 
+     ## cxcolorBg
+     ##
+     ## returns a color from a cxpal to be used as background color in cxprintLn
+     ## and other print routines
+     ##
+     ##.. code-block:: nim
+     ##
+     ##   cxprintln(3,cxcolor(cxyellowpal[x]),cxcolorBg(cxbluepal[5]),"NimCx Pallet") 
+     ##
+     result = hexToRgbBg(apal)
+
+
 proc showCxPallets*() = 
     # showCxPallets
     # shows use of cxpals defined in cxconsts.nim
+    decho(2)
     let spaltxt = smiley & "NimCx   "
-    var xpos = 3
+    var xpos = 2
     var x1 = 0
     for pxl in 0 ..< cxpals.len:
+      let spaltxt2 = cxpalnames[pxl]
       for x in 0 ..< cxpals[pxl].len:
          inc x1 
          if x == 4:
-              cxprintLn(xpos,pastelBlue,hextoRGBbg(cxpals[pxl][(cxpals[pxl].len-1) - x]),spaltxt & $(cxpals[pxl].len-x-1))
+             cxprintLn(xpos - 1,black,hextoRGBbg(cxpals[pxl][(cxpals[pxl].len-1) - x]),cxpad(spaltxt2,12) & $(cxpals[pxl].len-x-1))
          else:     
-             cxprintLn(xpos,hextoRGB(cxpals[pxl][x]),hextoRGBbg(cxpals[pxl][(cxpals[pxl].len-1) - x]),spaltxt & $(cxpals[pxl].len-x-1))
+             cxprintLn(xpos,hextoRGB(cxpals[pxl][x]),hextoRGBbg(cxpals[pxl][(cxpals[pxl].len-1) - x]),cxpad(spaltxt,12) & $(cxpals[pxl].len-x-1))
              
       curup(9)
-      xpos = xpos+12
+      xpos = xpos+14
 
     decho(10)
+    
+    # show some examples
+        
+    for x in 0..<cxbluepal.len - 1:
+        cxprintln(3,cxcolor(cxbluepal[x]),cxcolorBg(cxpurplepal[7]),"NimCx Pal    Blue on Purple " & smiley)
+    for x in 0..<cxtealpal.len - 1:
+        cxprintln(3,cxcolor(cxtealpal[x]),cxcolorBg(cxorangepal[4]),"NimCx Pal    Teal on Orange " & smiley)
+    curup(16)
+    for x in 0..<cxbluepal.len - 1:
+        cxprintln(36,cxcolor(cxyellowpal[x]),cxcolorBg(cxindigopal[8]),"NimCx Pal    Yellow on Indigo " & smiley)
+    for x in 0..<cxtealpal.len - 1:
+        cxprintln(36,cxcolor(cxredpal[x]),cxcolorBg(cxgreypal[6]),"NimCx Pal    Red on Grey      " & smiley)
+    curup(16)
+    for x in 0..<cxbluepal.len - 1:
+        cxprintln(72,cxcolor(cxorangepal[x]),cxcolorBg(cxtealpal[6]),"NimCx Pal   Orange on Teal   " & smiley)
+    for x in 0..<cxtealpal.len - 1:
+        cxprintln(72,cxcolor(cxyellowpal[x]),cxcolorBg(cxbluepal[5]),"NimCx Pal   Purple on Blue   " & smiley)
+    curup(16)
+    for x in 0..<cxbluepal.len - 1:
+        cxprintln(107,cxcolor(cxorangepal[x]),cxcolorBg(cxbluepal[8]),"NimCx Pal   Orange on Blue   " & smiley)
+    for x in 0..<cxtealpal.len - 1:
+        cxprintln(107,cxcolor(cxgreypal[x]),cxcolorBg(cxredpal[5]),"NimCx Pal   Grey on Red      " & smiley)
+    
 
 
 proc nimcat*(curFile: string, countphrase: seq[string] = @[]) =
@@ -494,7 +549,7 @@ proc nimcat*(curFile: string, countphrase: seq[string] = @[]) =
                 if x.len > maxphrasewidth: maxphrasewidth = x.len
             if countphrase.len > 0:
                 printLn("\n PhraseCount Stats :    \n", gold, styled = {styleUnderScore})
-                for x in 0..<countphrase.len:
+                for x in 0 ..< countphrase.len:
                     printLnBiCol(fmtx([""], "Phrase    : " & countphrase[x]), xpos = 3)
                     printLnBiCol("Occurence : Line No.", colLeft = lightblue, colRight = yellow, sep = ":", 3, false, {})
                     showseq(phraseinline[x])
@@ -754,7 +809,7 @@ proc lastAnd[T](num: T): string =
         if "," in num:
             let pos = num.rfind(",")
             var (pre, last) =
-                if pos >= 0: (num[0 .. pos - 1], num[pos + 1 .. num.high])
+                if pos >= 0: (num[0 ..< pos], num[pos + 1 .. num.high])
                 else: ("", num)
             if " and " notin last:
                 last = " and" & last
@@ -768,7 +823,7 @@ proc big(e: int, n: int64): string =
         elif e == 1:
              spellInteger(n) & " thousand"
         else:
-             spellInteger(n) & " " & huge[e]
+             spellInteger(n) & spaces(1) & huge[e]
 
 iterator base1000Rev(n: int64): int64 =
         # used by spellInteger
@@ -791,11 +846,11 @@ proc spellInteger*(n: int64): string =
         elif n < 100:
                 let a = n div 10
                 let b = n mod 10
-                tens[int(a)] & nonzero(" ", b)
+                tens[int(a)] & nonzero(spaces(1), b)
         elif n < 1000:
                 let a = n div 100
                 let b = n mod 100
-                small[int(a)] & " hundred" & nonzero(" ", b, "")
+                small[int(a)] & " hundred" & nonzero(spaces(1), b, "")
         else:
                 var sq = newSeq[string]()
                 var e = 0
@@ -804,7 +859,7 @@ proc spellInteger*(n: int64): string =
                                 sq.add big(e, x)
                         inc e
                 reverse sq
-                lastAnd(sq.join(" "))
+                lastAnd(sq.join(spaces(1)))
 
 
 proc spellInteger2*(n: string): string =
@@ -972,7 +1027,7 @@ proc getColorName*[T](sc: T): string =
      ##
      ##.. code-block:: nim
      ##  import nimcx
-     ##  for x in 0.. 10: 
+     ##  for x in 0 ..< 10: 
      ##     let acol = randcol()
      ##     let acolname = getColorName(acol)         
      ##     printLn(acolname,acol)  

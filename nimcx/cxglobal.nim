@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2020-12-03
+##     Latest      : 2021-01-01
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -114,6 +114,7 @@ macro toEnum*(words: static[string]): untyped =
       ##    
       result = newTree(nnkEnumTy, newEmptyNode())
       for w in strutils.splitWhitespace(words): result.add ident(w)          
+  
           
 macro cxgetType*(s: typed): untyped = 
           ## cxgetType
@@ -2849,6 +2850,7 @@ proc getPrimeSeq*(x,y:int):seq[int]=
      ## 
      ## 
      for p in primey(x,y): result.add(p)  
+
 
 when isMainModule:
     echo()

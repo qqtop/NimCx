@@ -10,7 +10,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2020-11-19
+##     Latest      : 2020-01-01
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -1499,7 +1499,8 @@ let cxpals* = @[cxgreypal,cxindigopal,cxgreenpal,cxbluepal,cxredpal,cxpinkpal,cx
 let cxpalnames* = @["cxgreypal","cxindigopal","cxgreenpal","cxbluepal","cxredpal","cxpinkpal","cxorangepal","cxyellowpal","cxpurplepal","cxtealpal"]  
 # show all pallets        showCxPallets()
 # show a single pallete   showhexcolors(cxbluepal)  
-                
+# use/show a color from a pallet                  
+            
                 
 # Font constants have been moved to cxfontconsts.nim in order to shrink
 # binaries which do not use them
