@@ -1,11 +1,10 @@
 # cxnetwork.nim
 # 
-# Var. internet related utility procs and experiments 
-# nmap , ip , lsof etc. needs to be installed if 
-# relevant procs to be used.
+# Var. internet related procs and experiments 
+# nmap , ip , lsof etc. needs to be installed if relevant procs to be used.
 # 
 # 
-# Last 2020-09-26
+# Last 2020-01-02
 # 
 
 import os,osproc,json,httpclient,strutils,strscans
@@ -155,10 +154,10 @@ proc localRouterIp*():string =
 proc showLocalIpInfo*() =
      cxprintln(1,white,darkslategraybg,"Router  " ,stylereverse, cxpad(strip(localRouterIp()),16))
      for llipre in localIp():
-         cxprintln(1,white,darkslategraybg,"Machine " ,styleReverse, cxpad(llipre,16))    
+         cxprintLn(1,white,darkslategraybg,"Machine " ,styleReverse, cxpad(llipre,16))    
     
 proc showWanIpInfo*() =     
-     cxprintln(1,white,darkslategraybg,"Wan Ip  " ,stylereverse, cxpad(strip(getwanIp()),16))
+     cxprintLn(1,white,darkslategraybg,"Wan Ip  " ,stylereverse, cxpad(strip(getwanIp()),16))
 
 
 proc pingy*(dest:string,pingcc:int = 3,col:string = termwhite,show:bool=true):int {.discardable.} = 
@@ -175,7 +174,7 @@ proc pingy*(dest:string,pingcc:int = 3,col:string = termwhite,show:bool=true):in
         let (outp,err) = execCmdEx("which ping")
         let outp2 = quoteshellposix(strutils.strip(outp,true,true))
         if err > 0 and show == true:
-            cxprintln(2,white,bgred,$err) 
+            cxprintLn(2,white,bgred,$err) 
         else: 
             if show == true:       
                printLnBiCol("Pinging : " & dest,white,truetomato,":",0,false,{})
@@ -430,7 +429,7 @@ when isMainModule:
     echo "WanIp2 : ",getWanIP2()
     echo()
     echo()
-    cxprintln(0,white,darkslategraybg,cxpad("Wifi Scanner (password required) ",60))
+    cxprintln(0,white,darkslategraybg,cxpad("Wifi Scanner (root password required) ",60))
     if cxYesNo() == true: # function in cxglobal
        echo()
        wifiStatus()

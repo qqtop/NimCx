@@ -65,13 +65,13 @@ proc ff2*(zz: SomeNumber, n: int = 3): string
 #-----------------------------------------------------------------------
 
 # procs lifted from an early version of terminal.nim
-#-----------------------------------------------------------------------
+#-----------------------------------------------------------------------------
 proc styledEchoProcessArg(s: string) = write stdout, s
 proc styledEchoProcessArg(style: Style) = setStyle({style})
 proc styledEchoProcessArg(style: set[Style]) = setStyle style
 proc styledEchoProcessArg(color: ForegroundColor) = setForegroundColor color
 proc styledEchoProcessArg(color: BackgroundColor) = setBackgroundColor color
-#-----------------------------------------------------------------------
+#-----------------------------------------------------------------------------
 
 # macros
 
@@ -103,17 +103,17 @@ macro procName*(x: untyped): untyped =
           result = x
 
 macro toEnum*(words: static[string]): untyped =
-      ## toEnum
-      ## 
-      ## lifted from nim-blog
-      ##  
-      ## Example 
-      ##.. code-block:: nim 
-      ##   type
-      ##      Color = toEnum("Red Green Blue Indigo")
-      ##    
-      result = newTree(nnkEnumTy, newEmptyNode())
-      for w in strutils.splitWhitespace(words): result.add ident(w)          
+          ## toEnum
+          ## 
+          ## lifted from nim-blog
+          ##  
+          ## Example 
+          ##.. code-block:: nim 
+          ##   type
+          ##      Color = toEnum("Red Green Blue Indigo")
+          ##    
+          result = newTree(nnkEnumTy, newEmptyNode())
+          for w in strutils.splitWhitespace(words): result.add ident(w)          
   
           
 macro cxgetType*(s: typed): untyped = 
@@ -203,22 +203,22 @@ proc remapToString*[T](s: seq[T]): seq[string] =
   
 proc fwriteUnlocked(buf: pointer, size, n: int, f: File): int {.importc: "fwrite_unlocked", noDecl.}
 proc fastWrite*(f: File, s: string) =
-  ## fastWrite
-  ## 
-  ## good for logging or vast file writes
-  ## 
-  ## based on code ex https://hookrace.net/blog/writing-an-async-logger-in-nim/
-  ## 
-  ##.. code-block:: nim
-  ##  var fft:File
-  ##  discard open(fft,"fast.txt",fmReadWrite)
-  ##  fastWrite(fft,"test " * 100)
-  ##  fft.close()  
-  ## 
-  ## 
-  if fwriteUnlocked(cstring(s), 1, s.len, f) != s.len:
-      raise newException(IOError, "cannot write string to file" )  
-  
+      ## fastWrite
+      ## 
+      ## good for logging or vast file writes
+      ## 
+      ## based on code ex https://hookrace.net/blog/writing-an-async-logger-in-nim/
+      ## 
+      ##.. code-block:: nim
+      ##  var fft:File
+      ##  discard open(fft,"fast.txt",fmReadWrite)
+      ##  fastWrite(fft,"test " * 100)
+      ##  fft.close()  
+      ## 
+      ## 
+      if fwriteUnlocked(cstring(s), 1, s.len, f) != s.len:
+          raise newException(IOError, "cannot write string to file" )  
+      
     
 func cxpad*(s: string, padlen: int, paddy: string = spaces(1)): string =
           ## cxpad
@@ -409,12 +409,12 @@ proc reverseMe*[T](xs: openarray[T]): seq[T] =
           for i, x in xs: result[xs.high - i] = x
 
 proc reverse*[T](s: var seq[T]) =
-  ## reverse
-  ##
-  ## in place reverse sequence
-  ## 
-  for i in 0 .. (s.high - 1) shr 1: swap(s[i], s[s.high - i])
-
+          ## reverse
+          ##
+          ## in place reverse sequence
+          ## 
+          for i in 0 .. (s.high - 1) shr 1: swap(s[i], s[s.high - i])
+        
 proc reverseText*(text: string): string =
           ## reverseText
           ## 
@@ -603,24 +603,24 @@ proc ff2*(zz: SomeNumber, n: int = 3):string =
                             
 
 proc ff2Eu*(zzz: SomeNumber, n: int = 3):string =
-     ## ff2Eu
-     ##
-     ## convert a number into EU locale formatted string
-     ## 1234567.123   -->  1.234.567,123
-     ## set after comma positions with n , default is 3
-     ##
-     ##.. code-block:: nim
-     ##    echo ff2Eu(1234567.123)
-     ##
-     var z = ff2(zzz,n) 
-     var zz = z.replace(",",".").splitty(".")
-     if zz.len > 0:
-        for x in 0 ..< zz.len - 1: result = result & zz[x]
-        result.removeSuffix(".")    
-        result = result & "," & zz[zz.high]
-     else:
-        result = z   
-
+         ## ff2Eu
+         ##
+         ## convert a number into EU locale formatted string
+         ## 1234567.123   -->  1.234.567,123
+         ## set after comma positions with n , default is 3
+         ##
+         ##.. code-block:: nim
+         ##    echo ff2Eu(1234567.123)
+         ##
+         var z = ff2(zzz,n) 
+         var zz = z.replace(",",".").splitty(".")
+         if zz.len > 0:
+            for x in 0 ..< zz.len - 1: result = result & zz[x]
+            result.removeSuffix(".")    
+            result = result & "," & zz[zz.high]
+         else:
+            result = z   
+    
 
 
 proc getRandomFloat*():float = rand(1.0) * getRandomSignF()

@@ -10,9 +10,9 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2020-01-01
+##     Latest      : 2020-01-02
 ##
-##     Compiler    : latest stable or devel branch
+##     Compiler    : Nim latest stable or devel branch
 ##
 ##     OS          : Linux
 ##
@@ -40,18 +40,16 @@ import terminal,colors,sequtils,strutils,htmlparser
          
 {.hint: "\x1b[38;2;154;205;50m ╰──────────────────────── CXCONSTS ──────────────────────────────────╯ " .}
 
-
-
  
 const cxcodestart* = "cxcodestart"
 const cxcodeend*   = "cxcodeend"
  
 proc getFg*(fg:ForegroundColor):string =
-    var gFG = ord(fg)
+    let gFG = ord(fg)
     result = "\e[" & $gFG & 'm'
 
 proc getBg*(bg:BackgroundColor):string =
-    var gBG = ord(bg)
+    let gBG = ord(bg)
     result = "\e[" & $gBG & 'm'
 
 proc fbright(fg:ForegroundColor): string =
@@ -1402,7 +1400,7 @@ let cxgreypal* = @["#f7fafc",
                 "#2d3748",
                 "#1a202c"]
                 
-var cxindigopal* = @["#ebf4ff",
+let cxindigopal* = @["#ebf4ff",
                   "#c3dafe",
                   "#a3bffa",
                   "#7f9cf5",
