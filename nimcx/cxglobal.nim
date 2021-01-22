@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2021-01-01
+##     Latest      : 2021-01-22
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -56,13 +56,13 @@ import
          
 {.hint: "\x1b[38;2;154;205;50m ╰──────────────────────── CXGLOBAL ──────────────────────────────────╯ " .}
 
-#-------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
 
 # Forward declarations
-# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 proc ff*(zz: float, n: int = 5): string
 proc ff2*(zz: SomeNumber, n: int = 3): string
-#-----------------------------------------------------------------------
+#-----------------------------------------------------------------------------
 
 # procs lifted from an early version of terminal.nim
 #-----------------------------------------------------------------------------
@@ -77,8 +77,7 @@ proc styledEchoProcessArg(color: BackgroundColor) = setBackgroundColor color
 
 macro styledEchoPrint*(m: varargs[untyped]): untyped =
           ## partially lifted from an earler macro in terminal.nim and removed new line 
-          ## improvements suggested by araq to avoid the now deprecated callsite()
-          ## maybe fails again ??? 2019-05-26  args not processed as before ???
+          ## improvements suggested by araq to avoid the since deprecated callsite()
           result = newNimNode(nnkStmtList)
           for i in countup(0, m.len - 1): result.add(newCall(bindSym"styledEchoProcessArg", m[i]))
           result.add(newCall(bindSym"write", bindSym"stdout", newStrLitNode("")))
@@ -294,6 +293,25 @@ proc rndSample*[T](asq: seq[T]): T =
           randomize()
           result = sample(asq)
           
+proc cxind*(indent: int,indchar:string=spaces(1)): string =
+          ## cxind
+          ## indent by n using indchar, default is spaces(1)
+          ##
+          assert indchar.len == 1
+          for i in 0 ..< indent:
+            result.add(indchar)
+
+proc cxSeqToStr*[T](asq:T):string = 
+         ## unpack a seq into a comma delimited string
+         if asq.len > 0:
+             result = $asq[0]
+             try:
+               for x in 1 .. asq.len - 1:
+                  result = result & "," & $asq[x]
+             except:
+                 discard
+         else: result = "" 
+    
 
 proc rndRGB*(): auto =
           ## rndRGB
@@ -317,6 +335,11 @@ proc sum*[T](aseq: seq[T]): T = foldl(aseq, a + b)
           ## 
           ## same effect as math.sum
           ##
+
+proc sumc*(n:int):float = n*(n+1)/2 
+          # sumc
+          # sum all integers up to n
+
 
 proc product*[T](aseq: seq[T]): T = foldl(aseq, a * b)
           ## product

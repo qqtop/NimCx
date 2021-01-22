@@ -862,10 +862,10 @@ proc printLnPassMsg*(atext:string = "",xpos:int = 1):string {.discardable.} =
      printLnBiCol("[Pass    ]" & spaces(1) & atext , colLeft = yellowgreen ,colRight = snow,sep = "]",xpos = xpos,false,{stylereverse})
 
 # printInfoMsg and printLnInfoMsg can take two strings for more generic use     
-proc printInfoMsg*(info:string="Info    ",atext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
+proc printInfoMsg*(info:string="Info    ",atext:string = "",colLeft:string = lightslategray ,colRight:string = rosyBrown,xpos:int = 1):string {.discardable.} =
      printBiCol("[" & alignLeft(info,msgLeftWidth) & "]" & spaces(1) & atext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
 
-proc printLnInfoMsg*(info:string="Info    ",atext:string = "",colLeft:string = lightslategray ,colRight:string = pastelWhite,xpos:int = 1):string {.discardable.} =
+proc printLnInfoMsg*(info:string="Info    ",atext:string = "",colLeft:string = lightslategray ,colRight:string = rosyBrown,xpos:int = 1):string {.discardable.} =
      printLnBiCol("[" & alignLeft(info,msgLeftWidth) & "]" & spaces(1) & atext , colLeft = colLeft ,colRight = colRight,sep = "]",xpos = xpos,false,{stylereverse})
 
       

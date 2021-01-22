@@ -19,7 +19,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2021-01-01
+##     Latest      : 2021-01-22
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -31,7 +31,7 @@
 ##
 ##                   for easy colored display in a linux terminal and also contains
 ##                   
-##                   a wide selection of utility functions and useable snippets for
+##                   a wide selection of utility routines and useable snippets for
 ##
 ##                   your projects and experimentations. 
 ##                   
@@ -135,6 +135,8 @@
 ##
 ##                   the OS zenity install do show graphical messageboxes etc 
 ##
+##     Donate       : ETH    0x9db72052273Ea7CC2a3A94dc3848Cb31Fc2F1cf0
+##                    Every little bit helps.
 ##
 ##     Compile idea : nim c -d:threads:on -d:ssl -d:danger --gc:arc -d:useMalloc -r -f cx
 ##
@@ -220,7 +222,7 @@ when defined(posix):
 
 let cxstart* = epochTime()   # simple execution timing with one line see doFinish()
 let cxstartgTime = getTime() 
-let cxstartmTime = getMonoTime()
+let cxstartmTime* = getMonoTime()
 
 randomize()                # seed rand number generator
 enableTrueColors()         # enable truecolorsupport
@@ -289,6 +291,19 @@ template cxRegion*(name, body: untyped) =
    cxprintLn(0,styleUnderscore,yellowgreen,"cxRegion : ",pink,name & spaces(2))
    echo()
    body
+
+
+template cxBlockRegion*(name, body: untyped) = 
+   ## cxBlockRegion
+   # idea is that we can use ide code folding 
+   # in large files and do not loose our way 
+   # and see what is going on and each region is inside a block
+   echo()
+   cxprintLn(0,styleUnderscore,yellowgreen,"cxRegion : ",pink,name & spaces(2))
+   echo()
+   block:
+      body
+
 
 
 template `as`*[T, U](x: T, _: typedesc[U]): U = U(x)
@@ -1488,8 +1503,8 @@ proc handler*() {.noconv.} =
     #echo()
     cxprint(2,yaleblue,greenyellowbg,cxbright,"Nim Version ", NimVersion,spaces(1))
     cxprint(23,yaleblue,pastelyellowbg,cxbright,"NimCx Version ", CXLIBVERSION,spaces(1))
-    cxprintLn(45,yaleblue,pastelorangebg,cxbright,"Elapsed secs ", fmtx(["<10.3"], epochTime() - cxstart))
-    cxprint(2,yaleblue,pastelgreenbg,cxbright," Have a Nice Day !") ## change or add custom messages as required
+    cxprint(45,yaleblue,pastelorangebg,cxbright,"Elapsed secs ", fmtx(["<10.3"], epochTime() - cxstart))
+    cxprintLn(2,yaleblue,pastelgreenbg,cxbright," Have a Nice Day !") ## change or add custom messages as required
     decho()
     addExitproc(resetAttributes)
     curon()  # turn cursor on in case it was off

@@ -12,7 +12,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2020-04-24
+##     Latest      : 2021-01-14
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -31,6 +31,7 @@
 ##                
 
 # slim numbers can be used with printSlimNumber
+# kerning adjusted for 1 , .
 
 const snumber0* =
   @["┌─┐",
@@ -39,9 +40,9 @@ const snumber0* =
 
 
 const snumber1* =
-  @["  ╷",
-    "  │",
-    "  ╵"]
+  @[" ╷",
+    " │",
+    " ╵"]
 
 const snumber2* =
   @["╶─┐",
@@ -91,14 +92,14 @@ const scolon* =
 
 
 const scomma* =
-   @["  ",
-     "  ",
-     "╷ "]
+   @[" ",
+     " ",
+     "╷"]
 
 const sdot* =
-   @["  ",
-     "  ",
-     ". "]
+   @[" ",
+     " ",
+     "."]
 
 
 const sblank* =
