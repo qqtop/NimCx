@@ -1,4 +1,5 @@
 import os,terminal,times,strutils,sequtils,random
+import std/monotimes
 import cxconsts
 
 ## ::
@@ -11,7 +12,7 @@ import cxconsts
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2020-09-26 
+##     Latest      : 2020-01-26 
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -78,10 +79,10 @@ template cxLocal*() : untyped = $now()
      ## Examples for var. cx time,date functions
      ## 
      ## .. code-block:: nim
-     ##    printLnBiCol(["cxLocal           : ",cxLocal])
-     ##    printLnBiCol(["cxNow             : ",cxNow])  
-     ##    printLnBiCol(["cxTime            : ",cxTime]) 
-     ##    printLnBiCol(["cxToday           : ",cxToday])
+     ##    printLnBiCol(["cxLocal           : ",cxLocal()])
+     ##    printLnBiCol(["cxNow             : ",cxNow()])  
+     ##    printLnBiCol(["cxTime            : ",cxTime()]) 
+     ##    printLnBiCol(["cxToday           : ",cxToday()])
      ##    printLnBiCol(["cxTimeZone(long)  : ",cxTimezone(long)])
      ##    printLnBiCol(["cxTimeZone(short) : ",cxTimezone(short)])
      ##    
@@ -685,31 +686,49 @@ proc isoweek*(dt: DateTime): WeekRange =
     1
   else:
     week  
-  
+ 
+ 
+
+proc getMsecs*(d: Duration): float64 = 
+     ## getMsecs
+     ##
+     ## returns duration in milliseconds
+     ## duration d can be obtained like so
+     ## let start = getMonoTime()
+     ## sleep(5)
+     ## let end   = getMonoTime()
+     ## let d = end - start
+     ## printLnBiCol "Timing : " & ff(getMsecs(d),6) & " ms\n"
+     result = inNanoseconds(d).float64 * 1e-6  
     
 when isMainModule:
     echo()
-    cxprintLn(0,"Display some usage of cxtime functions")
+    let astartTime = getMonoTime()
+    cxprintLn(0,darkslategraybg,"  Display usage of cxtime functions  ")
+    echo()
     let currenttime = getTime() 
     cxprintLn(1,"cxLocal           : ",cxLocal)
     cxprintLn(1,"cxNow             : ",cxNow) 
     let idt = isDst(now())
     cxprintLn(1,"DST Time          : ",$idt)
-    cxprintLn(1,"cxTime            : ",cxTime) 
-    cxprintLn(1,"cxToday           : ",cxToday)
+    cxprintLn(1,"cxTime            : ",cxTime()) 
+    cxprintLn(1,"cxToday           : ",cxToday())
     cxprintLn(1,"cxTimeZone(long)  : ",cxTimezone(long))
     cxprintLn(1,"cxTimeZone(short) : ",cxTimezone(short))
     cxprintLn(1,"Date in 20 days   : ",plusDays(cxtoday(),20),yellowgreen)
     cxprintLn(1,"Date 20 days ago  : ",minusDays(cxtoday(),20),yellowgreen)
     assert plusDays(minusDays(cxtoday(),20),20) == cxtoday() 
     cxprintLn(1,"Running Time      : ",$cxHRTimer(currenttime,getTime()))
+    cxprintLn(1,"Milliseconds      : ",$getMsecs(getMonoTime() - astartTime) , " ms")
     cxprintLn(1,"Next Monday       : ",getNextMonday(cxtoday())," = ",cxDayOfWeek(getNextMonday(cxtoday())))
-    printLnDTimeMsg()  # datetime message
     doAssert initDateTime(23, mDec, 2019, 0, 0, 0).isoweek == 52
     doAssert initDateTime(30, mDec, 2019, 0, 0, 0).isoweek == 1
     doAssert initDateTime(2, mFeb, 2020, 0, 0, 0).isoweek == 5
     doAssert initDateTime(3, mFeb, 2020, 0, 0, 0).isoweek == 6
     cxprintLn(1,"Current Isoweek   : ", $now().isoweek)
+    printLnDTimeMsg()  # datetime message
+    echo()
+    cxprintLn(1,white,truetomatobg,"        Times up. Good Bye        ")
     echo()
       
 
