@@ -660,6 +660,13 @@ proc getRndFloat*():float = rand(1.0) * getRandomSignF()
           ##
           ## same as getrandFloat()
 
+proc cxnormal*(x,min,max:int):int =
+          ## normalize int
+          result = (x - min) div (max - min)
+ 
+proc cxnormal*(x,min,max:float):float =        
+          ## normalize float
+          result = (x - min) / (max - min)
 
 proc createSeqFloat*(n: int = 10, prec: int = 3): seq[float] =
           ## createSeqFloat
