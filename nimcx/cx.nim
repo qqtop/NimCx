@@ -812,6 +812,27 @@ proc showHexColors*[T](hcolors:seq[T]) =
   for x in 0 ..< hcolors.len:
     var hxb = hcolors[x]
     cxprintln(0,hextorgb(hxb),fmtx(["","","<9",""],spaces(3),$hcolors[x],spaces(3)," nimcx hex color test "))
+ 
+ 
+template cxfg*(body:untyped):untyped =
+  ## cxfg
+  ##
+  ## to set foreground colors from cxpallets see consts.nim
+  
+  ##.. code-block:: nim
+  ##   cxfg(cxorangepal[3])
+  ## 
+  hextorgb(body)
+  
+template cxbg*(body:untyped):untyped =
+  ## cxbg
+  ##
+  ## used to set background colors from cxpallets see consts.nim
+  ##.. code-block:: nim
+  ##   cxbg(cxbluepal[3])
+  ##
+  hextorgbbg(body)   
+   
     
 # spellInteger
 proc nonzero(c: string, n: int64, connect = ""): string =

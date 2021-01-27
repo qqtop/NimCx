@@ -1,9 +1,9 @@
 # cxtest.nim
 #
-# very rough and ready testing of some of available functions in nimcx library
+# very rough and ready testing of some functions in nimcx library
 # see docs for more examples 
 #
-# Latest      : 2020-11-20 
+# Latest      : 2021-01-27 
  
 import nimcx
 
@@ -338,10 +338,10 @@ decho(5)
 
 nexttest()
 let stime = getTime()
-printLnBiCol(["cxLocal           : ",cxLocal])
-printLnBiCol(["cxNow             : ",cxNow])  
-printLnBiCol(["cxTime            : ",cxTime]) 
-printLnBiCol(["cxToday           : ",cxToday])
+printLnBiCol(["cxLocal           : ",cxLocal()])
+printLnBiCol(["cxNow             : ",cxNow()])  
+printLnBiCol(["cxTime            : ",cxTime()]) 
+printLnBiCol(["cxToday           : ",cxToday()])
 printLnBiCol(["cxTimeZone(long)  : ",cxTimezone(long)])
 printLnBiCol(["cxTimeZone(short) : ",cxTimezone(short)])
 printLnBiCol("This test took     : " & $cxHRTimer(stime,getTime()))
@@ -410,6 +410,10 @@ for x in cxpalnames:
 echo()
 showCxpallets()
 
+echo "Usage of cxfg and cxbg"
+# cxpallets all have 9 color intensities from 0..8  see consts.nim
+cxprintln(1,cxfg(cxorangepal[3]), cxbg(cxgreypal[7]),"orange on grey ",cxfg(cxyellowpal[3]),cxbg(cxbluepal[7])," ok yellow on blue")
+echo()  
 
 superheader("Ok , that's it for now ! Have a nice day .",skyblue,lightslategray)
 

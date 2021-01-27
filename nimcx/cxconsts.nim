@@ -1388,8 +1388,8 @@ let nimcxl* = """
       
  """    
 
-# nice color palettes
 
+# cxpallets
 let cxgreypal* = @["#f7fafc",
                 "#edf2f7",  
                 "#e2e8f0",
@@ -1497,8 +1497,8 @@ let cxpals* = @[cxgreypal,cxindigopal,cxgreenpal,cxbluepal,cxredpal,cxpinkpal,cx
 let cxpalnames* = @["cxgreypal","cxindigopal","cxgreenpal","cxbluepal","cxredpal","cxpinkpal","cxorangepal","cxyellowpal","cxpurplepal","cxtealpal"]  
 # show all pallets        showCxPallets()
 # show a single pallete   showhexcolors(cxbluepal)  
-# use/show a color from a pallet                  
-            
+# use a color from a cxpallet  with fg and bg colors:
+# cxprintln(1,cxfg(cxorangepal[3]), cxbg(cxgreypal[7]),"orange on grey ",cxfg(cxyellowpal[3]),cxbg(cxbluepal[7])," ok yellow on blue")            
                 
 # Font constants have been moved to cxfontconsts.nim in order to shrink
 # binaries which do not use them
