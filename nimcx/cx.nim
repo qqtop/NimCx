@@ -135,7 +135,8 @@
 ##
 ##                   the OS zenity install do show graphical messageboxes etc 
 ##
-##     Donate       : ETH    0x9db72052273Ea7CC2a3A94dc3848Cb31Fc2F1cf0
+##     Donate       : BTC            3HqnE8g69DSkvJBxBE7HsTLgqX7UfG9rz6  
+##                    NEXO ERC-20    0x19FaED9655819C9721e063B22eA4251EDf51bA2C
 ##                    Every little bit helps.
 ##
 ##     Compile idea : nim c -d:threads:on -d:ssl -d:danger --gc:arc -d:useMalloc -r -f cx
