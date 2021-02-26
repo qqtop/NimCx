@@ -19,7 +19,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2021-01-22
+##     Latest      : 2021-02-15
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -117,6 +117,16 @@
 ##                   nim c --cc:clang -d:danger --gc:arc -r cx.nim      
 ##  
 ##
+##                   for a 386 compile on a 86_64 machine try
+##
+##                   nim c --cincludes:/usr/include/x86_64-linux-gnu --os:linux --cpu:i386 --passC:-m32 --passL:-m32  --gc:arc -d:release -r cx.nim
+##                   and see it die with 
+##                   /usr/include/x86_64-linux-gnu/gnu/stubs.h:7:11: fatal error: gnu/stubs-32.h: No such file or directory
+##                   If this or similar is the case you need to find any missing xxx-32.h files and put them 
+##                   into the include path
+##                   Compiling on a pure i386 or even arm machine is totally fine.
+##
+##
 ##     Installation: nimble install nimcx
 ##
 ##
@@ -147,7 +157,8 @@
 ##
 ##     Hardcore     : nim c --gc:arc --debuginfo -d:useMalloc cx.nim && valgrind -s --leak-check=full ./cx
 ##
-                            
+##    Debug with gdb: nim c --gc:arc --opt:none --debugger:native  disables optimizations and enables debug symbols                            
+##
 
 import
         cxversion,cxconsts, cxglobal, cxtime, cxprint, cxhash, cxnetwork, cxstats
@@ -447,6 +458,15 @@ proc makeGreyScaleTest*(astart:int = 0, aend:int = 255 ,astep:int = 5) =
      
           
 # Misc. routines
+
+proc setTerminalTitle*(s:string) = 
+    ## Adjust terminal title during long processes 
+    # 
+    # may not work on every terminal 
+    #
+    let b = "echo -e '\\033]2;$1\\007'" % s
+    echo b
+    discard execCmd(b)
 
 proc cxcolor*[T](apal:T):string = 
      ## cxcolor
@@ -1450,6 +1470,7 @@ proc doByeBye*(xpos:int = 1) =
              pastelgreen,ff2(epochtime() - cxstart) ," secs ",gold ," Bye-Bye " )
      addExitproc(resetAttributes)
      echo()
+     curon()
      quit(0)        
 
 proc doFinish*() =
@@ -1492,6 +1513,7 @@ proc doFinish*() =
             cxprintLn(2,white,"uname -v ", un.output)
         rmTmpFilenames()
         GC_fullCollect() # just in case anything hangs around
+        curon()
         quit(0)
 
 proc cxFinish*() = doFinish()
@@ -1555,7 +1577,8 @@ proc doCxEnd*() =
        printLnBiCol("Program Result  : " & "Ok",xpos=2)
     else:
        printLnBiCol("Program Result  : " & "Fail",colRight = red,xpos=2) 
-    decho(2)   
+    decho(2) 
+    curon()  
        
 # putting this here we can stop most programs which use this lib and get the
 # automatic exit messages , it may not work in tight loops involving execCMD or

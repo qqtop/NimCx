@@ -1,5 +1,4 @@
-import os,terminal,times,strutils,sequtils,random
-import std/monotimes
+import std/[os,osproc,terminal,times,strutils,sequtils,random,monotimes]
 import cxconsts
 
 ## ::
@@ -12,7 +11,7 @@ import cxconsts
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2020-01-26 
+##     Latest      : 2021-02-22 
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -687,7 +686,10 @@ proc isoweek*(dt: DateTime): WeekRange =
   else:
     week  
  
- 
+proc cxSystemUptime*(): string =
+  ## Returns system uptime
+  result = execProcess("uptime --pretty").strip() & " since " & execProcess("uptime --since").strip()
+  result.removePrefix("up") 
 
 proc getMsecs*(d: Duration): float64 = 
      ## getMsecs
@@ -727,6 +729,7 @@ when isMainModule:
     doAssert initDateTime(3, mFeb, 2020, 0, 0, 0).isoweek == 6
     cxprintLn(1,"Current Isoweek   : ", $now().isoweek)
     printLnDTimeMsg()  # datetime message
+    cxprintLn(1,"System uptime     : ",cxSystemUptime())
     echo()
     cxprintLn(1,white,truetomatobg,"        Times up. Good Bye        ")
     echo()

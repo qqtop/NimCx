@@ -8,13 +8,24 @@ import nimcx
 #
 # Last  : 2020-11-29
 #
-
+# TODO
+#
+# https://funprojects.blog/2021/01/25/zenity-command-line-dialogs/
+#
+# zenity --info --text=$(top -n 1 | grep %Cpu | awk '{print $8}') --title="CPU Idle Time"
+#
+# zenity --warning --text='<span font="32" foreground="red">HIGH Temperature</span>' --title="HDD Check"
+#
+# ( for i in `seq 1 100`; do echo $i; echo "# $i";  sleep 1; done ) | zenity --progress
+#
+#zenity --list \  --title="2 Column Example" \   --column="Month" --column="Sales" \  Jan 100 Feb 95 Mar 77 Apr 110 May 111
+#
 
 proc cxZFileSelection():string =
      var zs = execCmdEx("""zenity --file-selection --title="Select a File" """)
      result = zs.output
      
-proc cxZCombobox(title:string="cxZComboBox",text:string="Selections available",cchoice:string="London|Birmingham|Paris|Dubai|Vienna|Hongkong",width:int=250):string = 
+proc cxZCombobox*(title:string="cxZComboBox",text:string="Selections available",cchoice:string="London|Birmingham|Paris|Dubai|Vienna|Hongkong",width:int=250):string = 
    ## cxZCombobox
    ##
 

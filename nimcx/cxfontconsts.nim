@@ -108,7 +108,7 @@ const sblank* =
      "  "]
 
 var slimNumberSet* = newSeq[string]()
-for x in 0.. 9: slimNumberSet.add($(x))
+for x in 0 .. 9: slimNumberSet.add($(x))
 var slimCharSet*   = @[",",".",":"," "]
 
 # dotmatrixfont 
