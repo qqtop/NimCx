@@ -2,11 +2,11 @@
 {.deadCodeElim: on, optimization: speed.}
 #{.passC: "-msse -msse2 -msse3 -mssse3 -march=native -mtune=native -flto".}
 #{.passL: "-msse -msse2 -msse3 -mssse3 -flto".}
-#{.passC: "-march-native -O3"}
+#{.passC: "-march=native -O3"}
 #{.noforward: on.}   # future feature
 
 
-# check memory usage and other issues via -d:UseMalloc and Valgrind
+# check memory usage and other issues via -g -d:UseMalloc and Valgrind
 ## ::
 ## 
 ##     Library     : nimcx.nim
@@ -124,7 +124,7 @@
 ##                   /usr/include/x86_64-linux-gnu/gnu/stubs.h:7:11: fatal error: gnu/stubs-32.h: No such file or directory
 ##                   If this or similar is the case you need to find any missing xxx-32.h files and put them 
 ##                   into the include path
-##                   Compiling on a pure i386 or even arm machine is totally fine.
+##                   Compiling on a pure i386 or  arm machine is totally fine.
 ##
 ##
 ##     Installation: nimble install nimcx
@@ -1592,6 +1592,7 @@ addExitproc(resetAttributes)
 
 when isMainModule: 
     decho(2)
+    # various end scenarios
     #colorio()
     #doCxEnd() 
     showColors()

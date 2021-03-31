@@ -392,22 +392,22 @@ proc getRndDate*(minyear:int = parseint(year(cxtoday())) - 50,maxyear:int = pars
   
 
 proc printTimeMsg*(atext:string = cxTime,xpos:int = 1):string {.discardable.} =
-     cxprint(xpos,gold,darkslategraybg,"[Time  ]",lightgrey,spaces(1),atext)
+     cxprint(xpos,gold,darkslategraybg,"[Time    ]",lightgrey,spaces(1),atext)
 
 proc printLnTimeMsg*(atext:string = cxTime,xpos:int = 1):string {.discardable.} =
-     cxprintLn(xpos,gold,darkslategraybg,"[Time  ]",lightgrey,spaces(1),atext) 
+     cxprintLn(xpos,gold,darkslategraybg,"[Time    ]",lightgrey,spaces(1),atext) 
 
 proc printDTimeMsg*(atext:string = $toTime(now()),xpos:int = 1):string {.discardable.} =
-     cxprint(xpos,gold,darkslategraybg,"[DTime ]",lightgrey,spaces(1),atext)
+     cxprint(xpos,gold,darkslategraybg,"[DTime   ]",lightgrey,spaces(1),atext)
 
 proc printLnDTimeMsg*(atext:string = $toTime(now()),xpos:int = 1):string {.discardable.} =
-     cxprintLn(xpos,orange,darkslategraybg,"[DTime ]",lightgrey,spaces(1),atext)  
+     cxprintLn(xpos,orange,darkslategraybg,"[DTime   ]",lightgrey,spaces(1),atext)  
 
 proc printDateMsg*(atext:string = getDateStr(),xpos:int = 1):string {.discardable.} =
-     cxprint(xpos,gold,darkslategraybg,"[Date  ]",lightgrey,spaces(1),atext)
+     cxprint(xpos,gold,darkslategraybg, "[Date    ]",lightgrey,spaces(1),atext)
   
 proc printLnDateMsg*(atext:string = getDateStr(),xpos:int = 1):string {.discardable.} =
-     cxprintLn(xpos,gold,darkslategraybg,"[Date  ]",lightgrey,spaces(1),atext)
+     cxprintLn(xpos,gold,darkslategraybg,"[Date    ]",lightgrey,spaces(1),atext)
   
    
 # cxtimer functions

@@ -496,7 +496,7 @@ proc createSeqInt*(n: int = 10, mi: int = 0, ma: int = 1000): seq[int] {.inline.
           ## gives @[4556,455,888,234,...] or similar
           ##
           ##.. code-block:: nim
-          ##    # create a seq with 50 rand integers ,of set 100.. 2000
+          ##    # create a seq with 50 rand integers ,of set 100 .. 2000
           ##    # including the limits 100 and 2000
           ##    echo createSeqInt(50,100,2000)
           # result = newSeqofCap[int](n)  # slow use if memory considerations are of top importance
@@ -1093,12 +1093,12 @@ proc splitty*(txt: string, sep: string): seq[string] =
           ##
           var rx = newSeq[string]()
           let z = txt.split(sep)
-          for xx in 0 ..< z.len:
-             if z[xx] != txt and z[xx] != "":
-                 if xx < z.len-1:
-                       rx.add(z[xx] & sep)
+          for x in 0 ..< z.len:
+             if z[x] != txt and z[x] != "":
+                 if x < z.len - 1:
+                       rx.add(z[x] & sep)
                  else:
-                       rx.add(z[xx])
+                       rx.add(z[x])
           result = rx
 
 
@@ -2841,6 +2841,16 @@ iterator span*(s: string; first: int, last: BackwardsIndex): char =
      for i in first .. s.len - last.int: yield s[i]
 
 
+proc cxlastN*[T](aseq:T,n:int):T =
+     ## cxlastN
+     ## returns a seq with last n items of input seq
+     ## 
+     result = aseq
+     let al = result.len
+     if al >= n: 
+         result = result[al - n .. al - 1]
+         
+         
 proc checkPrime*(a: int): bool =
      ## checkPrime
      ## 
@@ -2887,7 +2897,23 @@ when isMainModule:
     echo "Test   : Show primes between 2120000 and 2120030" 
     echo "Primes : ", getPrimeSeq(212_000_0,212_003_0)
     echo()
-    echo "Test   : GeoShapes"
+    echo "Test   : CreateSeqs"
+    
+    showSeq(createSeqApl(),randcol())
+    echo()
+    showSeq(createseqHiragana(),randcol())
+    echo()
+    showSeq(createSeqKatakana(),randcol())
+    echo()
+    showSeq(createSeqFractur(),randcol())
+    echo()
+    showSeq(createSeqIching(),randcol())
+    echo()
+    showSeq(createSeqBoxChars(),randcol())
+    echo()
+    showSeq(createSeqBool(),randcol())
+    echo()
+    showSeq(createSeqBinary(),randcol())
     showSeq(createSeqGeoshapes(),randcol())
     cxprintLn(3,plum,"Hongkong - London Distance")
     cxprintLn(3,$distanceto((114.109497,22.396427),(-0.126236,51.500153)) , " km")
