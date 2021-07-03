@@ -10,7 +10,7 @@
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2021-01-22
+##     Latest      : 2021-07-02
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -40,8 +40,8 @@ import
           streams,
           cpuinfo,
           rdstdin,
-          times,
-          unicode
+          times
+          
 
 # show something during compile using hint system
 #------------------------------------------------------------------------          
@@ -719,7 +719,7 @@ proc seqLeft*[T](it: seq[T], n: int): seq[T] =
           try:
                result = it
                if it.len >= n: result = it[0..<n]
-          except RangeError:
+          except RangeDefect:
                discard
 
 
@@ -732,7 +732,7 @@ proc seqRight*[T](it: seq[T], n: int): seq[T] =
           try:
                result = it
                if n <= it.len: result = it[it.len - n..<it.len]
-          except RangeError:
+          except RangeDefect:
                discard
 
 

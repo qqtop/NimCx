@@ -1,10 +1,11 @@
 #Compiler options
 {.deadCodeElim: on, optimization: speed.}
+#{.push raises: [Defect].}  #--> TODO :for very strict error handling
 #{.passC: "-msse -msse2 -msse3 -mssse3 -march=native -mtune=native -flto".}
 #{.passL: "-msse -msse2 -msse3 -mssse3 -flto".}
 #{.passC: "-march=native -O3"}
 #{.noforward: on.}   # future feature
-
+#{.push inline, noinit, checks: off.}
 
 # check memory usage and other issues via -g -d:UseMalloc and Valgrind
 ## ::
@@ -19,7 +20,7 @@
 ##
 ##     ProjectStart: 2015-06-20
 ##   
-##     Latest      : 2021-02-15
+##     Latest      : 2021-06-23
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -109,14 +110,16 @@
 ##
 ##                   Nimcx compiles with --gc:arc and --gc:orc
 ##
-##                   Nimcx brings in most of the stdlib modules for convenience.
+##                   Nimcx brings in most of the stdlib modules for convenience at the cost 
+##                   
+##                   of slightly longercompile times
 ##
 ##
-##                   if you have cloned nimcx lib somewhere you can try this
+##                   if you have cloned nimcx lib somewhere you can try one of this compile commands
 ##
-##                   nim c --cc:clang -d:danger --gc:arc -r cx.nim      
-##  
+##                   nim c --cc:clang -d:danger --gc:arc -r cx.nim      (may need sudo apt install libomp-dev)
 ##
+##                   
 ##                   for a 386 compile on a 86_64 machine try
 ##
 ##                   nim c --cincludes:/usr/include/x86_64-linux-gnu --os:linux --cpu:i386 --passC:-m32 --passL:-m32  --gc:arc -d:release -r cx.nim
@@ -145,11 +148,12 @@
 ##
 ##                   the OS zenity install do show graphical messageboxes etc 
 ##
-##     Donate       : BTC            3HqnE8g69DSkvJBxBE7HsTLgqX7UfG9rz6  
-##                    NEXO ERC-20    0x19FaED9655819C9721e063B22eA4251EDf51bA2C
-##                    Every little bit helps.
 ##
-##     Compile idea : nim c -d:threads:on -d:ssl -d:danger --gc:arc -d:useMalloc -r -f cx
+##     Compile ideas :
+##
+##                    nim c --gc:orc  --threads:on -d:ssl -d:release --stackTrace:on --lineTrace:on -f -r  cx.nim
+##
+##                    nim c -d:threads:on -d:ssl -d:danger --gc:arc -d:useMalloc -r -f cx
 ##
 ##     Fast         : nim c --gc:arc --threads:on -d:ssl --stackTrace:off -d:release --d:nimdrnim --passC:-flto -f -r cx
 ##
@@ -182,6 +186,8 @@ export
 
         
 export unicode except strip, split, splitWhitespace
+
+when defined(nimHasUsed): {.used.}
 
 # Profiling       
 #import nimprof  # nim c -r --profiler:on --stackTrace:on cx
@@ -336,7 +342,7 @@ template toCxOpenarray*(aseq:seq[untyped]):untyped=
      aseq.toOpenarray(0,aseq.len - 1)
          
          
-func newColor*(r, g, b: int): string =
+proc newColor*(r, g, b: int): string =
     ##   newColor
     ##   
     ##   creates a new color string from r,g,b values. Passed in colors can be used as 
@@ -358,7 +364,11 @@ func newColor*(r, g, b: int): string =
     ##     doFinish()
     ##
     ##
-    result = "\x1b[38;2;$1;$2;$3m" % [$r, $g, $b]
+    try:
+      result = "\x1b[38;2;$1;$2;$3m" % [$r, $g, $b]
+    except ValueError:
+        cxprintLn(1,red, "Description: Wrong color value")
+ 
 
 
 func newColor2*(r, g, b: int): string = "\x1b[48;2;$1;$2;$3m" % [$r, $g, $b]
@@ -1311,7 +1321,7 @@ proc rmTmpFilenames*() =
           except:
               cxprintLn(2,white,truetomatobg,fn & "could not be deleted.")
 
-proc cxBell*() =
+func cxBell*() =
      ## cxBell
      ##
      ## ring system bell

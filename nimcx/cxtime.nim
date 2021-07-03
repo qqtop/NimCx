@@ -11,7 +11,7 @@ import cxconsts
 ##
 ##     License     : MIT opensource
 ##   
-##     Latest      : 2021-02-22 
+##     Latest      : 2021-07-02 
 ##
 ##     Compiler    : latest stable or devel branch
 ##
@@ -231,7 +231,6 @@ proc month*(aDate:string) : string =
     result = $(parseInt(aDate.split("-")[1]))
     if result.len < 2:
        result = "0" & result
-    
 
 
 proc year*(aDate:string) : string = aDate.split("-")[0]

@@ -205,7 +205,17 @@ proc cxZIPort*():tuple[ip:string,port:string] =
    else:
       discard
    
-# Below WIP
+# Below Ideas and WIP
+
+#zenity --list --title "Packages" --list  --text "select packages you want to install" --checklist --column "id"  --column "Name" 1 "Google Chrome" 2 "VLC" 3 "Firefox" 4 "GIMP"
+
+#zenity --color-selection --show-palette
+
+#progressbar for a download example only
+#(wget -r  --no-parent patch -A.tar.gz http://157.245.99.119/latest/ -P /tmp 2>&1 ) | sed -u 's/.* \([0-9]\+%\)\ \+\([0-9.]\+.\) \(.*\)/\1\n# Downloading at \2\/s, ETA \3/' | zenity --progress --title="Downloading File..." --percentage=1 --pulsate
+
+
+
 proc cxZCheckbox*():string = 
     ## with checkbox
     var list2 = execCmdEx("""zenity --list column=Check --column="Column name 1" --column="Column name 2" TRUE "Text row 1" "Value row 1" FALSE "Text row 2" "Value row 2" --checklist""")

@@ -4,7 +4,7 @@
 # nmap , ip , lsof etc. needs to be installed if relevant procs to be used.
 # 
 # 
-# Last 2020-01-02
+# Last 2021-06-27
 # 
 
 import os,osproc,json,httpclient,strutils,strscans
@@ -102,7 +102,7 @@ proc getWanIp2*() : string =
     except:
        result = "WanIp could not be retrieved . Check firewall or permissions."
 
-  
+ 
 
 proc showIpInfo*(ip:string) =
       ## showIpInfo
@@ -427,12 +427,14 @@ when isMainModule:
     showLocalIpInfo()
     showWanIpInfo()
     echo "WanIp2 : ",getWanIP2()
+   
     echo()
     echo()
     cxprintln(0,white,darkslategraybg,cxpad("Wifi Scanner (root password required) ",60))
     if cxYesNo() == true: # function in cxglobal
        echo()
        wifiStatus()
+       
        echo()
     echo()
     
